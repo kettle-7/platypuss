@@ -1,0 +1,120 @@
+ /************************************************************************
+ * Copyright 2021 Ben Keppel                                             *
+ *                                                                       *
+ * This program is free software: you can redistribute it and/or modify  *
+ * it under the terms of the GNU General Public License as published by  *
+ * the Free Software Foundation, either version 3 of the License, or     *
+ * (at your option) any later version.                                   *
+ *                                                                       *
+ * This program is distributed in the hope that it will be useful,       *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ * GNU General Public License for more details.                          *
+ *                                                                       *
+ * You should have received a copy of the GNU General Public License     *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
+ ************************************************************************/
+
+@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+* {
+    font-family: Inter, sans-serif;
+    color: #ffffff;
+}
+
+code {
+    font-family: "Ubuntu Mono", "Lucida Sans", monospace, mono;
+    background-color: #484848;
+    border: 1px solid #888888;
+    border-radius: 5px;
+    padding: 2px;
+}
+
+pre > code {
+    border: 0px solid transparent;
+    background-color: transparent;
+    padding: 0px;
+}
+
+pre {
+    background-color: #484848;
+    border: 2px solid #888888;
+    border-radius: 5px;
+    padding: 3px;
+}
+
+a {
+    color: #0075DB;
+}
+
+blockquote {
+    border-left: 3px solid #888888;
+    margin-left: 0;
+    padding-left: 5;
+}
+
+img {
+    display: inline;
+    width: 50%;
+}
+
+tabs {
+    position: absolute;
+    left: 5px;
+}
+
+a > h1 {
+    color: #ffffff;
+    text-decoration: none;
+    display: inline;
+}
+
+footer {
+    position: absolute;
+    bottom: 0px;
+    height: 48px;
+}
+
+header {
+    background: #373737;
+    color: #f0f0f0;
+}
+
+header > a {
+    text-decoration: none;
+}
+
+header > h1 {
+    position: absolute;
+    top: -6px;
+    left: 65px;
+}
+
+body {
+    background-color: #373737;
+}
+
+input, textarea {
+    background-color: #484848;
+    color: #ffffff;
+    border: 1px solid #0075db;
+    border-radius: 5px;
+}
+
+p > iframe {
+    margin-top: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-bottom: 0px;
+    width: 99%;
+    height: 600px;/*
+    border: 2px solid white;*/
+    border-radius: 10px;
+    border/*-top*/: 2px solid #888888;
+    background: linear-gradient(to bottom, #474747 0%, transparent 5%, transparent 100%);
+}
+
+form > input {
+    margin-left: 10px;
+    margin-right: 10px;
+    /*width: 100%;*/
+}

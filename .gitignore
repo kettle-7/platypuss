@@ -4,9 +4,9 @@
 #  \_________________________________________________/
 #   
 
-centralserver/conf.json
-centralserver/users.json
-centralserver/invites.json
+# centralserver/conf.json
+# centralserver/users.json
+# centralserver/invites.json
 
 #   ________________
 #  /                \
