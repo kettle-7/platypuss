@@ -21,6 +21,32 @@
     color: #ffffff;
 }
 
+#login {
+    position: absolute;
+    top: 20px;
+    right: 98px;
+    background: #484848;
+    border: 1px solid #eeeeee;
+    border-radius: 5px;
+    font-size: large;
+}
+#login:hover {
+    background: #0075db;
+}
+
+#signup {
+    position: absolute;
+    top: 20px;
+    right: 18px;
+    background: #484848;
+    border: 1px solid #eeeeee;
+    border-radius: 5px;
+    font-size: large;
+}
+#signup:hover {
+    background: #0075db;
+}
+
 code {
     font-family: "Ubuntu Mono", "Lucida Sans", monospace, mono;
     background-color: #484848;
@@ -43,7 +69,7 @@ pre {
 }
 
 a {
-    color: #0075DB;
+    color: #2087e0;
 }
 
 blockquote {
@@ -91,6 +117,10 @@ header > h1 {
 
 body {
     background-color: #373737;
+    overflow: hidden;
+}
+main {
+    overflow-y: auto;
 }
 
 input, textarea {

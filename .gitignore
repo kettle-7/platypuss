@@ -5,7 +5,7 @@
 #   
 
 # centralserver/conf.json
-# centralserver/users.json
+centralserver/users.json
 # centralserver/invites.json
 
 #   ________________
