@@ -2,7 +2,7 @@
   "name": "platypuss_server",
   "version": "1.0.0",
   "description": "The server-side code for making Platypuss servers",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/kettle-7/platypuss#readme",
   "dependencies": {
+    "uuid": "^9.0.0",
     "ws": "^8.11.0"
   },
   "optionalDependencies": {
