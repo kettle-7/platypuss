@@ -15,5 +15,12 @@
   "bugs": {
     "url": "https://github.com/kettle-7/platypuss/issues"
   },
-  "homepage": "https://github.com/kettle-7/platypuss#readme"
+  "homepage": "https://github.com/kettle-7/platypuss#readme",
+  "dependencies": {
+    "ws": "^8.11.0"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^4.0.7",
+    "utf-8-validate": "^5.0.10"
+  }
 }
