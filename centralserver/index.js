@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ************************************************************************/
 
-const { userInfo } = require('os');
+const os = require('os');
 
 const fs = require('fs');
 const { createServer } = require("http");
@@ -24,6 +24,14 @@ const { v4 } = require("uuid");
 var conf = JSON.parse(fs.readFileSync("./conf.json")).server;
 var users = JSON.parse(fs.readFileSync("./users.json"));
 var sessions = {};
+
+function ClientUser(u) {
+    return {
+        unam: u.unam,
+        pfp: u.pfp,
+        id: u.id
+    }
+}
 
 class User {
     constructor(unam, pwd) {
@@ -50,74 +58,84 @@ const server = createServer((req, res) => {
 
     // annoying server stuff
 
-    if (url.pathname == "/li") {
-        let data, ift, unam, pwd, ser;
+    if (req.url.toString() == "/li" || (url.pathname == "/login" && req.method.toLowerCase() == "post")) {
+        let ift, unam, pwd, ser;
         try {
-            data = JSON.parse(req.body.toString());
-            ift = data.ift.toString().replace(/ /g, "-");
-            unam = data.unam.toString();
-            pwd = data.unam.toString();
-            ser = data.ser.toString();
-            if (ift == "false" || !ift) {
-                let has = false;
-                for (let u in users) {
-                    if (users[u].unam == unam) {
-                        has = true;
-                        if (users[u].pwd == pwd) {
-                            res.writeHead(200, { "Content-Type": "application/json" });
-                            res.end(JSON.stringify({
-                                exists: true,
-                                pwd: true,
-                                sid: new Session(u, ser).id
-                            }));
+            const chunks = [];
+            req.on("data", (chunk) => {
+                chunks.push(chunk);
+            });
+            req.on("end", () => {
+                const data = JSON.parse(Buffer.concat(chunks).toString());
+                ift = data.ift.toString();
+                unam = data.unam.toString().replace(/ /g, "-");
+                pwd = data.pwd.toString();
+                ser = data.ser.toString();
+                if (ift == "false" || !ift) {
+                    let has = false;
+                    for (let u in users) {
+                        if (users[u].unam == unam) {
+                            has = true;
+                            if (users[u].pwd == pwd) {
+                                res.writeHead(200, { "Content-Type": "application/json" });
+                                res.end(JSON.stringify({
+                                    exists: true,
+                                    pwd: true,
+                                    sid: new Session(u, ser).id
+                                }));
+                            }
+                            else {
+                                res.writeHead(200, { "Content-Type": "application/json" });
+                                res.end(JSON.stringify({
+                                    exists: true,
+                                    pwd: false,
+                                    sid: 0
+                                }));
+                            }
+                            return;
                         }
-                        else {
-                            res.writeHead(200, { "Content-Type": "application/json" });
-                            res.end(JSON.stringify({
-                                exists: true,
-                                pwd: false,
-                                sid: 0
-                            }));
-                        }
-                        return;
                     }
-                }
-                
-                if (!has) {
-                    res.writeHead(200, { "Content-Type": "application/json" });
-                    res.end(JSON.stringify({
-                        exists: false,
-                        pwd: true,
-                        sid: 0
-                    }));
-                }
-            }
-            if (ift == "false" || !ift) {
-                for (let u in users) {
-                    if (users[u].unam == unam) {
+                    
+                    if (!has) {
                         res.writeHead(200, { "Content-Type": "application/json" });
                         res.end(JSON.stringify({
-                            exists: true,
+                            exists: false,
+                            pwd: true,
                             sid: 0
                         }));
                         return;
                     }
                 }
-                res.writeHead(200, { "Content-Type": "application/json" });
-                res.end(JSON.stringify({
-                    exists: false,
-                    sid: new Session(new User(unam, pwd).id, ser).id
-                }));
-            }
+                else {
+                    for (let u in users) {
+                        if (users[u].unam == unam) {
+                            res.writeHead(200, { "Content-Type": "application/json" });
+                            res.end(JSON.stringify({
+                                exists: true,
+                                sid: 0
+                            }));
+                            return;
+                        }
+                    }
+                    res.writeHead(200, { "Content-Type": "application/json" });
+                    res.end(JSON.stringify({
+                        exists: false,
+                        sid: new Session(new User(unam, pwd).id, ser).id
+                    }));
+                    fs.writeFile("./users.json", JSON.stringify(users), () => {});
+                    return;
+                }
+            });
         }
-        catch {
+        catch (e) {
+            console.log(e);
             res.writeHead(403, {"Content-Type": "text/plain"});
             res.end("invalid json data or non-post request");
             return;
         }
     }
 
-    if (url.pathname == "/sinfo") {
+    else if (url.pathname == "/sinfo") {
         if (!url.searchParams.has('id')) {
             res.writeHead(403, {"Content-Type": "text/plain"});
             res.end("missing session id");
@@ -131,6 +149,28 @@ const server = createServer((req, res) => {
         }
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(JSON.stringify(sessions[sid]));
+    }
+
+    else if (url.pathname == "/uinfo") {
+        if (!url.searchParams.has('id')) {
+            res.writeHead(403, {"Content-Type": "text/plain"});
+            res.end("missing user id");
+            return;
+        }
+        let uid = url.searchParams.get('id');
+        if (!users[uid]) {
+            let sid = url.searchParams.get('id');
+            if (!sessions[sid]) {
+                res.writeHead(403, {"Content-Type": "text/plain"});
+                res.end("not an user id");
+                return;
+            }
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify(ClientUser(users[sessions[sid].uid])));
+            return;
+        }
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify(ClientUser(users[uid])));
     }
 
     // regular pages
@@ -208,7 +248,7 @@ const server = createServer((req, res) => {
                 res.end("404: 404 not found (ultimate bad error) (maybe just wait until we can fix it lol)");
                 console.log(err.toString());
             }
-            else res.end(data);
+            else res.end(data.toString()+" "+req.url+" -->");
         });
         return;
     }
