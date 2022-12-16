@@ -31,22 +31,22 @@ module.exports = {
         constructor(id) {
             this.id = id;
             this.groups = [];
-            this.globalPerms = defaultPerms;
+            this.globalPerms = module.exports.defaultPerms;
         }
     },
 
     Group: class {
         constructor() {
-            this.id = v4();
+            this.id = new v4().toString();
             this.members = [];
             this.colour = "#eeeeee";
-            this.globalPerms = defaultPerms;
+            this.globalPerms = module.exports.defaultPerms;
         }
     },
 
     Message: class {
         constructor(author, channel, content) {
-            this.id = v4();
+            this.id = new v4().toString();
             this.content = content;
             this.author = author;
             this.channel = channel;
@@ -55,7 +55,7 @@ module.exports = {
 
     Channel: class {
         constructor() {
-            this.id = v4();
+            this.id = new v4().toString();
             this.permissions = {};
         }
     }

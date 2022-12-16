@@ -19,23 +19,37 @@ const { v4 } = require("uuid");
 
 module.exports = {
 	eventType: "message",
-	execute: async function (server, wss, packet) {
+	execute: function (sdata, wss, packet) {
 		if (!("message" in packet)) {
 			packet.ws.send(JSON.stringify({
-				"type": "error",
+				"eventType": "error",
 				"code": "missingData",
-				"explanation": "The packet was missing important data required\
+				"explanation": "The packet was missing important data required \
 by the event handler on the server, please make sure your client is sending \
 all the information specified in the Platypuss API."
 			}));
-			return; // don't shove the broken packet on all the clients, while
-		}           // technically we can it's antisocial behaviour
-		packet.message.id = new v4();
-		packet.message.author = packet.ws.uid;
-		server.messages[packet.message.id] = packet.message;
+			return; // don't shove the broken packet on all the clients,
+		}           // technically we can but it's antisocial behaviour
+	    let	mid = new v4();
+	    let author = packet.ws.uid;
+		sdata.messages[packet.message.id] = packet.message;
+		console.log(JSON.stringify({
+			eventType: "message",
+			message: {
+				content: packet.message.content,
+				id: mid,
+				author: author
+			}
+		}));
 		for (let client of wss.clients) {
-			// just give all other clients the message to deal with (does not support private channels)
-			client.send(JSON.stringify(packet));
+			client.send(JSON.stringify({
+				eventType: "message",
+				message: {
+					content: packet.message.content,
+					id: mid,
+					author: author
+				}
+			}));
 		}
 	}
 };

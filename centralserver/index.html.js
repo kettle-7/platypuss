@@ -135,10 +135,6 @@ function clientLoad() {
                         eventType: "message",
                         message: { content: document.getElementById("msgtxt").value }
                     }));
-                    console.log({
-                        eventType: "message",
-                        message: { content: document.getElementById("msgtxt").value }
-                    });
                 });
                 ws.send(JSON.stringify({
                     eventType: "login",
@@ -163,8 +159,8 @@ function clientLoad() {
                                 unam = resp.unam;
                                 pfp = resp.pfp;
                             }
-                        }
-                        document.getElementById("mainContent").innerHTML += `
+                            console.log(document.getElementById("mainContent").innerHTML);
+                            document.getElementById("mainContent").innerHTML += `
 <div class="message1">
     <img src="${pfp}" class="avatar"/>
     <div class="message2">
@@ -173,6 +169,10 @@ function clientLoad() {
     </div>
 </div>
 `;
+                            console.log(document.getElementById("mainContent").innerHTML);
+                        }
+                        x.send();
+                        return;
                     default:
                         if ("explanation" in packet)
                             document.getElementById("mainContent").innerHTML += "<br>"+packet.explanation;

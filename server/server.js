@@ -64,8 +64,10 @@ wss.on('connection', function connection(ws) {
                 if (eventType in handlers) {
                     for (let handler of handlers[eventType]) {
                         packet.ws = ws;
+                        sdata.properties = conf;
                         let ret = handler.execute(sdata, wss, packet);
                         if (ret) sdata = ret;
+                        ws = packet.ws;
                     }
                 } else {
                     ws.send(JSON.stringify({
