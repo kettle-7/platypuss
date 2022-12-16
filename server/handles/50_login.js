@@ -36,18 +36,24 @@ module.exports = {
                 let data;
                 try {
                     data = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+                    packet.ws.loggedinbytoken = true;
+                    if (!(data.id in server.users)) {
+                        console.log(`${data.unam} has joined us today`);
+                        server.users[id] = new User(id);
+                        packet.ws.uid = id;
+                    }
+                    ws.send(JSON.stringify({
+                        eventType: "connected",
+                        explanation: "You have successfully connected to the server! Please note you can't currently see any messages from before you joined."
+                    }));
                 } catch {
                     packet.ws.send(JSON.stringify({
                         "type": "error",
                         "code": "invalidSession",
-                        "explanation": "The session ID provided is not valid,\
+                        "explanation": "The session ID provided is not valid, \
 try logging out then back in again to see if the issue is fixed."
                     }));
-                }
-                if (!(data.id in server.users)) {
-                    console.log(`${data.unam} has joined us today`);
-                    server.users[id] = new User(id);
-                    packet.ws.uid = id;
+                    return;
                 }
             });
         });

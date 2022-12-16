@@ -1,7 +1,7 @@
 var url = new URL(window.location);
 
 // client-side hashing taken off stackoverflow :)
-const cyrb53 = (str, seed = 105) => {
+const cyrb53 = (str, seed = 20) => {
 let h1 = 0xdeadbeef ^ seed, // dead beef
     h2 = 0x41c6ce57 ^ seed;
     for (let i = 0, ch; i < str.length; i++) {
@@ -61,12 +61,12 @@ function doTheLoginThingy() {
             "unam": unam,
             "pwd": cyrb53(pwd1)
         });
+        console.log(jsonobjectforloggingin);
         const xhr = new XMLHttpRequest();
         xhr.open("POST", '/li', true);
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         xhr.onreadystatechange = () => { // Call a function when the state changes.
             if (xhr.readyState === XMLHttpRequest.DONE && xhr.status) {
-                console.log(xhr.responseText);
                 let res = JSON.parse(xhr.responseText);
                 if (ift && res.exists) {
                     document.getElementById("lit2").innerHTML = 'An account with that username already exists, would you like to <a href="/login">log in</a> instead?';
@@ -93,13 +93,13 @@ function doTheLoginThingy() {
         "unam": unam,
         "pwd": cyrb53(pwd1)
     });
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", '/li', true);
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xhr.onreadystatechange = () => { // Call a function when the state changes.
-        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status) {
-            console.log(xhr.responseText);
-            let res = JSON.parse(xhr.responseText);
+    console.log(jsonobjectforloggingin);
+    const req = new XMLHttpRequest();
+    req.open("POST", '/li', true);
+    req.setRequestHeader("Content-Type", "application/raw");
+    req.onreadystatechange = () => { // Call a function when the state changes.
+        if (req.readyState === XMLHttpRequest.DONE && (req.status == 200 || req.status == 204)) {
+            let res = JSON.parse(req.responseText);
             if (ift && res.exists) {
                 document.getElementById("lit2").innerText = "An account with that username already exists ;-;";
                 return;
@@ -116,5 +116,5 @@ function doTheLoginThingy() {
             window.location = "/";
         }
     }
-    xhr.send(jsonobjectforloggingin);
+    req.send(jsonobjectforloggingin);
 }

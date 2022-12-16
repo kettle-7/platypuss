@@ -86,7 +86,7 @@ const server = createServer((req, res) => {
                                 }));
                             }
                             else {
-                                res.writeHead(204, { "Content-Type": "application/json" });
+                                res.writeHead(200, { "Content-Type": "application/json" });
                                 res.end(JSON.stringify({
                                     exists: true,
                                     pwd: false,
@@ -98,7 +98,7 @@ const server = createServer((req, res) => {
                     }
                     
                     if (!has) {
-                        res.writeHead(204, { "Content-Type": "application/json" });
+                        res.writeHead(200, { "Content-Type": "application/json" });
                         res.end(JSON.stringify({
                             exists: false,
                             pwd: true,
@@ -110,7 +110,7 @@ const server = createServer((req, res) => {
                 else {
                     for (let u in users) {
                         if (users[u].unam == unam) {
-                            res.writeHead(204, { "Content-Type": "application/json" });
+                            res.writeHead(200, { "Content-Type": "application/json" });
                             res.end(JSON.stringify({
                                 exists: true,
                                 sid: 0

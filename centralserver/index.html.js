@@ -41,7 +41,6 @@ xhr.onload = () => {
                         document.body.removeChild(document.getElementById('inviteparent'));
                         window.history.pushState({}, '', '/');
                     } else {
-                        console.log(r.status);
                         document.getElementById("serverName").innerHTML = "Couldn't join the server, try again later?";
                     }
                 }
@@ -65,7 +64,6 @@ xhr.onload = () => {
                 Number("0x"+inviteCode[6]+inviteCode[7]).toString()].join(".");
             let port = 0;
             for (let c = 8; c + 2 < inviteCode.length; c++) {
-                console.log(c, port, inviteCode[c], parseInt(inviteCode[c], 16).toString(10));
                 port = port * 16 + parseInt(inviteCode[c], 16);
             }
             let code = Number("0x"+inviteCode[inviteCode.length - 2]+inviteCode[inviteCode.length - 1]).toString();
@@ -118,8 +116,21 @@ function clientLoad() {
             let code = serveur.split(' ')[1];
             let url = ("ws://"+ip.toString());
             let ws = new WebSocket(url);
-            document.getElementById("msgtxt").addEventListener("keypress", (e) => {
-                if (e.key == "Enter") {
+            sockets[ip] = ws;
+            ws.onopen = () => {
+                document.getElementById("msgtxt").addEventListener("keypress", (e) => {
+                    if (e.key == "Enter") {
+                        ws.send(JSON.stringify({
+                            eventType: "message",
+                            message: { content: document.getElementById("msgtxt").value }
+                        }));
+                        console.log({
+                            eventType: "message",
+                            message: { content: document.getElementById("msgtxt").value }
+                        });
+                    }
+                });
+                document.getElementById("send").addEventListener("click", () => {
                     ws.send(JSON.stringify({
                         eventType: "message",
                         message: { content: document.getElementById("msgtxt").value }
@@ -128,20 +139,9 @@ function clientLoad() {
                         eventType: "message",
                         message: { content: document.getElementById("msgtxt").value }
                     });
-                }
-            });
-            document.getElementById("send").addEventListener("click", () => {
-                ws.send(JSON.stringify({
-                    eventType: "message",
-                    message: { content: document.getElementById("msgtxt").value }
-                }));
-                console.log({
-                    eventType: "message",
-                    message: { content: document.getElementById("msgtxt").value }
                 });
-            });
-            ws.onopen = (event) => {
                 ws.send(JSON.stringify({
+                    eventType: "login",
                     code: code,
                     sid: localStorage.getItem("sid")
                 }));
@@ -173,6 +173,11 @@ function clientLoad() {
     </div>
 </div>
 `;
+                    default:
+                        if ("explanation" in packet)
+                            document.getElementById("mainContent").innerHTML += "<br>"+packet.explanation;
+                        else
+                         document.getElementById("mainContent").innerHTML += "<br>"+event.data;
                 }
             };
         }

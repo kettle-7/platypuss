@@ -20,8 +20,8 @@ const { readFileSync, writeFile, readFile, readdirSync, writeFileSync } = requir
 const path = require('path');
 const { eventType } = require('./handles/50_message');
 var conf = JSON.parse(readFileSync(__dirname+"/server.properties"));
-var server = JSON.parse(readFileSync(__dirname+"/server.json"));
-server.properties = conf;
+var sdata = JSON.parse(readFileSync(__dirname+"/server.json"));
+sdata.properties = conf;
 var handlers = {};
 const handlePath = path.join(__dirname, 'handles');
 // we don't want to load README.md, any JSON config or platypussDefaults.js as they're all definitely not event handles
@@ -49,6 +49,45 @@ wss.on('connection', function connection(ws) {
         try {
             let packet = JSON.parse(data);
             let eventType = packet.eventType;
+            try {
+                if (!ws.loggedinbytoken && eventType != "login") {
+                    ws.send(JSON.stringify({
+                        eventType: "error",
+                        code: "notLoggedIn",
+                        explanation: 
+"This server requires a session token to be passed in order for any packets to\
+ be accepted. If you are the developer of the client then please add sign-in\
+ functionality."
+                    }));
+                    return;
+                }
+                if (eventType in handlers) {
+                    for (let handler of handlers[eventType]) {
+                        packet.ws = ws;
+                        let ret = handler.execute(sdata, wss, packet);
+                        if (ret) sdata = ret;
+                    }
+                } else {
+                    ws.send(JSON.stringify({
+                        eventType: "error",
+                        code: "unknownEvent",
+                        explanation: 
+"The server did not recognise the event type sent in the last packet, it may be\
+ using an outdated version of the API, incomplete, or the client sent a faulty\
+ packet. The only way to be sure which end is at fault is by checking the API\
+ reference docs to see what event types should be supported."
+                    }));
+                    console.log(`\
+The server did not recognise the event type sent in the last packet, it may be\
+ using an outdated version of the API, incomplete, or the client sent a faulty\
+ packet. The only way to be sure which end is at fault is by checking the API\
+ reference docs to see what event types should be supported.\n\nEvent type give\
+ n: ${eventType}\n`);
+                }
+            } catch (e) {
+                writeFileSync(__dirname+"/server.json", JSON.stringify(sdata));
+                console.log (e);
+            }
         }
         catch {
             ws.send(JSON.stringify({
@@ -61,51 +100,16 @@ check your code thoroughly, otherwise please contact the developer."
             }));
             return;
         }
-        try {
-            if (!ws.loggedinbytoken && eventType != "login") {
-                ws.send(JSON.stringify({
-                    eventType: "error",
-                    code: "notLoggedIn",
-                    explanation: 
-"This server requires a session token to be passed in order for any packets to\
-be accepted. If you are the developer of the client then please add sign-in\
-functionality."
-                }));
-                return;
-            }
-            if (eventType in handlers) {
-                for (let handler of handlers[eventType]) {
-                    packet.ws = ws;
-                    let ret = handler.execute(server, wss, packet);
-                    if (ret) server = ret;
-                }
-            } else {
-                ws.send(JSON.stringify({
-                    eventType: "error",
-                    code: "unknownEvent",
-                    explanation: 
-"The server did not recognise the event type sent in the last packet, it may be\
-using an outdated version of the API, incomplete, or the client sent a faulty\
-packet. The only way to be sure which end is at fault is by checking the API\
-reference docs to see what event types should be supported."
-                }));
-                console.log(`\
-The server did not recognise the event type sent in the last packet, it may be\
-using an outdated version of the API, incomplete, or the client sent a faulty\
-packet. The only way to be sure which end is at fault is by checking the API\
-reference docs to see what event types should be supported.\n\nEvent type give\
-n: ${eventType}\n`);
-            }
-        } catch (e) {
-            writeFileSync(__dirname+"/server.json", JSON.stringify(server));
-            console.log (e);
-        }
     });
     ws.send(JSON.stringify({
-        eventType: "connected",
-        explanation: "You have successfully connected to the server!"
+        eventType: "connecting",
+        explanation: "Connecting..."
     }));
+    ws.on("error", console.log);
+    ws.on("close", console.log);
 });
+wss.on("error", console.log);
+wss.on("close", console.log);
 
 let code = "";
 for (let part of conf.ip.split(".")) {
