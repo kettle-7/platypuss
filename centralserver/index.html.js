@@ -116,8 +116,8 @@ function clientLoad() {
         for (let serveur in sers) {
             let ip = serveur.split(' ')[0];
             let code = serveur.split(' ')[1];
-            console.log(ip);
-            let ws = new WebSocket("ws://"+ip.toString());
+            let url = ("ws://"+ip.toString());
+            let ws = new WebSocket(url);
             document.getElementById("msgtxt").addEventListener("keypress", (e) => {
                 if (e.key == "Enter") {
                     ws.send(JSON.stringify({

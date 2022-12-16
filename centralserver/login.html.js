@@ -1,7 +1,7 @@
 var url = new URL(window.location);
 
 // client-side hashing taken off stackoverflow :)
-const cyrb53 = (str, seed = 69) => {
+const cyrb53 = (str, seed = 105) => {
 let h1 = 0xdeadbeef ^ seed, // dead beef
     h2 = 0x41c6ce57 ^ seed;
     for (let i = 0, ch; i < str.length; i++) {
