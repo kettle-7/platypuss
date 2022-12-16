@@ -18,28 +18,38 @@
 const http = require("http");
 const { User } = require("./platypussDefaults.js");
 
-export const eventType = "login";
-export async function execute(server, wss, packet) {
-	http.get(`http://${server.properties.authAddr}/uinfo?id=${packet.sid}`, (res) => {
-        let chunks = [];
-        res.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
-        res.on('error', (err) => reject(err));
-        res.on('end', () => {
-            let data;
-            try {
-                data = JSON.parse(Buffer.concat(chunks).toString('utf8'));
-            } catch {
-                packet.ws.send(JSON.stringify({
-                    "type": "error",
-                    "code": "invalidSession",
-                    "explanation": "The session ID provided is not valid,\
+module.exports = {
+	eventType: "login",
+	execute: async function (server, wss, packet) {
+        if (packet.code != server.properties.inviteCode) {
+            packet.ws.send(JSON.stringify({
+                "type": "error",
+                "code": "invalidInvite",
+                "explanation": "You are not invited to the server or the invite you have been sent is expired."
+            }));
+        }
+        http.get(`http://${server.properties.authAddr}/uinfo?id=${packet.sid}`, (res) => {
+            let chunks = [];
+            res.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
+            res.on('error', (err) => reject(err));
+            res.on('end', () => {
+                let data;
+                try {
+                    data = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+                } catch {
+                    packet.ws.send(JSON.stringify({
+                        "type": "error",
+                        "code": "invalidSession",
+                        "explanation": "The session ID provided is not valid,\
 try logging out then back in again to see if the issue is fixed."
-                }));
-            }
-            if (!(data.id in server.users)) {
-                console.log(`${data.unam} has joined us today`);
-                server.users[id] = new User(id);
-            }
+                    }));
+                }
+                if (!(data.id in server.users)) {
+                    console.log(`${data.unam} has joined us today`);
+                    server.users[id] = new User(id);
+                    packet.ws.uid = id;
+                }
+            });
         });
-    });
-}
+	}
+};

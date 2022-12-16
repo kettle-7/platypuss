@@ -35,8 +35,9 @@ function ClientUser(u) {
 
 class User {
     constructor(unam, pwd) {
-        this.unam = unam;
         this.pfp = conf.icon;
+        this.servers = [];
+        this.unam = unam;
         this.pwd = pwd;
         this.id = v4();
         users[this.id] = this;
@@ -45,9 +46,9 @@ class User {
 
 class Session {
     constructor(uid, server) {
-        this.uid = uid;
-        this.server = server;
         this.ctime = Date.now();
+        this.server = server;
+        this.uid = uid;
         this.id = v4();
         sessions[this.id] = this;
     }
@@ -85,7 +86,7 @@ const server = createServer((req, res) => {
                                 }));
                             }
                             else {
-                                res.writeHead(200, { "Content-Type": "application/json" });
+                                res.writeHead(204, { "Content-Type": "application/json" });
                                 res.end(JSON.stringify({
                                     exists: true,
                                     pwd: false,
@@ -97,7 +98,7 @@ const server = createServer((req, res) => {
                     }
                     
                     if (!has) {
-                        res.writeHead(200, { "Content-Type": "application/json" });
+                        res.writeHead(204, { "Content-Type": "application/json" });
                         res.end(JSON.stringify({
                             exists: false,
                             pwd: true,
@@ -109,7 +110,7 @@ const server = createServer((req, res) => {
                 else {
                     for (let u in users) {
                         if (users[u].unam == unam) {
-                            res.writeHead(200, { "Content-Type": "application/json" });
+                            res.writeHead(204, { "Content-Type": "application/json" });
                             res.end(JSON.stringify({
                                 exists: true,
                                 sid: 0
@@ -135,16 +136,60 @@ const server = createServer((req, res) => {
         }
     }
 
-    else if (url.pathname == "/sinfo") {
+    else if (url.pathname == "/joinserver") {
         if (!url.searchParams.has('id')) {
-            res.writeHead(403, {"Content-Type": "text/plain"});
+            res.writeHead(204, {"Content-Type": "text/plain"});
             res.end("missing session id");
             return;
         }
         let sid = url.searchParams.get('id');
         if (!sessions[sid]) {
-            res.writeHead(403, {"Content-Type": "text/plain"});
-            res.end("not a session id");
+            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.end("invalid session");
+            return;
+        }
+        if (!url.searchParams.has('ip')) {
+            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.end("missing ip for server to join");
+            return;
+        }
+        users[sessions[sid].uid].servers.push(url.searchParams.get('ip'));
+        fs.writeFile("./users.json", JSON.stringify(users), () => {});
+        res.writeHead(200, {"Content-Type": "text/plain"});
+        res.end("success");
+    }
+
+    else if (url.pathname == "/sload") {
+        if (!url.searchParams.has('id')) {
+            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.end("missing session id");
+            return;
+        }
+        let sid = url.searchParams.get('id');
+        if (!sessions[sid]) {
+            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.end("invalid session");
+            return;
+        }
+        let tokens = {};
+        for (let ser of users[sessions[sid].uid].servers) {
+            tokens[ser] = (new Session(sessions[sid].uid, ser).id);
+        }
+        res.writeHead(200, {"Content-Type": "application/json"});
+        res.end(JSON.stringify(tokens));
+        return;
+    }
+
+    else if (url.pathname == "/sinfo") {
+        if (!url.searchParams.has('id')) {
+            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.end("missing session id");
+            return;
+        }
+        let sid = url.searchParams.get('id');
+        if (!sessions[sid]) {
+            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.end("invalid session");
             return;
         }
         res.writeHead(200, { "Content-Type": "application/json" });
@@ -153,7 +198,7 @@ const server = createServer((req, res) => {
 
     else if (url.pathname == "/uinfo") {
         if (!url.searchParams.has('id')) {
-            res.writeHead(403, {"Content-Type": "text/plain"});
+            res.writeHead(204, {"Content-Type": "text/plain"});
             res.end("missing user id");
             return;
         }
@@ -161,7 +206,7 @@ const server = createServer((req, res) => {
         if (!users[uid]) {
             let sid = url.searchParams.get('id');
             if (!sessions[sid]) {
-                res.writeHead(403, {"Content-Type": "text/plain"});
+                res.writeHead(204, {"Content-Type": "text/plain"});
                 res.end("not an user id");
                 return;
             }

@@ -16,7 +16,7 @@
  ************************************************************************/
 
 const { WebSocketServer } = require('ws');
-const { readFileSync, writeFile, readFile, readdirSync, fstat, writeFileSync } = require("fs");
+const { readFileSync, writeFile, readFile, readdirSync, writeFileSync } = require("fs");
 const path = require('path');
 const { eventType } = require('./handles/50_message');
 var conf = JSON.parse(readFileSync(__dirname+"/server.properties"));
@@ -24,7 +24,8 @@ var server = JSON.parse(readFileSync(__dirname+"/server.json"));
 server.properties = conf;
 var handlers = {};
 const handlePath = path.join(__dirname, 'handles');
-const handleFiles = readdirSync(handlePath).filter(file => file.endsWith('.js'));
+// we don't want to load README.md, any JSON config or platypussDefaults.js as they're all definitely not event handles
+const handleFiles = readdirSync(handlePath).filter(file => file.endsWith('.js') && !file.includes("platypussDefaults"));
 for (const file of handleFiles) {
 	const filePath = path.join(handlePath, file);
 	const handler = require(filePath);
@@ -105,3 +106,12 @@ n: ${eventType}\n`);
         explanation: "You have successfully connected to the server!"
     }));
 });
+
+let code = "";
+for (let part of conf.ip.split(".")) {
+    code += parseInt(part, 10).toString(16);
+}
+code += parseInt(conf.port, 10).toString(16) + parseInt(conf.inviteCode, 10).toString(16);
+inviteUrl = `http://122.62.122.75:3000/?invite=${code}`;
+
+console.log(`The server is currently running on port ${conf.port}, join at ${inviteUrl}`);

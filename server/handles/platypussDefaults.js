@@ -17,44 +17,46 @@
 
 // This file contains lots of commom useful classes for random stuff.
 
-import { v4 } from 'uuid';
+const v4 = require('uuid').v4;
 
 // Feel free to modify these to your liking (you may want different default permissions)
-export const defaultPerms = [
-    "message.send",
-    "message.read",
-    "message.old"
-];
+module.exports = {
+    defaultPerms: [
+        "message.send",
+        "message.read",
+        "message.old"
+    ],
 
-export class User {
-    constructor(id) {
-        this.id = id;
-        this.groups = [];
-        this.globalPerms = defaultPerms;
-    }
-}
+    User: class {
+        constructor(id) {
+            this.id = id;
+            this.groups = [];
+            this.globalPerms = defaultPerms;
+        }
+    },
 
-export class Group {
-    constructor() {
-        this.id = v4();
-        this.members = [];
-        this.colour = "#eeeeee";
-        this.globalPerms = defaultPerms;
-    }
-}
+    Group: class {
+        constructor() {
+            this.id = v4();
+            this.members = [];
+            this.colour = "#eeeeee";
+            this.globalPerms = defaultPerms;
+        }
+    },
 
-export class Message {
-    constructor(author, channel, text) {
-        this.id = v4();
-        this.text = text;
-        this.author = author;
-        this.channel = channel;
-    }
-}
+    Message: class {
+        constructor(author, channel, content) {
+            this.id = v4();
+            this.content = content;
+            this.author = author;
+            this.channel = channel;
+        }
+    },
 
-export class Channel {
-    constructor() {
-        this.id = v4();
-        this.permissions = {};
+    Channel: class {
+        constructor() {
+            this.id = v4();
+            this.permissions = {};
+        }
     }
-}
+};

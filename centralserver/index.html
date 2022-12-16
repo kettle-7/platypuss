@@ -7,12 +7,25 @@
     </head>
     <body>
         <header id="header">
-            <img alt="Ornithorynchus Anatinus" style="width:48px;height:48px;border-radius:50%;position:absolute;border:2px solid #eeeeee" src="ICON" />
-            <h1>Platypuss</h1>
-            <button onclick="window.location = '/login'" id="login" style="cursor: pointer;">Sign In</button>
-            <button onclick="window.location = '/login?ift=1'" id="signup" style="cursor: pointer;">Create Account</button>
-            <img onclick="document.getElementById('accountInfoParent').hidden = !document.getElementById('accountInfoParent').hidden" id="pfp" alt="" style="cursor:pointer;width:48px;height:48px;border-radius:50%;position:absolute;border:2px solid #eeeeee" src="" />
+            <img onclick="window.location = '/'" alt="Ornithorynchus Anatinus" style="cursor:pointer;width:48px;height:48px;border-radius:50%;border:2px solid #eeeeee" src="ICON" />
+            <h1 onclick="window.location = '/'" style="cursor: pointer;">Platypuss</h1>
+            <input type="text" id="msgtxt" class="textbox chonk" placeholder="Type a message" value=""/>
+            <button id="send">Send</button>
+            <button class="chonk" onclick="window.location = '/login'" id="login" style="cursor: pointer;">Sign In</button>
+            <button class="bleu chonk" onclick="window.location = '/login?ift=1'" id="signup" style="cursor: pointer;">Create Account</button>
+            <img onclick="document.getElementById('accountInfoParent').hidden = !document.getElementById('accountInfoParent').hidden" id="pfp" alt="" style="cursor:pointer;width:48px;height:48px;border-radius:50%;border:2px solid #eeeeee" src="" />
         </header>
+        <div id="infopagecontainer"><main id="infoPage" class="mainpage padded" hidden="true">
+            <p>nothing here yet, go see the sign in button if you want something interesting</p>
+        </main></div>
+        <div id="actualpagecontainer"><main id="actualPage" class="mainpage" hidden="true"> 
+            <div id="sidePane">
+                <button class="invisibutton" class="sericon">
+                    <img onclick="joinser()" id="joinser" alt="+" src=""/>
+                </button>
+            </div>
+            <div id="mainContent" class="padded"></div>
+        </main></div>
         <div class="popupParent" onclick="document.getElementById('accountInfoParent').hidden = true" id="accountInfoParent" hidden>
             <div class="popup" id="accountInfo">
                 <p id="username"></p>
@@ -20,9 +33,18 @@
                 <button class="dangerous" id="logout" onclick="logout()">Sign Out</button>
             </div>
         </div>
-        <footer>
-            <p>hah here's a footer to keep consistent with other websites</p>
-        </footer>
+        <div class="popupParent" id="inviteparent" hidden>
+            <div class="popup" id="invitepopup">
+                <h2 style="text-align:center;">Invite to server</h2>
+                <p id="serverName">
+                    You've been invited to join SERVER
+                    <br>IP: ADDR
+                    <br>COUNT members
+                </p>
+                <button class="bleu chonk" id="acceptinvitebtn">Accept</button>
+                <button class="chonk" id="invdecline" onclick="document.body.removeChild(document.getElementById('inviteparent'));window.history.pushState({}, '', '/')">Decline</button>
+            </div>
+        </div>
         <script src="/index.js"></script>
     </body>
 </html>

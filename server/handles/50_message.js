@@ -15,20 +15,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ************************************************************************/
 
-export const eventType = "message";
-export async function execute(server, wss, packet) {
-	for (let client of wss.clients) {
-		// just give all other clients the message to deal with (does not support private channels)
+const { v4 } = require("uuid");
+
+module.exports = {
+	eventType: "message",
+	execute: async function (server, wss, packet) {
 		if (!("message" in packet)) {
 			packet.ws.send(JSON.stringify({
 				"type": "error",
 				"code": "missingData",
 				"explanation": "The packet was missing important data required\
- by the event handler on the server, please make sure your client is sending \
+by the event handler on the server, please make sure your client is sending \
 all the information specified in the Platypuss API."
 			}));
 			return; // don't shove the broken packet on all the clients, while
 		}           // technically we can it's antisocial behaviour
-		client.send(JSON.stringify(packet));
+		packet.message.id = new v4();
+		packet.message.author = packet.ws.uid;
+		server.messages[packet.message.id] = packet.message;
+		for (let client of wss.clients) {
+			// just give all other clients the message to deal with (does not support private channels)
+			client.send(JSON.stringify(packet));
+		}
 	}
-}
+};
