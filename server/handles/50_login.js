@@ -35,19 +35,31 @@ module.exports = {
             res.on('end', () => {
                 let data;
                 try {
-                    console.log(Buffer.concat(chunks).toString('utf8'));
                     data = JSON.parse(Buffer.concat(chunks).toString('utf8'));
                     packet.ws.loggedinbytoken = true;
                     packet.ws.uid = data.id;
                     if (!(data.id in sdata.users)) {
                         console.log(`${data.unam} has joined us today`);
                         sdata.users[data.id] = new User(data.id);
+                        for (let client of wss.clients) {
+                            if (client != packet.ws)
+                            client.send(JSON.stringify({
+                                eventType: "welcome",
+                                user: data.id,
+                                explanation: `${data.unam} has joined us today.`
+                            }));
+                        }
+                    } else {
+                        console.log(`${data.unam} connected to the server.`);
+                        for (let client of wss.clients) {
+                            if (client != packet.ws)
+                            client.send(JSON.stringify({
+                                eventType: "join",
+                                user: data.id,
+                                explanation: `${data.unam} connected to the server.`
+                            }));
+                        }
                     }
-                    packet.ws.send(JSON.stringify({
-                        eventType: "join",
-                        user: data.id,
-                        explanation: `${data.unam} has joined us today.`
-                    }));
                     packet.ws.send(JSON.stringify({
                         eventType: "connected",
                         explanation: "You have successfully connected to the server! Please note you can't currently see any messages from before you joined."

@@ -40,6 +40,7 @@ xhr.onload = () => {
                     if (r.status == 200) {
                         document.body.removeChild(document.getElementById('inviteparent'));
                         window.history.pushState({}, '', '/');
+                        clientLoad();
                     } else {
                         document.getElementById("serverName").innerHTML = "Couldn't join the server, try again later?";
                     }
@@ -124,10 +125,7 @@ function clientLoad() {
                             eventType: "message",
                             message: { content: document.getElementById("msgtxt").value }
                         }));
-                        console.log({
-                            eventType: "message",
-                            message: { content: document.getElementById("msgtxt").value }
-                        });
+                        document.getElementById("msgtxt").value = "";
                     }
                 });
                 document.getElementById("send").addEventListener("click", () => {
@@ -135,6 +133,7 @@ function clientLoad() {
                         eventType: "message",
                         message: { content: document.getElementById("msgtxt").value }
                     }));
+                    document.getElementById("msgtxt").value = "";
                 });
                 ws.send(JSON.stringify({
                     eventType: "login",
@@ -159,8 +158,7 @@ function clientLoad() {
                                 unam = resp.unam;
                                 pfp = resp.pfp;
                             }
-                            console.log(document.getElementById("mainContent").innerHTML);
-                            document.getElementById("mainContent").innerHTML += `
+                            document.getElementById("mainContent").innerHTML = `
 <div class="message1">
     <img src="${pfp}" class="avatar"/>
     <div class="message2">
@@ -168,16 +166,15 @@ function clientLoad() {
         <p>${packet.message.content}</p>
     </div>
 </div>
-`;
-                            console.log(document.getElementById("mainContent").innerHTML);
+` + document.getElementById("mainContent").innerHTML;
                         }
                         x.send();
                         return;
                     default:
                         if ("explanation" in packet)
-                            document.getElementById("mainContent").innerHTML += "<br>"+packet.explanation;
+                            document.getElementById("mainContent").innerHTML = "<br>"+packet.explanation + document.getElementById("mainContent").innerHTML;
                         else
-                         document.getElementById("mainContent").innerHTML += "<br>"+event.data;
+                            document.getElementById("mainContent").innerHTML = "<br>"+event.data + document.getElementById("mainContent").innerHTML;
                 }
             };
         }

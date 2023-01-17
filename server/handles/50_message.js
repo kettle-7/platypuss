@@ -33,14 +33,7 @@ all the information specified in the Platypuss API."
 	    let	mid = new v4();
 	    let author = packet.ws.uid;
 		sdata.messages[packet.message.id] = packet.message;
-		console.log(JSON.stringify({
-			eventType: "message",
-			message: {
-				content: packet.message.content,
-				id: mid,
-				author: author
-			}
-		}));
+		console.log(`<${author}> ${packet.message.content}`);
 		for (let client of wss.clients) {
 			client.send(JSON.stringify({
 				eventType: "message",

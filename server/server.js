@@ -16,6 +16,7 @@
  ************************************************************************/
 
 const { WebSocketServer } = require('ws');
+const http = require('http');
 const { readFileSync, writeFile, readFile, readdirSync, writeFileSync } = require("fs");
 const path = require('path');
 const { eventType } = require('./handles/50_message');
@@ -108,14 +109,41 @@ check your code thoroughly, otherwise please contact the developer."
         explanation: "Connecting..."
     }));
     ws.on("error", console.log);
-    ws.on("close", console.log);
+    ws.on("close", () => {
+        http.get(`http://${sdata.properties.authAddr}/uinfo?id=${ws.uid}`, (res) => {
+            let chunks = [];
+            res.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
+            res.on('error', (err) => reject(err));
+            res.on('end', () => {
+                let data;
+                try {
+                    data = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+                    for (let client of wss.clients) {
+                        if (client != ws)
+                        client.send(JSON.stringify({
+                            eventType: "disconnect",
+                            user: ws.uid,
+                            explanation: `${data.unam} disconnected from the server.`
+                        }));
+                    }
+                } catch {
+                    console.log(e);
+                    console.log(ws.uid + " disconnected from the server.");
+                }
+            });
+        });
+    });
 });
 wss.on("error", console.log);
-wss.on("close", console.log);
+//wss.on("close", console.log);
 
 let code = "";
 for (let part of conf.ip.split(".")) {
-    code += parseInt(part, 10).toString(16);
+    cp = parseInt(part, 10).toString(16);
+    while (cp.length < 2) {
+    	cp = "0" + cp;
+    }
+    code += cp;
 }
 code += parseInt(conf.port, 10).toString(16) + parseInt(conf.inviteCode, 10).toString(16);
 inviteUrl = `http://122.62.122.75:3000/?invite=${code}`;
