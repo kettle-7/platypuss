@@ -17,7 +17,7 @@
 
 // This file contains lots of commom useful classes for random stuff.
 
-const v4 = require('uuid').v4;
+const { v4 } = require('uuid');
 
 // Feel free to modify these to your liking (you may want different default permissions)
 module.exports = {
@@ -37,7 +37,7 @@ module.exports = {
 
     Group: class {
         constructor() {
-            this.id = new v4().toString();
+            this.id = v4();
             this.members = [];
             this.colour = "#eeeeee";
             this.globalPerms = module.exports.defaultPerms;
@@ -46,7 +46,7 @@ module.exports = {
 
     Message: class {
         constructor(author, channel, content) {
-            this.id = new v4().toString();
+            this.id = v4();
             this.content = content;
             this.author = author;
             this.channel = channel;
@@ -55,7 +55,7 @@ module.exports = {
 
     Channel: class {
         constructor() {
-            this.id = new v4().toString();
+            this.id = v4();
             this.permissions = {};
         }
     }

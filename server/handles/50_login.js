@@ -60,9 +60,19 @@ module.exports = {
                             }));
                         }
                     }
+                    let msgstld = [];
+                    let mids = Object.keys(sdata.messages);
+                    for (let i = mids.length - 20; i < mids.length; i++) { // this acts weirdly when no messages have been sent
+                        while (i < 0) i++;
+                        msgstld.push(sdata.messages[mids[i]]);
+                    }
                     packet.ws.send(JSON.stringify({
                         eventType: "connected",
-                        explanation: "You have successfully connected to the server! Please note you can't currently see any messages from before you joined."
+                        explanation: "You've connected to the server successfully."
+                    }));
+                    packet.ws.send(JSON.stringify({
+                        eventType: "messages",
+                        messages: msgstld
                     }));
                     return sdata;
                 } catch (e) {

@@ -16,6 +16,8 @@
  ************************************************************************/
 
 const { v4 } = require("uuid");
+const rateLimit = 1000; // Minimum time between messages sent, change this if you like.
+const allowDuplicates = false;
 
 module.exports = {
 	eventType: "message",
@@ -30,9 +32,56 @@ all the information specified in the Platypuss API."
 			}));
 			return; // don't shove the broken packet on all the clients,
 		}           // technically we can but it's antisocial behaviour
-	    let	mid = new v4();
+		if (packet.message.content.length > 2000) {
+			packet.ws.send(JSON.stringify({
+				"eventType": "error",
+				"code": "tooLong",
+				"explanation": "That message is too long. Please keep under 2KB. This is to help prevent spam and abuse of the server."
+			}));
+			return;
+		}
+		//if (!(/[\!@#$%\^&\*()_+\-=\[\]{};':"\\|,.<>\/?A-Za-z0-9]/.test(packet.message.content)) && !packet) {
+		if (packet.message.content.replace(/[ \t]/g, "").length < 1) {
+			packet.ws.send(JSON.stringify({
+				"eventType": "error",
+				"code": "invisibleMsg",
+				"explanation": "An attempt to stop invisible messages."
+			}));
+			return;
+		}
+		if (packet.ws.lastMessage == packet.message.content && !allowDuplicates) {
+			packet.ws.send(JSON.stringify({
+				"eventType": "error",
+				"code": "repeatMessage",
+				"explanation": "Duplicate messages are not allowed on the server."
+			}));
+			return;
+		}
+		if (packet.ws.lastInteractionSent == undefined) {
+			packet.ws.lastInteractionSent = Date.now();
+			packet.ws.lastMessage = packet.message.content;
+		}
+		else if (packet.ws.lastInteractionSent + rateLimit > Date.now()) {
+			packet.ws.send(JSON.stringify({
+				"eventType": "rateLimit",
+				"delay": packet.ws.lastInteractionSent + rateLimit - Date.now(),
+				"explanation": "Aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa too many messages",
+				"repeatedPacket": {
+					eventType: "message",
+					message: packet.message
+				}
+			}));
+			return;
+		}
+		else {
+			packet.ws.lastInteractionSent = Date.now();
+			packet.ws.lastMessage = packet.message.content;
+		}
+	    let	mid = v4();
 	    let author = packet.ws.uid;
-		sdata.messages[packet.message.id] = packet.message;
+		packet.message.author = author;
+		packet.message.id = mid;
+		sdata.messages[mid] = packet.message;
 		console.log(`<${author}> ${packet.message.content}`);
 		for (let client of wss.clients) {
 			client.send(JSON.stringify({
@@ -44,5 +93,6 @@ all the information specified in the Platypuss API."
 				}
 			}));
 		}
+		return sdata;
 	}
 };

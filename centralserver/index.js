@@ -118,6 +118,14 @@ const server = createServer((req, res) => {
                             return;
                         }
                     }
+                    if (unam.length > 30 || pwd.length > 30) {
+                        res.writeHead(200, { "Content-Type": "application/json" });
+                        res.end(JSON.stringify({
+                            exists: true,
+                            sid: 0
+                        }));
+                        return;
+                    }
                     res.writeHead(200, { "Content-Type": "application/json" });
                     res.end(JSON.stringify({
                         exists: false,

@@ -76,7 +76,7 @@ wss.on('connection', function connection(ws) {
                         code: "unknownEvent",
                         explanation: 
 "The server did not recognise the event type sent in the last packet, it may be\
- using an outdated version of the API, incomplete, or the client sent a faulty\
+ incomplete, using an outdated version of the API, or the client sent a faulty\
  packet. The only way to be sure which end is at fault is by checking the API\
  reference docs to see what event types should be supported."
                     }));
@@ -110,6 +110,7 @@ check your code thoroughly, otherwise please contact the developer."
     }));
     ws.on("error", console.log);
     ws.on("close", () => {
+        writeFileSync(__dirname+"/server.json", JSON.stringify(sdata));
         http.get(`http://${sdata.properties.authAddr}/uinfo?id=${ws.uid}`, (res) => {
             let chunks = [];
             res.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
@@ -126,6 +127,7 @@ check your code thoroughly, otherwise please contact the developer."
                             explanation: `${data.unam} disconnected from the server.`
                         }));
                     }
+                    console.log(data.unam + " disconnected from the server.");
                 } catch {
                     console.log(e);
                     console.log(ws.uid + " disconnected from the server.");
@@ -144,6 +146,7 @@ for (let part of conf.ip.split(".")) {
     	cp = "0" + cp;
     }
     code += cp;
+    //console.log(code);
 }
 code += parseInt(conf.port, 10).toString(16) + parseInt(conf.inviteCode, 10).toString(16);
 inviteUrl = `http://122.62.122.75:3000/?invite=${code}`;

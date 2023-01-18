@@ -14,6 +14,7 @@ xhr.onload = () => {
     if (loggedin) {
         document.getElementById("header").removeChild(document.getElementById("login"));
         document.getElementById("header").removeChild(document.getElementById("signup"));
+        document.getElementById("header").removeChild(document.getElementById("spacement"));
         document.body.removeChild(document.getElementById("infopagecontainer"));
         if (url.searchParams.has("invite")) {
             let inviteCode = url.searchParams.get("invite");
@@ -55,6 +56,7 @@ xhr.onload = () => {
     else {
         document.getElementById("header").removeChild(document.getElementById("pfp"));
         document.getElementById("header").removeChild(document.getElementById("msgtxt"));
+        document.getElementById("header").removeChild(document.getElementById("send"));
         document.body.removeChild(document.getElementById("actualpagecontainer"));
         if (url.searchParams.has("invite")) {
             let inviteCode = url.searchParams.get("invite");
@@ -91,6 +93,9 @@ document.getElementById("accountInfo").addEventListener("click", (e) => {
     e.stopPropagation();
 });
 document.getElementById("invitepopup").addEventListener("click", (e) => {
+    e.stopPropagation();
+});
+document.getElementById("acspopup").addEventListener("click", (e) => {
     e.stopPropagation();
 });
 
@@ -150,12 +155,12 @@ function clientLoad() {
                         x.open('GET', '/uinfo?id='+packet.message.author, true);
                         x.onload = () => {
                             if (x.status != 200) {
-                                unam = "Server Message";
+                                unam = "Deleted User";
                                 pfp = "";
                             }
                             else {
                                 let resp = JSON.parse(x.responseText);
-                                unam = resp.unam;
+                                unam = resp.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
                                 pfp = resp.pfp;
                             }
                             document.getElementById("mainContent").innerHTML = `
@@ -169,7 +174,50 @@ function clientLoad() {
 ` + document.getElementById("mainContent").innerHTML;
                         }
                         x.send();
-                        return;
+                        break;
+                    case "messages":
+                        console.log(packet.messages);
+                        let q = new Array(packet.messages.length);
+                        let left = packet.messages.length;
+                        for (let m = 0; m < packet.messages.length; m++) {
+                            const x = new XMLHttpRequest();
+                            x.open('GET', '/uinfo?id='+packet.messages[m].author, true);
+                            x.onload = () => {
+                                left--;
+                                if (x.status != 200) {
+                                    unam = "Server Message";
+                                    pfp = "";
+                                }
+                                else {
+                                    let resp = JSON.parse(x.responseText);
+                                    unam = resp.unam;
+                                    pfp = resp.pfp;
+                                }
+                                q[m] = `
+    <div class="message1">
+        <img src="${pfp}" class="avatar"/>
+        <div class="message2">
+            <strong class="chonk">${unam}</strong><br>
+            <p>${packet.messages[m].content}</p>
+        </div>
+    </div>
+    `;
+                                if (left < 1) {
+                                    let txt = "";
+                                    for (let me of q) {
+                                        txt = me + txt;
+                                    }
+                                    document.getElementById("mainContent").innerHTML += txt;
+                                }
+                            }
+                            x.send();
+                        }
+                        break;
+                    case "rateLimit":
+                        setTimeout(() => {
+                            ws.send(JSON.stringify(packet.repeatedPacket));
+                        }, packet.delay);
+                        break;
                     default:
                         if ("explanation" in packet)
                             document.getElementById("mainContent").innerHTML = "<br>"+packet.explanation + document.getElementById("mainContent").innerHTML;

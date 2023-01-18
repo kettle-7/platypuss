@@ -31,6 +31,8 @@ button {
     border: 1px solid #888888;
     border-radius: 5px;
     padding: 2px;
+    padding-left: 10px;
+    padding-right: 10px;
     cursor: pointer;
 }
 
@@ -38,6 +40,10 @@ button {
     padding: 5px;
     font-size: 14pt;
     font-weight: 600;
+}
+
+.widest {
+    flex-grow: 1;
 }
 
 button:hover {
@@ -199,10 +205,13 @@ input {
     bottom: 0px;
     width: 100%;
     height: 100%;
+    overflow: hidden;
 }
 
-.mainContent {
+#mainContent {
     overflow: auto;
+    padding: 0px;
+    margin: 0px;
 }
 
 #actualPage {
@@ -227,7 +236,7 @@ input {
     display: flex;
     flex-direction: column;
     gap: 3px;
-    flex-grow: 999999999999;
+    flex-grow: 1;
 }
 
 .sericon {
@@ -278,6 +287,13 @@ input {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
+    width: 100%;
+    margin: 0px;
+    padding: 5px;
+}
+
+.message1:hover {
+    background-color: #303030;
 }
 
 .message2 {
