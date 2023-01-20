@@ -30,7 +30,8 @@ function ClientUser(u) {
     return {
         unam: u.unam,
         pfp: u.pfp,
-        id: u.id
+        id: u.id,
+        aboutMe: u.aboutMe
     }
 }
 
@@ -41,6 +42,9 @@ class User {
         this.unam = unam;
         this.pwd = pwd;
         this.id = v4();
+        this.aboutMe = {
+            text: ""
+        };
         users[this.id] = this;
     }
 }
@@ -77,6 +81,13 @@ const server = createServer((req, res) => {
         if (!sessions[sid]) {
             res.writeHead(204, {"Content-Type": "text/plain"});
             res.end("invalid session");
+            return;
+        }
+        // this should probably not be hardcoded ...
+        if (sessions[sid].server != "122.62.122.75:3000") {
+            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.end("You may not use server-specific tokens to modify account \
+data, this is to prevent server owners from hijacking accounts.");
             return;
         }
         try {
@@ -204,7 +215,102 @@ const server = createServer((req, res) => {
             res.end("missing ip for server to join");
             return;
         }
-        users[sessions[sid].uid].servers.push(url.searchParams.get('ip'));
+        // this should probably not be hardcoded ...
+        if (sessions[sid].server != "122.62.122.75:3000") {
+            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.end("You may not use server-specific tokens to modify account \
+data, this is to prevent server owners from hijacking accounts.");
+            return;
+        }
+        if (!users[sessions[sid].uid].servers.includes(url.searchParams.get("ip")))
+            users[sessions[sid].uid].servers.push(url.searchParams.get('ip'));
+        fs.writeFile("./users.json", JSON.stringify(users), () => {});
+        res.writeHead(200, {"Content-Type": "text/plain"});
+        res.end("success");
+    }
+
+    else if (url.pathname == "/leaveserver") {
+        if (!url.searchParams.has('id')) {
+            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.end("missing session id");
+            return;
+        }
+        let sid = url.searchParams.get('id');
+        if (!sessions[sid]) {
+            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.end("invalid session");
+            return;
+        }
+        if (!url.searchParams.has('ip')) {
+            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.end("missing ip for server to leave");
+            return;
+        }
+        // this should probably not be hardcoded ...
+        if (sessions[sid].server != "122.62.122.75:3000") {
+            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.end("You may not use server-specific tokens to modify account \
+data, this is to prevent server owners from hijacking accounts.");
+            return;
+        }
+        if (users[sessions[sid].uid].servers.includes(url.searchParams.get("ip")))
+            users[sessions[sid].uid].servers.splice(users[sessions[sid].uid].servers.indexOf(url.searchParams.get('ip')));
+        fs.writeFile("./users.json", JSON.stringify(users), () => {});
+        res.writeHead(200, {"Content-Type": "text/plain"});
+        res.end("success");
+    }
+
+    else if (url.pathname == "/delacc") {
+        if (!url.searchParams.has('id')) {
+            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.end("missing session id");
+            return;
+        }
+        let sid = url.searchParams.get('id');
+        if (!sessions[sid]) {
+            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.end("invalid session");
+            return;
+        }
+        // this should probably not be hardcoded ...
+        if (sessions[sid].server != "122.62.122.75:3000") {
+            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.end("You may not use server-specific tokens to modify account \
+data, this is to prevent server owners from hijacking accounts.");
+            return;
+        }
+        delete users[sessions[sid].uid];
+        fs.writeFile("./users.json", JSON.stringify(users), () => {});
+        res.writeHead(200, {"Content-Type": "text/plain"});
+        res.end("success");
+        return;
+    }
+
+    else if (url.pathname == "/passwdcfg") {
+        if (!url.searchParams.has('id')) {
+            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.end("missing session id");
+            return;
+        }
+        let sid = url.searchParams.get('id');
+        if (!sessions[sid]) {
+            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.end("invalid session");
+            return;
+        }
+        if (!url.searchParams.has("pwd")) {
+            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.end("no new password is provided");
+            return;
+        }
+        // this should probably not be hardcoded ...
+        if (sessions[sid].server != "122.62.122.75:3000") {
+            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.end("You may not use server-specific tokens to modify account \
+data, this is to prevent server owners from hijacking accounts.");
+            return;
+        }
+        users[sessions[sid].uid].pwd = URL.searchParams.get("pwd");
         fs.writeFile("./users.json", JSON.stringify(users), () => {});
         res.writeHead(200, {"Content-Type": "text/plain"});
         res.end("success");
@@ -217,7 +323,7 @@ const server = createServer((req, res) => {
             return;
         }
         let sid = url.searchParams.get('id');
-        if (!sessions[sid]) {
+        if (!sessions[sid] || !users[sessions[sid].uid]) {
             res.writeHead(204, {"Content-Type": "text/plain"});
             res.end("invalid session");
             return;
@@ -238,7 +344,7 @@ const server = createServer((req, res) => {
             return;
         }
         let sid = url.searchParams.get('id');
-        if (!sessions[sid]) {
+        if (!sessions[sid] || !users[sessions[sid].uid]) {
             res.writeHead(204, {"Content-Type": "text/plain"});
             res.end("invalid session");
             return;
@@ -256,7 +362,7 @@ const server = createServer((req, res) => {
         let uid = url.searchParams.get('id');
         if (!users[uid]) {
             let sid = url.searchParams.get('id');
-            if (!sessions[sid]) {
+            if (!sessions[sid] || !users[sessions[sid].uid]) {
                 res.writeHead(204, {"Content-Type": "text/plain"});
                 res.end("not an user id");
                 return;
@@ -266,6 +372,10 @@ const server = createServer((req, res) => {
             return;
         }
         res.writeHead(200, { "Content-Type": "application/json" });
+        if (users[uid].aboutMe == undefined) {
+            users[uid].aboutMe = {text:""};
+            fs.writeFile("./users.json", JSON.stringify(users), () => {});
+        }
         res.end(JSON.stringify(ClientUser(users[uid])));
     }
 
