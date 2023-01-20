@@ -9,6 +9,8 @@ xhr.onload = () => {
         let res = JSON.parse(xhr.responseText);
         document.getElementById("pfp").src = res.pfp;
         document.getElementById("username").innerText = "Logged in as " + res.unam;
+        document.getElementById("changePfp").src = res.pfp;
+        document.getElementById("acsusername").innerText = res.unam;
         document.ppures = res;
     }
     if (loggedin) {
@@ -51,6 +53,49 @@ xhr.onload = () => {
             document.getElementById("acceptinvitebtn").addEventListener("click", clicky);
         } else {
             clientLoad();
+            function pickNewAvatar() {
+                var input = document.createElement('input');
+                input.type = 'file';
+                input.onchange = e => { 
+                    var file = e.target.files[0];
+                    let ctype = "image/png";
+                    let l = file.name.toLowerCase().split(".");
+                    switch (l[l.length - 1]) {
+                        case "gif":
+                            ctype = "image/gif";
+                            break;
+                        case "bmp":
+                            ctype = "image/bmp";
+                            break;
+                        case "jpg":
+                        case "jpeg":
+                            ctype = "image/jpeg";
+                            break;
+                        case "tiff":
+                        case "tif":
+                            ctype = "image/tiff";
+                            break;
+                        default:
+                            ctype = "image/png";
+                            break;
+                    }
+                    const xhr = new XMLHttpRequest();
+                    xhr.open("POST", '/pfpUpload?id='+localStorage.getItem("sid")+"&ctype="+encodeURIComponent(ctype), true);
+                    console.log("POST", '/pfpUpload?id='+localStorage.getItem("sid")+"&ctype="+encodeURIComponent(ctype), true);
+                    xhr.setRequestHeader("Content-Type", ctype);
+                    xhr.onreadystatechange = () => { // Call a function when the state changes.
+                        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status) {
+                            window.location.reload();
+                        }
+                        else if (xhr.readyState === XMLHttpRequest.DONE && xhr.status == 0) {
+                            document.getElementById("avatarTooBig").hidden = false;
+                        }
+                    }
+                    xhr.send(file);
+                }
+                input.click();
+            }
+            document.getElementById("changePfp").addEventListener("click", pickNewAvatar);
         }
     }
     else {
@@ -168,7 +213,7 @@ function clientLoad() {
     <img src="${pfp}" class="avatar"/>
     <div class="message2">
         <strong class="chonk">${unam}</strong><br>
-        <p>${packet.message.content}</p>
+        <p>${packet.message.content.replace(/\</g, '&lt;').replace(/\>/g, '&gt;')}</p>
     </div>
 </div>
 ` + document.getElementById("mainContent").innerHTML;
@@ -190,7 +235,7 @@ function clientLoad() {
                                 }
                                 else {
                                     let resp = JSON.parse(x.responseText);
-                                    unam = resp.unam;
+                                    unam = resp.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;");;
                                     pfp = resp.pfp;
                                 }
                                 q[m] = `
@@ -198,7 +243,7 @@ function clientLoad() {
         <img src="${pfp}" class="avatar"/>
         <div class="message2">
             <strong class="chonk">${unam}</strong><br>
-            <p>${packet.messages[m].content}</p>
+            <p>${packet.messages[m].content.replace(/\</g, '&lt;').replace(/\>/g, '&gt;')}</p>
         </div>
     </div>
     `;

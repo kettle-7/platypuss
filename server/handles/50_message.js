@@ -16,8 +16,10 @@
  ************************************************************************/
 
 const { v4 } = require("uuid");
-const rateLimit = 1000; // Minimum time between messages sent, change this if you like.
-const allowDuplicates = false;
+const { } = require("./platypussDefaults.js"); // import nothing :o)
+
+const rateLimit = 500; // Minimum time between messages sent, change this if you like.
+const allowDuplicates = true;
 
 module.exports = {
 	eventType: "message",

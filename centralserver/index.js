@@ -20,6 +20,7 @@ const os = require('os');
 const fs = require('fs');
 const { createServer } = require("http");
 const { v4 } = require("uuid");
+const path = require('path');
 
 var conf = JSON.parse(fs.readFileSync("./conf.json")).server;
 var users = JSON.parse(fs.readFileSync("./users.json"));
@@ -59,7 +60,49 @@ const server = createServer((req, res) => {
 
     // annoying server stuff
 
-    if (req.url.toString() == "/li" || (url.pathname == "/login" && req.method.toLowerCase() == "post")) {
+    if (url.pathname == "/pfpUpload") {
+        if (!url.searchParams.has('id')) {
+            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.end("missing session id");
+            return;
+        }
+        let sid = url.searchParams.get('id');
+        let ctype = "png";
+        if (url.searchParams.has('ctype')) {
+            ctype = url.searchParams.get("ctype");
+            if (ctype.includes("/")) { // naughty file extension shenanigans
+                ctype = "png";
+            }
+        }
+        if (!sessions[sid]) {
+            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.end("invalid session");
+            return;
+        }
+        try {
+            const chunks = [];
+            let received = 0;
+            req.on("data", (chunk) => {
+                received += chunk.length;
+                if (received > 5000000) req.destroy();
+                chunks.push(chunk);
+            });
+            req.on("end", () => {
+                let data = Buffer.concat(chunks);
+                fs.writeFile("./avatars/"+sessions[sid].uid+"."+ctype, data, () => {});
+                users[sessions[sid].uid].pfp = "/avatars/"+sessions[sid].uid+"."+ctype.toLowerCase();
+                fs.writeFile("./users.json", JSON.stringify(users), () => {});
+            });
+        }
+        catch (e) {
+            console.log(e);
+            res.writeHead(403, {"Content-Type": "text/plain"});
+            res.end("some error, idk");
+            return;
+        }
+    }
+
+    if (url.pathname == "/li" || (url.pathname == "/login" && req.method.toLowerCase() == "post")) {
         let ift, unam, pwd, ser;
         try {
             const chunks = [];
@@ -227,6 +270,40 @@ const server = createServer((req, res) => {
     }
 
     // regular pages
+
+    else if (url.pathname.startsWith("/avatars")) {
+        let ctype = "image/png";
+        switch (path.extname(url.pathname)) {
+            case "gif":
+                ctype = "image/gif";
+                break;
+            case "bmp":
+                ctype = "image/bmp";
+                break;
+            case "jpg":
+            case "jpeg":
+                ctype = "image/jpeg";
+                break;
+            case "tiff":
+            case "tif":
+                ctype = "image/tiff";
+                break;
+            default:
+                ctype = "image/png";
+                break;
+        }
+        if (!fs.existsSync("./avatars/"+path.basename(url.pathname))) {
+            res.writeHead(302, {"Location": conf.icon});
+            res.end(conf.icon);
+            return;
+        }
+        let stream = fs.createReadStream("./avatars/"+path.basename(url.pathname))
+        res.writeHead(200, {"Content-Type": ctype});
+        stream.on("ready", () => {
+            stream.pipe(res);
+        });
+        return;
+    }
 
     else if (url.pathname == "/main.css") {
         res.writeHead(200, {"Content-Type": "text/css"});

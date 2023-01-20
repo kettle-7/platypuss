@@ -1,6 +1,7 @@
 # Sensitive Files (no commiter)
 
 centralserver/users.json
+centralserver/avatars/
 server/server.json
 
 # We don't need these
