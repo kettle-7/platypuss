@@ -274,7 +274,7 @@ function clientLoad() {
     <img src="${pfp}" class="avatar"/>
     <div class="message2">
         <strong class="chonk">${unam}</strong><br>
-        <p>${converty.makeHtml(packet.message.content.replace(/\</g, '&lt;').replace(/\>/g, '&gt;'))}</p>
+        <p>${converty.makeHtml(packet.message.content.replace(/\</g, '&lt;')/*.replace(/\>/g, '&gt;')*/)}</p>
     </div>
 </div>
 ` + document.getElementById("mainContent").innerHTML;
@@ -295,7 +295,7 @@ function clientLoad() {
                                 }
                                 else {
                                     let resp = JSON.parse(x.responseText);
-                                    unam = resp.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;");;
+                                    unam = resp.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
                                     pfp = resp.pfp;
                                 }
                                 q[m] = `
@@ -303,7 +303,7 @@ function clientLoad() {
         <img src="${pfp}" class="avatar"/>
         <div class="message2">
             <strong class="chonk">${unam}</strong><br>
-            <p>${converty.makeHtml(packet.messages[m].content.replace(/\</g, '&lt;').replace(/\>/g, '&gt;'))}</p>
+            <p>${converty.makeHtml(packet.messages[m].content.replace(/\</g, '&lt;')/*.replace(/\>/g, '&gt;')*/)}</p>
         </div>
     </div>
     `;
