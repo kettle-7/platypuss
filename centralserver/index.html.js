@@ -1,4 +1,19 @@
 // °^° i am pingu
+const cyrb53 = (str, seed = 20) => {
+    let h1 = 0xdeadbeef ^ seed, // dead beef
+    h2 = 0x41c6ce57 ^ seed;
+    for (let i = 0, ch; i < str.length; i++) {
+        ch = str.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+
+    return (h2>>>0).toString(16).padStart(8,0)+(h1>>>0).toString(16).padStart(8,0);
+};
+
 var converty = new showdown.Converter({
     noHeaderId: true,
     simplifiedAutoLink: true,
@@ -9,10 +24,13 @@ var converty = new showdown.Converter({
     disableForced4SpacesIndentedSublists: true,
     simpleLineBreaks: true,
     requireSpaceBeforeHeadingText: true,
-    openLinksInNewWindow: true,
+    //openLinksInNewWindow: true,
     emoji: true,
-    underline: true
+    underline: true,
+    ghMentions: true,
+    ghMentionsLink: "#user_{u}"
 });
+
 var url = new URL(window.location);
 var loggedin = true;
 const xhr = new XMLHttpRequest();
@@ -91,7 +109,7 @@ xhr.onload = () => {
                         window.history.pushState({}, '', '/');
                         clientLoad();
                     } else {
-                        document.getElementById("serverName").innerHTML = "Couldn't join the server, try again later?";
+                        document.getElementById("serverName").innerHTML = "Couldn't join the server, maybe try again later?";
                     }
                 }
                 r.send(null);
@@ -154,6 +172,31 @@ xhr.onload = () => {
                 }
                 xhr.send();
             });
+            document.getElementById("cpwdsave").addEventListener("click", () => {
+                // let pwd1 = document.getElementById("oldPwd").value;
+                let pwd2 = document.getElementById("newPwd").value;
+                let pwd3 = document.getElementById("newPwd2").value;
+
+                if (pwd2 != pwd3) {
+                    document.getElementById("nonmatch").hidden = false;
+                    return;
+                }
+                
+                const xhr = new XMLHttpRequest();
+                xhr.open("GET", '/passwdcfg?id='+localStorage.getItem("sid")+"&pwd="+encodeURIComponent(pwd3), true);
+                xhr.onreadystatechange = () => {
+                    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status) {
+                        window.location.reload();
+                    }
+                    else {
+                        if (xhr.readyState === XMLHttpRequest.DONE) {
+                            document.getElementById("nonmatch").hidden = false;
+                            document.getElementById("nonmatch").innerText = xhr.responseText;
+                        }
+                    }
+                }
+                xhr.send();
+            });
         }
     }
     else {
@@ -191,6 +234,24 @@ You've been invited to join SERVER
 };
 xhr.send(null);
 
+const observeUrlChange = () => {
+    let oldHref = document.location.href;
+    const body = document.querySelector("body");
+    const observer = new MutationObserver(mutations => {
+        mutations.forEach(() => {
+            if (oldHref !== document.location.href) {
+                oldHref = document.location.href;
+                let hash = oldHref.split("#")[oldHref.split("#").length];
+                if (hash != oldHref) {
+                    // there's something after the #
+                }
+            }
+        });
+    });
+    observer.observe(body, { childList: true, subtree: true });
+};
+window.onload = observeUrlChange;    
+
 document.getElementById("accountInfo").addEventListener("click", (e) => {
     e.stopPropagation();
 });
@@ -198,6 +259,9 @@ document.getElementById("invitepopup").addEventListener("click", (e) => {
     e.stopPropagation();
 });
 document.getElementById("acspopup").addEventListener("click", (e) => {
+    e.stopPropagation();
+});
+document.getElementById("cpwdpopup").addEventListener("click", (e) => {
     e.stopPropagation();
 });
 
@@ -261,8 +325,8 @@ function clientLoad() {
                         x.open('GET', '/uinfo?id='+packet.message.author, true);
                         x.onload = () => {
                             if (x.status != 200) {
-                                unam = "Deleted User";
-                                pfp = "";
+                                unam = "Deleted User (there's something sus about this)";
+                                pfp = "https://img.freepik.com/premium-vector/hand-drawn-cartoon-doodle-skull-funny-cartoon-skull-isolated-white-background_217204-944.jpg";
                             }
                             else {
                                 let resp = JSON.parse(x.responseText);
@@ -291,7 +355,7 @@ function clientLoad() {
                                 left--;
                                 if (x.status != 200) {
                                     unam = "Deleted User";
-                                    pfp = "https://img.freepik.com/premium-vector/hand-drawn-cartoon-doodle-skull-funny-cartoon-skull-isolated-white-background_217204-944.jpg?w=96";
+                                    pfp = "https://img.freepik.com/premium-vector/hand-drawn-cartoon-doodle-skull-funny-cartoon-skull-isolated-white-background_217204-944.jpg";
                                 }
                                 else {
                                     let resp = JSON.parse(x.responseText);

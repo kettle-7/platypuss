@@ -310,7 +310,7 @@ data, this is to prevent server owners from hijacking accounts.");
 data, this is to prevent server owners from hijacking accounts.");
             return;
         }
-        users[sessions[sid].uid].pwd = URL.searchParams.get("pwd");
+        users[sessions[sid].uid].pwd = url.searchParams.get("pwd");
         fs.writeFile("./users.json", JSON.stringify(users), () => {});
         res.writeHead(200, {"Content-Type": "text/plain"});
         res.end("success");

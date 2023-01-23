@@ -222,7 +222,14 @@ input {
 
 #mainContent {
     overflow-y: auto;
-    overflow-x: auto;
+    overflow-x: hidden;
+    padding: 0px;
+    margin: 0px;
+}
+
+#mainContentContainer {
+    overflow-y: hidden;
+    overflow-x: hidden;
     padding: 0px;
     margin: 0px;
 }
@@ -249,6 +256,15 @@ input {
     background: #373737;
     width: fit-content;
     display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex-grow: 1;
+}
+
+#mainContentContainer {
+    background: #373737;
+    width: fit-content;
+    display: contents;
     flex-direction: column;
     gap: 3px;
     flex-grow: 1;
@@ -337,6 +353,18 @@ input {
     gap: 5px;
     justify-content: flex-start;
     align-items: center;
+}
+
+.textBox {
+    background-color: #303030;
+    border-color: #888888;
+    box-shadow: 2px 2px 5px #1b1b1b inset;
+}
+
+.textBox:focus {
+    background-color: #303030;
+    border: 1px solid #0075db;
+    box-shadow: 2px 2px 5px #1b1b1b inset;
 }
 
 #changePfp:hover {
