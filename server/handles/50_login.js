@@ -42,7 +42,7 @@ module.exports = {
                         console.log(`${data.unam} has joined us today`);
                         sdata.users[data.id] = new User(data.id);
                         for (let client of wss.clients) {
-                            if (client != packet.ws)
+                            if (client != packet.ws && client.loggedinbytoken)
                             client.send(JSON.stringify({
                                 eventType: "welcome",
                                 user: data.id,
@@ -52,7 +52,7 @@ module.exports = {
                     } else {
                         console.log(`${data.unam} connected to the server.`);
                         for (let client of wss.clients) {
-                            if (client != packet.ws)
+                            if (client != packet.ws && client.loggedinbytoken)
                             client.send(JSON.stringify({
                                 eventType: "join",
                                 user: data.id,

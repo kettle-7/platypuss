@@ -24,21 +24,39 @@ var converty = new showdown.Converter({
     disableForced4SpacesIndentedSublists: true,
     simpleLineBreaks: true,
     requireSpaceBeforeHeadingText: true,
-    //openLinksInNewWindow: true,
+    openLinksInNewWindow: true,
     emoji: true,
-    underline: true,
-    ghMentions: true,
-    ghMentionsLink: "#user_{u}"
+    underline: true
 });
 
+var oldestMessage = 0;
 var url = new URL(window.location);
 var loggedin = true;
-const xhr = new XMLHttpRequest();
-xhr.open('GET', '/uinfo?id='+localStorage.getItem('sid'), true);
-xhr.onload = () => {
-    if (xhr.status != 200) loggedin = false;
+var usercache = {};
+
+function fetchUser(id) {
+    return new Promise((resolve, reject) => {
+        if (usercache[id] == undefined) {
+            const x = new XMLHttpRequest();
+            x.open('GET', '/uinfo?id='+id, true);
+            x.onload = () => {
+                if (x.status != 200) {
+                    resolve(null);
+                    return;
+                };
+                usercache[id] = JSON.parse(x.responseText);
+                resolve(usercache[id]);
+            };
+            x.send();
+        } else {
+            resolve(usercache[id]);
+        }
+    });
+}
+
+fetchUser(localStorage.getItem('sid')).then((res) => {
+    if (res == null) loggedin = false;
     else {
-        let res = JSON.parse(xhr.responseText);
         document.getElementById("pfp").src = res.pfp;
         document.getElementById("username").innerText = "Logged in as " + res.unam;
         document.getElementById("changePfp").src = res.pfp;
@@ -49,7 +67,7 @@ xhr.onload = () => {
         document.getElementById("header").removeChild(document.getElementById("login"));
         document.getElementById("header").removeChild(document.getElementById("signup"));
         document.getElementById("header").removeChild(document.getElementById("spacement"));
-        document.body.removeChild(document.getElementById("infopagecontainer"));
+        document.getElementById("everything").removeChild(document.getElementById("infopagecontainer"));
         if (url.searchParams.has("invite")) {
             let inviteCode = url.searchParams.get("invite");
             let ip = [ // the first 8 characters are the ip address in hex form
@@ -183,7 +201,7 @@ xhr.onload = () => {
                 }
                 
                 const xhr = new XMLHttpRequest();
-                xhr.open("GET", '/passwdcfg?id='+localStorage.getItem("sid")+"&pwd="+encodeURIComponent(pwd3), true);
+                xhr.open("GET", '/passwdcfg?id='+localStorage.getItem("sid")+"&pwd="+cyrb53(pwd3), true);
                 xhr.onreadystatechange = () => {
                     if (xhr.readyState === XMLHttpRequest.DONE && xhr.status) {
                         window.location.reload();
@@ -231,26 +249,7 @@ You've been invited to join SERVER
             document.getElementById("invdecline").innerText = "Cancel";
         }
     }
-};
-xhr.send(null);
-
-const observeUrlChange = () => {
-    let oldHref = document.location.href;
-    const body = document.querySelector("body");
-    const observer = new MutationObserver(mutations => {
-        mutations.forEach(() => {
-            if (oldHref !== document.location.href) {
-                oldHref = document.location.href;
-                let hash = oldHref.split("#")[oldHref.split("#").length];
-                if (hash != oldHref) {
-                    // there's something after the #
-                }
-            }
-        });
-    });
-    observer.observe(body, { childList: true, subtree: true });
-};
-window.onload = observeUrlChange;    
+});
 
 document.getElementById("accountInfo").addEventListener("click", (e) => {
     e.stopPropagation();
@@ -271,6 +270,24 @@ function logout() {
 }
 
 var sockets = {};
+var loadedMessages = 0;
+
+function deleteMessage(id, server) {
+    sockets[server].send(JSON.stringify({
+        eventType: "messageDelete",
+        id: id
+    }));
+}
+
+function moreMessages() {
+    for (let socket of Object.keys(sockets)) {
+        sockets[socket].send(JSON.stringify({
+            eventType: "messageLoad",
+            max: 50,
+            start: loadedMessages
+        }));
+    }
+}
 
 function clientLoad() {
     sockets = {};
@@ -283,7 +300,7 @@ function clientLoad() {
             window.location.reload(); // page to infinitely reload. the most likely response from the user is the
         }                             // page being closed and mild confusion which is not ideal but not dangerous.
         let sers = JSON.parse(h.responseText);
-        for (let serveur in sers) {
+        for (let serveur in sers.servers) {
             let ip = serveur.split(' ')[0];
             let code = serveur.split(' ')[1];
             let url = ("ws://"+ip.toString());
@@ -316,70 +333,139 @@ function clientLoad() {
                     sid: localStorage.getItem("sid")
                 }));
             };
-            ws.onmessage = (event) => {
+            ws.onmessage = async (event) => {
                 let packet = JSON.parse(event.data);
                 let unam, pfp;
                 switch (packet.eventType) {
                     case "message":
-                        const x = new XMLHttpRequest();
-                        x.open('GET', '/uinfo?id='+packet.message.author, true);
-                        x.onload = () => {
-                            if (x.status != 200) {
+                        loadedMessages++;
+                        // looks like absolute gibberish, matches uuids
+                        let uuidreg = /[0-9a-f]{7,8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/ig;
+                        let msgtxt = converty.makeHtml(packet.message.content.replace(/\</g, '&lt;')/*.replace(/\>/g, '&gt;')*/);
+                        let arr;
+                        while ((arr = uuidreg.exec(msgtxt)) !== null) {
+                            let strl = msgtxt.split("");
+                            if (strl[arr.index + 35] == "]") {
+                                strl.splice(arr.index, 0, "0");
+                            }
+                            if (strl[arr.index + 36] != "]" || strl[arr.index - 2] != "[") {
+                                continue;
+                            }
+                            let t = strl[arr.index - 1];
+                            switch(t) {
+                                case "@":
+                                    let user = await fetchUser(arr[0])
+                                    if (user == null) {
+                                        strl.splice(arr.index - 2, 39, `<a class="userMention invalidUser">@Deleted User</a>`);
+                                    } else {
+                                        // we don't support server nicknames as they don't exist yet
+                                        strl.splice(arr.index - 2, 39, `
+<a class="userMention" onclick="mentionClicked('${user.id}', '${packet.message.id}');">@${user.unam}</a>`);
+                                    }
+                                    console.log(msgtxt);
+                                    msgtxt = strl.join("");
+                                    console.log(msgtxt);
+                                    //uuidreg.exec(msgtxt);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+
+                        fetchUser(packet.message.author).then((resp) => {
+                            if (resp == null) {
                                 unam = "Deleted User (there's something sus about this)";
                                 pfp = "https://img.freepik.com/premium-vector/hand-drawn-cartoon-doodle-skull-funny-cartoon-skull-isolated-white-background_217204-944.jpg";
                             }
                             else {
-                                let resp = JSON.parse(x.responseText);
                                 unam = resp.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
                                 pfp = resp.pfp;
                             }
+                            let message3;
+                            if (packet.message.author == sers.userId) {
+                                message3 = `
+<div class="message3">
+    <button>Delete</button>
+</div>`;
+                            } else {
+                                message3 = "";
+                            }
                             document.getElementById("mainContent").innerHTML = `
-<div class="message1">
+<div class="message1" id="message_${packet.message.id}">
     <img src="${pfp}" class="avatar"/>
     <div class="message2">
         <strong class="chonk">${unam}</strong><br>
-        <p>${converty.makeHtml(packet.message.content.replace(/\</g, '&lt;')/*.replace(/\>/g, '&gt;')*/)}</p>
-    </div>
+        <p>${msgtxt}</p>
+    </div>${message3}
 </div>
 ` + document.getElementById("mainContent").innerHTML;
-                        }
-                        x.send();
+                        });
                         break;
                     case "messages":
-                        let q = new Array(packet.messages.length);
-                        let left = packet.messages.length;
+                        let txt = "";
                         for (let m = 0; m < packet.messages.length; m++) {
-                            const x = new XMLHttpRequest();
-                            x.open('GET', '/uinfo?id='+packet.messages[m].author, true);
-                            x.onload = () => {
-                                left--;
-                                if (x.status != 200) {
-                                    unam = "Deleted User";
-                                    pfp = "https://img.freepik.com/premium-vector/hand-drawn-cartoon-doodle-skull-funny-cartoon-skull-isolated-white-background_217204-944.jpg";
+                            loadedMessages++;
+                            let uuidreg = /[0-9a-f]{7,8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/ig;
+                            let msgtxt = converty.makeHtml(packet.messages[m].content.replace(/\</g, '&lt;')/*.replace(/\>/g, '&gt;')*/);
+                            let arr;
+                            while ((arr = uuidreg.exec(msgtxt)) !== null) {
+                                let strl = msgtxt.split("");
+                                if (strl[arr.index + 35] == "]") {
+                                    strl.splice(arr.index, 0, "0");
                                 }
-                                else {
-                                    let resp = JSON.parse(x.responseText);
-                                    unam = resp.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
-                                    pfp = resp.pfp;
+                                if (strl[arr.index + 36] != "]" || strl[arr.index - 2] != "[") {
+                                    continue;
                                 }
-                                q[m] = `
-    <div class="message1">
-        <img src="${pfp}" class="avatar"/>
-        <div class="message2">
-            <strong class="chonk">${unam}</strong><br>
-            <p>${converty.makeHtml(packet.messages[m].content.replace(/\</g, '&lt;')/*.replace(/\>/g, '&gt;')*/)}</p>
-        </div>
-    </div>
-    `;
-                                if (left < 1) {
-                                    let txt = "";
-                                    for (let me of q) {
-                                        txt = me + txt;
-                                    }
-                                    document.getElementById("mainContent").innerHTML += txt;
+                                let t = strl[arr.index - 1];
+                                switch(t) {
+                                    case "@":
+                                        let user = await fetchUser(arr[0])
+                                        if (user == null) {
+                                            strl.splice(arr.index - 2, 39, `<a class="invalidUser">@Deleted User</a>`);
+                                        } else {
+                                            // we don't support server nicknames as they don't exist yet
+                                            strl.splice(arr.index - 2, 39, `
+<a class="userMention" onclick="mentionClicked('${user.id}', '${packet.messages[m].id}');">@${user.unam
+                                                .replace(/\</g, "&lt;")
+                                                .replace(/\>/g, "&gt;")}</a>`);
+                                        }
+                                        msgtxt = strl.join("");
+                                        //uuidreg.exec(msgtxt);
+                                        break;
+                                    default:
+                                        break;
                                 }
                             }
-                            x.send();
+                            let user = await fetchUser(packet.messages[m].author);
+                            if (user == null) {
+                                unam = "Deleted User";
+                                pfp = "https://img.freepik.com/premium-vector/hand-drawn-cartoon-doodle-skull-funny-cartoon-skull-isolated-white-background_217204-944.jpg";
+                            }
+                            else {
+                                unam = user.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
+                                pfp = user.pfp;
+                            }
+                            let message3;
+                            if (packet.messages[m].author == sers.userId) {
+                                message3 = `
+<div class="message3">
+    <button onclick="deleteMessage('${packet.messages[m].id}', '${ip}');">Delete</button>
+</div>`;
+                            } else {
+                                message3 = "";
+                            }
+                            txt = `
+<div class="message1" id="message_${packet.messages[m].id}">
+    <img src="${pfp}" class="avatar"/>
+    <div class="message2">
+        <strong class="chonk">${unam}</strong><br>
+        <p>${msgtxt}</p>
+    </div>${message3}
+</div>
+` + txt;
+                            if (m + 1 == packet.messages.length) { // is this the last message
+                                document.getElementById("mainContent").innerHTML += txt;
+                            }
                         }
                         break;
                     case "rateLimit":

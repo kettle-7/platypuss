@@ -333,7 +333,10 @@ data, this is to prevent server owners from hijacking accounts.");
             tokens[ser] = (new Session(sessions[sid].uid, ser).id);
         }
         res.writeHead(200, {"Content-Type": "application/json"});
-        res.end(JSON.stringify(tokens));
+        res.end(JSON.stringify({
+            servers: tokens,
+            userId: sessions[sid].uid
+        }));
         return;
     }
 

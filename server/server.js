@@ -120,7 +120,7 @@ check your code thoroughly, otherwise please contact the developer."
                 try {
                     data = JSON.parse(Buffer.concat(chunks).toString('utf8'));
                     for (let client of wss.clients) {
-                        if (client != ws)
+                        if (client != ws && client.loggedinbytoken)
                         client.send(JSON.stringify({
                             eventType: "disconnect",
                             user: ws.uid,

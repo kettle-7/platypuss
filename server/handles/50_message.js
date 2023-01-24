@@ -44,11 +44,11 @@ all the information specified in the Platypuss API."
 		}
 		//if (!(/[\!@#$%\^&\*()_+\-=\[\]{};':"\\|,.<>\/?A-Za-z0-9]/.test(packet.message.content)) && !packet) {
 		if (packet.message.content.replace(/[ \t\r\n]/g, "").length < 1) {
-			packet.ws.send(JSON.stringify({
+			/*packet.ws.send(JSON.stringify({
 				"eventType": "error",
 				"code": "invisibleMsg",
 				"explanation": "An attempt to stop invisible messages."
-			}));
+			}));*/
 			return;
 		}
 		if (packet.ws.lastMessage == packet.message.content && !allowDuplicates) {
@@ -86,6 +86,7 @@ all the information specified in the Platypuss API."
 		sdata.messages[mid] = packet.message;
 		console.log(`<${author}> ${packet.message.content}`);
 		for (let client of wss.clients) {
+			if (client.loggedinbytoken)
 			client.send(JSON.stringify({
 				eventType: "message",
 				message: {

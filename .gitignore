@@ -3,6 +3,7 @@
 centralserver/users.json
 centralserver/avatars/
 server/server.json
+temp.js
 
 # We don't need these
 
