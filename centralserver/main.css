@@ -34,6 +34,12 @@ button {
     padding-left: 10px;
     padding-right: 10px;
     cursor: pointer;
+    box-shadow: 1px 1px 5px black;
+}
+
+button:active {
+    box-shadow: 1px 1px 5px black inset !important;
+    background-color: #373737 !important;
 }
 
 .chonk {
@@ -66,6 +72,16 @@ button:hover {
     background-color: #770000;
 }
 
+.bleu:active {
+    box-shadow: 1px 1px 5px black inset !important;
+    background-color: #0075db !important;
+}
+
+.dangerous:active {
+    box-shadow: 1px 1px 5px black inset !important;
+    background-color: crimson !important;
+}
+
 .popup {
     width: fit-content;
     height: fit-content;
@@ -90,7 +106,32 @@ button:hover {
     right: 0px;
     top: 0px;
     bottom: 0px;
-    background: transparent;
+    background: rgba(0, 0, 0, 0.25);
+}
+
+#loadingScreen {
+    background: #303030;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column-reverse;
+}
+
+#loadingText {
+    width: fit-content;
+    height: fit-content;
+    font-size: xx-large;
+}
+
+.fadeOut {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s 0.25s, opacity 2s linear;
 }
 
 #accountInfo {
@@ -128,7 +169,25 @@ a {
 blockquote {
     border-left: 3px solid #888888;
     margin-left: 0;
-    padding-left: 5;
+    padding: 5px;
+}
+
+table, th, td {
+    width: min-content;
+    border: 1px solid;
+}
+
+th, td {
+    padding: 5px;
+}
+
+.message2 {
+    overflow-x: auto;
+}
+
+blockquote p {
+    margin-top: 0px;
+    margin-bottom: 0px;
 }
 
 a > h1 {
@@ -288,7 +347,33 @@ input {
 }
 
 #msgtxt {
+    object-fit: fill;
+    resize: none;
     flex-grow: 1;
+}
+
+.msgbtn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 2px solid #eeeeee;
+    /*background: #171717;*/
+    cursor: pointer;
+    object-fit: cover;
+    align-self: center;
+}
+
+#longMessageBoxContainer {
+    justify-content: stretch;
+    align-items: stretch;
+    align-self: stretch;
+    flex-direction: row;
+    padding-right: 10px;
+    /*padding-left: 10px;*/
+    display: flex;
+    /*right: 10px;
+    left: 10px;*/
+    gap: 10px;
 }
 
 .avatar {
@@ -391,3 +476,46 @@ input {
 #changePfp:hover {
     opacity: 25%;
 }
+
+/*******************************************************************
+*                                                                  *
+*                  Some random loading animation                   *
+*                     I found on the internet                      *
+*                                                                  *
+*******************************************************************/
+
+.lds-ring {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+  }
+  .lds-ring div {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    margin: 8px;
+    border: 8px solid #fff;
+    border-radius: 50%;
+    animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    border-color: #fff transparent transparent transparent;
+  }
+  .lds-ring div:nth-child(1) {
+    animation-delay: -0.45s;
+  }
+  .lds-ring div:nth-child(2) {
+    animation-delay: -0.3s;
+  }
+  .lds-ring div:nth-child(3) {
+    animation-delay: -0.15s;
+  }
+  @keyframes lds-ring {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }

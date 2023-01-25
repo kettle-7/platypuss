@@ -66,7 +66,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
     if (loggedin) {
         document.getElementById("header").removeChild(document.getElementById("login"));
         document.getElementById("header").removeChild(document.getElementById("signup"));
-        document.getElementById("header").removeChild(document.getElementById("spacement"));
+        // document.getElementById("header").removeChild(document.getElementById("spacement"));
         document.getElementById("everything").removeChild(document.getElementById("infopagecontainer"));
         if (url.searchParams.has("invite")) {
             let inviteCode = url.searchParams.get("invite");
@@ -177,7 +177,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 input.click();
             }
             document.getElementById("changePfp").addEventListener("click", pickNewAvatar);
-            document.getElementById("acsdelacc").addEventListener("click", () => {
+            document.getElementById("dodel").addEventListener("click", () => {
                 const xhr = new XMLHttpRequest();
                 xhr.open("GET", '/delacc?id='+localStorage.getItem("sid"), true);
                 xhr.onreadystatechange = () => {
@@ -219,9 +219,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
     }
     else {
         document.getElementById("header").removeChild(document.getElementById("pfp"));
-        document.getElementById("header").removeChild(document.getElementById("msgtxt"));
-        document.getElementById("header").removeChild(document.getElementById("send"));
-        document.body.removeChild(document.getElementById("actualpagecontainer"));
+        document.getElementById("everything").removeChild(document.getElementById("actualpagecontainer"));
         if (url.searchParams.has("invite")) {
             let inviteCode = url.searchParams.get("invite");
             let ip = [ // the first 8 characters are the ip address in hex form
@@ -249,6 +247,7 @@ You've been invited to join SERVER
             document.getElementById("invdecline").innerText = "Cancel";
         }
     }
+    document.getElementById("loadingScreen").className += " fadeOut";
 });
 
 document.getElementById("accountInfo").addEventListener("click", (e) => {
@@ -261,6 +260,9 @@ document.getElementById("acspopup").addEventListener("click", (e) => {
     e.stopPropagation();
 });
 document.getElementById("cpwdpopup").addEventListener("click", (e) => {
+    e.stopPropagation();
+});
+document.getElementById("dacpopup").addEventListener("click", (e) => {
     e.stopPropagation();
 });
 
@@ -310,20 +312,23 @@ function clientLoad() {
                 document.getElementById("msgtxt").addEventListener("keypress", (e) => {
                     if (e.key == "Enter") {
                         if (e.shiftKey) {
-                            document.getElementById("msgtxt").value += "\\n";
+                            // document.getElementById("msgtxt").value += "\\n";
+                            document.getElementById("msgtxt").rows += 1;
                             return;
                         }
                         ws.send(JSON.stringify({
                             eventType: "message",
-                            message: { content: document.getElementById("msgtxt").value.replace(/\\n/g, '\n') }
+                            message: { content: document.getElementById("msgtxt").value/*.replace(/\\n/g, '\n')*/ }
                         }));
                         document.getElementById("msgtxt").value = "";
+                        e.stopImmediatePropagation();
+                        e.preventDefault();
                     }
                 });
                 document.getElementById("send").addEventListener("click", () => {
                     ws.send(JSON.stringify({
                         eventType: "message",
-                        message: { content: document.getElementById("msgtxt").value.replace(/\\n/g, '\n') }
+                        message: { content: document.getElementById("msgtxt").value/*.replace(/\\n/g, '\n')*/ }
                     }));
                     document.getElementById("msgtxt").value = "";
                 });
@@ -356,15 +361,13 @@ function clientLoad() {
                                 case "@":
                                     let user = await fetchUser(arr[0])
                                     if (user == null) {
-                                        strl.splice(arr.index - 2, 39, `<a class="userMention invalidUser">@Deleted User</a>`);
+                                        strl.splice(arr.index - 2, 39, `<a class="invalidUser">@Deleted User</a>`);
                                     } else {
                                         // we don't support server nicknames as they don't exist yet
                                         strl.splice(arr.index - 2, 39, `
 <a class="userMention" onclick="mentionClicked('${user.id}', '${packet.message.id}');">@${user.unam}</a>`);
                                     }
-                                    console.log(msgtxt);
                                     msgtxt = strl.join("");
-                                    console.log(msgtxt);
                                     //uuidreg.exec(msgtxt);
                                     break;
                                 default:
@@ -385,12 +388,12 @@ function clientLoad() {
                             if (packet.message.author == sers.userId) {
                                 message3 = `
 <div class="message3">
-    <button>Delete</button>
+    <button onclick="deleteMessage('${packet.message.id}', '${ip}');">Delete</button>
 </div>`;
                             } else {
                                 message3 = "";
                             }
-                            document.getElementById("mainContent").innerHTML = `
+                            document.getElementById("mainContent").innerHTML += `
 <div class="message1" id="message_${packet.message.id}">
     <img src="${pfp}" class="avatar"/>
     <div class="message2">
@@ -398,7 +401,7 @@ function clientLoad() {
         <p>${msgtxt}</p>
     </div>${message3}
 </div>
-` + document.getElementById("mainContent").innerHTML;
+`
                         });
                         break;
                     case "messages":
@@ -454,7 +457,7 @@ function clientLoad() {
                             } else {
                                 message3 = "";
                             }
-                            txt = `
+                            txt += `
 <div class="message1" id="message_${packet.messages[m].id}">
     <img src="${pfp}" class="avatar"/>
     <div class="message2">
@@ -462,9 +465,9 @@ function clientLoad() {
         <p>${msgtxt}</p>
     </div>${message3}
 </div>
-` + txt;
+`;
                             if (m + 1 == packet.messages.length) { // is this the last message
-                                document.getElementById("mainContent").innerHTML += txt;
+                                document.getElementById("mainContent").innerHTML = txt + document.getElementById("mainContent").innerHTML;
                             }
                         }
                         break;
@@ -473,11 +476,14 @@ function clientLoad() {
                             ws.send(JSON.stringify(packet.repeatedPacket));
                         }, packet.delay);
                         break;
+                    case "messageDeleted":
+                        document.getElementById(`message_${packet.messageId}`).style.display = "none";
+                        break;
                     default:
                         if ("explanation" in packet)
-                            document.getElementById("mainContent").innerHTML = "<br>"+packet.explanation + document.getElementById("mainContent").innerHTML;
+                            document.getElementById("mainContent").innerHTML += "<br>"+packet.explanation;
                         else
-                            document.getElementById("mainContent").innerHTML = "<br>"+event.data + document.getElementById("mainContent").innerHTML;
+                            document.getElementById("mainContent").innerHTML += "<br>"+event.data;
                 }
             };
         }

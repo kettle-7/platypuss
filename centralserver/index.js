@@ -31,7 +31,8 @@ function ClientUser(u) {
         unam: u.unam,
         pfp: u.pfp,
         id: u.id,
-        aboutMe: u.aboutMe
+        aboutMe: u.aboutMe,
+        tag: u.tag
     }
 }
 
@@ -58,6 +59,18 @@ class Session {
         sessions[this.id] = this;
     }
 }
+
+function toBase26(number) {
+    let string = '';
+	let _number = number;
+	while (_number > 0) {
+		string = (String.fromCharCode('a'.charCodeAt(0) - 1 + (_number % 26 || 26))) + string;
+		_number = Math.floor((_number - 1) / 26);
+	}
+	return string;
+}
+
+console.log(toBase26(Math.floor(Math.random() * 100000)));
 
 const server = createServer((req, res) => {
     var url = new URL(req.url, `http://${req.headers.host}`);
@@ -126,6 +139,14 @@ data, this is to prevent server owners from hijacking accounts.");
                 unam = data.unam.toString().replace(/ /g, "-");
                 pwd = data.pwd.toString();
                 ser = data.ser.toString();
+                /*if (!unam.match(/^[A-Za-z0-9`~!@#$%^&*(){}\[\]]*$/)) {
+                    res.writeHead(200, { "Content-Type": "application/json" });
+                    res.end(JSON.stringify({
+                        exists: true,
+                        sid: 0
+                    }));
+                    return;
+                }*/
                 if (ift == "false" || !ift) {
                     let has = false;
                     for (let u in users) {
@@ -377,6 +398,11 @@ data, this is to prevent server owners from hijacking accounts.");
         res.writeHead(200, { "Content-Type": "application/json" });
         if (users[uid].aboutMe == undefined) {
             users[uid].aboutMe = {text:""};
+            fs.writeFileSync("./users.json", JSON.stringify(users), () => {});
+        }
+        if (!users[uid].tag) {
+            users[uid].tag = toBase26(users.count);
+            users.count++;
             fs.writeFile("./users.json", JSON.stringify(users), () => {});
         }
         res.end(JSON.stringify(ClientUser(users[uid])));

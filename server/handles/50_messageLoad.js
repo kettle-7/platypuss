@@ -20,15 +20,15 @@
  module.exports = {
 	eventType: "messageLoad",
 	execute: function (sdata, wss, packet) {
-        let numberToLoad = 20;
+        let max = 20;
         let start = 0;
-        if (packet.numberToLoad != undefined)
-            numberToLoad = packet.numberToLoad;
+        if (packet.max != undefined)
+            max = packet.max;
         if (packet.start != undefined)
             start = packet.start;
         let msgstld = [];
         let mids = Object.keys(sdata.messages);
-        for (let i = mids.length - numberToLoad - packet.start; i < mids.length; i++) { // this acts weirdly when no messages have been sent
+        for (let i = mids.length - max - start; i < mids.length - start; i++) { // this acts weirdly when no messages have been sent
             while (i < 0) i++;
             msgstld.push(sdata.messages[mids[i]]);
         }

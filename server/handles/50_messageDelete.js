@@ -44,11 +44,14 @@
             }));
             return;
         }
+        delete sdata.messages[packet.id];
         for (let client of wss.clients) {
             if (client.loggedinbytoken)
             client.send(JSON.stringify({
-                eventType: "messageDeleted"
+                eventType: "messageDeleted",
+                messageId: packet.id
             }));
         }
+        return sdata;
     }
 };

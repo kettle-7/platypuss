@@ -128,7 +128,7 @@ check your code thoroughly, otherwise please contact the developer."
                         }));
                     }
                     console.log(data.unam + " disconnected from the server.");
-                } catch {
+                } catch (e) {
                     console.log(e);
                     console.log(ws.uid + " disconnected from the server.");
                 }
