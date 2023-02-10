@@ -316,16 +316,17 @@ function clientLoad() {
                             document.getElementById("msgtxt").rows += 1;
                             return;
                         }
+                        document.getElementById("msgtxt").rows = 2;
                         ws.send(JSON.stringify({
                             eventType: "message",
                             message: { content: document.getElementById("msgtxt").value/*.replace(/\\n/g, '\n')*/ }
                         }));
                         document.getElementById("msgtxt").value = "";
-                        e.stopImmediatePropagation();
                         e.preventDefault();
                     }
                 });
                 document.getElementById("send").addEventListener("click", () => {
+                    document.getElementById("msgtxt").rows = 2;
                     ws.send(JSON.stringify({
                         eventType: "message",
                         message: { content: document.getElementById("msgtxt").value/*.replace(/\\n/g, '\n')*/ }
@@ -402,10 +403,16 @@ function clientLoad() {
     </div>${message3}
 </div>
 `
+                            let ma = document.getElementById("messageArea");
+                            if (ma.scrollHeight < ma.scrollTop  + (2 * ma.clientHeight)) {
+                                ma.scrollTo(ma.scrollLeft, ma.scrollHeight - ma.clientHeight);
+                            }
                         });
                         break;
                     case "messages":
                         let txt = "";
+                        let ma = document.getElementById("messageArea");
+                        let scrollBottom = ma.scrollHeight - ma.scrollTop;
                         for (let m = 0; m < packet.messages.length; m++) {
                             loadedMessages++;
                             let uuidreg = /[0-9a-f]{7,8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/ig;
@@ -468,6 +475,7 @@ function clientLoad() {
 `;
                             if (m + 1 == packet.messages.length) { // is this the last message
                                 document.getElementById("mainContent").innerHTML = txt + document.getElementById("mainContent").innerHTML;
+                                ma.scrollTo(ma.scrollLeft, ma.scrollHeight - scrollBottom);
                             }
                         }
                         break;
@@ -484,6 +492,10 @@ function clientLoad() {
                             document.getElementById("mainContent").innerHTML += "<br>"+packet.explanation;
                         else
                             document.getElementById("mainContent").innerHTML += "<br>"+event.data;
+                    
+                        if (ma.scrollHeight < ma.scrollTop  + (2 * ma.clientHeight)) {
+                            ma.scrollTo(ma.scrollLeft, ma.scrollHeight - ma.clientHeight);
+                        }
                 }
             };
         }

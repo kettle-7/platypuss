@@ -174,15 +174,18 @@ blockquote {
 
 table, th, td {
     width: min-content;
-    border: 1px solid;
+    /*border: 1px solid;*/
+}
+
+table {
+    background: #272727;
+    border-radius: 5px;
 }
 
 th, td {
     padding: 5px;
-}
-
-.message2 {
-    overflow-x: auto;
+    border-radius: 4px;
+    background: linear-gradient(#373737, #303030);
 }
 
 blockquote p {
@@ -234,12 +237,7 @@ body {
     height: 100%;
 }
 
-#actualPageContainer {
-    position: relative;
-    top: 0px;
-    bottom: 0px;
-    left: 0px;
-    right: 0px;
+#actualpagecontainer {
     min-height: 0;
 }
 
@@ -263,8 +261,8 @@ input {
     bottom: 0px;
     left: 0px;
     right: 0px;
+    min-height: 0;
     position: absolute;
-    overflow-y: auto;
 }
 
 .mainpage {
@@ -276,6 +274,8 @@ input {
 #actualPage {
     display: flex;
     flex-direction: row;
+    min-height: 0;
+    max-height: 100%;
 }
 
 #sidePane {
@@ -304,6 +304,12 @@ input {
     gap: 3px;
     flex-grow: 1;
     bottom: 30pt;
+    min-height: 0;
+}
+
+#messageArea {
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 #mainContentContainer {
@@ -314,6 +320,8 @@ input {
     flex-direction: column;
     gap: 3px;
     flex-grow: 1;
+    max-width: 100%;
+    min-width: 0;
 }
 
 .sericon {
@@ -401,6 +409,11 @@ input {
     right: 0px;
     margin: 0px;
     padding: 5px;
+    gap: 5px;
+}
+
+hr {
+    border: 2px solid #888888;
 }
 
 .message1:hover {
@@ -412,10 +425,18 @@ input {
     flex-direction: column;
     justify-content: flex-start;
     flex-grow: 1;
+    text-overflow: ellipsis;
+    overflow-wrap: break-word;
+    right: 0px;
+    min-width: none;
 }
 
 .message3 {
     display: none;
+}
+
+.message2 * {
+    overflow-wrap: break-word;
 }
 
 .message1:hover .message3, .message1.hover .message3 {

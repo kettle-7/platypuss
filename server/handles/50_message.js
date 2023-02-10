@@ -59,6 +59,14 @@ all the information specified in the Platypuss API."
 			}));
 			return;
 		}
+		if (packet.message.content.includes(">>>>>") || packet.message.content.includes("> > > > > ")) {
+			packet.ws.send(JSON.stringify({
+				"eventType": "error",
+				"code": "no",
+				"explanation": "no"
+			}));
+			return;
+		}
 		if (packet.ws.lastInteractionSent == undefined) {
 			packet.ws.lastInteractionSent = Date.now();
 			packet.ws.lastMessage = packet.message.content;
