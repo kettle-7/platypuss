@@ -26,11 +26,21 @@
             <div id="mainContentContainer">
                 <div id="messageArea">
                     <button onclick="moreMessages();" id="loadMoreMessages" class="chonk">Load More Messages</button>
+                    <div style="flex-grow: 1;"></div>
                     <div id="mainContent"></div>
                 </div>
                 <div id="longMessageBoxContainer">
                     <textarea id="msgtxt" class="textBox chonk" placeholder="Type a message"></textarea>
-                    <button id="send" class="bleu msgbtn chonk">Send</button>
+                    <button id="send" class="msgbtn chonk">
+                        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+                            <style type="text/css">
+                                .st0{fill:#eeeeee;}
+                            </style>
+                            <g id="XMLID_2_">
+                                <polygon id="XMLID_4_" class="st0" points="0,0 49.6,233.9 352.1,256 49.6,278.1 0,512 512,256  "/>
+                            </g>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </main></div></div> <!-- Hi debuggers, thanks for debugging, this is the end of div#everything -->
@@ -63,7 +73,7 @@
                         </span>
                         <img class="avatar" id="changePfp" src="" style="width:96px;height:96px;position: absolute;margin: 0px; padding: 0px;left: 0px;top: 0px;border: none;"/>
                     </div>
-                    <h1 id="acsusername">(username)</h1>
+                    <h1 id="acsusername">(username)</h1><span id="tag"></span>
                 </div>
                 <span id="avatarTooBig" hidden>Sorry, that file is too big, the maximum size is 5MB.</span>
                 <button class="dangerous chonk" id="acsdelacc"

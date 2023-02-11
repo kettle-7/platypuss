@@ -21,6 +21,14 @@
     color: #ffffff;
 }
 
+#send > svg {
+    position: relative;
+    width: 80%;
+    height: 80%;
+    left: 10%;
+    top: 7%;
+}
+
 h1 {
     cursor: default;
 }
@@ -239,6 +247,7 @@ body {
 
 #actualpagecontainer {
     min-height: 0;
+    flex-grow: 1;
 }
 
 input, textarea {
@@ -276,6 +285,7 @@ input {
     flex-direction: row;
     min-height: 0;
     max-height: 100%;
+    bottom: 0px;
 }
 
 #sidePane {

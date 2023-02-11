@@ -1,0 +1,12 @@
+#!/bin/bash
+if [[ "x$1" == "x" ]]
+then
+    "$0" centralserver &
+    while true; do
+        "$0" server
+    done
+else
+    cd "`dirname $0`"
+    cd "./$1"
+    node .
+fi

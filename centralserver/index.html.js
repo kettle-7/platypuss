@@ -61,13 +61,28 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
         document.getElementById("username").innerText = "Logged in as " + res.unam;
         document.getElementById("changePfp").src = res.pfp;
         document.getElementById("acsusername").innerText = res.unam;
+        document.getElementById("tag").innerText = res.tag;
         document.ppures = res;
     }
     if (loggedin) {
         document.getElementById("header").removeChild(document.getElementById("login"));
         document.getElementById("header").removeChild(document.getElementById("signup"));
         // document.getElementById("header").removeChild(document.getElementById("spacement"));
-        document.getElementById("everything").removeChild(document.getElementById("infopagecontainer"));
+        const h = new XMLHttpRequest();
+        h.open('GET', '/sload?id='+localStorage.getItem('sid'), true);
+        h.onload = () => {
+            if (h.status != 200) {        // warning: this code might fail if something has gone wrong, and thus cause the 
+                window.location.reload(); // page to infinitely reload. the most likely response from the user is the
+            }                             // page being closed and mild confusion which is not ideal but not dangerous.
+            let sers = JSON.parse(h.responseText);
+            console.log(sers.servers);
+            if (Object.keys(sers.servers).length === 0) { // None
+                document.getElementById("everything").removeChild(document.getElementById("actualpagecontainer"));
+            } else {
+                document.getElementById("everything").removeChild(document.getElementById("infopagecontainer"));
+            }
+        };
+        h.send();
         if (url.searchParams.has("invite")) {
             let inviteCode = url.searchParams.get("invite");
             let ip = [ // the first 8 characters are the ip address in hex form
@@ -313,7 +328,8 @@ function clientLoad() {
                     if (e.key == "Enter") {
                         if (e.shiftKey) {
                             // document.getElementById("msgtxt").value += "\\n";
-                            document.getElementById("msgtxt").rows += 1;
+                            if (document.getElementById("msgtxt").rows < 10)
+                                document.getElementById("msgtxt").rows += 1;
                             return;
                         }
                         document.getElementById("msgtxt").rows = 2;
@@ -342,6 +358,7 @@ function clientLoad() {
             ws.onmessage = async (event) => {
                 let packet = JSON.parse(event.data);
                 let unam, pfp;
+                let ma = document.getElementById("messageArea");
                 switch (packet.eventType) {
                     case "message":
                         loadedMessages++;
@@ -403,7 +420,6 @@ function clientLoad() {
     </div>${message3}
 </div>
 `
-                            let ma = document.getElementById("messageArea");
                             if (ma.scrollHeight < ma.scrollTop  + (2 * ma.clientHeight)) {
                                 ma.scrollTo(ma.scrollLeft, ma.scrollHeight - ma.clientHeight);
                             }
@@ -411,7 +427,6 @@ function clientLoad() {
                         break;
                     case "messages":
                         let txt = "";
-                        let ma = document.getElementById("messageArea");
                         let scrollBottom = ma.scrollHeight - ma.scrollTop;
                         for (let m = 0; m < packet.messages.length; m++) {
                             loadedMessages++;
@@ -492,7 +507,7 @@ function clientLoad() {
                             document.getElementById("mainContent").innerHTML += "<br>"+packet.explanation;
                         else
                             document.getElementById("mainContent").innerHTML += "<br>"+event.data;
-                    
+                        
                         if (ma.scrollHeight < ma.scrollTop  + (2 * ma.clientHeight)) {
                             ma.scrollTo(ma.scrollLeft, ma.scrollHeight - ma.clientHeight);
                         }

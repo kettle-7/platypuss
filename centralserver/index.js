@@ -27,6 +27,12 @@ var users = JSON.parse(fs.readFileSync("./users.json"));
 var sessions = {};
 
 function ClientUser(u) {
+    if (u.tag == undefined) {
+        users.count++;
+        users[u.id].tag = toBase26(users.count);
+        u.tag = toBase26(users.count);
+        fs.writeFile("./users.json", JSON.stringify(users), () => {})
+    }
     return {
         unam: u.unam,
         pfp: u.pfp,
@@ -46,6 +52,8 @@ class User {
         this.aboutMe = {
             text: ""
         };
+        this.tag = toBase26(users.count);
+        users.count++;
         users[this.id] = this;
     }
 }
@@ -69,8 +77,6 @@ function toBase26(number) {
 	}
 	return string;
 }
-
-console.log(toBase26(Math.floor(Math.random() * 100000)));
 
 const server = createServer((req, res) => {
     var url = new URL(req.url, `http://${req.headers.host}`);
@@ -347,6 +353,13 @@ data, this is to prevent server owners from hijacking accounts.");
         if (!sessions[sid] || !users[sessions[sid].uid]) {
             res.writeHead(204, {"Content-Type": "text/plain"});
             res.end("invalid session");
+            return;
+        }
+        // this should probably not be hardcoded ...
+        if (sessions[sid].server != "122.62.122.75:3000") {
+            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.end("You may not use server-specific tokens to modify account \
+data, this is to prevent server owners from hijacking accounts.");
             return;
         }
         let tokens = {};
