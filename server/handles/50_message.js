@@ -60,7 +60,7 @@ all the information specified in the Platypuss API."
 			}));
 			return;
 		}
-		if (packet.message.content.includes(">>>>>") || packet.message.content.includes("> > > > > ")) {
+		if (packet.message.content.replace(/ /g, "").includes(">>>>>")) {
 			packet.ws.send(JSON.stringify({
 				"eventType": "error",
 				"code": "no",
