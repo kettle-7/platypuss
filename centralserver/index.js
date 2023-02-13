@@ -504,7 +504,7 @@ data, this is to prevent server owners from hijacking accounts.");
             return;
         }
         let stream = fs.createReadStream("./usercontent"+url.pathname)
-        res.writeHead(200, {"Content-Type": ctype});
+        res.writeHead(200, {});
         stream.on("ready", () => {
             stream.pipe(res);
         });

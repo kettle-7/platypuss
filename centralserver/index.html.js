@@ -68,6 +68,17 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
     if (loggedin) {
         document.getElementById("header").removeChild(document.getElementById("login"));
         document.getElementById("header").removeChild(document.getElementById("signup"));
+        document.getElementById("mainContentContainer").addEventListener("drop", (e) => {
+            e.preventDefault();
+            const files = e.dataTransfer.files;
+            for (let file of files) {
+                if (!uploadQueue.every(f => f.name !== file.name)) {
+                    uploadQueue.push(file);
+                    f.id = Math.random(); // should be good
+                    document.getElementById("fileUploadMessage").hidden = false;
+                }
+            }
+        });
         // document.getElementById("header").removeChild(document.getElementById("spacement"));
         const h = new XMLHttpRequest();
         h.open('GET', '/sload?id='+localStorage.getItem('sid'), true);
