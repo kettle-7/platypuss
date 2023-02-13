@@ -16,6 +16,7 @@
  ************************************************************************/
 
 const os = require('os');
+const { formidable } = require("formidable")
 
 const fs = require('fs');
 const { createServer } = require("http");
@@ -29,6 +30,7 @@ var sessions = {};
 function ClientUser(u) {
     if (u.tag == undefined) {
         users.count++;
+        console.log(users.count);
         users[u.id].tag = toBase26(users.count);
         u.tag = toBase26(users.count);
         fs.writeFile("./users.json", JSON.stringify(users), () => {})
@@ -130,6 +132,37 @@ data, this is to prevent server owners from hijacking accounts.");
             res.end("some error, idk");
             return;
         }
+    }
+
+    if (url.pathname == "/upload") {
+        if (!url.searchParams.has('id')) {
+            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.end("missing session id");
+            return;
+        }
+        let sid = url.searchParams.get('id');
+        if (!sessions[sid] || !users[sessions[sid].uid]) {
+            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.end("invalid session");
+            return;
+        }
+        const form = formidable({
+            maxFiles: 5,
+            maxFileSize: 25 * 1024 * 1024,
+            uploadDir: `./usercontent/uploads/${sessions[sid].uid}/`,
+            filename: (name, ext, part, form) => {
+                fs.mkdirSync(`./usercontent/uploads/${sessions[sid].uid}/`, {recursive: true})
+                return `${v4()}.${ext}`;
+            }
+        });
+        form.parse(req, (err, fields, files) => {
+            if (err) {
+                res.writeHead(err.httpCode || 400, {'Content-Type':'text/plain'});
+                res.end(String(err));
+                return;
+            }
+            // do something here
+        })
     }
 
     if (url.pathname == "/li" || (url.pathname == "/login" && req.method.toLowerCase() == "post")) {
@@ -457,6 +490,27 @@ data, this is to prevent server owners from hijacking accounts.");
         return;
     }
 
+    else if (url.pathname.startsWith("/uploads")) {
+        url.pathname = url.pathname.replace(/\.\./g, "");
+        if (!fs.existsSync("./usercontent"+url.pathname)) {
+            res.writeHead(404, "thats not a page owo", { "Content-Type": "text/html" });
+            fs.readFile("./found.html", (err, data) => {
+                if (err) {
+                    res.end("404: 404 not found (ultimate bad error) (maybe just wait until we can fix it lol)");
+                    console.log(err.toString());
+                }
+                else res.end(data.toString()+" "+req.url+" -->");
+            });
+            return;
+        }
+        let stream = fs.createReadStream("./usercontent"+url.pathname)
+        res.writeHead(200, {"Content-Type": ctype});
+        stream.on("ready", () => {
+            stream.pipe(res);
+        });
+        return;
+    }
+
     else if (url.pathname == "/main.css") {
         res.writeHead(200, {"Content-Type": "text/css"});
         fs.readFile("./main.css", (err, data) => {
@@ -486,7 +540,7 @@ data, this is to prevent server owners from hijacking accounts.");
                 res.end();
                 console.log(err.toString());
             }
-            else res.end(data.toString().replace(/ICON/, conf.icon));
+            else res.end(data.toString().replace(/ICON/g, conf.icon));
         });
         return;
     }

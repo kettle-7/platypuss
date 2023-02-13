@@ -33,6 +33,7 @@ var oldestMessage = 0;
 var url = new URL(window.location);
 var loggedin = true;
 var usercache = {};
+var uploadQueue = [];
 
 function fetchUser(id) {
     return new Promise((resolve, reject) => {
@@ -306,10 +307,28 @@ function moreMessages() {
     }
 }
 
+// should also work on regular files
+function imageUpload(imgs, callback) {
+    const formData = new FormData();
+    imgs.forEach((image, index) => {
+        formData.append(`file[${index}]`, image);
+    });
+    fetch(`/upload?id=${localStorage.getItem("sid")}`, {
+        method: "POST",
+        body: formData
+    }).then(res => {
+        if (res.status) {
+            callback(res);
+        }
+    })
+}
+
 function clientLoad() {
     sockets = {};
+    document.getElementById("loadMoreMessages").hidden = false;
     document.getElementById("mainContent").innerHTML = "";
-    document.getElementById("sidePane").innerHTML = "";
+    document.getElementById("left").innerHTML = "";
+    document.getElementById("right").innerHTML = "";
     const h = new XMLHttpRequest();
     h.open('GET', '/sload?id='+localStorage.getItem('sid'), true);
     h.onload = () => {
@@ -493,6 +512,15 @@ function clientLoad() {
                                 ma.scrollTo(ma.scrollLeft, ma.scrollHeight - scrollBottom);
                             }
                         }
+
+                        if (packet.isTop) {
+                            document.getElementById("mainContent").innerHTML = `
+<span class="message1" style="text-align: center; align-self: stretch;">
+    You've reached the top! Well done.
+</span>
+` + document.getElementById("mainContent").innerHTML;
+                            document.getElementById("loadMoreMessages").hidden = true;
+                        }
                         break;
                     case "rateLimit":
                         setTimeout(() => {
@@ -502,11 +530,21 @@ function clientLoad() {
                     case "messageDeleted":
                         document.getElementById(`message_${packet.messageId}`).style.display = "none";
                         break;
+                    case "connected":
+                    case "join":
+                    case "connecting":
+                    case "disconnect":
+                        break;
                     default:
+                        if ("code" in packet) {
+                            if (["nothingModify"].includes(packet.code)) break;
+                        }
                         if ("explanation" in packet)
-                            document.getElementById("mainContent").innerHTML += "<br>"+packet.explanation;
+                            document.getElementById("mainContent").innerHTML += 
+                                '<div class="message1">'+packet.explanation+'</div>';
                         else
-                            document.getElementById("mainContent").innerHTML += "<br>"+event.data;
+                            document.getElementById("mainContent").innerHTML +=
+                                '<pre class="message1"><code>'+event.data+'</code></pre>';
                         
                         if (ma.scrollHeight < ma.scrollTop  + (2 * ma.clientHeight)) {
                             ma.scrollTo(ma.scrollLeft, ma.scrollHeight - ma.clientHeight);

@@ -2,6 +2,7 @@
 
 centralserver/users.json
 centralserver/avatars/
+centralserver/usercontent/
 server/server.json
 temp.js
 

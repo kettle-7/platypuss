@@ -2,8 +2,10 @@
 <html>
     <head>
         <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,maximum-scale=1"/>
         <title>Platypuss</title>
         <link href="/main.css" rel="stylesheet"/>
+        <link rel="icon" type="image/png" href="ICON"/>
         <script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
     </head>
     <body>
@@ -21,7 +23,7 @@
             <h1 style="font-size: 2in;">p</h1>
         </main></div>
         <div id="actualpagecontainer"><main id="actualPage" class="mainpage" hidden="true"> 
-            <div id="sidePane">
+            <div class="sidePane" id="left">
             </div>
             <div id="mainContentContainer">
                 <div id="messageArea">
@@ -29,8 +31,10 @@
                     <div style="flex-grow: 1;"></div>
                     <div id="mainContent"></div>
                 </div>
+                <span id="fileDeleteMessage" hidden>Click a file to delete it</span>
+                <div id="fileUploadSpace"></div>
                 <div id="longMessageBoxContainer">
-                    <textarea id="msgtxt" class="textBox chonk" placeholder="Type a message"></textarea>
+                    <textarea id="msgtxt" class="textBox chonk" placeholder="Type a message" cols="1"></textarea>
                     <button id="send" class="msgbtn chonk">
                         <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
                             <style type="text/css">
@@ -42,6 +46,8 @@
                         </svg>
                     </button>
                 </div>
+            </div>
+            <div class="sidePane" id="right">
             </div>
         </main></div></div> <!-- Hi debuggers, thanks for debugging, this is the end of div#everything -->
         <div class="popupParent" onclick="document.getElementById('accountInfoParent').hidden = true" id="accountInfoParent" hidden>

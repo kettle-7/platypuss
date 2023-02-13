@@ -32,9 +32,11 @@
             while (i < 0) i++;
             msgstld.push(sdata.messages[mids[i]]);
         }
+        let done = (max + start >= mids.length);
         packet.ws.send(JSON.stringify({
             eventType: "messages",
-            messages: msgstld
+            messages: msgstld,
+            isTop: done
         }));
     }
 };

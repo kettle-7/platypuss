@@ -72,7 +72,8 @@ module.exports = {
                     }));
                     packet.ws.send(JSON.stringify({
                         eventType: "messages",
-                        messages: msgstld
+                        messages: msgstld,
+                        isTop: (mids.length <= 20)
                     }));
                     return sdata;
                 } catch (e) {

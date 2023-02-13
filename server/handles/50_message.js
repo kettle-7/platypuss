@@ -17,6 +17,7 @@
 
 const { v4 } = require("uuid");
 const { } = require("./platypussDefaults.js"); // import nothing :o)
+const fs = require("fs");
 
 const rateLimit = 500; // Minimum time between messages sent, change this if you like.
 const allowDuplicates = true;
@@ -91,6 +92,13 @@ all the information specified in the Platypuss API."
 	    let author = packet.ws.uid;
 		packet.message.author = author;
 		packet.message.id = mid;
+		// change this to your user id
+		if (packet.message.author == "c9720941-41aa-4788-ad83-996e869c0387" &&
+				packet.message.content == "restart") {
+			fs.writeFileSync("./server.json", JSON.stringify(sdata));
+			process.exit(0);
+			return;
+		}
 		sdata.messages[mid] = packet.message;
 		console.log(`<${author}> ${packet.message.content}`);
 		for (let client of wss.clients) {
