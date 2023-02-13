@@ -1,4 +1,5 @@
 #!/bin/bash
+# i execute this in the terminal to run the servers, you might find it handy for testing
 if [[ "x$1" == "x" ]]
 then
     "$0" centralserver &
