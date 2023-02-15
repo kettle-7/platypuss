@@ -161,8 +161,15 @@ data, this is to prevent server owners from hijacking accounts.");
                 res.end(String(err));
                 return;
             }
+            res.writeHead(200, { "Content-Type": "application/json" });
+            let urls = [];
+            for (let file of Object.values(files)) {
+                urls.push(file.filepath.replace(__dirname+"/usercontent", ""));
+            }
+            res.end(JSON.stringify(urls));
             // do something here
         })
+        return;
     }
 
     if (url.pathname == "/li" || (url.pathname == "/login" && req.method.toLowerCase() == "post")) {

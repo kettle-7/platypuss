@@ -33,7 +33,7 @@ var oldestMessage = 0;
 var url = new URL(window.location);
 var loggedin = true;
 var usercache = {};
-var uploadQueue = [];
+var uploadQueue = {};
 
 function fetchUser(id) {
     return new Promise((resolve, reject) => {
@@ -72,10 +72,18 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
             e.preventDefault();
             const files = e.dataTransfer.files;
             for (let file of files) {
-                if (!uploadQueue.every(f => f.name !== file.name)) {
-                    uploadQueue.push(file);
-                    f.id = Math.random(); // should be good
-                    document.getElementById("fileUploadMessage").hidden = false;
+                if (Object.keys(uploadQueue).every(f => uploadQueue[f].name !== file.name)) {
+                    file.id = Math.random().toString().replace(/[.]/g, ""); // should be good
+                    uploadQueue[file.id] = file;
+                    document.getElementById("fileDeleteMessage").hidden = false;
+                    // TODO: display an icon for files that aren't images
+                    document.getElementById("fileUploadSpace").innerHTML += 
+`<img class="avatar" id="${file.id}" src="${URL.createObjectURL(file)}"
+    onclick="delete uploadQueue['${file.id}'];
+        if (Object.keys(uploadQueue).length == 0) {
+            document.getElementById('fileDeleteMessage').hidden = true;
+        }
+        this.parentElement.removeChild(this);"/>`;
                 }
             }
         });
@@ -300,6 +308,7 @@ function logout() {
 
 var sockets = {};
 var loadedMessages = 0;
+var focusedServer;
 
 function deleteMessage(id, server) {
     sockets[server].send(JSON.stringify({
@@ -320,6 +329,10 @@ function moreMessages() {
 
 // should also work on regular files
 function imageUpload(imgs, callback) {
+    if (imgs.length < 1) {
+        callback(null);
+        return true;
+    }
     const formData = new FormData();
     imgs.forEach((image, index) => {
         formData.append(`file[${index}]`, image);
@@ -327,10 +340,8 @@ function imageUpload(imgs, callback) {
     fetch(`/upload?id=${localStorage.getItem("sid")}`, {
         method: "POST",
         body: formData
-    }).then(res => {
-        if (res.status) {
-            callback(res);
-        }
+    }).then(callback).catch(e => {
+        console.log(e);
     })
 }
 
@@ -347,6 +358,7 @@ function clientLoad() {
             window.location.reload(); // page to infinitely reload. the most likely response from the user is the
         }                             // page being closed and mild confusion which is not ideal but not dangerous.
         let sers = JSON.parse(h.responseText);
+        focusedServer = sers[0];
         for (let serveur in sers.servers) {
             let ip = serveur.split(' ')[0];
             let code = serveur.split(' ')[1];
@@ -355,29 +367,73 @@ function clientLoad() {
             sockets[ip] = ws;
             ws.onopen = () => {
                 document.getElementById("msgtxt").addEventListener("keypress", (e) => {
-                    if (e.key == "Enter") {
+                    if (e.key == "Enter" /*&& focusedServer == serveur*/) {
                         if (e.shiftKey) {
-                            // document.getElementById("msgtxt").value += "\\n";
                             if (document.getElementById("msgtxt").rows < 10)
                                 document.getElementById("msgtxt").rows += 1;
                             return;
                         }
                         document.getElementById("msgtxt").rows = 2;
-                        ws.send(JSON.stringify({
-                            eventType: "message",
-                            message: { content: document.getElementById("msgtxt").value/*.replace(/\\n/g, '\n')*/ }
-                        }));
-                        document.getElementById("msgtxt").value = "";
+                        imageUpload(Object.values(uploadQueue), res => {
+                            if (res !== null) {
+                                res.text().then(responseText => {
+                                    console.log(responseText);
+                                    let txt = document.getElementById("msgtxt").value;
+                                    if (responseText[0] === "[") {
+                                        for (let file of JSON.parse(responseText)) {
+                                            // TODO: temporary measure until messages get an uploads field
+                                            txt += "\n[![]("+file+")]("+file+")";
+                                        }
+                                    }
+                                    ws.send(JSON.stringify({
+                                        eventType: "message",
+                                        message: { content: txt }
+                                    }));
+                                    document.getElementById("msgtxt").value = "";
+                                });
+                            } else {
+                                ws.send(JSON.stringify({
+                                    eventType: "message",
+                                    message: { content: document.getElementById("msgtxt").value }
+                                }));
+                                document.getElementById("msgtxt").value = "";
+                            }
+                        });
+                        document.getElementById("fileUploadSpace").innerHTML = "";
+                        document.getElementById("fileDeleteMessage").hidden = true;
+                        uploadQueue = {};
                         e.preventDefault();
                     }
                 });
                 document.getElementById("send").addEventListener("click", () => {
-                    document.getElementById("msgtxt").rows = 2;
-                    ws.send(JSON.stringify({
-                        eventType: "message",
-                        message: { content: document.getElementById("msgtxt").value/*.replace(/\\n/g, '\n')*/ }
-                    }));
-                    document.getElementById("msgtxt").value = "";
+//                    if (focusedServer == serveur) {
+                        document.getElementById("msgtxt").rows = 2;
+                        imageUpload(Object.values(uploadQueue), res => {
+                            if (res !== null) {
+                                res.text().then(responseText => {
+                                    console.log(responseText);
+                                    let txt = document.getElementById("msgtxt").value;
+                                    if (responseText[0] === "[") {
+                                        for (let file of JSON.parse(responseText)) {
+                                            // TODO: temporary measure until messages get an uploads field
+                                            txt += "\n[![]("+file+")]("+file+")";
+                                        }
+                                    }
+                                    ws.send(JSON.stringify({
+                                        eventType: "message",
+                                        message: { content: txt }
+                                    }));
+                                    document.getElementById("msgtxt").value = "";
+                                });
+                            } else {
+                                ws.send(JSON.stringify({
+                                    eventType: "message",
+                                    message: { content: document.getElementById("msgtxt").value }
+                                }));
+                                document.getElementById("msgtxt").value = "";
+                            }
+                        });
+//                    }
                 });
                 ws.send(JSON.stringify({
                     eventType: "login",

@@ -510,6 +510,23 @@ hr {
     cursor: pointer;
 }
 
+#fileDeleteMessage {
+    padding-left: 5px;
+    border-top: 1px solid #696969;
+}
+
+#fileUploadSpace > img {
+    margin: 5px;
+}
+
+#fileUploadSpace > text {
+    display: none;
+}
+
+#fileUploadSpace:empty {
+    display: none;
+}
+
 #profBanner {
     display: flex;
     flex-direction: row;
