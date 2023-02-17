@@ -91,7 +91,9 @@ button:hover {
 }
 
 .popup {
-    width: fit-content;
+    min-width: min-content !important;
+    max-width: 90%;
+    width: 50vh;
     height: fit-content;
     display: flex;
     flex-direction: column;
@@ -527,12 +529,20 @@ hr {
     display: none;
 }
 
-#profBanner {
+.banner {
     display: flex;
     flex-direction: row;
     gap: 5px;
     justify-content: flex-start;
     align-items: center;
+}
+
+#serverName, #serverName * {
+    min-width: min-content;
+}
+
+#banner > span {
+    min-width: fit-content;
 }
 
 .textBox {

@@ -1,3 +1,20 @@
+ /************************************************************************
+ * Copyright 2020-2023 Ben Keppel                                        *
+ *                                                                       *
+ * This program is free software: you can redistribute it and/or modify  *
+ * it under the terms of the GNU General Public License as published by  *
+ * the Free Software Foundation, either version 3 of the License, or     *
+ * (at your option) any later version.                                   *
+ *                                                                       *
+ * This program is distributed in the hope that it will be useful,       *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ * GNU General Public License for more details.                          *
+ *                                                                       *
+ * You should have received a copy of the GNU General Public License     *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
+ ************************************************************************/
+
 // °^° i am pingu
 const cyrb53 = (str, seed = 20) => {
     let h1 = 0xdeadbeef ^ seed, // dead beef
@@ -115,8 +132,30 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 port = port * 16 + parseInt(inviteCode[c], 16);
             }
             let code = Number("0x"+inviteCode[inviteCode.length - 2]+inviteCode[inviteCode.length - 1]).toString();
-            document.getElementById("serverName").innerHTML =
-            document.getElementById("serverName").innerHTML.replace("ADDR", `${ip}:${port}`);
+            fetch(`http://${ip}:${port}`).then(res => {
+                res.json().then(data => {
+                    document.getElementById("serverName").innerHTML = `
+                    You've been invited to join ${data.title}
+                    <br>IP: ${ip}:${port}
+                    <br>${data.memberCount} members
+                    `;
+                    document.getElementById("inviteIcon").src = data.icon;
+                }).catch(err => {
+                    document.getElementById("serverName").innerHTML = `
+                    You've been invited to join a server, but we couldn't connect :~(<br>
+                    Either the invite link is invalid or the server is currently down.
+                    Please contact the server owner if you think there's an issue.
+                    `;
+                    document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
+                });;
+            }).catch(err => {
+                document.getElementById("serverName").innerHTML = `
+                You've been invited to join a server, but we couldn't connect :~(<br>
+                Either the invite link is invalid or the server is currently down.
+                Please contact the server owner if you think there's an issue.
+                `;
+                document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
+            });
             document.getElementById("inviteparent").style.display = "flex";
             function clicky () {
                 document.getElementById("invdecline").innerText = "Close";
@@ -134,6 +173,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 }
                 r.send(null);
             }
+            localStorage.removeItem("pendingInvite");
             document.getElementById("acceptinvitebtn").addEventListener("click", clicky);
         } else if (localStorage.getItem("pendingInvite") != null) {
             let inviteCode = localStorage.getItem("pendingInvite");
@@ -147,8 +187,30 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 port = port * 16 + parseInt(inviteCode[c], 16);
             }
             let code = Number("0x"+inviteCode[inviteCode.length - 2]+inviteCode[inviteCode.length - 1]).toString();
-            document.getElementById("serverName").innerHTML =
-            document.getElementById("serverName").innerHTML.replace("ADDR", `${ip}:${port}`);
+            fetch(`http://${ip}:${port}`).then(res => {
+                res.json().then(data => {
+                    document.getElementById("serverName").innerHTML = `
+                    You've been invited to join ${data.title}
+                    <br>IP: ${ip}:${port}
+                    <br>${data.memberCount} members
+                    `;
+                    document.getElementById("inviteIcon").src = data.icon;
+                }).catch(err => {
+                    document.getElementById("serverName").innerHTML = `
+                    You've been invited to join a server, but we couldn't connect :~(<br>
+                    Either the invite link is invalid or the server is currently down.
+                    Please contact the server owner if you think there's an issue.
+                    `;
+                    document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
+                });;
+            }).catch(err => {
+                document.getElementById("serverName").innerHTML = `
+                You've been invited to join a server, but we couldn't connect :~(<br>
+                Either the invite link is invalid or the server is currently down.
+                Please contact the server owner if you think there's an issue.
+                `;
+                document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
+            });
             document.getElementById("inviteparent").style.display = "flex";
             localStorage.removeItem("pendingInvite");
             function clicky () {
@@ -266,13 +328,31 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
             for (let c = 8; c + 2 < inviteCode.length; c++) {
                 port = port * 16 + parseInt(inviteCode[c], 16);
             }
-            document.getElementById("serverName").innerHTML = `
-You've been invited to join SERVER
-<br>IP: ${ip}:${port}
-<br>COUNT members
-<br>Create a free Platypuss account to join!
-<br>You'll need to go to this link again afterward.
-            `;
+            fetch(`http://${ip}:${port}`).then(res => {
+                res.json().then(data => {
+                    document.getElementById("serverName").innerHTML = `
+                    You've been invited to join ${data.title}
+                    <br>IP: ${ip}:${port}
+                    <br>${data.memberCount} members
+                    <br>Create a free Platypuss account to join!
+                    <br>You may need to go to this link again afterward.`;
+                    document.getElementById("inviteIcon").src = data.icon;
+                }).catch(err => {
+                    document.getElementById("serverName").innerHTML = `
+                    You've been invited to join a server, but we couldn't connect :~(<br>
+                    Either the invite link is invalid or the server is currently down.
+                    Please contact the server owner if you think there's an issue.
+                    `;
+                    document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
+                });;
+            }).catch(err => {
+                document.getElementById("serverName").innerHTML = `
+                You've been invited to join a server, but we couldn't connect :~(<br>
+                Either the invite link is invalid or the server is currently down.
+                Please contact the server owner if you think there's an issue.
+                `;
+                document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
+            });
             document.getElementById("inviteparent").style.display = "flex";
             document.getElementById("acceptinvitebtn").addEventListener("click", () => {
                 localStorage.setItem("pendingInvite", inviteCode);
@@ -364,8 +444,8 @@ function clientLoad() {
             let code = serveur.split(' ')[1];
             let url = ("ws://"+ip.toString());
             let ws = new WebSocket(url);
-            sockets[ip] = ws;
             ws.onopen = () => {
+                sockets[ip] = ws;
                 document.getElementById("msgtxt").addEventListener("keypress", (e) => {
                     if (e.key == "Enter" /*&& focusedServer == serveur*/) {
                         if (e.shiftKey) {

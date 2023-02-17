@@ -22,6 +22,7 @@ const fs = require('fs');
 const { createServer } = require("http");
 const { v4 } = require("uuid");
 const path = require('path');
+const crypto = require('crypto');
 
 var conf = JSON.parse(fs.readFileSync("./conf.json")).server;
 var users = JSON.parse(fs.readFileSync("./users.json"));
@@ -30,7 +31,6 @@ var sessions = {};
 function ClientUser(u) {
     if (u.tag == undefined) {
         users.count++;
-        console.log(users.count);
         users[u.id].tag = toBase26(users.count);
         u.tag = toBase26(users.count);
         fs.writeFile("./users.json", JSON.stringify(users), () => {})
@@ -127,7 +127,7 @@ data, this is to prevent server owners from hijacking accounts.");
             });
         }
         catch (e) {
-            console.log(e);
+            console.error(e);
             res.writeHead(403, {"Content-Type": "text/plain"});
             res.end("some error, idk");
             return;
@@ -146,13 +146,14 @@ data, this is to prevent server owners from hijacking accounts.");
             res.end("invalid session");
             return;
         }
+        let count = 1;
         const form = formidable({
             maxFiles: 5,
             maxFileSize: 25 * 1024 * 1024,
             uploadDir: `./usercontent/uploads/${sessions[sid].uid}/`,
             filename: (name, ext, part, form) => {
                 fs.mkdirSync(`./usercontent/uploads/${sessions[sid].uid}/`, {recursive: true})
-                return `${v4()}.${ext}`;
+                return `${count++}.${ext}`;
             }
         });
         form.parse(req, (err, fields, files) => {
@@ -164,11 +165,19 @@ data, this is to prevent server owners from hijacking accounts.");
             res.writeHead(200, { "Content-Type": "application/json" });
             let urls = [];
             for (let file of Object.values(files)) {
-                urls.push(file.filepath.replace(__dirname+"/usercontent", ""));
+                try {
+                    let fdata = fs.readFileSync(file.filepath);
+                    let newpath = __dirname+"/usercontent/uploads/"+sessions[sid].uid+"/";
+                    newpath += crypto.createHash('sha512').update(fdata).digest("hex");
+                    fs.renameSync(file.filepath, newpath);
+                    urls.push(newpath.replace(__dirname+"/usercontent", ""));
+                } catch (e) {
+                    console.error(e);
+                }
             }
             res.end(JSON.stringify(urls));
             // do something here
-        })
+        });
         return;
     }
 
@@ -258,7 +267,7 @@ data, this is to prevent server owners from hijacking accounts.");
             });
         }
         catch (e) {
-            console.log(e);
+            console.error(e);
             res.writeHead(403, {"Content-Type": "text/plain"});
             res.end("invalid json data or non-post request");
             return;
@@ -461,7 +470,11 @@ data, this is to prevent server owners from hijacking accounts.");
         res.end(JSON.stringify(ClientUser(users[uid])));
     }
 
-    // regular pages
+    //
+    //
+    // folders
+    //
+    // 
 
     else if (url.pathname.startsWith("/avatars")) {
         let ctype = "image/png";
@@ -504,12 +517,25 @@ data, this is to prevent server owners from hijacking accounts.");
             fs.readFile("./found.html", (err, data) => {
                 if (err) {
                     res.end("404: 404 not found (ultimate bad error) (maybe just wait until we can fix it lol)");
-                    console.log(err.toString());
+                    console.error(err.toString());
                 }
                 else res.end(data.toString()+" "+req.url+" -->");
             });
             return;
         }
+
+        if (fs.lstatSync("./usercontent"+url.pathname).isDirectory()) {
+            res.writeHead(403, "no you may not", { "Content-Type": "text/html" });
+            fs.readFile("./found.html", (err, data) => {
+                if (err) {
+                    res.end("404: 404 not found (ultimate bad error) (maybe just wait until we can fix it lol)");
+                    console.error(err.toString());
+                }
+                else res.end(data.toString()+" "+req.url+" -->");
+            });
+            return;
+        }
+
         let stream = fs.createReadStream("./usercontent"+url.pathname)
         res.writeHead(200, {});
         stream.on("ready", () => {
@@ -518,12 +544,18 @@ data, this is to prevent server owners from hijacking accounts.");
         return;
     }
 
+    //
+    //
+    // normal files
+    //
+    //
+
     else if (url.pathname == "/main.css") {
         res.writeHead(200, {"Content-Type": "text/css"});
         fs.readFile("./main.css", (err, data) => {
             if (err) {
                 res.end();
-                console.log(err.toString());
+                console.error(err.toString());
             }
             else res.end(data);
         });
@@ -534,7 +566,7 @@ data, this is to prevent server owners from hijacking accounts.");
         fs.readFile("./index.html.js", (err, data) => {
             if (err) {
                 res.end();
-                console.log(err.toString());
+                console.error(err.toString());
             }
             else res.end(data.toString().replace(/ICON/, conf.icon));
         });
@@ -545,7 +577,7 @@ data, this is to prevent server owners from hijacking accounts.");
         fs.readFile("./index.html", (err, data) => {
             if (err) {
                 res.end();
-                console.log(err.toString());
+                console.error(err.toString());
             }
             else res.end(data.toString().replace(/ICON/g, conf.icon));
         });
@@ -556,7 +588,7 @@ data, this is to prevent server owners from hijacking accounts.");
         fs.readFile("./login.html.js", (err, data) => {
             if (err) {
                 res.end();
-                console.log(err.toString());
+                console.error(err.toString());
             }
             else res.end(data.toString().replace(/ICON/, conf.icon));
         });
@@ -567,7 +599,7 @@ data, this is to prevent server owners from hijacking accounts.");
         fs.readFile("./login.html", (err, data) => {
             if (err) {
                 res.end();
-                console.log(err.toString());
+                console.error(err.toString());
             }
             else res.end(data.toString().replace(/ICON/, conf.icon));
         });
@@ -578,7 +610,7 @@ data, this is to prevent server owners from hijacking accounts.");
         fs.readFile("./tos.html", (err, data) => {
             if (err) {
                 res.end();
-                console.log(err.toString());
+                console.error(err.toString());
             }
             else res.end(data.toString().replace(/ICON/, conf.icon));
         });
@@ -589,7 +621,7 @@ data, this is to prevent server owners from hijacking accounts.");
         fs.readFile("./found.html", (err, data) => {
             if (err) {
                 res.end("404: 404 not found (ultimate bad error) (maybe just wait until we can fix it lol)");
-                console.log(err.toString());
+                console.error(err.toString());
             }
             else res.end(data.toString()+" "+req.url+" -->");
         });

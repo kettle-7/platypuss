@@ -17,7 +17,7 @@
 
 const { WebSocketServer } = require('ws');
 const http = require('http');
-const { readFileSync, writeFile, readFile, readdirSync, writeFileSync } = require("fs");
+const { readFileSync, readdirSync, writeFileSync } = require("fs");
 const path = require('path');
 const { eventType } = require('./handles/50_message');
 var conf = JSON.parse(readFileSync(__dirname+"/server.properties"));
@@ -42,102 +42,111 @@ for (const file of handleFiles) {
     }
 }
 
-const wss = new WebSocketServer({ port: conf.port, clientTracking: true });
+const httpser = http.createServer((req, res) => {
+    res.writeHead(200, {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"
+    });
+    res.end(JSON.stringify(conf.manifest));
+});
 
-wss.on('connection', function connection(ws) {
-    ws.loggedinbytoken = false;
-    ws.on('message', function message(data) {
-        try {
-            let packet = JSON.parse(data);
-            let eventType = packet.eventType;
+httpser.listen(conf.port, () => {
+    const wss = new WebSocketServer({ clientTracking: true, server: httpser });
+
+    wss.on('connection', function connection(ws) {
+        ws.loggedinbytoken = false;
+        ws.on('message', function message(data) {
             try {
-                if (!ws.loggedinbytoken && eventType != "login") {
-                    ws.send(JSON.stringify({
-                        eventType: "error",
-                        code: "notLoggedIn",
-                        explanation: 
+                let packet = JSON.parse(data);
+                let eventType = packet.eventType;
+                try {
+                    if (!ws.loggedinbytoken && eventType != "login") {
+                        ws.send(JSON.stringify({
+                            eventType: "error",
+                            code: "notLoggedIn",
+                            explanation: 
 "This server requires a session token to be passed in order for any packets to\
  be accepted. If you are the developer of the client then please add sign-in\
  functionality."
-                    }));
-                    return;
-                }
-                if (eventType in handlers) {
-                    for (let handler of handlers[eventType]) {
-                        packet.ws = ws;
-                        sdata.properties = conf;
-                        let ret = handler.execute(sdata, wss, packet);
-                        if (ret) sdata = ret;
-                        ws = packet.ws;
+                        }));
+                        return;
                     }
-                } else {
-                    ws.send(JSON.stringify({
-                        eventType: "error",
-                        code: "unknownEvent",
-                        explanation: 
+                    if (eventType in handlers) {
+                        for (let handler of handlers[eventType]) {
+                            packet.ws = ws;
+                            sdata.properties = conf;
+                            let ret = handler.execute(sdata, wss, packet);
+                            if (ret) sdata = ret;
+                            ws = packet.ws;
+                        }
+                    } else {
+                        ws.send(JSON.stringify({
+                            eventType: "error",
+                            code: "unknownEvent",
+                            explanation: 
 "The server did not recognise the event type sent in the last packet, it may be\
  incomplete, using an outdated version of the API, or the client sent a faulty\
  packet. The only way to be sure which end is at fault is by checking the API\
  reference docs to see what event types should be supported."
-                    }));
-                    console.log(`\
+                        }));
+                        console.log(`\
 The server did not recognise the event type sent in the last packet, it may be\
  using an outdated version of the API, incomplete, or the client sent a faulty\
  packet. The only way to be sure which end is at fault is by checking the API\
  reference docs to see what event types should be supported.\n\nEvent type give\
  n: ${eventType}\n`);
+                    }
+                } catch (e) {
+                    writeFileSync(__dirname+"/server.json", JSON.stringify(sdata));
+                    console.log (e);
                 }
-            } catch (e) {
-                writeFileSync(__dirname+"/server.json", JSON.stringify(sdata));
-                console.log (e);
             }
-        }
-        catch {
-            ws.send(JSON.stringify({
-                eventType: "error",
-                code: "invalidJson",
-                explanation: 
+            catch {
+                ws.send(JSON.stringify({
+                    eventType: "error",
+                    code: "invalidJson",
+                    explanation: 
 "The JSON data recieved in the previous packet was invalid or had no eventType\
  property. If you are the developer of the client that sent the packet please \
 check your code thoroughly, otherwise please contact the developer."
-            }));
-            return;
-        }
-    });
-    ws.send(JSON.stringify({
-        eventType: "connecting",
-        explanation: "Connecting..."
-    }));
-    ws.on("error", console.log);
-    ws.on("close", () => {
-        writeFileSync(__dirname+"/server.json", JSON.stringify(sdata));
-        http.get(`http://${sdata.properties.authAddr}/uinfo?id=${ws.uid}`, (res) => {
-            let chunks = [];
-            res.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
-            res.on('error', (err) => reject(err));
-            res.on('end', () => {
-                let data;
-                try {
-                    data = JSON.parse(Buffer.concat(chunks).toString('utf8'));
-                    for (let client of wss.clients) {
-                        if (client != ws && client.loggedinbytoken)
-                        client.send(JSON.stringify({
-                            eventType: "disconnect",
-                            user: ws.uid,
-                            explanation: `${data.unam} disconnected from the server.`
-                        }));
+                }));
+                return;
+            }
+        });
+        ws.send(JSON.stringify({
+            eventType: "connecting",
+            explanation: "Connecting..."
+        }));
+        ws.on("error", console.log);
+        ws.on("close", () => {
+            writeFileSync(__dirname+"/server.json", JSON.stringify(sdata));
+            http.get(`http://${sdata.properties.authAddr}/uinfo?id=${ws.uid}`, (res) => {
+                let chunks = [];
+                res.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
+                res.on('error', (err) => reject(err));
+                res.on('end', () => {
+                    let data;
+                    try {
+                        data = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+                        for (let client of wss.clients) {
+                            if (client != ws && client.loggedinbytoken)
+                            client.send(JSON.stringify({
+                                eventType: "disconnect",
+                                user: ws.uid,
+                                explanation: `${data.unam} disconnected from the server.`
+                            }));
+                        }
+                        console.log(data.unam + " disconnected from the server.");
+                    } catch (e) {
+                        console.log(e);
+                        console.log(ws.uid + " disconnected from the server.");
                     }
-                    console.log(data.unam + " disconnected from the server.");
-                } catch (e) {
-                    console.log(e);
-                    console.log(ws.uid + " disconnected from the server.");
-                }
+                });
             });
         });
     });
+    wss.on("error", console.log);
 });
-wss.on("error", console.log);
-//wss.on("close", console.log);
 
 let code = "";
 for (let part of conf.ip.split(".")) {
@@ -146,9 +155,9 @@ for (let part of conf.ip.split(".")) {
     	cp = "0" + cp;
     }
     code += cp;
-    //console.log(code);
 }
+// the invite code must be at least 16
 code += parseInt(conf.port, 10).toString(16) + parseInt(conf.inviteCode, 10).toString(16);
-inviteUrl = `http://122.62.122.75:3000/?invite=${code}`;
+inviteUrl = `http://platypuss.ddns.net/?invite=${code}`;
 
 console.log(`The server is currently running on port ${conf.port}, join at ${inviteUrl}`);

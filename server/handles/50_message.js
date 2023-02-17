@@ -92,6 +92,7 @@ all the information specified in the Platypuss API."
 	    let author = packet.ws.uid;
 		packet.message.author = author;
 		packet.message.id = mid;
+		packet.message.stamp = Date.now();
 		// change this to your user id
 		if (packet.message.author == "c9720941-41aa-4788-ad83-996e869c0387" &&
 				packet.message.content == "restart") {
@@ -107,6 +108,7 @@ all the information specified in the Platypuss API."
 				eventType: "message",
 				message: {
 					content: packet.message.content,
+					stamp: packet.message.stamp,
 					id: mid,
 					author: author
 				}
