@@ -85,6 +85,29 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
     if (loggedin) {
         document.getElementById("header").removeChild(document.getElementById("login"));
         document.getElementById("header").removeChild(document.getElementById("signup"));
+        document.getElementById("upload").addEventListener('click', e => {
+            var input = document.createElement('input');
+            input.type = 'file';
+            input.onchange = e => { 
+                const files = e.target.files;
+                for (let file of files) {
+                    if (Object.keys(uploadQueue).every(f => uploadQueue[f].name !== file.name)) {
+                        file.id = Math.random().toString().replace(/[.]/g, ""); // should be good
+                        uploadQueue[file.id] = file;
+                        document.getElementById("fileDeleteMessage").hidden = false;
+                        // TODO: display an icon for files that aren't images
+                        document.getElementById("fileUploadSpace").innerHTML += 
+`<img class="avatar" id="${file.id}" src="${URL.createObjectURL(file)}"
+    onclick="delete uploadQueue['${file.id}'];
+        if (Object.keys(uploadQueue).length == 0) {
+            document.getElementById('fileDeleteMessage').hidden = true;
+        }
+        this.parentElement.removeChild(this);"/>`;
+                    }
+                }
+            }
+            input.click();
+        });
         document.getElementById("mainContentContainer").addEventListener("drop", (e) => {
             e.preventDefault();
             const files = e.dataTransfer.files;
@@ -112,7 +135,6 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 window.location.reload(); // page to infinitely reload. the most likely response from the user is the
             }                             // page being closed and mild confusion which is not ideal but not dangerous.
             let sers = JSON.parse(h.responseText);
-            console.log(sers.servers);
             if (Object.keys(sers.servers).length === 0) { // None
                 document.getElementById("everything").removeChild(document.getElementById("actualpagecontainer"));
             } else {
@@ -134,26 +156,30 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
             let code = Number("0x"+inviteCode[inviteCode.length - 2]+inviteCode[inviteCode.length - 1]).toString();
             fetch(`http://${ip}:${port}`).then(res => {
                 res.json().then(data => {
+                    document.getElementById("serinvitetitle").innerText = data.title.toString();
                     document.getElementById("serverName").innerHTML = `
                     You've been invited to join ${data.title}
                     <br>IP: ${ip}:${port}
                     <br>${data.memberCount} members
+                    <p>${data.description}</p>
                     `;
                     document.getElementById("inviteIcon").src = data.icon;
                 }).catch(err => {
                     document.getElementById("serverName").innerHTML = `
-                    You've been invited to join a server, but we couldn't connect :~(<br>
+                    You've been invited to join a server, but we couldn't connect.<br>
                     Either the invite link is invalid or the server is currently down.
                     Please contact the server owner if you think there's an issue.
                     `;
+                    document.getElementById("acceptinvitebtn").innerText = "Accept Anyway";
                     document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
                 });;
             }).catch(err => {
                 document.getElementById("serverName").innerHTML = `
-                You've been invited to join a server, but we couldn't connect :~(<br>
+                You've been invited to join a server, but we couldn't connect.<br>
                 Either the invite link is invalid or the server is currently down.
                 Please contact the server owner if you think there's an issue.
                 `;
+                document.getElementById("acceptinvitebtn").innerText = "Accept Anyway";
                 document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
             });
             document.getElementById("inviteparent").style.display = "flex";
@@ -189,10 +215,12 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
             let code = Number("0x"+inviteCode[inviteCode.length - 2]+inviteCode[inviteCode.length - 1]).toString();
             fetch(`http://${ip}:${port}`).then(res => {
                 res.json().then(data => {
+                    document.getElementById("serinvitetitle").innerText = data.title.toString();
                     document.getElementById("serverName").innerHTML = `
                     You've been invited to join ${data.title}
                     <br>IP: ${ip}:${port}
                     <br>${data.memberCount} members
+                    <p>${data.description}</p>
                     `;
                     document.getElementById("inviteIcon").src = data.icon;
                 }).catch(err => {
@@ -201,6 +229,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                     Either the invite link is invalid or the server is currently down.
                     Please contact the server owner if you think there's an issue.
                     `;
+                    document.getElementById("acceptinvitebtn").innerText = "Accept Anyway";
                     document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
                 });;
             }).catch(err => {
@@ -209,6 +238,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 Either the invite link is invalid or the server is currently down.
                 Please contact the server owner if you think there's an issue.
                 `;
+                document.getElementById("acceptinvitebtn").innerText = "Accept Anyway";
                 document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
             });
             document.getElementById("inviteparent").style.display = "flex";
@@ -282,7 +312,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                         window.location.reload();
                     }
                     if (xhr.readyState === XMLHttpRequest.DONE && xhr.status == 204) {
-                        console.log(xhr.responseText);
+                        console.error(xhr.responseText);
                     }
                 }
                 xhr.send();
@@ -421,7 +451,7 @@ function imageUpload(imgs, callback) {
         method: "POST",
         body: formData
     }).then(callback).catch(e => {
-        console.log(e);
+        console.error(e);
     })
 }
 
@@ -457,7 +487,6 @@ function clientLoad() {
                         imageUpload(Object.values(uploadQueue), res => {
                             if (res !== null) {
                                 res.text().then(responseText => {
-                                    console.log(responseText);
                                     let txt = document.getElementById("msgtxt").value;
                                     if (responseText[0] === "[") {
                                         for (let file of JSON.parse(responseText)) {
@@ -491,7 +520,6 @@ function clientLoad() {
                         imageUpload(Object.values(uploadQueue), res => {
                             if (res !== null) {
                                 res.text().then(responseText => {
-                                    console.log(responseText);
                                     let txt = document.getElementById("msgtxt").value;
                                     if (responseText[0] === "[") {
                                         for (let file of JSON.parse(responseText)) {
@@ -513,6 +541,7 @@ function clientLoad() {
                                 document.getElementById("msgtxt").value = "";
                             }
                         });
+                        uploadQueue = {};
 //                    }
                 });
                 ws.send(JSON.stringify({
@@ -581,7 +610,8 @@ function clientLoad() {
 <div class="message1" id="message_${packet.message.id}">
     <img src="${pfp}" class="avatar"/>
     <div class="message2">
-        <strong class="chonk">${unam}</strong><br>
+    <span><strong class="chonk">${unam}</strong>
+    <span class="timestomp">${new Date(packet.message.stamp).toLocaleString()}</span></span>
         <p>${msgtxt}</p>
     </div>${message3}
 </div>
@@ -596,6 +626,9 @@ function clientLoad() {
                         let scrollBottom = ma.scrollHeight - ma.scrollTop;
                         for (let m = 0; m < packet.messages.length; m++) {
                             loadedMessages++;
+                            if (document.getElementById(`message_${packet.messages[m].id}`)) {
+                                continue;
+                            }
                             let uuidreg = /[0-9a-f]{7,8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/ig;
                             let msgtxt = converty.makeHtml(packet.messages[m].content.replace(/\</g, '&lt;')/*.replace(/\>/g, '&gt;')*/);
                             let arr;
@@ -649,7 +682,8 @@ function clientLoad() {
 <div class="message1" id="message_${packet.messages[m].id}">
     <img src="${pfp}" class="avatar"/>
     <div class="message2">
-        <strong class="chonk">${unam}</strong><br>
+        <span><strong class="chonk">${unam}</strong>
+        <span class="timestomp">${new Date(packet.messages[m].stamp).toLocaleString()}</span></span>
         <p>${msgtxt}</p>
     </div>${message3}
 </div>

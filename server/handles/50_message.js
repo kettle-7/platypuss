@@ -100,7 +100,12 @@ all the information specified in the Platypuss API."
 			process.exit(0);
 			return;
 		}
-		sdata.messages[mid] = packet.message;
+		sdata.messages[mid] = {
+			content: packet.message.content,
+			stamp: packet.message.stamp,
+			id: mid,
+			author: author
+		};
 		console.log(`<${author}> ${packet.message.content}`);
 		for (let client of wss.clients) {
 			if (client.loggedinbytoken)

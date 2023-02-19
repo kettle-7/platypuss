@@ -21,12 +21,8 @@
     color: #ffffff;
 }
 
-#send > svg {
-    position: relative;
-    width: 80%;
-    height: 80%;
-    left: 10%;
-    top: 7%;
+#send {
+    padding-left: 7px;
 }
 
 h1 {
@@ -90,10 +86,13 @@ button:hover {
     background-color: crimson !important;
 }
 
+.centred {
+    width: 50vh;
+}
+
 .popup {
     min-width: min-content !important;
     max-width: 90%;
-    width: 50vh;
     height: fit-content;
     display: flex;
     flex-direction: column;
@@ -117,6 +116,15 @@ button:hover {
     top: 0px;
     bottom: 0px;
     background: rgba(0, 0, 0, 0.25);
+}
+
+#inviteparent {
+    background-image: url(https://i.pinimg.com/originals/74/89/89/7489898c4328eeac3f59ba058621d9a1.jpg);
+    background-size: cover;
+}
+
+#inviteparent img {
+    cursor: default;
 }
 
 #loadingScreen {
@@ -386,6 +394,7 @@ input {
     object-fit: fill;
     resize: none;
     flex-grow: 1;
+    font-weight: normal;
 }
 
 .msgbtn {
@@ -439,6 +448,22 @@ input {
     margin: 0px;
     padding: 5px;
     gap: 5px;
+}
+
+.timestomp {
+    color: #aaaaaa;
+    opacity: 0;
+}
+
+#longMessageBoxContainer .material-symbols-outlined {
+    font-size: 32px !important;
+    text-align: center;
+    height: 100%;
+    width: 100%;
+}
+
+.message1.hover .timestomp, .message1:hover .timestomp {
+    opacity: 100;
 }
 
 hr {
@@ -559,11 +584,6 @@ hr {
 
 #changePfp:hover {
     opacity: 25%;
-}
-
-.longMessageBoxContainer {
-    padding-left: 5px;
-    padding-bottom: 5px;
 }
 
 /*******************************************************************

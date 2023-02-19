@@ -6,6 +6,7 @@
         <title>Platypuss</title>
         <link href="/main.css" rel="stylesheet"/>
         <link rel="icon" type="image/png" href="ICON"/>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,1,0" />
         <script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
     </head>
     <body>
@@ -35,15 +36,11 @@
                 <div id="fileUploadSpace"></div>
                 <div id="longMessageBoxContainer">
                     <textarea id="msgtxt" class="textBox chonk" placeholder="Type a message" cols="1"></textarea>
+                    <button id="upload" class="msgbtn chonk" style="border-color: #888888;">
+                        <span class="material-symbols-outlined">publish</span>
+                    </button>
                     <button id="send" class="msgbtn chonk" style="border-color: #888888;">
-                        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
-                            <style type="text/css">
-                                .st0{fill:#0075db;}
-                            </style>
-                            <g id="XMLID_2_">
-                                <polygon id="XMLID_4_" class="st0" points="0,0 49.6,233.9 352.1,256 49.6,278.1 0,512 512,256  "/>
-                            </g>
-                        </svg>
+                        <span class="material-symbols-outlined">send</span>
                     </button>
                 </div>
             </div>
@@ -58,10 +55,10 @@
             </div>
         </div>
         <div class="popupParent" id="inviteparent" hidden>
-            <div class="popup" id="invitepopup">
+            <div class="centred popup" id="invitepopup">
                 <div class="banner" style="padding-top:10px;">
                     <img class="avatar" id="inviteIcon" style="width:96px;height:96px;padding: 0px;margin-right:10px;"/>
-                    <h2 style="text-align:center;flex-grow: 1;">Invite to server</h2>
+                    <h2 style="text-align:center;flex-grow: 1;" id="serinvitetitle">Invite to server</h2>
                 </div>
                 <p id="serverName">
                     You've been invited to join a server!<br>
@@ -70,11 +67,11 @@
                     contact the server owner to resolve the issue.
                 </p>
                 <button class="bleu chonk" id="acceptinvitebtn">Accept</button>
-                <button class="chonk" id="invdecline" onclick="document.body.removeChild(document.getElementById('inviteparent'));window.history.pushState({}, '', '/')">Decline</button>
+                <button class="chonk" id="invdecline" onclick="document.body.removeChild(document.getElementById('inviteparent'));window.history.pushState({}, '', '/');clientLoad();">Decline</button>
             </div>
         </div>
         <div class="popupParent" id="acsparent" onclick="document.getElementById('acsparent').style.display = 'none'" hidden>
-            <div class="popup" id="acspopup">
+            <div class="centred popup" id="acspopup">
                 <h2 style="text-align:center;">Account Settings</h2>
                 <div id="profBanner" class="banner">
                     <div style="width:96px;height:96px; padding: 0px;position: relative;display: block;" class="avatar">
@@ -96,7 +93,7 @@
             </div>
         </div>
         <div class="popupParent" id="dacparent" onclick="document.getElementById('dacparent').style.display = 'none'" hidden>
-            <div class="popup" id="dacpopup">
+            <div class="centred popup" id="dacpopup">
                 <h2 style="text-align:center;">Delete Account</h2>
                 <span>Do you really want to do that?</span>
                 <button class="dangerous chonk" id="dodel">Yes</button>
@@ -104,8 +101,9 @@
             </div>
         </div>
         <div class="popupParent" id="cpwdparent" onclick="document.getElementById('cpwdparent').style.display = 'none'" hidden>
-            <div class="popup" id="cpwdpopup">
+            <div class="centred popup" id="cpwdpopup">
                 <h2 style="text-align:center;">Change Password</h2>
+                <div style="flex-grow:1;"></div>
                 <!-- <span id="cpwdnc" hidden>Sorry, that's not your current password.</span>
                 <input type="password" id="oldPwd" class="chonk textBox" placeholder="Current Password" /> -->
                 <span id="nonmatch" hidden>Sorry, that's not your current password.</span>
