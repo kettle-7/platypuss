@@ -88,6 +88,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
         document.getElementById("upload").addEventListener('click', e => {
             var input = document.createElement('input');
             input.type = 'file';
+            input.multiple = true;
             input.onchange = e => { 
                 const files = e.target.files;
                 for (let file of files) {
@@ -447,12 +448,19 @@ function imageUpload(imgs, callback) {
     imgs.forEach((image, index) => {
         formData.append(`file[${index}]`, image);
     });
-    fetch(`/upload?id=${localStorage.getItem("sid")}`, {
-        method: "POST",
-        body: formData
-    }).then(callback).catch(e => {
-        console.error(e);
-    })
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", `/upload?id=${localStorage.getItem("sid")}`);
+    xhr.onreadystatechange = () => {
+        document.getElementById("progress").hidden = true;
+        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status) {
+            callback(xhr.responseText);
+        }
+    }
+    document.getElementById("progress").hidden = false;
+    xhr.upload.onprogress = (e) => {
+        document.getElementById("progress2").style.marginRight = `${e.loaded/e.total*100}%`
+    }
+    xhr.send(formData);
 }
 
 function clientLoad() {
@@ -484,22 +492,28 @@ function clientLoad() {
                             return;
                         }
                         document.getElementById("msgtxt").rows = 2;
+                        document.getElementById("progress").innerHTML = '<div id="progress2"></div>';
                         imageUpload(Object.values(uploadQueue), res => {
-                            if (res !== null) {
-                                res.text().then(responseText => {
-                                    let txt = document.getElementById("msgtxt").value;
-                                    if (responseText[0] === "[") {
-                                        for (let file of JSON.parse(responseText)) {
-                                            // TODO: temporary measure until messages get an uploads field
-                                            txt += "\n[![]("+file+")]("+file+")";
-                                        }
+                            if (res) {
+                                if (res[0] == "E") {
+                                    document.getElementById("progress").innerHTML += res;
+                                    document.getElementById("progress").hidden = false;
+                                    document.getElementById("progress2").style.marginRight = "0px";
+                                    return;
+                                }
+                                let responseText = JSON.parse(res);
+                                let txt = document.getElementById("msgtxt").value;
+                                if (res[0] === "[") {
+                                    for (let file of responseText) {
+                                        // TODO: temporary measure until messages get an uploads field
+                                        txt += "\n[![]("+file+")]("+file+")";
                                     }
-                                    ws.send(JSON.stringify({
-                                        eventType: "message",
-                                        message: { content: txt }
-                                    }));
-                                    document.getElementById("msgtxt").value = "";
-                                });
+                                }
+                                ws.send(JSON.stringify({
+                                    eventType: "message",
+                                    message: { content: txt }
+                                }));
+                                document.getElementById("msgtxt").value = "";
                             } else {
                                 ws.send(JSON.stringify({
                                     eventType: "message",
@@ -518,21 +532,26 @@ function clientLoad() {
 //                    if (focusedServer == serveur) {
                         document.getElementById("msgtxt").rows = 2;
                         imageUpload(Object.values(uploadQueue), res => {
-                            if (res !== null) {
-                                res.text().then(responseText => {
-                                    let txt = document.getElementById("msgtxt").value;
-                                    if (responseText[0] === "[") {
-                                        for (let file of JSON.parse(responseText)) {
-                                            // TODO: temporary measure until messages get an uploads field
-                                            txt += "\n[![]("+file+")]("+file+")";
-                                        }
+                            if (res) {
+                                if (res[0] == "E") {
+                                    document.getElementById("progress").innerText = res;
+                                    document.getElementById("progress").hidden = false;
+                                    document.getElementById("progress").style.marginRight = "0px";
+                                    return;
+                                }
+                                responseText = JSON.parse(res);
+                                let txt = document.getElementById("msgtxt").value;
+                                if (responseText[0] === "[") {
+                                    for (let file of JSON.parse(responseText)) {
+                                        // TODO: temporary measure until messages get an uploads field
+                                        txt += "\n[![]("+file+")]("+file+")";
                                     }
-                                    ws.send(JSON.stringify({
-                                        eventType: "message",
-                                        message: { content: txt }
-                                    }));
-                                    document.getElementById("msgtxt").value = "";
-                                });
+                                }
+                                ws.send(JSON.stringify({
+                                    eventType: "message",
+                                    message: { content: txt }
+                                }));
+                                document.getElementById("msgtxt").value = "";
                             } else {
                                 ws.send(JSON.stringify({
                                     eventType: "message",
@@ -559,7 +578,7 @@ function clientLoad() {
                         loadedMessages++;
                         // looks like absolute gibberish, matches uuids
                         let uuidreg = /[0-9a-f]{7,8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/ig;
-                        let msgtxt = converty.makeHtml(packet.message.content.replace(/\</g, '&lt;')/*.replace(/\>/g, '&gt;')*/);
+                        let msgtxt = converty.makeHtml(packet.message.content.replace(/\</g, '&lt;')/*.replace(/\>/g, '&gt;')*/).replace(/\<\/?pre\>/g);
                         let arr;
                         while ((arr = uuidreg.exec(msgtxt)) !== null) {
                             let strl = msgtxt.split("");
@@ -611,7 +630,7 @@ function clientLoad() {
     <img src="${pfp}" class="avatar"/>
     <div class="message2">
     <span><strong class="chonk">${unam}</strong>
-    <span class="timestomp">${new Date(packet.message.stamp).toLocaleString()}</span></span>
+    <span class="timestomp">#${resp ? resp.tag : "None"} at ${new Date(packet.message.stamp).toLocaleString()}</span></span>
         <p>${msgtxt}</p>
     </div>${message3}
 </div>
@@ -619,6 +638,8 @@ function clientLoad() {
                             if (ma.scrollHeight < ma.scrollTop  + (2 * ma.clientHeight)) {
                                 ma.scrollTo(ma.scrollLeft, ma.scrollHeight - ma.clientHeight);
                             }
+                            if (document.visibilityState == "hidden" && sers.userId != packet.message.author)
+                                new Audio('/uploads/93c70e82-b447-4794-99d9-3ab070d659ea/f3cb5ab570a29417524422d17b4e4a4db33b5900df8127688ffcf352df17383f79e1cfa87d9c6ab9ce4b47e90d231d22a805597dd719fbf01fe6da6d047d7290').play();
                         });
                         break;
                     case "messages":
@@ -630,7 +651,7 @@ function clientLoad() {
                                 continue;
                             }
                             let uuidreg = /[0-9a-f]{7,8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/ig;
-                            let msgtxt = converty.makeHtml(packet.messages[m].content.replace(/\</g, '&lt;')/*.replace(/\>/g, '&gt;')*/);
+                            let msgtxt = converty.makeHtml(packet.messages[m].content.replace(/\</g, '&lt;')/*.replace(/\>/g, '&gt;')*/).replace(/\<\/?pre\>/g);
                             let arr;
                             while ((arr = uuidreg.exec(msgtxt)) !== null) {
                                 let strl = msgtxt.split("");
@@ -683,7 +704,7 @@ function clientLoad() {
     <img src="${pfp}" class="avatar"/>
     <div class="message2">
         <span><strong class="chonk">${unam}</strong>
-        <span class="timestomp">${new Date(packet.messages[m].stamp).toLocaleString()}</span></span>
+        <span class="timestomp">#${user ? user.tag : "None"} at ${new Date(packet.messages[m].stamp).toLocaleString()}</span></span>
         <p>${msgtxt}</p>
     </div>${message3}
 </div>

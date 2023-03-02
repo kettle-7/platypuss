@@ -81,6 +81,7 @@ function toBase26(number) {
 }
 
 const server = createServer((req, res) => {
+    if (req.url == "http://") return;
     var url = new URL(req.url, `http://${req.headers.host}`);
 
     // annoying server stuff
