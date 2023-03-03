@@ -51,12 +51,14 @@ var url = new URL(window.location);
 var loggedin = true;
 var usercache = {};
 var uploadQueue = {};
+var authUrl = localStorage.getItem("authUrl");
+if (!authUrl) authUrl = "http://122.62.122.75";
 
 function fetchUser(id) {
     return new Promise((resolve, reject) => {
         if (usercache[id] == undefined) {
             const x = new XMLHttpRequest();
-            x.open('GET', '/uinfo?id='+id, true);
+            x.open('GET', authUrl+'/uinfo?id='+id, true);
             x.onload = () => {
                 if (x.status != 200) {
                     resolve(null);
@@ -75,11 +77,11 @@ function fetchUser(id) {
 fetchUser(localStorage.getItem('sid')).then((res) => {
     if (res == null) loggedin = false;
     else {
-        document.getElementById("pfp").src = res.pfp;
+        document.getElementById("pfp").src = authUrl + res.pfp;
         document.getElementById("username").innerText = "Logged in as " + res.unam;
-        document.getElementById("changePfp").src = res.pfp;
+        document.getElementById("changePfp").src = authUrl + res.pfp;
         document.getElementById("acsusername").innerText = res.unam;
-        document.getElementById("editTag").innerText = res.tag;
+        document.getElementById("tag").innerText = res.tag;
         document.ppures = res;
     }
     if (loggedin) {
@@ -130,7 +132,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
         });
         // document.getElementById("header").removeChild(document.getElementById("spacement"));
         const h = new XMLHttpRequest();
-        h.open('GET', '/sload?id='+localStorage.getItem('sid'), true);
+        h.open('GET', authUrl+'/sload?id='+localStorage.getItem('sid'), true);
         h.onload = () => {
             if (h.status != 200) {        // warning: this code might fail if something has gone wrong, and thus cause the 
                 window.location.reload(); // page to infinitely reload. the most likely response from the user is the
@@ -188,11 +190,11 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 document.getElementById("invdecline").innerText = "Close";
                 document.getElementById("invitepopup").removeChild(document.getElementById("acceptinvitebtn"));
                 const r = new XMLHttpRequest();
-                r.open("GET", `/joinserver?id=${localStorage.getItem("sid")}&ip=${ip}:${port}+${code}`);
+                r.open("GET", authUrl+`/joinserver?id=${localStorage.getItem("sid")}&ip=${ip}:${port}+${code}`);
                 r.onload = () => {
                     if (r.status == 200) {
                         document.body.removeChild(document.getElementById('inviteparent'));
-                        window.history.pushState({}, '', '/');
+                        window.history.pushState({}, '', './index.html');
                         clientLoad();
                     } else {
                         document.getElementById("serverName").innerHTML = "Couldn't join the server, try again later?";
@@ -248,11 +250,11 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 document.getElementById("invdecline").innerText = "Close";
                 document.getElementById("invitepopup").removeChild(document.getElementById("acceptinvitebtn"));
                 const r = new XMLHttpRequest();
-                r.open("GET", `/joinserver?id=${localStorage.getItem("sid")}&ip=${ip}:${port}+${code}`);
+                r.open("GET", authUrl+`/joinserver?id=${localStorage.getItem("sid")}&ip=${ip}:${port}+${code}`);
                 r.onload = () => {
                     if (r.status == 200) {
                         document.body.removeChild(document.getElementById('inviteparent'));
-                        window.history.pushState({}, '', '/');
+                        window.history.pushState({}, '', './index.html');
                         clientLoad();
                     } else {
                         document.getElementById("serverName").innerHTML = "Couldn't join the server, maybe try again later?";
@@ -290,7 +292,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                             break;
                     }
                     const xhr = new XMLHttpRequest();
-                    xhr.open("POST", '/pfpUpload?id='+localStorage.getItem("sid")+"&ctype="+encodeURIComponent(ctype), true);
+                    xhr.open("POST", authUrl+'/pfpUpload?id='+localStorage.getItem("sid")+"&ctype="+encodeURIComponent(ctype), true);
                     xhr.setRequestHeader("Content-Type", ctype);
                     xhr.onreadystatechange = () => {
                         if (xhr.readyState === XMLHttpRequest.DONE && xhr.status) {
@@ -307,7 +309,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
             document.getElementById("changePfp").addEventListener("click", pickNewAvatar);
             document.getElementById("dodel").addEventListener("click", () => {
                 const xhr = new XMLHttpRequest();
-                xhr.open("GET", '/delacc?id='+localStorage.getItem("sid"), true);
+                xhr.open("GET", authUrl+'/delacc?id='+localStorage.getItem("sid"), true);
                 xhr.onreadystatechange = () => {
                     if (xhr.readyState === XMLHttpRequest.DONE && xhr.status == 200) {
                         window.location.reload();
@@ -329,7 +331,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 }
                 
                 const xhr = new XMLHttpRequest();
-                xhr.open("GET", '/passwdcfg?id='+localStorage.getItem("sid")+"&pwd="+cyrb53(pwd3), true);
+                xhr.open("GET", authUrl+'/passwdcfg?id='+localStorage.getItem("sid")+"&pwd="+cyrb53(pwd3), true);
                 xhr.onreadystatechange = () => {
                     if (xhr.readyState === XMLHttpRequest.DONE && xhr.status) {
                         window.location.reload();
@@ -387,7 +389,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
             document.getElementById("inviteparent").style.display = "flex";
             document.getElementById("acceptinvitebtn").addEventListener("click", () => {
                 localStorage.setItem("pendingInvite", inviteCode);
-                window.location = "/login.html?ift=1";
+                window.location = "./login.html?ift=1";
             });
             document.getElementById("acceptinvitebtn").innerText = "Create Account";
             document.getElementById("invdecline").innerText = "Cancel";
@@ -449,7 +451,7 @@ function imageUpload(imgs, callback) {
         formData.append(`file[${index}]`, image);
     });
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", `/upload?id=${localStorage.getItem("sid")}`);
+    xhr.open("POST", authUrl+`/upload?id=${localStorage.getItem("sid")}`);
     xhr.onreadystatechange = () => {
         document.getElementById("progress").hidden = true;
         if (xhr.readyState === XMLHttpRequest.DONE && xhr.status) {
@@ -470,7 +472,7 @@ function clientLoad() {
     document.getElementById("left").innerHTML = "";
     document.getElementById("right").innerHTML = "";
     const h = new XMLHttpRequest();
-    h.open('GET', '/sload?id='+localStorage.getItem('sid'), true);
+    h.open('GET', authUrl+'/sload?id='+localStorage.getItem('sid'), true);
     h.onload = () => {
         if (h.status != 200) {        // warning: this code might fail if something has gone wrong, and thus cause the 
             window.location.reload(); // page to infinitely reload. the most likely response from the user is the
@@ -506,7 +508,7 @@ function clientLoad() {
                                 if (res[0] === "[") {
                                     for (let file of responseText) {
                                         // TODO: temporary measure until messages get an uploads field
-                                        txt += "\n[![]("+file+")]("+file+")";
+                                        txt += "\n[![]("+authUrl + file+")]("+authUrl + file+")";
                                     }
                                 }
                                 ws.send(JSON.stringify({
@@ -614,7 +616,7 @@ function clientLoad() {
                             }
                             else {
                                 unam = resp.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
-                                pfp = resp.pfp;
+                                pfp = authUrl + resp.pfp;
                             }
                             let message3;
                             if (packet.message.author == sers.userId) {
@@ -639,7 +641,7 @@ function clientLoad() {
                                 ma.scrollTo(ma.scrollLeft, ma.scrollHeight - ma.clientHeight);
                             }
                             if (document.visibilityState == "hidden" && sers.userId != packet.message.author)
-                                new Audio('/uploads/93c70e82-b447-4794-99d9-3ab070d659ea/f3cb5ab570a29417524422d17b4e4a4db33b5900df8127688ffcf352df17383f79e1cfa87d9c6ab9ce4b47e90d231d22a805597dd719fbf01fe6da6d047d7290').play();
+                                new Audio(authUrl+'/uploads/93c70e82-b447-4794-99d9-3ab070d659ea/f3cb5ab570a29417524422d17b4e4a4db33b5900df8127688ffcf352df17383f79e1cfa87d9c6ab9ce4b47e90d231d22a805597dd719fbf01fe6da6d047d7290').play();
                         });
                         break;
                     case "messages":
@@ -688,7 +690,7 @@ function clientLoad() {
                             }
                             else {
                                 unam = user.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
-                                pfp = user.pfp;
+                                pfp = authUrl + user.pfp;
                             }
                             let message3;
                             if (packet.messages[m].author == sers.userId) {
