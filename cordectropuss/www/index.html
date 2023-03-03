@@ -4,19 +4,19 @@
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,maximum-scale=1"/>
         <title>Platypuss</title>
-        <link href="/main.css" rel="stylesheet"/>
-        <link rel="icon" type="image/png" href="ICON"/>
+        <link href="main.css" rel="stylesheet"/>
+        <link rel="icon" type="image/png" href="./icon.png"/>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,1,0" />
         <script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
     </head>
     <body>
         <div id="everything">
         <header id="header">
-            <img onclick="window.location = '/'" alt="Ornithorynchus Anatinus" style="cursor:pointer;width:48px;height:48px;border-radius:50%;border:2px solid #eeeeee" src="ICON" />
-            <h1 onclick="window.location = '/'" style="cursor: pointer;">Platypuss</h1>
+            <img onclick="window.location.reload()" alt="Ornithorynchus Anatinus" style="cursor:pointer;width:48px;height:48px;border-radius:50%;border:2px solid #eeeeee" src="icon.png" />
+            <h1 onclick="window.location.reload()" style="cursor: pointer;">Platypuss</h1>
             <div id="spacement" class="widest"></div>
-            <button class="chonk" onclick="window.location = '/login.html'" id="login" style="cursor: pointer;">Sign In</button>
-            <button class="bleu chonk" onclick="window.location = '/login.html?ift=1'" id="signup" style="cursor: pointer;">Create Account</button>
+            <button class="chonk" onclick="window.location = './login.html'" id="login" style="cursor: pointer;">Sign In</button>
+            <button class="bleu chonk" onclick="window.location = './login.html?ift=1'" id="signup" style="cursor: pointer;">Create Account</button>
             <img onclick="document.getElementById('accountInfoParent').hidden = !document.getElementById('accountInfoParent').hidden" id="pfp" alt="" class="avatar" src="" />
         </header>
         <div id="infopagecontainer"><main id="infoPage" class="mainpage padded" hidden="true">
@@ -81,7 +81,7 @@
                         </span>
                         <img class="avatar" id="changePfp" src="" style="width:96px;height:96px;position: absolute;margin: 0px; padding: 0px;left: 0px;top: 0px;border: none;"/>
                     </div>
-                    <h1 id="acsusername">(username)</h1><span id="tag">#<span id="editTag"></span></span>
+                    <h1 id="acsusername">(username)</h1><span id="tag"></span>
                 </div>
                 <span id="avatarTooBig" hidden>Sorry, that file is too big, the maximum size is 5MB.</span>
                 <button class="dangerous chonk" id="acsdelacc"
@@ -121,6 +121,6 @@
             </p>
             <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
         </div>
-        <script src="/index.js"></script>
+        <script src="index.js"></script>
     </body>
 </html>

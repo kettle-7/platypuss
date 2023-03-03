@@ -1,0 +1,10 @@
+{
+  "browserWindow": {
+    "darkTheme": true,
+    "webPreferences": {
+      "nodeIntegration": false
+    },
+    "width": 2000,
+    "autoHideMenuBar": true,
+  }
+}
