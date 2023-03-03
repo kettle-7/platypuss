@@ -1,7 +1,0 @@
-{
-    "server": {
-        "hostname": "0.0.0.0",
-        "port": 3000,
-        "icon": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Ornithorhynchus.jpg/1200px-Ornithorhynchus.jpg"
-    }
-}
