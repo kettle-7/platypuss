@@ -104,7 +104,8 @@ all the information specified in the Platypuss API."
 			content: packet.message.content,
 			stamp: packet.message.stamp,
 			id: mid,
-			author: author
+			author: author,
+			uploads: packet.message.uploads
 		};
 		console.log(`<${author}> ${packet.message.content}`);
 		for (let client of wss.clients) {
@@ -115,7 +116,8 @@ all the information specified in the Platypuss API."
 					content: packet.message.content,
 					stamp: packet.message.stamp,
 					id: mid,
-					author: author
+					author: author,
+					uploads: packet.message.uploads
 				}
 			}));
 		}

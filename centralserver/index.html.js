@@ -503,15 +503,9 @@ function clientLoad() {
                                 }
                                 let responseText = JSON.parse(res);
                                 let txt = document.getElementById("msgtxt").value;
-                                if (res[0] === "[") {
-                                    for (let file of responseText) {
-                                        // TODO: temporary measure until messages get an uploads field
-                                        txt += "\n[![]("+file+")]("+file+")";
-                                    }
-                                }
                                 ws.send(JSON.stringify({
                                     eventType: "message",
-                                    message: { content: txt }
+                                    message: { content: txt, uploads: responseText }
                                 }));
                                 document.getElementById("msgtxt").value = "";
                             } else {
@@ -531,25 +525,20 @@ function clientLoad() {
                 document.getElementById("send").addEventListener("click", () => {
 //                    if (focusedServer == serveur) {
                         document.getElementById("msgtxt").rows = 2;
+                        document.getElementById("progress").innerHTML = '<div id="progress2"></div>';
                         imageUpload(Object.values(uploadQueue), res => {
                             if (res) {
                                 if (res[0] == "E") {
-                                    document.getElementById("progress").innerText = res;
+                                    document.getElementById("progress").innerHTML += res;
                                     document.getElementById("progress").hidden = false;
-                                    document.getElementById("progress").style.marginRight = "0px";
+                                    document.getElementById("progress2").style.marginRight = "0px";
                                     return;
                                 }
-                                responseText = JSON.parse(res);
+                                let responseText = JSON.parse(res);
                                 let txt = document.getElementById("msgtxt").value;
-                                if (responseText[0] === "[") {
-                                    for (let file of JSON.parse(responseText)) {
-                                        // TODO: temporary measure until messages get an uploads field
-                                        txt += "\n[![]("+file+")]("+file+")";
-                                    }
-                                }
                                 ws.send(JSON.stringify({
                                     eventType: "message",
-                                    message: { content: txt }
+                                    message: { content: txt, uploads: responseText }
                                 }));
                                 document.getElementById("msgtxt").value = "";
                             } else {
@@ -560,6 +549,8 @@ function clientLoad() {
                                 document.getElementById("msgtxt").value = "";
                             }
                         });
+                        document.getElementById("fileUploadSpace").innerHTML = "";
+                        document.getElementById("fileDeleteMessage").hidden = true;
                         uploadQueue = {};
 //                    }
                 });
@@ -651,7 +642,16 @@ function clientLoad() {
                                 continue;
                             }
                             let uuidreg = /[0-9a-f]{7,8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/ig;
-                            let msgtxt = converty.makeHtml(packet.messages[m].content.replace(/\</g, '&lt;')/*.replace(/\>/g, '&gt;')*/).replace(/\<\/?pre\>/g);
+                            let md = packet.messages[m].content.replace(/\</g, '&lt;');
+                            console.log(packet.messages[m]);
+                            for (let upload of packet.messages[m].uploads ? packet.messages[m].uploads : []) {
+                                let url = upload;
+                                if (url !== url.toString()) {
+                                    url = url.url; // confusing but it works
+                                }
+                                md += `\n[![](${url})](${url})`; // image
+                            }
+                            let msgtxt = converty.makeHtml(md).replace(/\<\/?pre\>/g);
                             let arr;
                             while ((arr = uuidreg.exec(msgtxt)) !== null) {
                                 let strl = msgtxt.split("");

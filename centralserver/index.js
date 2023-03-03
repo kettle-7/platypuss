@@ -88,7 +88,8 @@ const server = createServer((req, res) => {
 
     if (url.pathname == "/pfpUpload") {
         if (!url.searchParams.has('id')) {
-            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.writeHead(204, {"Content-Type": "text/plain",
+            "Access-Control-Allow-Origin": "*"});
             res.end("missing session id");
             return;
         }
@@ -101,7 +102,8 @@ const server = createServer((req, res) => {
             }
         }
         if (!sessions[sid]) {
-            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.writeHead(204, {"Content-Type": "text/plain",
+            "Access-Control-Allow-Origin": "*"});
             res.end("invalid session");
             return;
         }
@@ -129,7 +131,8 @@ data, this is to prevent server owners from hijacking accounts.");
         }
         catch (e) {
             console.error(e);
-            res.writeHead(403, {"Content-Type": "text/plain"});
+            res.writeHead(403, {"Content-Type": "text/plain",
+            "Access-Control-Allow-Origin": "*"});
             res.end("some error, idk");
             return;
         }
@@ -137,13 +140,15 @@ data, this is to prevent server owners from hijacking accounts.");
 
     if (url.pathname == "/upload") {
         if (!url.searchParams.has('id')) {
-            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.writeHead(204, {"Content-Type": "text/plain",
+            "Access-Control-Allow-Origin": "*"});
             res.end("missing session id");
             return;
         }
         let sid = url.searchParams.get('id');
         if (!sessions[sid] || !users[sessions[sid].uid]) {
-            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.writeHead(204, {"Content-Type": "text/plain",
+            "Access-Control-Allow-Origin": "*"});
             res.end("invalid session");
             return;
         }
@@ -159,11 +164,13 @@ data, this is to prevent server owners from hijacking accounts.");
         });
         form.parse(req, (err, fields, files) => {
             if (err) {
-                res.writeHead(err.httpCode || 400, {'Content-Type':'text/plain'});
+                res.writeHead(err.httpCode || 400, {'Content-Type':'text/plain',
+                "Access-Control-Allow-Origin": "*"});
                 res.end(String(err));
                 return;
             }
-            res.writeHead(200, { "Content-Type": "application/json" });
+            res.writeHead(200, { "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*" });
             let urls = [];
             for (let file of Object.values(files)) {
                 try {
@@ -190,11 +197,19 @@ data, this is to prevent server owners from hijacking accounts.");
                 chunks.push(chunk);
             });
             req.on("end", () => {
-                const data = JSON.parse(Buffer.concat(chunks).toString());
-                ift = data.ift.toString();
-                unam = data.unam.toString().replace(/ /g, "-");
-                pwd = data.pwd.toString();
-                ser = data.ser.toString();
+                try {
+                    const data = JSON.parse(Buffer.concat(chunks).toString());
+                    ift = data.ift.toString();
+                    unam = data.unam.toString().replace(/ /g, "-");
+                    pwd = data.pwd.toString();
+                    ser = data.ser.toString();
+                } catch (e) {
+                    console.error(e);
+                    res.writeHead(403, {
+                        "Access-Control-Allow-Origin": "*"});
+                    res.end();
+                    return;
+                }
                 /*if (!unam.match(/^[A-Za-z0-9`~!@#$%^&*(){}\[\]]*$/)) {
                     res.writeHead(200, { "Content-Type": "application/json" });
                     res.end(JSON.stringify({
@@ -209,7 +224,8 @@ data, this is to prevent server owners from hijacking accounts.");
                         if (users[u].unam == unam) {
                             has = true;
                             if (users[u].pwd == pwd) {
-                                res.writeHead(200, { "Content-Type": "application/json" });
+                                res.writeHead(200, { "Content-Type": "application/json",
+                                "Access-Control-Allow-Origin": "*" });
                                 res.end(JSON.stringify({
                                     exists: true,
                                     pwd: true,
@@ -217,7 +233,8 @@ data, this is to prevent server owners from hijacking accounts.");
                                 }));
                             }
                             else {
-                                res.writeHead(200, { "Content-Type": "application/json" });
+                                res.writeHead(200, { "Content-Type": "application/json",
+                                "Access-Control-Allow-Origin": "*" });
                                 res.end(JSON.stringify({
                                     exists: true,
                                     pwd: false,
@@ -229,7 +246,8 @@ data, this is to prevent server owners from hijacking accounts.");
                     }
                     
                     if (!has) {
-                        res.writeHead(200, { "Content-Type": "application/json" });
+                        res.writeHead(200, { "Content-Type": "application/json",
+                        "Access-Control-Allow-Origin": "*" });
                         res.end(JSON.stringify({
                             exists: false,
                             pwd: true,
@@ -241,7 +259,8 @@ data, this is to prevent server owners from hijacking accounts.");
                 else {
                     for (let u in users) {
                         if (users[u].unam == unam) {
-                            res.writeHead(200, { "Content-Type": "application/json" });
+                            res.writeHead(200, { "Content-Type": "application/json",
+                            "Access-Control-Allow-Origin": "*" });
                             res.end(JSON.stringify({
                                 exists: true,
                                 sid: 0
@@ -250,14 +269,16 @@ data, this is to prevent server owners from hijacking accounts.");
                         }
                     }
                     if (unam.length > 30 || pwd.length > 30) {
-                        res.writeHead(200, { "Content-Type": "application/json" });
+                        res.writeHead(200, { "Content-Type": "application/json",
+                        "Access-Control-Allow-Origin": "*" });
                         res.end(JSON.stringify({
                             exists: true,
                             sid: 0
                         }));
                         return;
                     }
-                    res.writeHead(200, { "Content-Type": "application/json" });
+                    res.writeHead(200, { "Content-Type": "application/json",
+                    "Access-Control-Allow-Origin": "*" });
                     res.end(JSON.stringify({
                         exists: false,
                         sid: new Session(new User(unam, pwd).id, ser).id
@@ -277,24 +298,28 @@ data, this is to prevent server owners from hijacking accounts.");
 
     else if (url.pathname == "/joinserver") {
         if (!url.searchParams.has('id')) {
-            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.writeHead(204, {"Content-Type": "text/plain",
+            "Access-Control-Allow-Origin": "*"});
             res.end("missing session id");
             return;
         }
         let sid = url.searchParams.get('id');
         if (!sessions[sid]) {
-            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.writeHead(204, {"Content-Type": "text/plain",
+            "Access-Control-Allow-Origin": "*"});
             res.end("invalid session");
             return;
         }
         if (!url.searchParams.has('ip')) {
-            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.writeHead(204, {"Content-Type": "text/plain",
+            "Access-Control-Allow-Origin": "*"});
             res.end("missing ip for server to join");
             return;
         }
         // this should probably not be hardcoded ...
         if (sessions[sid].server != "122.62.122.75:3000") {
-            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.writeHead(204, {"Content-Type": "text/plain",
+            "Access-Control-Allow-Origin": "*"});
             res.end("You may not use server-specific tokens to modify account \
 data, this is to prevent server owners from hijacking accounts.");
             return;
@@ -302,30 +327,35 @@ data, this is to prevent server owners from hijacking accounts.");
         if (!users[sessions[sid].uid].servers.includes(url.searchParams.get("ip")))
             users[sessions[sid].uid].servers.push(url.searchParams.get('ip'));
         fs.writeFile("./users.json", JSON.stringify(users), () => {});
-        res.writeHead(200, {"Content-Type": "text/plain"});
+        res.writeHead(200, {"Content-Type": "text/plain",
+        "Access-Control-Allow-Origin": "*"});
         res.end("success");
     }
 
     else if (url.pathname == "/leaveserver") {
         if (!url.searchParams.has('id')) {
-            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.writeHead(204, {"Content-Type": "text/plain",
+            "Access-Control-Allow-Origin": "*"});
             res.end("missing session id");
             return;
         }
         let sid = url.searchParams.get('id');
         if (!sessions[sid]) {
-            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.writeHead(204, {"Content-Type": "text/plain",
+            "Access-Control-Allow-Origin": "*"});
             res.end("invalid session");
             return;
         }
         if (!url.searchParams.has('ip')) {
-            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.writeHead(204, {"Content-Type": "text/plain",
+            "Access-Control-Allow-Origin": "*"});
             res.end("missing ip for server to leave");
             return;
         }
         // this should probably not be hardcoded ...
         if (sessions[sid].server != "122.62.122.75:3000") {
-            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.writeHead(204, {"Content-Type": "text/plain",
+            "Access-Control-Allow-Origin": "*"});
             res.end("You may not use server-specific tokens to modify account \
 data, this is to prevent server owners from hijacking accounts.");
             return;
@@ -333,81 +363,94 @@ data, this is to prevent server owners from hijacking accounts.");
         if (users[sessions[sid].uid].servers.includes(url.searchParams.get("ip")))
             users[sessions[sid].uid].servers.splice(users[sessions[sid].uid].servers.indexOf(url.searchParams.get('ip')));
         fs.writeFile("./users.json", JSON.stringify(users), () => {});
-        res.writeHead(200, {"Content-Type": "text/plain"});
+        res.writeHead(200, {"Content-Type": "text/plain",
+        "Access-Control-Allow-Origin": "*"});
         res.end("success");
     }
 
     else if (url.pathname == "/delacc") {
         if (!url.searchParams.has('id')) {
-            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.writeHead(204, {"Content-Type": "text/plain",
+            "Access-Control-Allow-Origin": "*"});
             res.end("missing session id");
             return;
         }
         let sid = url.searchParams.get('id');
         if (!sessions[sid]) {
-            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.writeHead(204, {"Content-Type": "text/plain",
+            "Access-Control-Allow-Origin": "*"});
             res.end("invalid session");
             return;
         }
         // this should probably not be hardcoded ...
         if (sessions[sid].server != "122.62.122.75:3000") {
-            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.writeHead(204, {"Content-Type": "text/plain",
+            "Access-Control-Allow-Origin": "*"});
             res.end("You may not use server-specific tokens to modify account \
 data, this is to prevent server owners from hijacking accounts.");
             return;
         }
         delete users[sessions[sid].uid];
         fs.writeFile("./users.json", JSON.stringify(users), () => {});
-        res.writeHead(200, {"Content-Type": "text/plain"});
+        res.writeHead(200, {"Content-Type": "text/plain",
+        "Access-Control-Allow-Origin": "*"});
         res.end("success");
         return;
     }
 
     else if (url.pathname == "/passwdcfg") {
         if (!url.searchParams.has('id')) {
-            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.writeHead(204, {"Content-Type": "text/plain",
+            "Access-Control-Allow-Origin": "*"});
             res.end("missing session id");
             return;
         }
         let sid = url.searchParams.get('id');
         if (!sessions[sid]) {
-            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.writeHead(204, {"Content-Type": "text/plain",
+            "Access-Control-Allow-Origin": "*"});
             res.end("invalid session");
             return;
         }
         if (!url.searchParams.has("pwd")) {
-            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.writeHead(204, {"Content-Type": "text/plain",
+            "Access-Control-Allow-Origin": "*"});
             res.end("no new password is provided");
             return;
         }
         // this should probably not be hardcoded ...
         if (sessions[sid].server != "122.62.122.75:3000") {
-            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.writeHead(204, {"Content-Type": "text/plain",
+            "Access-Control-Allow-Origin": "*"});
             res.end("You may not use server-specific tokens to modify account \
 data, this is to prevent server owners from hijacking accounts.");
             return;
         }
         users[sessions[sid].uid].pwd = url.searchParams.get("pwd");
         fs.writeFile("./users.json", JSON.stringify(users), () => {});
-        res.writeHead(200, {"Content-Type": "text/plain"});
+        res.writeHead(200, {"Content-Type": "text/plain",
+        "Access-Control-Allow-Origin": "*"});
         res.end("success");
     }
 
     else if (url.pathname == "/sload") {
         if (!url.searchParams.has('id')) {
-            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.writeHead(204, {"Content-Type": "text/plain",
+            "Access-Control-Allow-Origin": "*"});
             res.end("missing session id");
             return;
         }
         let sid = url.searchParams.get('id');
         if (!sessions[sid] || !users[sessions[sid].uid]) {
-            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.writeHead(204, {"Content-Type": "text/plain",
+            "Access-Control-Allow-Origin": "*"});
             res.end("invalid session");
             return;
         }
         // this should probably not be hardcoded ...
         if (sessions[sid].server != "122.62.122.75:3000") {
-            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.writeHead(204, {"Content-Type": "text/plain",
+            "Access-Control-Allow-Origin": "*"});
             res.end("You may not use server-specific tokens to modify account \
 data, this is to prevent server owners from hijacking accounts.");
             return;
@@ -416,7 +459,8 @@ data, this is to prevent server owners from hijacking accounts.");
         for (let ser of users[sessions[sid].uid].servers) {
             tokens[ser] = (new Session(sessions[sid].uid, ser).id);
         }
-        res.writeHead(200, {"Content-Type": "application/json"});
+        res.writeHead(200, {"Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*"});
         res.end(JSON.stringify({
             servers: tokens,
             userId: sessions[sid].uid
@@ -426,23 +470,27 @@ data, this is to prevent server owners from hijacking accounts.");
 
     else if (url.pathname == "/sinfo") {
         if (!url.searchParams.has('id')) {
-            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.writeHead(204, {"Content-Type": "text/plain",
+            "Access-Control-Allow-Origin": "*"});
             res.end("missing session id");
             return;
         }
         let sid = url.searchParams.get('id');
         if (!sessions[sid] || !users[sessions[sid].uid]) {
-            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.writeHead(204, {"Content-Type": "text/plain",
+            "Access-Control-Allow-Origin": "*"});
             res.end("invalid session");
             return;
         }
-        res.writeHead(200, { "Content-Type": "application/json" });
+        res.writeHead(200, { "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*" });
         res.end(JSON.stringify(sessions[sid]));
     }
 
     else if (url.pathname == "/uinfo") {
         if (!url.searchParams.has('id')) {
-            res.writeHead(204, {"Content-Type": "text/plain"});
+            res.writeHead(204, {"Content-Type": "text/plain",
+            "Access-Control-Allow-Origin": "*"});
             res.end("missing user id");
             return;
         }
@@ -450,15 +498,18 @@ data, this is to prevent server owners from hijacking accounts.");
         if (!users[uid]) {
             let sid = url.searchParams.get('id');
             if (!sessions[sid] || !users[sessions[sid].uid]) {
-                res.writeHead(204, {"Content-Type": "text/plain"});
+                res.writeHead(204, {"Content-Type": "text/plain",
+                "Access-Control-Allow-Origin": "*"});
                 res.end("not an user id");
                 return;
             }
-            res.writeHead(200, { "Content-Type": "application/json" });
+            res.writeHead(200, { "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*" });
             res.end(JSON.stringify(ClientUser(users[sessions[sid].uid])));
             return;
         }
-        res.writeHead(200, { "Content-Type": "application/json" });
+        res.writeHead(200, { "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*" });
         if (users[uid].aboutMe == undefined) {
             users[uid].aboutMe = {text:""};
             fs.writeFileSync("./users.json", JSON.stringify(users), () => {});
@@ -504,7 +555,8 @@ data, this is to prevent server owners from hijacking accounts.");
             return;
         }
         let stream = fs.createReadStream("./avatars/"+path.basename(url.pathname))
-        res.writeHead(200, {"Content-Type": ctype});
+        res.writeHead(200, {"Content-Type": ctype,
+        "Access-Control-Allow-Origin": "*"});
         stream.on("ready", () => {
             stream.pipe(res);
         });
@@ -514,7 +566,8 @@ data, this is to prevent server owners from hijacking accounts.");
     else if (url.pathname.startsWith("/uploads")) {
         url.pathname = url.pathname.replace(/\.\./g, "");
         if (!fs.existsSync("./usercontent"+url.pathname)) {
-            res.writeHead(404, "thats not a page owo", { "Content-Type": "text/html" });
+            res.writeHead(404, "thats not a page owo", { "Content-Type": "text/html",
+            "Access-Control-Allow-Origin": "*" });
             fs.readFile("./found.html", (err, data) => {
                 if (err) {
                     res.end("404: 404 not found (ultimate bad error) (maybe just wait until we can fix it lol)");
@@ -526,7 +579,8 @@ data, this is to prevent server owners from hijacking accounts.");
         }
 
         if (fs.lstatSync("./usercontent"+url.pathname).isDirectory()) {
-            res.writeHead(403, "no you may not", { "Content-Type": "text/html" });
+            res.writeHead(403, "no you may not", { "Content-Type": "text/html",
+            "Access-Control-Allow-Origin": "*" });
             fs.readFile("./found.html", (err, data) => {
                 if (err) {
                     res.end("404: 404 not found (ultimate bad error) (maybe just wait until we can fix it lol)");
@@ -552,7 +606,8 @@ data, this is to prevent server owners from hijacking accounts.");
     //
 
     else if (url.pathname == "/main.css") {
-        res.writeHead(200, {"Content-Type": "text/css"});
+        res.writeHead(200, {"Content-Type": "text/css",
+        "Access-Control-Allow-Origin": "*"});
         fs.readFile("./main.css", (err, data) => {
             if (err) {
                 res.end();
@@ -563,7 +618,8 @@ data, this is to prevent server owners from hijacking accounts.");
         return;
     }
     else if (url.pathname == "/index.js") {
-        res.writeHead(200, {"Content-Type": "application/javascript"});
+        res.writeHead(200, {"Content-Type": "application/javascript",
+        "Access-Control-Allow-Origin": "*"});
         fs.readFile("./index.html.js", (err, data) => {
             if (err) {
                 res.end();
@@ -574,7 +630,8 @@ data, this is to prevent server owners from hijacking accounts.");
         return;
     }
     else if (url.pathname == "/index.html" || url.pathname == "/") {
-        res.writeHead(200, {"Content-Type": "text/html"});
+        res.writeHead(200, {"Content-Type": "text/html",
+        "Access-Control-Allow-Origin": "*"});
         fs.readFile("./index.html", (err, data) => {
             if (err) {
                 res.end();
@@ -585,7 +642,8 @@ data, this is to prevent server owners from hijacking accounts.");
         return;
     }
     else if (url.pathname == "/login.js") {
-        res.writeHead(200, {"Content-Type": "application/javascript"});
+        res.writeHead(200, {"Content-Type": "application/javascript",
+        "Access-Control-Allow-Origin": "*"});
         fs.readFile("./login.html.js", (err, data) => {
             if (err) {
                 res.end();
@@ -596,7 +654,8 @@ data, this is to prevent server owners from hijacking accounts.");
         return;
     }
     else if (url.pathname == "/login") {
-        res.writeHead(200, {"Content-Type": "text/html"});
+        res.writeHead(200, {"Content-Type": "text/html",
+        "Access-Control-Allow-Origin": "*"});
         fs.readFile("./login.html", (err, data) => {
             if (err) {
                 res.end();
@@ -607,7 +666,8 @@ data, this is to prevent server owners from hijacking accounts.");
         return;
     }
     else if (url.pathname == "/tos") {
-        res.writeHead(200, {"Content-Type": "text/html"});
+        res.writeHead(200, {"Content-Type": "text/html",
+        "Access-Control-Allow-Origin": "*"});
         fs.readFile("./tos.html", (err, data) => {
             if (err) {
                 res.end();
@@ -618,7 +678,8 @@ data, this is to prevent server owners from hijacking accounts.");
         return;
     }
     else {
-        res.writeHead(404, "thats not a page owo", { "Content-Type": "text/html" });
+        res.writeHead(404, "thats not a page owo", { "Content-Type": "text/html",
+        "Access-Control-Allow-Origin": "*" });
         fs.readFile("./found.html", (err, data) => {
             if (err) {
                 res.end("404: 404 not found (ultimate bad error) (maybe just wait until we can fix it lol)");
