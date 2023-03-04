@@ -164,7 +164,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                     You've been invited to join ${data.title}
                     <br>IP: ${ip}:${port}
                     <br>${data.memberCount} members
-                    <p>${data.description}</p>
+                    <p>${converty.makeHtml(data.description.toString().replace(/\</g, "&lt;").replace(/\>/g, "&gt;"))}</p>
                     `;
                     document.getElementById("inviteIcon").src = data.icon;
                 }).catch(err => {
@@ -223,7 +223,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                     You've been invited to join ${data.title}
                     <br>IP: ${ip}:${port}
                     <br>${data.memberCount} members
-                    <p>${data.description}</p>
+                    <p>${converty.makeHtml(data.description.toString().replace(/\</g, "&lt;").replace(/\>/g, "&gt;"))}</p>
                     `;
                     document.getElementById("inviteIcon").src = data.icon;
                 }).catch(err => {
