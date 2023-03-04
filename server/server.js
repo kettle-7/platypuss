@@ -47,7 +47,9 @@ const httpser = http.createServer((req, res) => {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*"
     });
-    res.end(JSON.stringify(conf.manifest));
+    let o = conf.manifest;
+    o.memberCount = Object.keys(sdata.users).length;
+    res.end(JSON.stringify(o));
 });
 
 httpser.listen(conf.port, () => {
