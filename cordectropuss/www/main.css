@@ -16,6 +16,7 @@
  ************************************************************************/
 
 @import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+
 * {
     font-family: Inter, sans-serif;
     color: #ffffff;
@@ -119,8 +120,10 @@ button:hover {
 }
 
 #inviteparent {
-    background-image: url(https://i.pinimg.com/originals/74/89/89/7489898c4328eeac3f59ba058621d9a1.jpg);
+    background-image: url(swim1.png);
     background-size: cover;
+    background-position: center;
+    background-color: #1b1b1b;
 }
 
 #inviteparent img {

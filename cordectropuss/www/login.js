@@ -80,7 +80,6 @@ function doTheLoginThingy() {
             "unam": unam,
             "pwd": cyrb53(pwd1)
         });
-        console.log(jsonobjectforloggingin);
         const xhr = new XMLHttpRequest();
         xhr.open("POST", authUrl + '/li', true);
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -114,7 +113,7 @@ function doTheLoginThingy() {
     });
     const req = new XMLHttpRequest();
     req.open("POST", authUrl + '/li', true);
-    req.setRequestHeader("Content-Type", "application/raw");
+    req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     req.onreadystatechange = () => { // Call a function when the state changes.
         if (req.readyState === XMLHttpRequest.DONE && (req.status == 200 || req.status == 204)) {
             let res = JSON.parse(req.responseText);
@@ -134,6 +133,5 @@ function doTheLoginThingy() {
             window.location = "./index.html";
         }
     }
-    console.log(jsonobjectforloggingin);
     req.send(jsonobjectforloggingin);
 }
