@@ -184,7 +184,7 @@ pre {
 }
 
 a {
-    color: #2087e0;
+    color: #4aa9fc;
 }
 
 blockquote {
@@ -451,6 +451,7 @@ input {
     margin: 0px;
     padding: 5px;
     gap: 5px;
+    border: 0px solid transparent;
 }
 
 .timestomp {
@@ -511,6 +512,7 @@ hr {
     justify-content: flex-start;
     padding: 3px;
     padding-left: 0px;
+    gap: 3px;
 }
 
 * {

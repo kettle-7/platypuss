@@ -49,6 +49,7 @@ var loggedin = true;
 var usercache = {};
 var uploadQueue = {};
 var authUrl = localStorage.getItem("authUrl");
+var messageMap = {};
 if (!authUrl) authUrl = "http://122.62.122.75";
 function fetchUser(id) {
   return new Promise((resolve, reject) => {
@@ -402,11 +403,17 @@ function logout() {
 var sockets = {};
 var loadedMessages = 0;
 var focusedServer;
+var reply;
 function deleteMessage(id, server) {
   sockets[server].send(JSON.stringify({
     eventType: "messageDelete",
     id: id
   }));
+}
+function replyTo(id, server) {
+  reply = id;
+  document.getElementById(`message_${reply}`).style.borderLeftWidth = "5px";
+  document.getElementById(`message_${reply}`).style.borderLeftColor = "#0075DB";
 }
 function moreMessages() {
   for (let socket of Object.keys(sockets)) {
@@ -470,7 +477,6 @@ function clientLoad() {
               if (document.getElementById("msgtxt").rows < 10) document.getElementById("msgtxt").rows += 1;
               return;
             }
-            document.getElementById("msgtxt").rows = 2;
             document.getElementById("progress").innerHTML = '<div id="progress2"></div>';
             imageUpload(Object.values(uploadQueue), res => {
               if (res) {
@@ -491,7 +497,8 @@ function clientLoad() {
                 ws.send(JSON.stringify({
                   eventType: "message",
                   message: {
-                    content: txt
+                    content: txt,
+                    reply: reply
                   }
                 }));
                 document.getElementById("msgtxt").value = "";
@@ -499,21 +506,27 @@ function clientLoad() {
                 ws.send(JSON.stringify({
                   eventType: "message",
                   message: {
-                    content: document.getElementById("msgtxt").value
+                    content: document.getElementById("msgtxt").value,
+                    reply: reply
                   }
                 }));
                 document.getElementById("msgtxt").value = "";
               }
+              if (reply) {
+                document.getElementById(`message_${reply}`).style.borderLeftWidth = "0px";
+                document.getElementById(`message_${reply}`).style.borderLeftColor = "transparent";
+              }
+              reply = false;
+              document.getElementById("fileUploadSpace").innerHTML = "";
+              document.getElementById("fileDeleteMessage").hidden = true;
+              uploadQueue = {};
+              document.getElementById("msgtxt").rows = 2;
             });
-            document.getElementById("fileUploadSpace").innerHTML = "";
-            document.getElementById("fileDeleteMessage").hidden = true;
-            uploadQueue = {};
             e.preventDefault();
           }
         });
         document.getElementById("send").addEventListener("click", () => {
           //                    if (focusedServer == serveur) {
-          document.getElementById("msgtxt").rows = 2;
           imageUpload(Object.values(uploadQueue), res => {
             if (res) {
               if (res[0] == "E") {
@@ -533,7 +546,8 @@ function clientLoad() {
               ws.send(JSON.stringify({
                 eventType: "message",
                 message: {
-                  content: txt
+                  content: txt,
+                  reply: reply
                 }
               }));
               document.getElementById("msgtxt").value = "";
@@ -541,13 +555,22 @@ function clientLoad() {
               ws.send(JSON.stringify({
                 eventType: "message",
                 message: {
-                  content: document.getElementById("msgtxt").value
+                  content: document.getElementById("msgtxt").value,
+                  reply: reply
                 }
               }));
               document.getElementById("msgtxt").value = "";
             }
+            document.getElementById("msgtxt").rows = 2;
+            if (reply) {
+              document.getElementById(`message_${reply}`).style.borderLeftWidth = "0px";
+              document.getElementById(`message_${reply}`).style.borderLeftColor = "transparent";
+            }
+            reply = false;
+            uploadQueue = {};
+            document.getElementById("fileUploadSpace").innerHTML = "";
+            document.getElementById("fileDeleteMessage").hidden = true;
           });
-          uploadQueue = {};
           //                    }
         });
 
@@ -564,6 +587,7 @@ function clientLoad() {
         switch (packet.eventType) {
           case "message":
             loadedMessages++;
+            messageMap[packet.message.id] = packet.message;
             // looks like absolute gibberish, matches uuids
             let uuidreg = /[0-9a-f]{7,8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/ig;
             let msgtxt = converty.makeHtml(packet.message.content.replace(/\</g, '&lt;') /*.replace(/\>/g, '&gt;')*/).replace(/\<\/?pre\>/g);
@@ -594,6 +618,21 @@ function clientLoad() {
                   break;
               }
             }
+            if (packet.message.reply) {
+              if (!messageMap[packet.message.reply]) {
+                msgtxt = `<blockquote><em>Message couldn't be loaded</em></blockquote>` + msgtxt;
+              } else {
+                let m = await fetchUser(messageMap[packet.message.reply].author);
+                if (m == null) {
+                  msgtxt = `<blockquote onclick="document.getElementById('message_${packet.message.reply}').scrollIntoView()">
+                                    <a class="invalidUser">@Deleted User</a> ${messageMap[packet.message.reply].content}</blockquote>` + msgtxt;
+                } else {
+                  // we don't support server nicknames as they don't exist yet
+                  msgtxt = `<blockquote onclick="document.getElementById('message_${packet.message.reply}').scrollIntoView()">
+<a class="userMention" onclick="mentionClicked('${m.id}', '${packet.message.id}');">@${m.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;")}</a> ${messageMap[packet.message.reply].content}</blockquote>` + msgtxt;
+                }
+              }
+            }
             fetchUser(packet.message.author).then(resp => {
               if (resp == null) {
                 unam = "Deleted User (there's something sus about this)";
@@ -607,9 +646,13 @@ function clientLoad() {
                 message3 = `
 <div class="message3">
     <button onclick="deleteMessage('${packet.message.id}', '${ip}');">Delete</button>
+    <button onclick="replyTo('${packet.message.id}', '${ip}');">Reply</button>
 </div>`;
               } else {
-                message3 = "";
+                message3 = `
+<div class="message3">
+    <button onclick="replyTo('${packet.message.id}', '${ip}');">Reply</button>
+</div>`;
               }
               document.getElementById("mainContent").innerHTML += `
 <div class="message1" id="message_${packet.message.id}">
@@ -631,6 +674,7 @@ function clientLoad() {
             let txt = "";
             let scrollBottom = ma.scrollHeight - ma.scrollTop;
             for (let m = 0; m < packet.messages.length; m++) {
+              messageMap[packet.messages[m].id] = packet.messages[m];
               loadedMessages++;
               if (document.getElementById(`message_${packet.messages[m].id}`)) {
                 continue;
@@ -658,10 +702,24 @@ function clientLoad() {
 <a class="userMention" onclick="mentionClicked('${user.id}', '${packet.messages[m].id}');">@${user.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;")}</a>`);
                     }
                     msgtxt = strl.join("");
-                    //uuidreg.exec(msgtxt);
                     break;
                   default:
                     break;
+                }
+              }
+              if (packet.messages[m].reply) {
+                if (!messageMap[packet.messages[m].reply]) {
+                  msgtxt = `<blockquote><em>Message couldn't be loaded</em></blockquote>` + msgtxt;
+                } else {
+                  let ms = await fetchUser(messageMap[packet.messages[m].reply].author);
+                  if (ms == null) {
+                    msgtxt = `<blockquote onclick="document.getElementById('message_${packet.messages[m].reply}').scrollIntoView()">
+                                        <a class="invalidUser">@Deleted User</a> ${messageMap[packet.messages[m].reply].content}</blockquote>` + msgtxt;
+                  } else {
+                    // we don't support server nicknames as they don't exist yet
+                    msgtxt = `<blockquote onclick="document.getElementById('message_${packet.messages[m].reply}').scrollIntoView()">
+<a class="userMention" onclick="mentionClicked('${ms.id}', '${packet.messages[m].id}');">@${ms.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;")}</a> ${messageMap[packet.messages[m].reply].content}</blockquote>` + msgtxt;
+                  }
                 }
               }
               let user = await fetchUser(packet.messages[m].author);
@@ -677,9 +735,13 @@ function clientLoad() {
                 message3 = `
 <div class="message3">
     <button onclick="deleteMessage('${packet.messages[m].id}', '${ip}');">Delete</button>
+    <button onclick="replyTo('${packet.messages[m].id}', '${ip}');">Reply</button>
 </div>`;
               } else {
-                message3 = "";
+                message3 = `
+<div class="message3">
+    <button onclick="replyTo('${packet.messages[m].id}', '${ip}');">Reply</button>
+</div>`;
               }
               txt += `
 <div class="message1" id="message_${packet.messages[m].id}">
