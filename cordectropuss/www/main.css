@@ -515,6 +515,22 @@ hr {
     gap: 3px;
 }
 
+.message1.pulsating {
+    animation: pulse 5s ease-in-out 0s alternate 3 none running;
+}
+
+@keyframes pulse {
+    0% {
+      background-color: #303030;
+    }
+    50% {
+        background-color: #252d35;
+    }
+    100% {
+      background-color: #303030;
+    }
+  }
+
 * {
     max-width: 100%;
 }

@@ -411,8 +411,12 @@ function deleteMessage(id, server) {
   }));
 }
 function replyTo(id, server) {
+  if (reply) {
+    document.getElementById(`message_${reply}`).style.borderLeftWidth = "0px";
+    document.getElementById(`message_${reply}`).style.borderLeftColor = "transparent";
+  }
   reply = id;
-  document.getElementById(`message_${reply}`).style.borderLeftWidth = "5px";
+  document.getElementById(`message_${reply}`).style.borderLeftWidth = "2px";
   document.getElementById(`message_${reply}`).style.borderLeftColor = "#0075DB";
 }
 function moreMessages() {
@@ -423,6 +427,13 @@ function moreMessages() {
       start: loadedMessages
     }));
   }
+}
+function siv(mid) {
+  let m = document.getElementById(`message_${mid}`);
+  m.scrollIntoView();
+  m.className += " pulsating";
+  let ma = document.getElementById("messageArea");
+  if (ma.scrollTop + ma.clientHeight < ma.scrollHeight) ma.scrollTo(ma.scrollLeft, ma.scrollTop - ma.clientHeight / 2);
 }
 
 // should also work on regular files
@@ -624,11 +635,11 @@ function clientLoad() {
               } else {
                 let m = await fetchUser(messageMap[packet.message.reply].author);
                 if (m == null) {
-                  msgtxt = `<blockquote onclick="document.getElementById('message_${packet.message.reply}').scrollIntoView()">
+                  msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.message.reply}')">
                                     <a class="invalidUser">@Deleted User</a> ${messageMap[packet.message.reply].content}</blockquote>` + msgtxt;
                 } else {
                   // we don't support server nicknames as they don't exist yet
-                  msgtxt = `<blockquote onclick="document.getElementById('message_${packet.message.reply}').scrollIntoView()">
+                  msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.message.reply}')">
 <a class="userMention" onclick="mentionClicked('${m.id}', '${packet.message.id}');">@${m.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;")}</a> ${messageMap[packet.message.reply].content}</blockquote>` + msgtxt;
                 }
               }
@@ -713,11 +724,11 @@ function clientLoad() {
                 } else {
                   let ms = await fetchUser(messageMap[packet.messages[m].reply].author);
                   if (ms == null) {
-                    msgtxt = `<blockquote onclick="document.getElementById('message_${packet.messages[m].reply}').scrollIntoView()">
+                    msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.messages[m].reply}')">
                                         <a class="invalidUser">@Deleted User</a> ${messageMap[packet.messages[m].reply].content}</blockquote>` + msgtxt;
                   } else {
                     // we don't support server nicknames as they don't exist yet
-                    msgtxt = `<blockquote onclick="document.getElementById('message_${packet.messages[m].reply}').scrollIntoView()">
+                    msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.messages[m].reply}')">
 <a class="userMention" onclick="mentionClicked('${ms.id}', '${packet.messages[m].id}');">@${ms.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;")}</a> ${messageMap[packet.messages[m].reply].content}</blockquote>` + msgtxt;
                   }
                 }
