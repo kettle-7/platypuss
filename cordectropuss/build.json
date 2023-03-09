@@ -2,13 +2,15 @@
   "electron": {
     "windows": {
       "package": [
-        "zip"
+        "portable"
       ],
       "arch": ["x64"]
     },
     "linux": {
       "package": [
-        "zip"
+        "zip",
+        "snap",
+        "AppImage"
       ],
       "arch": ["x64"]
     }

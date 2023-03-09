@@ -17,6 +17,20 @@
             <div id="spacement" class="widest"></div>
             <button class="chonk" onclick="window.location = './login.html'" id="login" style="cursor: pointer;">Sign In</button>
             <button class="bleu chonk" onclick="window.location = './login.html?ift=1'" id="signup" style="cursor: pointer;">Create Account</button>
+            <div id="g_id_onload"
+                data-client_id="1076407762610-kg5oj0lb8u8bdjp5gmdt4d9ap9n01qam.apps.googleusercontent.com"
+                data-context="signin"
+                data-ux_mode="popup"
+                data-callback="googleAuth"
+                data-auto_prompt="false">
+            </div>
+            <div class="g_id_signin"
+                data-type="icon"
+                data-shape="circle"
+                data-theme="filled_black"
+                data-text="signin_with"
+                data-size="large">
+            </div>
             <img onclick="document.getElementById('accountInfoParent').hidden = !document.getElementById('accountInfoParent').hidden" id="pfp" alt="" class="avatar" src="" />
         </header>
         <div id="infopagecontainer"><main id="infoPage" class="mainpage padded" hidden="true">
@@ -126,5 +140,7 @@
         <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
         <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
         <script src="index.js"></script>
+        <!-- boring google sign in shit -->
+        <script src="https://accounts.google.com/gsi/client" async defer></script>
     </body>
 </html>
