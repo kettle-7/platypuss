@@ -516,6 +516,12 @@ document.getElementById("dacpopup").addEventListener("click", e => {
 document.getElementById("p").addEventListener("click", e => {
   e.stopPropagation();
 });
+if (window.location.toString().startsWith("http://192.168")) {
+  if (authUrl == "http://122.62.122.75") {
+    localStorage.setItem("authUrl", "http://192.168.1.70:3000");
+    window.location.reload();
+  }
+}
 function logout() {
   localStorage.clear();
   window.location.reload();
