@@ -489,6 +489,14 @@ fetchUser(localStorage.getItem('sid')).then(res => {
     }
   }
   document.getElementById("loadingScreen").className += " fadeOut";
+}, () => {
+  if (authUrl == "http://122.62.122.75") {
+    localStorage.setItem("authUrl", "http://192.168.1.70:3000");
+    window.location.reload();
+  }
+  document.getElementById("header").removeChild(document.getElementById("pfp"));
+  document.getElementById("everything").removeChild(document.getElementById("actualpagecontainer"));
+  document.getElementById("loadingScreen").className += " fadeOut";
 });
 document.getElementById("accountInfo").addEventListener("click", e => {
   e.stopPropagation();
