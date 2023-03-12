@@ -116,7 +116,7 @@ button:hover {
     right: 0px;
     top: 0px;
     bottom: 0px;
-    background: rgba(0, 0, 0, 0.25);
+    background: rgba(0, 0, 0, 0.5);
 }
 
 #inviteparent {
@@ -128,6 +128,10 @@ button:hover {
 
 #inviteparent img {
     cursor: default;
+}
+
+#lit2 {
+    min-width: min-content;
 }
 
 #loadingScreen {
@@ -567,6 +571,13 @@ hr {
     cursor: pointer;
 }
 
+#page {
+    padding-top: 10vh;
+    padding-bottom: 10vh;
+    padding-right: 10vw;
+    padding-left: 10vw;
+}
+
 #progress {
     position: relative;
     right: 0px;
@@ -607,6 +618,26 @@ hr {
     display: none;
 }
 
+::-webkit-scrollbar {
+    background-color: #282828;
+    width: 10px;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: #888888;
+    width: 10px;
+    box-shadow: 0 0 5px grey; 
+}
+
+:focus {
+    outline: 0;
+    outline-color: transparent;
+    outline-style: none;
+    box-shadow: 0px 0px 3px #888888 !important;
+}
+
 .banner {
     display: flex;
     flex-direction: row;
@@ -632,7 +663,6 @@ hr {
 .textBox:focus {
     background-color: #303030;
     border: 1px solid #0075db;
-    box-shadow: 2px 2px 5px #1b1b1b inset;
 }
 
 #changePfp:hover {

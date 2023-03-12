@@ -50,7 +50,116 @@ var usercache = {};
 var uploadQueue = {};
 var authUrl = localStorage.getItem("authUrl");
 var messageMap = {};
+var ift = false;
 if (!authUrl) authUrl = "http://122.62.122.75";
+function li() {
+  ift = false;
+  document.getElementById('P').style.display = 'flex';
+  document.getElementById("pwdbox").hidden = true;
+  document.getElementById("pwd1").addEventListener("keypress", e => {
+    if (e.key == "Enter") doTheLoginThingy();
+  });
+  document.getElementById("lit1").innerHTML = document.getElementById("lit1").innerHTML.replace(/Create Account/g, "Sign In");
+  document.getElementById("lit2").innerHTML = 'Welcome back! If you don\'t already have an account please <a href="#" onclick="su()">create an account</a> instead.';
+  document.getElementById("lit3").innerText = document.getElementById("lit3").innerText.replace(/Create Account/g, "Sign In");
+  return;
+}
+function su() {
+  ift = true;
+  document.getElementById('P').style.display = 'flex';
+  document.getElementById("pwdbox").hidden = false;
+  document.getElementById("pwd2").addEventListener("keypress", e => {
+    if (e.key == "Enter") doTheLoginThingy();
+  });
+  document.getElementById("lit1").innerHTML = document.getElementById("lit1").innerHTML.replace(/Sign In/g, "Create Account");
+  document.getElementById("lit2").innerHTML = "Welcome to Platypuss! If this is not your first time with us please <a href='#' onclick='li()'>sign in</a> instead. Please make\n\
+sure to read the <a href='./tos.html'>terms of service</a> before creating an account.";
+  document.getElementById("lit3").innerText = document.getElementById("lit3").innerText.replace(/Sign In/g, "Create Account");
+}
+function doTheLoginThingy() {
+  let unam = document.getElementById("unam").value;
+  let pwd1 = document.getElementById("pwd1").value;
+  unam = unam.replace(/ /g, '-');
+  if (ift) {
+    // if you're making a new account
+    let pwd2 = document.getElementById("pwd2").value;
+    if (pwd1 != pwd2) {
+      document.getElementById("lit2").innerText = "Your passwords don't match.";
+      return;
+    }
+    if (unam == "") {
+      document.getElementById("lit2").innerText = "Please fill this out, you can't just make an account without an username...";
+      return;
+    }
+    if (pwd1 == "") {
+      document.getElementById("lit2").innerText = "Please fill this out, you can't just make an account without a password...";
+      return;
+    }
+    let jsonobjectforloggingin = JSON.stringify({
+      // i want long variable name
+      "ift": ift,
+      "ser": "122.62.122.75:3000",
+      "unam": unam,
+      "pwd": cyrb53(pwd1)
+    });
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", authUrl + '/li', true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.onreadystatechange = () => {
+      // Call a function when the state changes.
+      if (xhr.readyState === XMLHttpRequest.DONE && xhr.status) {
+        let res = JSON.parse(xhr.responseText);
+        if (ift && res.exists) {
+          document.getElementById("lit2").innerHTML = 'An account with that username already exists, would you like to <a href="./login.html">log in</a> instead?';
+          return;
+        }
+        if (!ift && !res.exists) {
+          document.getElementById("lit2").innerText = "There's no account with that username, did you misspell it?";
+          return;
+        }
+        if (!ift && !res.pwd) {
+          document.getElementById("lit2").innerText = "That password isn't correct, did you misspell it?";
+          return;
+        }
+        localStorage.setItem('sid', res.sid);
+        window.location = "./index.html";
+      }
+    };
+    xhr.send(jsonobjectforloggingin);
+    return;
+  }
+  let jsonobjectforloggingin = JSON.stringify({
+    // i want long variable name
+    "ift": ift,
+    "ser": "122.62.122.75:3000",
+    "unam": unam,
+    "pwd": cyrb53(pwd1)
+  });
+  const req = new XMLHttpRequest();
+  req.open("POST", authUrl + '/li', true);
+  req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  req.onreadystatechange = () => {
+    // Call a function when the state changes.
+    if (req.readyState === XMLHttpRequest.DONE && (req.status == 200 || req.status == 204)) {
+      let res = JSON.parse(req.responseText);
+      if (ift && res.exists) {
+        document.getElementById("lit2").innerText = "An account with that username already exists ;-;";
+        return;
+      }
+      if (!ift && !res.exists) {
+        document.getElementById("lit2").innerText = "There's no account with that username, did you misspell it?";
+        return;
+      }
+      if (!ift && !res.pwd) {
+        document.getElementById("lit2").innerText = "That password isn't correct, did you misspell it?";
+        return;
+      }
+      localStorage.setItem('sid', res.sid);
+      window.location = "./index.html";
+    }
+  };
+  req.send(jsonobjectforloggingin);
+}
 function fetchUser(id) {
   return new Promise((resolve, reject) => {
     if (usercache[id] == undefined) {
@@ -396,6 +505,9 @@ document.getElementById("cpwdpopup").addEventListener("click", e => {
 document.getElementById("dacpopup").addEventListener("click", e => {
   e.stopPropagation();
 });
+document.getElementById("p").addEventListener("click", e => {
+  e.stopPropagation();
+});
 function logout() {
   localStorage.clear();
   window.location.reload();
@@ -409,6 +521,9 @@ function deleteMessage(id, server) {
     eventType: "messageDelete",
     id: id
   }));
+}
+function googleAuth(argv) {
+  console.log(argv);
 }
 function replyTo(id, server) {
   if (reply) {
