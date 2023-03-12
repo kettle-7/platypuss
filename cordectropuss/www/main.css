@@ -460,7 +460,7 @@ input {
 
 .timestomp {
     color: #aaaaaa;
-    opacity: 0;
+    display: none;
 }
 
 #longMessageBoxContainer .material-symbols-outlined {
@@ -471,7 +471,7 @@ input {
 }
 
 .message1.hover .timestomp, .message1:hover .timestomp {
-    opacity: 100;
+    display: unset;
 }
 
 hr {
