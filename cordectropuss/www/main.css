@@ -506,6 +506,10 @@ hr {
     background-color: #505050;
 }
 
+.message2 a {
+    width: fit-content;
+}
+
 .message3 {
     opacity: 0;
     display: flex;

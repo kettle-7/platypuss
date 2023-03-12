@@ -559,7 +559,8 @@ function imageUpload(imgs, callback) {
   }
   const formData = new FormData();
   imgs.forEach((image, index) => {
-    formData.append(`file[${index}]`, image);
+    console.log(image, index);
+    formData.append(image.name, image);
   });
   const xhr = new XMLHttpRequest();
   xhr.open("POST", authUrl + `/upload?id=${localStorage.getItem("sid")}`);
@@ -605,48 +606,41 @@ function clientLoad() {
             }
             document.getElementById("progress").innerHTML = '<div id="progress2"></div>';
             imageUpload(Object.values(uploadQueue), res => {
+              let uploads = [];
               if (res) {
                 if (res[0] == "E") {
-                  document.getElementById("progress").innerHTML += res;
+                  document.getElementById("progress").innerText = res;
                   document.getElementById("progress").hidden = false;
-                  document.getElementById("progress2").style.marginRight = "0px";
+                  document.getElementById("progress").style.marginRight = "0px";
                   return;
                 }
-                let responseText = JSON.parse(res);
-                let txt = document.getElementById("msgtxt").value;
-                if (res[0] === "[") {
-                  for (let file of responseText) {
-                    // TODO: temporary measure until messages get an uploads field
-                    txt += "\n[![](" + authUrl + file + ")](" + authUrl + file + ")";
-                  }
+                responseText = JSON.parse(res);
+                for (let u of responseText) {
+                  uploads.push({
+                    "url": u.url,
+                    "type": u.type,
+                    "name": u.name
+                  });
                 }
-                ws.send(JSON.stringify({
-                  eventType: "message",
-                  message: {
-                    content: txt,
-                    reply: reply
-                  }
-                }));
-                document.getElementById("msgtxt").value = "";
-              } else {
-                ws.send(JSON.stringify({
-                  eventType: "message",
-                  message: {
-                    content: document.getElementById("msgtxt").value,
-                    reply: reply
-                  }
-                }));
-                document.getElementById("msgtxt").value = "";
               }
+              ws.send(JSON.stringify({
+                eventType: "message",
+                message: {
+                  content: document.getElementById("msgtxt").value,
+                  reply: reply ? reply : undefined,
+                  uploads: uploads ? uploads : undefined
+                }
+              }));
+              document.getElementById("msgtxt").value = "";
+              document.getElementById("msgtxt").rows = 2;
               if (reply) {
                 document.getElementById(`message_${reply}`).style.borderLeftWidth = "0px";
                 document.getElementById(`message_${reply}`).style.borderLeftColor = "transparent";
               }
               reply = false;
+              uploadQueue = {};
               document.getElementById("fileUploadSpace").innerHTML = "";
               document.getElementById("fileDeleteMessage").hidden = true;
-              uploadQueue = {};
-              document.getElementById("msgtxt").rows = 2;
             });
             e.preventDefault();
           }
@@ -654,6 +648,8 @@ function clientLoad() {
         document.getElementById("send").addEventListener("click", () => {
           //                    if (focusedServer == serveur) {
           imageUpload(Object.values(uploadQueue), res => {
+            let uploads = [];
+            console.log(res);
             if (res) {
               if (res[0] == "E") {
                 document.getElementById("progress").innerText = res;
@@ -662,31 +658,23 @@ function clientLoad() {
                 return;
               }
               responseText = JSON.parse(res);
-              let txt = document.getElementById("msgtxt").value;
-              if (responseText[0] === "[") {
-                for (let file of JSON.parse(responseText)) {
-                  // TODO: temporary measure until messages get an uploads field
-                  txt += "\n[![](" + file + ")](" + file + ")";
-                }
+              for (let u of responseText) {
+                uploads.push({
+                  "url": u.url,
+                  "type": u.type,
+                  "name": u.name
+                });
               }
-              ws.send(JSON.stringify({
-                eventType: "message",
-                message: {
-                  content: txt,
-                  reply: reply
-                }
-              }));
-              document.getElementById("msgtxt").value = "";
-            } else {
-              ws.send(JSON.stringify({
-                eventType: "message",
-                message: {
-                  content: document.getElementById("msgtxt").value,
-                  reply: reply
-                }
-              }));
-              document.getElementById("msgtxt").value = "";
             }
+            ws.send(JSON.stringify({
+              eventType: "message",
+              message: {
+                content: document.getElementById("msgtxt").value,
+                reply: reply ? reply : undefined,
+                uploads: uploads ? uploads : undefined
+              }
+            }));
+            document.getElementById("msgtxt").value = "";
             document.getElementById("msgtxt").rows = 2;
             if (reply) {
               document.getElementById(`message_${reply}`).style.borderLeftWidth = "0px";
@@ -757,6 +745,18 @@ function clientLoad() {
                   msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.message.reply}')">
 <a class="userMention" onclick="mentionClicked('${m.id}', '${packet.message.id}');">@${m.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;")}</a> ${messageMap[packet.message.reply].content}</blockquote>` + msgtxt;
                 }
+              }
+            }
+            if (packet.message.uploads) {
+              for (let upload of packet.message.uploads) {
+                if (upload.type.startsWith("image/")) {
+                  msgtxt += `\n<br><a target="_blank" href="${authUrl + upload.url}"><img src="${authUrl + upload.url}"></a>`;
+                  continue;
+                }
+                msgtxt += `
+                                    <div class="upload">
+                                        <span class="material-symbols-outlined">draft</span><a class="uploadName" target="_blank" href="${authUrl + upload.url}">${upload.name}</a>
+                                    </div>`;
               }
             }
             fetchUser(packet.message.author).then(resp => {
@@ -846,6 +846,18 @@ function clientLoad() {
                     msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.messages[m].reply}')">
 <a class="userMention" onclick="mentionClicked('${ms.id}', '${packet.messages[m].id}');">@${ms.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;")}</a> ${messageMap[packet.messages[m].reply].content}</blockquote>` + msgtxt;
                   }
+                }
+              }
+              if (packet.messages[m].uploads) {
+                for (let upload of packet.messages[m].uploads) {
+                  if (upload.type.startsWith("image/")) {
+                    msgtxt += `\n<br><a target="_blank" href="${authUrl + upload.url}"><img src="${authUrl + upload.url}"></a>`;
+                    continue;
+                  }
+                  msgtxt += `
+                                        <div class="upload">
+                                            <span class="material-symbols-outlined">draft</span><a class="uploadName" target="_blank" href="${authUrl + upload.url}">${upload.name}</a>
+                                        </div>`;
                 }
               }
               let user = await fetchUser(packet.messages[m].author);
