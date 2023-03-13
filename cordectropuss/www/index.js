@@ -51,7 +51,7 @@ var uploadQueue = {};
 var authUrl = localStorage.getItem("authUrl");
 var messageMap = {};
 var ift = false;
-if (!authUrl) authUrl = "http://122.62.122.75";
+if (!authUrl) authUrl = "http://platypuss.ddns.net";
 function li() {
   ift = false;
   document.getElementById('P').style.display = 'flex';
@@ -490,7 +490,7 @@ fetchUser(localStorage.getItem('sid')).then(res => {
   }
   document.getElementById("loadingScreen").className += " fadeOut";
 }, () => {
-  if (authUrl == "http://122.62.122.75") {
+  if (url.host.startsWith("http://192.168")) {
     localStorage.setItem("authUrl", "http://192.168.1.70:3000");
     window.location.reload();
   }
@@ -516,11 +516,9 @@ document.getElementById("dacpopup").addEventListener("click", e => {
 document.getElementById("p").addEventListener("click", e => {
   e.stopPropagation();
 });
-if (window.location.toString().startsWith("http://192.168")) {
-  if (authUrl == "http://122.62.122.75") {
-    localStorage.setItem("authUrl", "http://192.168.1.70:3000");
-    window.location.reload();
-  }
+if (authUrl != url.host && url.protocol == "http:") {
+  localStorage.setItem("authUrl", url.host);
+  window.location.reload();
 }
 function logout() {
   localStorage.clear();

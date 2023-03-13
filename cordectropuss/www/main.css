@@ -512,8 +512,9 @@ hr {
 
 .message3 {
     opacity: 0;
-    display: flex;
+    display: none;
     width: fit-content;
+    height: fit-content;
     top: 0px;
     bottom: 0px;
     flex-direction: column;
@@ -521,6 +522,19 @@ hr {
     padding: 3px;
     padding-left: 0px;
     gap: 3px;
+}
+
+@media only screen and (min-width: 768px) {
+    .message3 {
+        display: flex;
+        opacity: 0;
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+
+    .message3 * {
+        height: fit-content;
+    }
 }
 
 .message1.pulsating {
@@ -549,6 +563,7 @@ hr {
 
 .message1:hover .message3, .message1.hover .message3 {
     opacity: 1;
+    display: flex;
 }
 
 .message2 > p {
