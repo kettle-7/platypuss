@@ -783,13 +783,13 @@ function clientLoad() {
               if (packet.message.author == sers.userId) {
                 message3 = `
 <div class="message3">
-    <button onclick="deleteMessage('${packet.message.id}', '${ip}');">Delete</button>
-    <button onclick="replyTo('${packet.message.id}', '${ip}');">Reply</button>
+    <button class="material-symbols-outlined" onclick="deleteMessage('${packet.message.id}', '${ip}');">Delete</button>
+    <button class="material-symbols-outlined" onclick="replyTo('${packet.message.id}', '${ip}');">Reply</button>
 </div>`;
               } else {
                 message3 = `
 <div class="message3">
-    <button onclick="replyTo('${packet.message.id}', '${ip}');">Reply</button>
+    <button class="material-symbols-outlined" onclick="replyTo('${packet.message.id}', '${ip}');">Reply</button>
 </div>`;
               }
               document.getElementById("mainContent").innerHTML += `
@@ -884,13 +884,13 @@ function clientLoad() {
               if (packet.messages[m].author == sers.userId) {
                 message3 = `
 <div class="message3">
-    <button onclick="deleteMessage('${packet.messages[m].id}', '${ip}');">Delete</button>
-    <button onclick="replyTo('${packet.messages[m].id}', '${ip}');">Reply</button>
+    <button class="material-symbols-outlined" onclick="deleteMessage('${packet.messages[m].id}', '${ip}');">Delete</button>
+    <button class="material-symbols-outlined" onclick="replyTo('${packet.messages[m].id}', '${ip}');">Reply</button>
 </div>`;
               } else {
                 message3 = `
 <div class="message3">
-    <button onclick="replyTo('${packet.messages[m].id}', '${ip}');">Reply</button>
+    <button class="material-symbols-outlined" onclick="replyTo('${packet.messages[m].id}', '${ip}');">Reply</button>
 </div>`;
               }
               txt += `

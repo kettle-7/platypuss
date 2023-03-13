@@ -524,6 +524,10 @@ hr {
     gap: 3px;
 }
 
+.message3 button {
+    padding: 3px;
+}
+
 @media only screen and (min-width: 768px) {
     .message3 {
         display: flex;
@@ -539,6 +543,19 @@ hr {
 
 .message1.pulsating {
     animation: pulse 5s ease-in-out 0s alternate 3 none running;
+}
+
+.upload {
+    padding: 3px;
+    padding-right: 6px;
+    display: flex;
+    flex-direction: row;
+    gap: 3px;
+    border: 1px solid #888888;
+    box-shadow: 1px 1px 5px black;
+    align-content: center;
+    border-radius: 5px;
+    width: fit-content;
 }
 
 @keyframes pulse {
