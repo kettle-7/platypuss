@@ -516,7 +516,7 @@ document.getElementById("dacpopup").addEventListener("click", e => {
 document.getElementById("p").addEventListener("click", e => {
   e.stopPropagation();
 });
-if (authUrl != url.host && url.protocol == "http:") {
+if (authUrl != url.protocol + "//" + url.host && url.protocol == "http:") {
   localStorage.setItem("authUrl", url.protocol + "//" + url.host);
   window.location.reload();
 }
