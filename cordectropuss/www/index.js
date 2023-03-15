@@ -110,7 +110,7 @@ function doTheLoginThingy() {
       if (xhr.readyState === XMLHttpRequest.DONE && xhr.status) {
         let res = JSON.parse(xhr.responseText);
         if (ift && res.exists) {
-          document.getElementById("lit2").innerHTML = 'An account with that username already exists, would you like to <a href="./login.html">log in</a> instead?';
+          document.getElementById("lit2").innerHTML = 'An account with that username already exists, would you like to <a onclick="su()">log in</a> instead?';
           return;
         }
         if (!ift && !res.exists) {
@@ -482,7 +482,7 @@ fetchUser(localStorage.getItem('sid')).then(res => {
       document.getElementById("inviteparent").style.display = "flex";
       document.getElementById("acceptinvitebtn").addEventListener("click", () => {
         localStorage.setItem("pendingInvite", inviteCode);
-        window.location = "./login.html?ift=1";
+        su();
       });
       document.getElementById("acceptinvitebtn").innerText = "Create Account";
       document.getElementById("invdecline").innerText = "Cancel";
