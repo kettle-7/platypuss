@@ -571,7 +571,6 @@ function imageUpload(imgs, callback) {
   }
   const formData = new FormData();
   imgs.forEach((image, index) => {
-    console.log(image, index);
     formData.append(image.name, image);
   });
   const xhr = new XMLHttpRequest();
@@ -589,11 +588,15 @@ function imageUpload(imgs, callback) {
   xhr.send(formData);
 }
 function clientLoad() {
+  for (let socket of Object.values(sockets)) {
+    socket.close();
+  }
   sockets = {};
   document.getElementById("loadMoreMessages").hidden = false;
   document.getElementById("mainContent").innerHTML = "";
   document.getElementById("left").innerHTML = "";
   document.getElementById("right").innerHTML = "";
+  let ma = document.getElementById("messageArea");
   const h = new XMLHttpRequest();
   h.open('GET', authUrl + '/sload?id=' + localStorage.getItem('sid'), true);
   h.onload = () => {
@@ -602,16 +605,30 @@ function clientLoad() {
       window.location.reload(); // page to infinitely reload. the most likely response from the user is the
     } // page being closed and mild confusion which is not ideal but not dangerous.
     let sers = JSON.parse(h.responseText);
-    focusedServer = sers[0];
     for (let serveur in sers.servers) {
       let ip = serveur.split(' ')[0];
       let code = serveur.split(' ')[1];
       let url = "ws://" + ip.toString();
       let ws = new WebSocket(url);
+      document.getElementById("left").innerHTML = "";
+      setTimeout(() => {
+        if (ws.readyState == 0) {
+          ws.close();
+        }
+      }, 5000);
+      ws.onerror = () => {
+        document.getElementById("mainContent").innerHTML += `<div class="message1">
+                        Warning: couldn't connect to ${ip}, try check your internet connection or inform the owner(s) of the server.
+                    </div>`;
+        if (ma.scrollHeight < ma.scrollTop + 2 * ma.clientHeight) {
+          ma.scrollTo(ma.scrollLeft, ma.scrollHeight - ma.clientHeight);
+        }
+      };
       ws.onopen = () => {
+        console.log(serveur);
         sockets[ip] = ws;
         document.getElementById("msgtxt").addEventListener("keypress", e => {
-          if (e.key == "Enter" /*&& focusedServer == serveur*/) {
+          if (e.key == "Enter" && focusedServer == serveur) {
             if (e.shiftKey) {
               if (document.getElementById("msgtxt").rows < 10) document.getElementById("msgtxt").rows += 1;
               return;
@@ -658,141 +675,142 @@ function clientLoad() {
           }
         });
         document.getElementById("send").addEventListener("click", () => {
-          //                    if (focusedServer == serveur) {
-          imageUpload(Object.values(uploadQueue), res => {
-            let uploads = [];
-            console.log(res);
-            if (res) {
-              if (res[0] == "E") {
-                document.getElementById("progress").innerText = res;
-                document.getElementById("progress").hidden = false;
-                document.getElementById("progress").style.marginRight = "0px";
-                return;
+          if (focusedServer == serveur) {
+            imageUpload(Object.values(uploadQueue), res => {
+              let uploads = [];
+              if (res) {
+                if (res[0] == "E") {
+                  document.getElementById("progress").innerText = res;
+                  document.getElementById("progress").hidden = false;
+                  document.getElementById("progress").style.marginRight = "0px";
+                  return;
+                }
+                responseText = JSON.parse(res);
+                for (let u of responseText) {
+                  uploads.push({
+                    "url": u.url,
+                    "type": u.type,
+                    "name": u.name
+                  });
+                }
               }
-              responseText = JSON.parse(res);
-              for (let u of responseText) {
-                uploads.push({
-                  "url": u.url,
-                  "type": u.type,
-                  "name": u.name
-                });
+              ws.send(JSON.stringify({
+                eventType: "message",
+                message: {
+                  content: document.getElementById("msgtxt").value,
+                  reply: reply ? reply : undefined,
+                  uploads: uploads ? uploads : undefined
+                }
+              }));
+              document.getElementById("msgtxt").value = "";
+              document.getElementById("msgtxt").rows = 2;
+              if (reply) {
+                document.getElementById(`message_${reply}`).style.borderLeftWidth = "0px";
+                document.getElementById(`message_${reply}`).style.borderLeftColor = "transparent";
               }
-            }
-            ws.send(JSON.stringify({
-              eventType: "message",
-              message: {
-                content: document.getElementById("msgtxt").value,
-                reply: reply ? reply : undefined,
-                uploads: uploads ? uploads : undefined
-              }
-            }));
-            document.getElementById("msgtxt").value = "";
-            document.getElementById("msgtxt").rows = 2;
-            if (reply) {
-              document.getElementById(`message_${reply}`).style.borderLeftWidth = "0px";
-              document.getElementById(`message_${reply}`).style.borderLeftColor = "transparent";
-            }
-            reply = false;
-            uploadQueue = {};
-            document.getElementById("fileUploadSpace").innerHTML = "";
-            document.getElementById("fileDeleteMessage").hidden = true;
-          });
-          //                    }
+              reply = false;
+              uploadQueue = {};
+              document.getElementById("fileUploadSpace").innerHTML = "";
+              document.getElementById("fileDeleteMessage").hidden = true;
+            });
+          }
         });
-
+        console.log("e");
         ws.send(JSON.stringify({
           eventType: "login",
           code: code,
           sid: localStorage.getItem("sid")
         }));
+        console.log(serveur);
       };
       ws.onmessage = async event => {
         let packet = JSON.parse(event.data);
         let unam, pfp;
-        let ma = document.getElementById("messageArea");
+        console.log(serveur, packet.eventType);
         switch (packet.eventType) {
           case "message":
-            loadedMessages++;
-            messageMap[packet.message.id] = packet.message;
-            // looks like absolute gibberish, matches uuids
-            let uuidreg = /[0-9a-f]{7,8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/ig;
-            let msgtxt = converty.makeHtml(packet.message.content.replace(/\</g, '&lt;') /*.replace(/\>/g, '&gt;')*/).replace(/\<\/?pre\>/g);
-            let arr;
-            while ((arr = uuidreg.exec(msgtxt)) !== null) {
-              let strl = msgtxt.split("");
-              if (strl[arr.index + 35] == "]") {
-                strl.splice(arr.index, 0, "0");
-              }
-              if (strl[arr.index + 36] != "]" || strl[arr.index - 2] != "[") {
-                continue;
-              }
-              let t = strl[arr.index - 1];
-              switch (t) {
-                case "@":
-                  let user = await fetchUser(arr[0]);
-                  if (user == null) {
-                    strl.splice(arr.index - 2, 39, `<a class="invalidUser">@Deleted User</a>`);
-                  } else {
-                    // we don't support server nicknames as they don't exist yet
-                    strl.splice(arr.index - 2, 39, `
-<a class="userMention" onclick="mentionClicked('${user.id}', '${packet.message.id}');">@${user.unam}</a>`);
-                  }
-                  msgtxt = strl.join("");
-                  //uuidreg.exec(msgtxt);
-                  break;
-                default:
-                  break;
-              }
-            }
-            if (packet.message.reply) {
-              if (!messageMap[packet.message.reply]) {
-                msgtxt = `<blockquote><em>Message couldn't be loaded</em></blockquote>` + msgtxt;
-              } else {
-                let m = await fetchUser(messageMap[packet.message.reply].author);
-                if (m == null) {
-                  msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.message.reply}')">
-                                    <a class="invalidUser">@Deleted User</a> ${messageMap[packet.message.reply].content}</blockquote>` + msgtxt;
-                } else {
-                  // we don't support server nicknames as they don't exist yet
-                  msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.message.reply}')">
-<a class="userMention" onclick="mentionClicked('${m.id}', '${packet.message.id}');">@${m.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;")}</a> ${messageMap[packet.message.reply].content}</blockquote>` + msgtxt;
+            if (focusedServer == serveur) {
+              loadedMessages++;
+              messageMap[packet.message.id] = packet.message;
+              // looks like absolute gibberish, matches uuids
+              let uuidreg = /[0-9a-f]{7,8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/ig;
+              let msgtxt = converty.makeHtml(packet.message.content.replace(/\</g, '&lt;') /*.replace(/\>/g, '&gt;')*/).replace(/\<\/?pre\>/g);
+              let arr;
+              while ((arr = uuidreg.exec(msgtxt)) !== null) {
+                let strl = msgtxt.split("");
+                if (strl[arr.index + 35] == "]") {
+                  strl.splice(arr.index, 0, "0");
                 }
-              }
-            }
-            if (packet.message.uploads) {
-              for (let upload of packet.message.uploads) {
-                if (upload.type.startsWith("image/")) {
-                  msgtxt += `\n<br><a target="_blank" href="${authUrl + upload.url}"><img src="${authUrl + upload.url}"></a>`;
+                if (strl[arr.index + 36] != "]" || strl[arr.index - 2] != "[") {
                   continue;
                 }
-                msgtxt += `
-                                    <div class="upload">
-                                        <span class="material-symbols-outlined">draft</span><a class="uploadName" target="_blank" href="${authUrl + upload.url}">${upload.name}</a>
-                                    </div>`;
+                let t = strl[arr.index - 1];
+                switch (t) {
+                  case "@":
+                    let user = await fetchUser(arr[0]);
+                    if (user == null) {
+                      strl.splice(arr.index - 2, 39, `<a class="invalidUser">@Deleted User</a>`);
+                    } else {
+                      // we don't support server nicknames as they don't exist yet
+                      strl.splice(arr.index - 2, 39, `
+<a class="userMention" onclick="mentionClicked('${user.id}', '${packet.message.id}');">@${user.unam}</a>`);
+                    }
+                    msgtxt = strl.join("");
+                    //uuidreg.exec(msgtxt);
+                    break;
+                  default:
+                    break;
+                }
               }
-            }
-            fetchUser(packet.message.author).then(resp => {
-              if (resp == null) {
-                unam = "Deleted User (there's something sus about this)";
-                pfp = "https://img.freepik.com/premium-vector/hand-drawn-cartoon-doodle-skull-funny-cartoon-skull-isolated-white-background_217204-944.jpg";
-              } else {
-                unam = resp.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
-                pfp = authUrl + resp.pfp;
+              if (packet.message.reply) {
+                if (!messageMap[packet.message.reply]) {
+                  msgtxt = `<blockquote><em>Message couldn't be loaded</em></blockquote>` + msgtxt;
+                } else {
+                  let m = await fetchUser(messageMap[packet.message.reply].author);
+                  if (m == null) {
+                    msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.message.reply}')">
+                                        <a class="invalidUser">@Deleted User</a> ${messageMap[packet.message.reply].content}</blockquote>` + msgtxt;
+                  } else {
+                    // we don't support server nicknames as they don't exist yet
+                    msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.message.reply}')">
+<a class="userMention" onclick="mentionClicked('${m.id}', '${packet.message.id}');">@${m.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;")}</a> ${messageMap[packet.message.reply].content}</blockquote>` + msgtxt;
+                  }
+                }
               }
-              let message3;
-              if (packet.message.author == sers.userId) {
-                message3 = `
+              if (packet.message.uploads) {
+                for (let upload of packet.message.uploads) {
+                  if (upload.type.startsWith("image/")) {
+                    msgtxt += `\n<br><a target="_blank" href="${authUrl + upload.url}"><img src="${authUrl + upload.url}"></a>`;
+                    continue;
+                  }
+                  msgtxt += `
+                                        <div class="upload">
+                                            <span class="material-symbols-outlined">draft</span><a class="uploadName" target="_blank" href="${authUrl + upload.url}">${upload.name}</a>
+                                        </div>`;
+                }
+              }
+              fetchUser(packet.message.author).then(resp => {
+                if (resp == null) {
+                  unam = "Deleted User (there's something sus about this)";
+                  pfp = "https://img.freepik.com/premium-vector/hand-drawn-cartoon-doodle-skull-funny-cartoon-skull-isolated-white-background_217204-944.jpg";
+                } else {
+                  unam = resp.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
+                  pfp = authUrl + resp.pfp;
+                }
+                let message3;
+                if (packet.message.author == sers.userId) {
+                  message3 = `
 <div class="message3">
     <button class="material-symbols-outlined" onclick="deleteMessage('${packet.message.id}', '${ip}');">Delete</button>
     <button class="material-symbols-outlined" onclick="replyTo('${packet.message.id}', '${ip}');">Reply</button>
 </div>`;
-              } else {
-                message3 = `
+                } else {
+                  message3 = `
 <div class="message3">
     <button class="material-symbols-outlined" onclick="replyTo('${packet.message.id}', '${ip}');">Reply</button>
 </div>`;
-              }
-              document.getElementById("mainContent").innerHTML += `
+                }
+                document.getElementById("mainContent").innerHTML += `
 <div class="message1" id="message_${packet.message.id}">
     <img src="${pfp}" class="avatar"/>
     <div class="message2">
@@ -802,14 +820,19 @@ function clientLoad() {
     </div>${message3}
 </div>
 `;
-              if (ma.scrollHeight < ma.scrollTop + 2 * ma.clientHeight) {
-                ma.scrollTo(ma.scrollLeft, ma.scrollHeight - ma.clientHeight);
-              }
-              if (document.visibilityState == "hidden" && sers.userId != packet.message.author) new Audio(authUrl + '/uploads/93c70e82-b447-4794-99d9-3ab070d659ea/f3cb5ab570a29417524422d17b4e4a4db33b5900df8127688ffcf352df17383f79e1cfa87d9c6ab9ce4b47e90d231d22a805597dd719fbf01fe6da6d047d7290').play();
-            });
+                if (ma.scrollHeight < ma.scrollTop + 2 * ma.clientHeight) {
+                  ma.scrollTo(ma.scrollLeft, ma.scrollHeight - ma.clientHeight);
+                }
+                if (document.visibilityState == "hidden" && sers.userId != packet.message.author) new Audio(authUrl + '/uploads/93c70e82-b447-4794-99d9-3ab070d659ea/f3cb5ab570a29417524422d17b4e4a4db33b5900df8127688ffcf352df17383f79e1cfa87d9c6ab9ce4b47e90d231d22a805597dd719fbf01fe6da6d047d7290').play();
+              });
+            }
             break;
           case "messages":
+            if (serveur != focusedServer) break;
             let txt = "";
+            if (packet.messages == []) {
+              break;
+            }
             let scrollBottom = ma.scrollHeight - ma.scrollTop;
             for (let m = 0; m < packet.messages.length; m++) {
               messageMap[packet.messages[m].id] = packet.messages[m];
@@ -927,6 +950,21 @@ function clientLoad() {
             document.getElementById(`message_${packet.messageId}`).style.display = "none";
             break;
           case "connected":
+            if (!focusedServer) focusedServer = serveur;
+            console.log(serveur);
+            if (!packet.manifest) packet.manifest = {};
+            if (!packet.manifest.icon) {
+              packet.manifest.icon = "./icon.png";
+            }
+            let icomg = document.createElement("img");
+            icomg.className = "serverIcon avatar";
+            icomg.src = packet.manifest.icon;
+            icomg.addEventListener("click", () => {
+              focusedServer = serveur;
+              clientLoad();
+            });
+            document.getElementById("left").appendChild(icomg);
+            break;
           case "join":
           case "connecting":
           case "disconnect":

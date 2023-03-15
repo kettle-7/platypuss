@@ -313,10 +313,11 @@ input {
 }
 
 .sidePane {
-    width: 48px;
+    width: fit-content;
     display: flex;
     flex-direction: column;
     gap: 3px;
+    padding: 3px;
     flex-grow: 0;
     flex-shrink: 0;
 }
@@ -430,13 +431,19 @@ input {
 }
 
 .avatar {
-    width: 48px;
-    height: 48px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     border: 2px solid #eeeeee;
     background: #171717;
     cursor: pointer;
     object-fit: cover;
+}
+
+#left .avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 25%;
 }
 
 #acsusername {
