@@ -507,10 +507,10 @@ hr {
 
 .message2 img {
     border-radius: 8px;
-    box-shadow: 2px 2px 10px black;
-    height: 20vh;
+    max-height: 40vh;
+    height: 40vh;
+    max-width: 100%;
     padding: 1px;
-    background-color: #505050;
 }
 
 .message2 a {

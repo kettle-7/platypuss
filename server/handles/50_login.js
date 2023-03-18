@@ -62,18 +62,19 @@ module.exports = {
                     }
                     let msgstld = [];
                     let mids = Object.keys(sdata.messages);
-                    for (let i = mids.length - 20; i < mids.length; i++) { // this acts weirdly when no messages have been sent
+                    for (let i = mids.length - 50; i < mids.length; i++) { // this acts weirdly when no messages have been sent
                         while (i < 0) i++;
                         msgstld.push(sdata.messages[mids[i]]);
                     }
                     packet.ws.send(JSON.stringify({
                         eventType: "connected",
-                        explanation: "You've connected to the server successfully."
+                        explanation: "You've connected to the server successfully.",
+                        icon: sdata.properties.icon
                     }));
                     packet.ws.send(JSON.stringify({
                         eventType: "messages",
                         messages: msgstld,
-                        isTop: (mids.length <= 20)
+                        isTop: (mids.length <= 50)
                     }));
                     return sdata;
                 } catch (e) {
