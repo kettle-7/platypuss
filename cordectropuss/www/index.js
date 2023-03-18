@@ -592,6 +592,7 @@ function clientLoad() {
     socket.close();
   }
   sockets = {};
+  let ips = [];
   document.getElementById("loadMoreMessages").hidden = false;
   document.getElementById("mainContent").innerHTML = "";
   document.getElementById("left").innerHTML = "";
@@ -606,6 +607,101 @@ function clientLoad() {
     } // page being closed and mild confusion which is not ideal but not dangerous.
     let sers = JSON.parse(h.responseText);
     for (let serveur in sers.servers) {
+      function ke(e) {
+        if (e.key == "Enter" && focusedServer == ws.url) {
+          console.log(document.getElementById("msgtxt").value, focusedServer, ws.url);
+          if (e.shiftKey) {
+            if (document.getElementById("msgtxt").rows < 10) document.getElementById("msgtxt").rows += 1;
+            return;
+          }
+          document.getElementById("progress").innerHTML = '<div id="progress2"></div>';
+          imageUpload(Object.values(uploadQueue), res => {
+            let uploads = [];
+            if (res) {
+              if (res[0] == "E") {
+                document.getElementById("progress").innerText = res;
+                document.getElementById("progress").hidden = false;
+                document.getElementById("progress").style.marginRight = "0px";
+                return;
+              }
+              responseText = JSON.parse(res);
+              for (let u of responseText) {
+                uploads.push({
+                  "url": u.url,
+                  "type": u.type,
+                  "name": u.name
+                });
+              }
+            }
+            ws.send(JSON.stringify({
+              eventType: "message",
+              message: {
+                content: document.getElementById("msgtxt").value,
+                reply: reply ? reply : undefined,
+                uploads: uploads ? uploads : undefined
+              }
+            }));
+            document.getElementById("msgtxt").value = "";
+            document.getElementById("msgtxt").rows = 2;
+            if (reply) {
+              document.getElementById(`message_${reply}`).style.borderLeftWidth = "0px";
+              document.getElementById(`message_${reply}`).style.borderLeftColor = "transparent";
+            }
+            reply = false;
+            uploadQueue = {};
+            document.getElementById("fileUploadSpace").innerHTML = "";
+            document.getElementById("fileDeleteMessage").hidden = true;
+          });
+          e.preventDefault();
+        }
+      }
+      function ce(e) {
+        console.log(ws, ws.url, focusedServer);
+        if (focusedServer == ws.url) {
+          console.log(document.getElementById("msgtxt").value);
+          imageUpload(Object.values(uploadQueue), res => {
+            let uploads = [];
+            if (res) {
+              if (res[0] == "E") {
+                document.getElementById("progress").innerText = res;
+                document.getElementById("progress").hidden = false;
+                document.getElementById("progress").style.marginRight = "0px";
+                return;
+              }
+              responseText = JSON.parse(res);
+              for (let u of responseText) {
+                uploads.push({
+                  "url": u.url,
+                  "type": u.type,
+                  "name": u.name
+                });
+              }
+            }
+            ws.send(JSON.stringify({
+              eventType: "message",
+              message: {
+                content: document.getElementById("msgtxt").value,
+                reply: reply ? reply : undefined,
+                uploads: uploads ? uploads : undefined
+              }
+            }));
+            document.getElementById("msgtxt").value = "";
+            document.getElementById("msgtxt").rows = 2;
+            if (reply) {
+              document.getElementById(`message_${reply}`).style.borderLeftWidth = "0px";
+              document.getElementById(`message_${reply}`).style.borderLeftColor = "transparent";
+            }
+            reply = false;
+            uploadQueue = {};
+            document.getElementById("fileUploadSpace").innerHTML = "";
+            document.getElementById("fileDeleteMessage").hidden = true;
+          });
+        }
+      }
+      document.getElementById("msgtxt").removeEventListener("keypress", ke);
+      document.getElementById("send").removeEventListener("click", ce);
+      if (ips.includes(serveur)) continue;
+      ips.push(serveur);
       let ip = serveur.split(' ')[0];
       let code = serveur.split(' ')[1];
       let url = "ws://" + ip.toString();
@@ -617,119 +713,31 @@ function clientLoad() {
         }
       }, 5000);
       ws.onerror = () => {
-        document.getElementById("mainContent").innerHTML += `<div class="message1">
-                        Warning: couldn't connect to ${ip}, try check your internet connection or inform the owner(s) of the server.
-                    </div>`;
+        console.error(`Warning: couldn't connect to ${ip}, try check your internet connection or inform the owner(s) of the server.`);
         if (ma.scrollHeight < ma.scrollTop + 2 * ma.clientHeight) {
           ma.scrollTo(ma.scrollLeft, ma.scrollHeight - ma.clientHeight);
         }
       };
       ws.onopen = () => {
-        console.log(serveur);
+        console.log(ws.url);
         sockets[ip] = ws;
-        document.getElementById("msgtxt").addEventListener("keypress", e => {
-          if (e.key == "Enter" && focusedServer == serveur) {
-            if (e.shiftKey) {
-              if (document.getElementById("msgtxt").rows < 10) document.getElementById("msgtxt").rows += 1;
-              return;
-            }
-            document.getElementById("progress").innerHTML = '<div id="progress2"></div>';
-            imageUpload(Object.values(uploadQueue), res => {
-              let uploads = [];
-              if (res) {
-                if (res[0] == "E") {
-                  document.getElementById("progress").innerText = res;
-                  document.getElementById("progress").hidden = false;
-                  document.getElementById("progress").style.marginRight = "0px";
-                  return;
-                }
-                responseText = JSON.parse(res);
-                for (let u of responseText) {
-                  uploads.push({
-                    "url": u.url,
-                    "type": u.type,
-                    "name": u.name
-                  });
-                }
-              }
-              ws.send(JSON.stringify({
-                eventType: "message",
-                message: {
-                  content: document.getElementById("msgtxt").value,
-                  reply: reply ? reply : undefined,
-                  uploads: uploads ? uploads : undefined
-                }
-              }));
-              document.getElementById("msgtxt").value = "";
-              document.getElementById("msgtxt").rows = 2;
-              if (reply) {
-                document.getElementById(`message_${reply}`).style.borderLeftWidth = "0px";
-                document.getElementById(`message_${reply}`).style.borderLeftColor = "transparent";
-              }
-              reply = false;
-              uploadQueue = {};
-              document.getElementById("fileUploadSpace").innerHTML = "";
-              document.getElementById("fileDeleteMessage").hidden = true;
-            });
-            e.preventDefault();
-          }
-        });
-        document.getElementById("send").addEventListener("click", () => {
-          if (focusedServer == serveur) {
-            imageUpload(Object.values(uploadQueue), res => {
-              let uploads = [];
-              if (res) {
-                if (res[0] == "E") {
-                  document.getElementById("progress").innerText = res;
-                  document.getElementById("progress").hidden = false;
-                  document.getElementById("progress").style.marginRight = "0px";
-                  return;
-                }
-                responseText = JSON.parse(res);
-                for (let u of responseText) {
-                  uploads.push({
-                    "url": u.url,
-                    "type": u.type,
-                    "name": u.name
-                  });
-                }
-              }
-              ws.send(JSON.stringify({
-                eventType: "message",
-                message: {
-                  content: document.getElementById("msgtxt").value,
-                  reply: reply ? reply : undefined,
-                  uploads: uploads ? uploads : undefined
-                }
-              }));
-              document.getElementById("msgtxt").value = "";
-              document.getElementById("msgtxt").rows = 2;
-              if (reply) {
-                document.getElementById(`message_${reply}`).style.borderLeftWidth = "0px";
-                document.getElementById(`message_${reply}`).style.borderLeftColor = "transparent";
-              }
-              reply = false;
-              uploadQueue = {};
-              document.getElementById("fileUploadSpace").innerHTML = "";
-              document.getElementById("fileDeleteMessage").hidden = true;
-            });
-          }
-        });
+        document.getElementById("msgtxt").addEventListener("keypress", ke);
+        document.getElementById("send").addEventListener("click", ce);
         console.log("e");
         ws.send(JSON.stringify({
           eventType: "login",
           code: code,
           sid: localStorage.getItem("sid")
         }));
-        console.log(serveur);
+        console.log(ws.url);
       };
       ws.onmessage = async event => {
         let packet = JSON.parse(event.data);
         let unam, pfp;
-        console.log(serveur, packet.eventType);
+        console.log(ws.url, packet.eventType);
         switch (packet.eventType) {
           case "message":
-            if (focusedServer == serveur) {
+            if (focusedServer == ws.url) {
               loadedMessages++;
               messageMap[packet.message.id] = packet.message;
               // looks like absolute gibberish, matches uuids
@@ -828,7 +836,7 @@ function clientLoad() {
             }
             break;
           case "messages":
-            if (serveur != focusedServer) break;
+            if (ws.url != focusedServer) break;
             let txt = "";
             if (packet.messages == []) {
               break;
@@ -950,8 +958,8 @@ function clientLoad() {
             document.getElementById(`message_${packet.messageId}`).style.display = "none";
             break;
           case "connected":
-            if (!focusedServer) focusedServer = serveur;
-            console.log(serveur);
+            if (!focusedServer) focusedServer = ws.url;
+            console.log(ws.url);
             if (!packet.manifest) packet.manifest = {};
             if (!packet.manifest.icon) {
               packet.manifest.icon = "./icon.png";
@@ -960,7 +968,7 @@ function clientLoad() {
             icomg.className = "serverIcon avatar";
             icomg.src = packet.manifest.icon;
             icomg.addEventListener("click", () => {
-              focusedServer = serveur;
+              focusedServer = ws.url;
               clientLoad();
             });
             document.getElementById("left").appendChild(icomg);
