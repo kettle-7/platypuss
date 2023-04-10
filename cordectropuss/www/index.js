@@ -254,6 +254,9 @@ fetchUser(localStorage.getItem('sid')).then(res => {
       let ip = [
       // the first 8 characters are the ip address in hex form
       Number("0x" + inviteCode[0] + inviteCode[1]).toString(), Number("0x" + inviteCode[2] + inviteCode[3]).toString(), Number("0x" + inviteCode[4] + inviteCode[5]).toString(), Number("0x" + inviteCode[6] + inviteCode[7]).toString()].join(".");
+      if (url.searchParams.has("invip")) {
+        ip = url.searchParams.get("invip");
+      }
       let port = 0;
       for (let c = 8; c + 2 < inviteCode.length; c++) {
         port = port * 16 + parseInt(inviteCode[c], 16);
@@ -305,12 +308,16 @@ fetchUser(localStorage.getItem('sid')).then(res => {
         r.send(null);
       }
       localStorage.removeItem("pendingInvite");
+      localStorage.removeItem("pendingInvip");
       document.getElementById("acceptinvitebtn").addEventListener("click", clicky);
     } else if (localStorage.getItem("pendingInvite") != null) {
       let inviteCode = localStorage.getItem("pendingInvite");
       let ip = [
       // the first 8 characters are the ip address in hex form
       Number("0x" + inviteCode[0] + inviteCode[1]).toString(), Number("0x" + inviteCode[2] + inviteCode[3]).toString(), Number("0x" + inviteCode[4] + inviteCode[5]).toString(), Number("0x" + inviteCode[6] + inviteCode[7]).toString()].join(".");
+      if (localStorage.getItem("pendingInvip")) {
+        ip = localStorage.getItem("pendingInvip");
+      }
       let port = 0;
       for (let c = 8; c + 2 < inviteCode.length; c++) {
         port = port * 16 + parseInt(inviteCode[c], 16);
@@ -346,6 +353,7 @@ fetchUser(localStorage.getItem('sid')).then(res => {
       });
       document.getElementById("inviteparent").style.display = "flex";
       localStorage.removeItem("pendingInvite");
+      localStorage.removeItem("pendingInvip");
       function clicky() {
         document.getElementById("invdecline").innerText = "Close";
         document.getElementById("invitepopup").removeChild(document.getElementById("acceptinvitebtn"));
@@ -450,6 +458,9 @@ fetchUser(localStorage.getItem('sid')).then(res => {
       let ip = [
       // the first 8 characters are the ip address in hex form
       Number("0x" + inviteCode[0] + inviteCode[1]).toString(), Number("0x" + inviteCode[2] + inviteCode[3]).toString(), Number("0x" + inviteCode[4] + inviteCode[5]).toString(), Number("0x" + inviteCode[6] + inviteCode[7]).toString()].join(".");
+      if (url.searchParams.has("invip")) {
+        ip = url.searchParams.get("invip");
+      }
       let port = 0;
       for (let c = 8; c + 2 < inviteCode.length; c++) {
         port = port * 16 + parseInt(inviteCode[c], 16);
@@ -482,6 +493,7 @@ fetchUser(localStorage.getItem('sid')).then(res => {
       document.getElementById("inviteparent").style.display = "flex";
       document.getElementById("acceptinvitebtn").addEventListener("click", () => {
         localStorage.setItem("pendingInvite", inviteCode);
+        localStorage.setItem("pendingInvip", ip);
         su();
       });
       document.getElementById("acceptinvitebtn").innerText = "Create Account";
