@@ -45,11 +45,11 @@ all the information specified in the Platypuss API."
 		}
 		//if (!(/[\!@#$%\^&\*()_+\-=\[\]{};':"\\|,.<>\/?A-Za-z0-9]/.test(packet.message.content)) && !packet) {
 		if (packet.message.content.replace(/[ \t\r\n]/g, "").length < 1 && !packet.message.uploads) {
-			/*packet.ws.send(JSON.stringify({
+			packet.ws.send(JSON.stringify({
 				"eventType": "error",
 				"code": "invisibleMsg",
 				"explanation": "An attempt to stop invisible messages.<br><br><pre><code>"+JSON.stringify(packet.message)+"</code></pre>"
-			}));*/
+			}));
 			return;
 		}
 		if (packet.ws.lastMessage == packet.message.content && !allowDuplicates) {
