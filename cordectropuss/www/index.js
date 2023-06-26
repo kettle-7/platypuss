@@ -730,6 +730,7 @@ function clientLoad() {
       }, 5000);
       ws.onerror = () => {
         console.error(`Warning: couldn't connect to ${ip}, try check your internet connection or inform the owner(s) of the server.`);
+        console.log(elapsed);
         if (ma.scrollHeight < ma.scrollTop + 2 * ma.clientHeight) {
           ma.scrollTo(ma.scrollLeft, ma.scrollHeight - ma.clientHeight);
         }
