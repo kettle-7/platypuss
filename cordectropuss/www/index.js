@@ -981,6 +981,7 @@ function clientLoad() {
           default:
             if ("code" in packet) {
               if (["nothingModify"].includes(packet.code)) break;
+              if (["invisibleMsg"].includes(packet.code)) break;
             }
             if ("explanation" in packet) document.getElementById("mainContent").innerHTML += '<div class="message1">' + packet.explanation + '</div>';else document.getElementById("mainContent").innerHTML += '<pre class="message1"><code>' + event.data + '</code></pre>';
             if (ma.scrollHeight < ma.scrollTop + 2 * ma.clientHeight) {
