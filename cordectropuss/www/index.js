@@ -731,9 +731,6 @@ function clientLoad() {
       ws.onerror = () => {
         console.error(`Warning: couldn't connect to ${ip}, try check your internet connection or inform the owner(s) of the server.`);
         console.log(elapsed);
-        if (ma.scrollHeight < ma.scrollTop + 2 * ma.clientHeight) {
-          ma.scrollTo(ma.scrollLeft, ma.scrollHeight - ma.clientHeight);
-        }
         if (elapsed) window.location.reload();
       };
       ws.onopen = () => {
@@ -746,9 +743,6 @@ function clientLoad() {
       };
       ws.onclose = () => {
         console.error(`Warning: the server at ${ip} closed.`);
-        if (ma.scrollHeight < ma.scrollTop + 2 * ma.clientHeight) {
-          ma.scrollTo(ma.scrollLeft, ma.scrollHeight - ma.clientHeight);
-        }
         if (elapsed) window.location.reload();
       };
       ws.onmessage = async event => {
