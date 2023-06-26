@@ -67,7 +67,7 @@ all the information specified in the Platypuss API."
 			}));
 			return;
 		}
-		if (packet.message.content.replace(/ /g, "").includes(">>>>>")) {
+		if (packet.message.content.replace(/ /g, "").includes(">>>>>")) { // browser crash
 			packet.ws.send(JSON.stringify({
 				"eventType": "error",
 				"code": "no",

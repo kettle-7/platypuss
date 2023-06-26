@@ -706,6 +706,11 @@ function clientLoad() {
       window.location.reload(); // page to infinitely reload. the most likely response from the user is the
     } // page being closed and mild confusion which is not ideal but not dangerous.
 
+    setTimeout(() => {
+      if (Object.keys(sers.servers).length < 1) {
+        window.location.reload();
+      }
+    }, 5050);
     let sers = JSON.parse(h.responseText);
     for (let serveur in sers.servers) {
       if (ips.includes(serveur)) continue;
@@ -714,17 +719,21 @@ function clientLoad() {
       let code = serveur.split(' ')[1];
       let url = "ws://" + ip.toString();
       let ws = new WebSocket(url);
+      let elapsed = false;
       document.getElementById("left").innerHTML = "";
       setTimeout(() => {
         if (ws.readyState == 0) {
           ws.close();
+          delete sers.servers[serveur];
         }
+        elapsed = true;
       }, 5000);
       ws.onerror = () => {
         console.error(`Warning: couldn't connect to ${ip}, try check your internet connection or inform the owner(s) of the server.`);
         if (ma.scrollHeight < ma.scrollTop + 2 * ma.clientHeight) {
           ma.scrollTo(ma.scrollLeft, ma.scrollHeight - ma.clientHeight);
         }
+        if (elapsed) clientLoad();
       };
       ws.onopen = () => {
         sockets[serveur] = ws;
@@ -733,6 +742,13 @@ function clientLoad() {
           code: code,
           sid: localStorage.getItem("sid")
         }));
+      };
+      ws.onclose = () => {
+        console.error(`Warning: the server at ${ip} closed.`);
+        if (ma.scrollHeight < ma.scrollTop + 2 * ma.clientHeight) {
+          ma.scrollTo(ma.scrollLeft, ma.scrollHeight - ma.clientHeight);
+        }
+        if (elapsed) clientLoad();
       };
       ws.onmessage = async event => {
         let packet = JSON.parse(event.data);
