@@ -733,7 +733,7 @@ function clientLoad() {
         if (ma.scrollHeight < ma.scrollTop + 2 * ma.clientHeight) {
           ma.scrollTo(ma.scrollLeft, ma.scrollHeight - ma.clientHeight);
         }
-        if (elapsed) clientLoad();
+        if (elapsed) window.location.reload();
       };
       ws.onopen = () => {
         sockets[serveur] = ws;
@@ -748,7 +748,7 @@ function clientLoad() {
         if (ma.scrollHeight < ma.scrollTop + 2 * ma.clientHeight) {
           ma.scrollTo(ma.scrollLeft, ma.scrollHeight - ma.clientHeight);
         }
-        if (elapsed) clientLoad();
+        if (elapsed) window.location.reload();
       };
       ws.onmessage = async event => {
         let packet = JSON.parse(event.data);
