@@ -500,7 +500,6 @@ fetchUser(localStorage.getItem('sid')).then(res => {
       document.getElementById("invdecline").innerText = "Cancel";
     }
   }
-  document.getElementById("loadingScreen").className += " fadeOut";
 }, () => {
   if (url.host.startsWith("http://192.168")) {
     localStorage.setItem("authUrl", "http://192.168.1.69:3000");
@@ -980,6 +979,7 @@ function clientLoad() {
             document.getElementById(`message_${packet.messageId}`).style.display = "none";
             break;
           case "connected":
+            document.getElementById("loadingScreen").className += " fadeOut";
             if (!focusedServer) focusedServer = serveur;
             if (!packet.manifest) packet.manifest = {};
             if (!packet.manifest.icon) {
