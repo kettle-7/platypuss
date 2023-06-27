@@ -689,6 +689,7 @@ function ce(e) {
 }
 document.getElementById("msgtxt").addEventListener("keypress", ke);
 document.getElementById("send").addEventListener("click", ce);
+var elapsed;
 function clientLoad() {
   for (let socket of Object.values(sockets)) {
     socket.close();
@@ -721,7 +722,7 @@ function clientLoad() {
       let code = serveur.split(' ')[1];
       let url = "ws://" + ip.toString();
       let ws = new WebSocket(url);
-      let elapsed = false;
+      elapsed = false;
       document.getElementById("left").innerHTML = "";
       setTimeout(() => {
         if (ws.readyState == 0) {
