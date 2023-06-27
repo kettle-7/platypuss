@@ -272,6 +272,7 @@ fetchUser(localStorage.getItem('sid')).then(res => {
                     <p>${converty.makeHtml(data.description.toString().replace(/\</g, "&lt;").replace(/\>/g, "&gt;"))}</p>
                     `;
           document.getElementById("inviteIcon").src = data.icon;
+          document.getElementById("loadingScreen").className += " fadeOut";
         }).catch(err => {
           document.getElementById("serverName").innerHTML = `
                     You've been invited to join a server, but we couldn't connect.<br>
@@ -280,6 +281,7 @@ fetchUser(localStorage.getItem('sid')).then(res => {
                     `;
           document.getElementById("acceptinvitebtn").innerText = "Accept Anyway";
           document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
+          document.getElementById("loadingScreen").className += " fadeOut";
         });
       }).catch(err => {
         document.getElementById("serverName").innerHTML = `
@@ -289,6 +291,7 @@ fetchUser(localStorage.getItem('sid')).then(res => {
                 `;
         document.getElementById("acceptinvitebtn").innerText = "Accept Anyway";
         document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
+        document.getElementById("loadingScreen").className += " fadeOut";
       });
       document.getElementById("inviteparent").style.display = "flex";
       function clicky() {
@@ -333,6 +336,7 @@ fetchUser(localStorage.getItem('sid')).then(res => {
                     <p>${converty.makeHtml(data.description.toString().replace(/\</g, "&lt;").replace(/\>/g, "&gt;"))}</p>
                     `;
           document.getElementById("inviteIcon").src = data.icon;
+          document.getElementById("loadingScreen").className += " fadeOut";
         }).catch(err => {
           document.getElementById("serverName").innerHTML = `
                     You've been invited to join a server, but we couldn't connect :~(<br>
@@ -341,6 +345,7 @@ fetchUser(localStorage.getItem('sid')).then(res => {
                     `;
           document.getElementById("acceptinvitebtn").innerText = "Accept Anyway";
           document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
+          document.getElementById("loadingScreen").className += " fadeOut";
         });
       }).catch(err => {
         document.getElementById("serverName").innerHTML = `
@@ -350,6 +355,7 @@ fetchUser(localStorage.getItem('sid')).then(res => {
                 `;
         document.getElementById("acceptinvitebtn").innerText = "Accept Anyway";
         document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
+        document.getElementById("loadingScreen").className += " fadeOut";
       });
       document.getElementById("inviteparent").style.display = "flex";
       localStorage.removeItem("pendingInvite");
@@ -474,6 +480,7 @@ fetchUser(localStorage.getItem('sid')).then(res => {
                     <br>Create a free Platypuss account to join!
                     <br>You may need to go to this link again afterward.`;
           document.getElementById("inviteIcon").src = data.icon;
+          document.getElementById("loadingScreen").className += " fadeOut";
         }).catch(err => {
           document.getElementById("serverName").innerHTML = `
                     You've been invited to join a server, but we couldn't connect :~(<br>
@@ -481,6 +488,7 @@ fetchUser(localStorage.getItem('sid')).then(res => {
                     Please contact the server owner if you think there's an issue.
                     `;
           document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
+          document.getElementById("loadingScreen").className += " fadeOut";
         });
       }).catch(err => {
         document.getElementById("serverName").innerHTML = `
@@ -489,6 +497,7 @@ fetchUser(localStorage.getItem('sid')).then(res => {
                 Please contact the server owner if you think there's an issue.
                 `;
         document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
+        document.getElementById("loadingScreen").className += " fadeOut";
       });
       document.getElementById("inviteparent").style.display = "flex";
       document.getElementById("acceptinvitebtn").addEventListener("click", () => {
