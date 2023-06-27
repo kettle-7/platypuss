@@ -710,7 +710,7 @@ function clientLoad() {
 
     setTimeout(() => {
       if (Object.keys(sers.servers).length < 1) {
-        document.getElementById("everything").removeChild(document.getElementById("actualpagecontainer"));
+        //document.getElementById("everything").removeChild(document.getElementById("actualpagecontainer"));
       }
     }, 5050);
     let sers = JSON.parse(h.responseText);
