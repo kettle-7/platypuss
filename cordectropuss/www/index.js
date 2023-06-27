@@ -734,7 +734,7 @@ function clientLoad() {
           ws.close();
         }
         elapsed = true;
-      }, 30500));
+      }, 60000));
       ws.onerror = () => {
         console.error(`Warning: couldn't connect to ${ip}, try check your internet connection or inform the owner(s) of the server.`);
         console.log(elapsed);
