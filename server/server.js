@@ -140,7 +140,7 @@ check your code thoroughly, otherwise please contact the developer."
                         }
                         console.log(data.unam + " disconnected from the server.");
                     } catch (e) {
-                        console.log(e);
+                        console.log(e, Buffer.concat(chunks).toString('utf8'));
                         console.log(ws.uid + " disconnected from the server.");
                     }
                 });

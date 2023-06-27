@@ -503,7 +503,7 @@ fetchUser(localStorage.getItem('sid')).then(res => {
   document.getElementById("loadingScreen").className += " fadeOut";
 }, () => {
   if (url.host.startsWith("http://192.168")) {
-    localStorage.setItem("authUrl", "http://192.168.1.70:3000");
+    localStorage.setItem("authUrl", "http://192.168.1.69:3000");
     window.location.reload();
   }
   document.getElementById("header").removeChild(document.getElementById("pfp"));
@@ -528,10 +528,12 @@ document.getElementById("dacpopup").addEventListener("click", e => {
 document.getElementById("p").addEventListener("click", e => {
   e.stopPropagation();
 });
+/*
 if (authUrl != url.protocol + "//" + url.host && url.protocol == "http:") {
-  localStorage.setItem("authUrl", url.protocol + "//" + url.host);
-  window.location.reload();
-}
+    localStorage.setItem("authUrl", url.protocol + "//" + url.host);
+    window.location.reload();
+}*/
+
 function logout() {
   localStorage.clear();
   window.location.reload();
@@ -708,7 +710,7 @@ function clientLoad() {
 
     setTimeout(() => {
       if (Object.keys(sers.servers).length < 1) {
-        window.location.reload();
+        document.getElementById("everything").removeChild(document.getElementById("actualpagecontainer"));
       }
     }, 5050);
     let sers = JSON.parse(h.responseText);
@@ -731,7 +733,7 @@ function clientLoad() {
       ws.onerror = () => {
         console.error(`Warning: couldn't connect to ${ip}, try check your internet connection or inform the owner(s) of the server.`);
         console.log(elapsed);
-        if (elapsed) window.location.reload();
+        if (elapsed) clientLoad();
       };
       ws.onopen = () => {
         sockets[serveur] = ws;
@@ -741,10 +743,11 @@ function clientLoad() {
           sid: localStorage.getItem("sid")
         }));
       };
+      /*
       ws.onclose = () => {
-        console.error(`Warning: the server at ${ip} closed.`);
-        if (elapsed) window.location.reload();
-      };
+          console.error(`Warning: the server at ${ip} closed.`);
+          if (elapsed) clientLoad();
+      };*/
       ws.onmessage = async event => {
         let packet = JSON.parse(event.data);
         let unam, pfp;
