@@ -690,9 +690,13 @@ function ce(e) {
 document.getElementById("msgtxt").addEventListener("keypress", ke);
 document.getElementById("send").addEventListener("click", ce);
 var elapsed;
+breaks = [];
 function clientLoad() {
   for (let socket of Object.values(sockets)) {
     socket.close();
+  }
+  for (let bread of breaks) {
+    clearTimeout(bread);
   }
   sockets = {};
   let ips = [];
@@ -724,13 +728,13 @@ function clientLoad() {
       let ws = new WebSocket(url);
       elapsed = false;
       document.getElementById("left").innerHTML = "";
-      setTimeout(() => {
+      breaks.push(setTimeout(() => {
         if (ws.readyState == 0) {
           ws.close();
           delete sers.servers[serveur];
         }
         elapsed = true;
-      }, 5000);
+      }, 5000));
       ws.onerror = () => {
         console.error(`Warning: couldn't connect to ${ip}, try check your internet connection or inform the owner(s) of the server.`);
         console.log(elapsed);
