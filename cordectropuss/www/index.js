@@ -698,6 +698,7 @@ function clientLoad() {
   for (let bread of breaks) {
     clearTimeout(bread);
   }
+  elapsed = false;
   sockets = {};
   let opensocks = 0;
   let ips = [];
@@ -718,7 +719,7 @@ function clientLoad() {
       if (opensocks < 1) {
         document.getElementById("everything").removeChild(document.getElementById("actualpagecontainer"));
       }
-    }, 5050);
+    }, 10050);
     let sers = JSON.parse(h.responseText);
     for (let serveur in sers.servers) {
       if (ips.includes(serveur)) continue;
@@ -727,15 +728,13 @@ function clientLoad() {
       let code = serveur.split(' ')[1];
       let url = "ws://" + ip.toString();
       let ws = new WebSocket(url);
-      elapsed = false;
       document.getElementById("left").innerHTML = "";
       breaks.push(setTimeout(() => {
         if (ws.readyState == 0) {
           ws.close();
-          delete sers.servers[serveur];
         }
         elapsed = true;
-      }, 5000));
+      }, 10000));
       ws.onerror = () => {
         console.error(`Warning: couldn't connect to ${ip}, try check your internet connection or inform the owner(s) of the server.`);
         console.log(elapsed);
