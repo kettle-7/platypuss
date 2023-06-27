@@ -699,6 +699,7 @@ function clientLoad() {
     clearTimeout(bread);
   }
   sockets = {};
+  let opensocks = 0;
   let ips = [];
   document.getElementById("loadMoreMessages").hidden = false;
   document.getElementById("mainContent").innerHTML = "";
@@ -714,8 +715,8 @@ function clientLoad() {
     } // page being closed and mild confusion which is not ideal but not dangerous.
 
     setTimeout(() => {
-      if (Object.keys(sers.servers).length < 1) {
-        //document.getElementById("everything").removeChild(document.getElementById("actualpagecontainer"));
+      if (opensocks < 1) {
+        document.getElementById("everything").removeChild(document.getElementById("actualpagecontainer"));
       }
     }, 5050);
     let sers = JSON.parse(h.responseText);
@@ -741,6 +742,7 @@ function clientLoad() {
         if (elapsed) clientLoad();
       };
       ws.onopen = () => {
+        opensocks++;
         sockets[serveur] = ws;
         ws.send(JSON.stringify({
           eventType: "login",
