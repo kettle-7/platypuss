@@ -719,7 +719,7 @@ function clientLoad() {
       if (opensocks < 1) {
         document.getElementById("everything").removeChild(document.getElementById("actualpagecontainer"));
       }
-    }, 10050);
+    }, 3000);
     let sers = JSON.parse(h.responseText);
     for (let serveur in sers.servers) {
       if (ips.includes(serveur)) continue;
@@ -734,7 +734,7 @@ function clientLoad() {
           ws.close();
         }
         elapsed = true;
-      }, 10000));
+      }, 30500));
       ws.onerror = () => {
         console.error(`Warning: couldn't connect to ${ip}, try check your internet connection or inform the owner(s) of the server.`);
         console.log(elapsed);
