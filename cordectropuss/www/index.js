@@ -845,6 +845,7 @@ function clientLoad() {
                 } else {
                   message3 = `
 <div class="message3">
+    <button class="material-symbols-outlined" onclick="ping('${packet.message.author}');">alternate_email</button>
     <button class="material-symbols-outlined" onclick="replyTo('${packet.message.id}', '${serveur}');">Reply</button>
 </div>`;
                 }
