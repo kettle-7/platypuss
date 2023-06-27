@@ -754,7 +754,7 @@ function clientLoad() {
         ws.send(JSON.stringify({
           eventType: "login",
           code: code,
-          sid: localStorage.getItem("sid")
+          sid: sers.servers[serveur]
         }));
       };
       /*
