@@ -515,10 +515,12 @@ fetchUser(localStorage.getItem('sid')).then(res => {
       });
       document.getElementById("acceptinvitebtn").innerText = "Create Account";
       document.getElementById("invdecline").innerText = "Cancel";
+    } else {
+      document.getElementById("loadingScreen").className += " fadeOut";
     }
   }
 }, () => {
-  if (url.host.startsWith("http://192.168")) {
+  if (url.host.startsWith("http://192.168") && !localStorage.getItem("forceAuth")) {
     localStorage.setItem("authUrl", "http://192.168.1.69:3000");
     window.location.reload();
   }
@@ -544,12 +546,10 @@ document.getElementById("dacpopup").addEventListener("click", e => {
 document.getElementById("p").addEventListener("click", e => {
   e.stopPropagation();
 });
-/*
-if (authUrl != url.protocol + "//" + url.host && url.protocol == "http:") {
-    localStorage.setItem("authUrl", url.protocol + "//" + url.host);
-    window.location.reload();
-}*/
-
+if (authUrl != url.protocol + "//" + url.host && url.protocol == "http:" && !localStorage.getItem("forceAuth")) {
+  localStorage.setItem("authUrl", url.protocol + "//" + url.host);
+  window.location.reload();
+}
 function logout() {
   localStorage.clear();
   window.location.reload();
