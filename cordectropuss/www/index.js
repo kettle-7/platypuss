@@ -568,6 +568,9 @@ function replyTo(id, server) {
   document.getElementById(`message_${reply}`).style.borderLeftWidth = "2px";
   document.getElementById(`message_${reply}`).style.borderLeftColor = "#0075DB";
 }
+function ping(id) {
+  document.getElementById("msgtxt").value += ` [@${id}] `;
+}
 function moreMessages() {
   sockets[focusedServer].send(JSON.stringify({
     eventType: "messageLoad",
