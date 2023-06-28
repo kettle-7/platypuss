@@ -211,6 +211,7 @@ fetchUser(localStorage.getItem('sid')).then(res => {
         this.parentElement.removeChild(this);"/>`;
           }
         }
+        document.getElementById("acceptinvitebtn").focus();
       };
       input.click();
     });
@@ -231,6 +232,7 @@ fetchUser(localStorage.getItem('sid')).then(res => {
         this.parentElement.removeChild(this);"/>`;
         }
       }
+      document.getElementById("acceptinvitebtn").focus();
     });
     // document.getElementById("header").removeChild(document.getElementById("spacement"));
     const h = new XMLHttpRequest();
@@ -273,6 +275,7 @@ fetchUser(localStorage.getItem('sid')).then(res => {
                     `;
           document.getElementById("inviteIcon").src = data.icon;
           document.getElementById("loadingScreen").className += " fadeOut";
+          document.getElementById("acceptinvitebtn").focus();
         }).catch(err => {
           document.getElementById("serverName").innerHTML = `
                     You've been invited to join a server, but we couldn't connect.<br>
@@ -282,6 +285,7 @@ fetchUser(localStorage.getItem('sid')).then(res => {
           document.getElementById("acceptinvitebtn").innerText = "Accept Anyway";
           document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
           document.getElementById("loadingScreen").className += " fadeOut";
+          document.getElementById("invdecline").focus();
         });
       }).catch(err => {
         document.getElementById("serverName").innerHTML = `
@@ -292,6 +296,7 @@ fetchUser(localStorage.getItem('sid')).then(res => {
         document.getElementById("acceptinvitebtn").innerText = "Accept Anyway";
         document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
         document.getElementById("loadingScreen").className += " fadeOut";
+        document.getElementById("invdecline").focus();
       });
       document.getElementById("inviteparent").style.display = "flex";
       function clicky() {
@@ -337,6 +342,7 @@ fetchUser(localStorage.getItem('sid')).then(res => {
                     `;
           document.getElementById("inviteIcon").src = data.icon;
           document.getElementById("loadingScreen").className += " fadeOut";
+          document.getElementById("acceptinvitebtn").focus();
         }).catch(err => {
           document.getElementById("serverName").innerHTML = `
                     You've been invited to join a server, but we couldn't connect :~(<br>
@@ -346,6 +352,7 @@ fetchUser(localStorage.getItem('sid')).then(res => {
           document.getElementById("acceptinvitebtn").innerText = "Accept Anyway";
           document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
           document.getElementById("loadingScreen").className += " fadeOut";
+          document.getElementById("invdecline").focus();
         });
       }).catch(err => {
         document.getElementById("serverName").innerHTML = `
@@ -356,6 +363,7 @@ fetchUser(localStorage.getItem('sid')).then(res => {
         document.getElementById("acceptinvitebtn").innerText = "Accept Anyway";
         document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
         document.getElementById("loadingScreen").className += " fadeOut";
+        document.getElementById("invdecline").focus();
       });
       document.getElementById("inviteparent").style.display = "flex";
       localStorage.removeItem("pendingInvite");
@@ -570,6 +578,7 @@ function replyTo(id, server) {
 }
 function ping(id) {
   document.getElementById("msgtxt").value += ` [@${id}] `;
+  document.getElementById("msgtxt").focus();
 }
 function moreMessages() {
   sockets[focusedServer].send(JSON.stringify({
@@ -602,6 +611,7 @@ function imageUpload(imgs, callback) {
     document.getElementById("progress").hidden = true;
     if (xhr.readyState === XMLHttpRequest.DONE && xhr.status) {
       callback(xhr.responseText);
+      document.getElementById("acceptinvitebtn").focus();
     }
   };
   document.getElementById("progress").hidden = false;
@@ -696,6 +706,7 @@ function ce(e) {
     uploadQueue = {};
     document.getElementById("fileUploadSpace").innerHTML = "";
     document.getElementById("fileDeleteMessage").hidden = true;
+    document.getElementById("acceptinvitebtn").focus();
   });
 }
 document.getElementById("msgtxt").addEventListener("keypress", ke);
@@ -994,7 +1005,10 @@ function clientLoad() {
             break;
           case "connected":
             document.getElementById("loadingScreen").className += " fadeOut";
-            if (!focusedServer) focusedServer = serveur;
+            if (!focusedServer) {
+              focusedServer = serveur;
+              document.getElementById("msgtxt").focus();
+            }
             if (!packet.manifest) packet.manifest = {};
             if (!packet.manifest.icon) {
               packet.manifest.icon = "./icon.png";
