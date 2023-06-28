@@ -563,6 +563,7 @@ function deleteMessage(id, server) {
     eventType: "messageDelete",
     id: id
   }));
+  document.getElementById("msgtxt").focus();
 }
 function googleAuth(argv) {
   console.log(argv);
@@ -575,6 +576,7 @@ function replyTo(id, server) {
   reply = id;
   document.getElementById(`message_${reply}`).style.borderLeftWidth = "2px";
   document.getElementById(`message_${reply}`).style.borderLeftColor = "#0075DB";
+  document.getElementById("msgtxt").focus();
 }
 function ping(id) {
   document.getElementById("msgtxt").value += ` [@${id}] `;
