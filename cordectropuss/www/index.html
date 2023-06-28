@@ -97,7 +97,7 @@
                 <button class="chonk" id="invdecline" onclick="document.body.removeChild(document.getElementById('inviteparent'));window.history.pushState({}, '', '/');clientLoad();">Decline</button>
             </div>
         </div>
-        <div class="popupParent" id="acsparent" onclick="document.getElementById('acsparent').style.display = 'none'" hidden>
+        <div class="popupParent" id="acsparent" onclick="au();document.getElementById('acsparent').style.display = 'none'" hidden>
             <div class="centred popup" id="acspopup">
                 <h2 style="text-align:center;">Account Settings</h2>
                 <div id="profBanner" class="banner">
@@ -107,28 +107,29 @@
                         </span>
                         <img class="avatar" id="changePfp" src="" style="width:96px;height:96px;position: absolute;margin: 0px; padding: 0px;left: 0px;top: 0px;border: none;"/>
                     </div>
-                    <h1 id="acsusername">(username)</h1><span id="tag"></span>
+                    <h1><label id="acsusername" class="labelInDisguise">(username)</label></h1><span id="tag"></span>
                 </div>
                 <span id="avatarTooBig" hidden>Sorry, that file is too big, the maximum size is 5MB.</span>
-                <textarea>I don't have legs.</textarea>
+                <textarea class="textBox" id="acsabm" placeholder="Tell us more about you...">I don't have legs.</textarea>
                 <button class="dangerous chonk" id="acsdelacc"
                     onclick="document.getElementById('dacparent').style.display = 'flex';document.getElementById('acsparent').style.display = 'none';"
                     >Delete Account</button>
                 <button class="chonk" id="acscpwd"
                     onclick="document.getElementById('cpwdparent').style.display = 'flex'; document.getElementById('acsparent').style.display = 'none'"
                     >Change Password</button>
-                <button class="chonk" id="acssave" onclick="document.getElementById('acsparent').style.display = 'none';">Done</button>
+                <button class="chonk" id="acssave" onclick="au();document.getElementById('acsparent').style.display = 'none';">Done</button>
             </div>
         </div>
         <div class="popupParent" id="uifparent" onclick="document.getElementById('uifparent').style.display = 'none'" hidden>
             <div class="centred popup" id="uifpopup">
+                <hr>
                 <div id="uifbanner" class="banner">
                     <div style="width:96px;height:96px; padding: 0px;position: relative;display: block;" class="avatar">
                         <img class="avatar" id="uifpfp" src="" style="width:96px;height:96px;position: absolute;margin: 0px; padding: 0px;left: 0px;top: 0px;border: none;"/>
                     </div>
                     <h1 id="uifusername">(username)</h1><span id="uiftag"></span>
                 </div>
-                <button class="chonk" id="acssave" onclick="document.getElementById('acsparent').style.display = 'none';">Done</button>
+                <p id="uifabm"></p>
             </div>
         </div>
         <div class="popupParent" id="dacparent" onclick="document.getElementById('dacparent').style.display = 'none'" hidden>

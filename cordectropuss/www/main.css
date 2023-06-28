@@ -708,6 +708,19 @@ hr {
     border: 1px solid #0075db;
 }
 
+.labelInDisguise {
+    background: none;
+    border: none;
+    color: #ffffff;
+}
+
+.labelInDisguise:focus {
+    background-color: #303030;
+    box-shadow: 2px 2px 5px #1b1b1b inset;
+    border: 1px solid #0075db;
+    border-radius: 5px;
+}
+
 #changePfp:hover {
     opacity: 25%;
 }

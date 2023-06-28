@@ -51,6 +51,8 @@ var uploadQueue = {};
 var authUrl = localStorage.getItem("authUrl");
 var messageMap = {};
 var ift = false;
+var premyum = false;
+var abm, oldunam;
 if (!authUrl) authUrl = "http://platypuss.ddns.net";
 function li() {
   ift = false;
@@ -181,11 +183,17 @@ function fetchUser(id) {
 }
 fetchUser(localStorage.getItem('sid')).then(res => {
   if (res == null) loggedin = false;else {
+    oldunam = res.unam;
+    abm = res.aboutMe.text;
+    if (res.aboutMe.premyum) {
+      premyum = true;
+    }
     document.getElementById("pfp").src = authUrl + res.pfp;
     document.getElementById("username").innerText = "Logged in as " + res.unam;
     document.getElementById("changePfp").src = authUrl + res.pfp;
-    document.getElementById("acsusername").innerText = res.unam;
-    document.getElementById("tag").innerText = res.tag;
+    document.getElementById("acsusername").value = res.unam;
+    document.getElementById("tag").innerText = "@" + res.tag;
+    document.getElementById("acsabm").innerText = abm;
     document.ppures = res;
   }
   if (loggedin) {
@@ -562,6 +570,7 @@ var loadedMessages = 0;
 var focusedServer;
 var reply;
 function deleteMessage(id, server) {
+  if (premyum) return;
   sockets[server].send(JSON.stringify({
     eventType: "messageDelete",
     id: id
@@ -572,6 +581,7 @@ function googleAuth(argv) {
   console.log(argv);
 }
 function replyTo(id, server) {
+  if (premyum) return;
   if (reply) {
     document.getElementById(`message_${reply}`).style.borderLeftWidth = "0px";
     document.getElementById(`message_${reply}`).style.borderLeftColor = "transparent";
@@ -585,11 +595,12 @@ function userInfo(id) {
   fetchUser(id).then(res => {
     document.getElementById("uifpfp").src = authUrl + res.pfp;
     document.getElementById("uifusername").innerText = res.unam;
-    document.getElementById("uiftag").innerText = res.tag;
+    document.getElementById("uiftag").innerText = "@" + res.tag;
     document.getElementById('uifparent').style.display = 'flex';
   });
 }
 function ping(id) {
+  if (premyum) return;
   document.getElementById("msgtxt").value += ` [@${id}] `;
   document.getElementById("msgtxt").focus();
 }
@@ -599,6 +610,24 @@ function moreMessages() {
     max: 100,
     start: loadedMessages
   }));
+}
+function au() {
+  if (document.getElementById("acsabm").innerText != abm) {
+    abm = document.getElementById("acsabm").innerText;
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", authUrl + '/abmcfg?id=' + localStorage.getItem("sid"), true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.send(JSON.stringify({
+      text: abm
+    }));
+  }
+  if (document.getElementById("acsusername").value != oldunam) {
+    if (premyum) return;
+    oldunam = document.getElementById("acsusername").value;
+    const hrx = new XMLHttpRequest();
+    hrx.open("GET", authUrl + '/unamcfg?id=' + localStorage.getItem("sid") + '&unam=' + encodeURIComponent(oldunam), true);
+    hrx.send();
+  }
 }
 function siv(mid) {
   let m = document.getElementById(`message_${mid}`);
@@ -610,7 +639,7 @@ function siv(mid) {
 
 // should also work on regular files
 function imageUpload(imgs, callback) {
-  if (imgs.length < 1) {
+  if (imgs.length < 1 || premyum) {
     callback(null);
     return true;
   }
@@ -719,7 +748,7 @@ function ce(e) {
     uploadQueue = {};
     document.getElementById("fileUploadSpace").innerHTML = "";
     document.getElementById("fileDeleteMessage").hidden = true;
-    document.getElementById("acceptinvitebtn").focus();
+    document.getElementById("msgtxt").focus();
   });
 }
 document.getElementById("msgtxt").addEventListener("keypress", ke);
@@ -844,7 +873,7 @@ function clientLoad() {
               }
               if (packet.message.uploads) {
                 for (let upload of packet.message.uploads) {
-                  if (upload.type.startsWith("image/")) {
+                  if (upload.type.startsWith("image/") && !premyum) {
                     msgtxt += `\n<br><a target="_blank" href="${authUrl + upload.url}"><img src="${authUrl + upload.url}"></a>`;
                     continue;
                   }
@@ -881,7 +910,7 @@ function clientLoad() {
     <img src="${pfp}" class="avatar" onclick="userInfo('${packet.message.author}');"/>
     <div class="message2">
     <span><strong class="chonk" onclick="userInfo('${packet.message.author}');">${unam}</strong>
-    <span class="timestomp">#${resp ? resp.tag : "None"} at ${new Date(packet.message.stamp).toLocaleString()}</span></span>
+    <span class="timestomp">@${resp ? resp.tag : "None"} at ${new Date(packet.message.stamp).toLocaleString()}</span></span>
         <p>${msgtxt}</p>
     </div>${message3}
 </div>
@@ -951,7 +980,7 @@ function clientLoad() {
               }
               if (packet.messages[m].uploads) {
                 for (let upload of packet.messages[m].uploads) {
-                  if (upload.type.startsWith("image/")) {
+                  if (upload.type.startsWith("image/") && !premyum) {
                     msgtxt += `\n<br><a target="_blank" href="${authUrl + upload.url}"><img src="${authUrl + upload.url}"></a>`;
                     continue;
                   }
@@ -988,7 +1017,7 @@ function clientLoad() {
     <img src="${pfp}" class="avatar" onclick="userInfo('${packet.messages[m].author}');"/>
     <div class="message2">
         <span><strong class="chonk" onclick="userInfo('${packet.messages[m].author}');">${unam}</strong>
-        <span class="timestomp">#${user ? user.tag : "None"} at ${new Date(packet.messages[m].stamp).toLocaleString()}</span></span>
+        <span class="timestomp">@${user ? user.tag : "None"} at ${new Date(packet.messages[m].stamp).toLocaleString()}</span></span>
         <p>${msgtxt}</p>
     </div>${message3}
 </div>
@@ -1038,6 +1067,9 @@ function clientLoad() {
           case "join":
           case "connecting":
           case "disconnect":
+            if (packet.explanation && premyum) {
+              document.getElementById("mainContent").innerHTML += '<div class="message1">' + packet.explanation + '</div>';
+            }
             break;
           default:
             if ("code" in packet) {
