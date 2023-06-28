@@ -546,6 +546,9 @@ document.getElementById("dacpopup").addEventListener("click", e => {
 document.getElementById("p").addEventListener("click", e => {
   e.stopPropagation();
 });
+document.getElementById("uifpopup").addEventListener("click", e => {
+  e.stopPropagation();
+});
 if (authUrl != url.protocol + "//" + url.host && url.protocol == "http:" && !localStorage.getItem("forceAuth")) {
   localStorage.setItem("authUrl", url.protocol + "//" + url.host);
   window.location.reload();
@@ -583,6 +586,7 @@ function userInfo(id) {
     document.getElementById("uifpfp").src = authUrl + res.pfp;
     document.getElementById("uifusername").innerText = res.unam;
     document.getElementById("uiftag").innerText = res.tag;
+    document.getElementById('uifparent').style.display = 'flex';
   });
 }
 function ping(id) {
