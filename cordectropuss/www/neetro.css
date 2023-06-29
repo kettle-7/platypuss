@@ -371,7 +371,7 @@ input {
 #mainContentContainer {
     padding: 0px;
     margin: 0px;
-    background: #ffffff;
+    background: #f0f0f0;
     display: flex;
     flex-direction: column;
     gap: 3px;
@@ -498,7 +498,7 @@ hr {
 }
 
 .message1:hover {
-    background-color: #f0f0f0;
+    background-color: #ffffff;
 }
 
 .message2 {
