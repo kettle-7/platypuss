@@ -275,6 +275,10 @@ input, textarea {
     border-radius: 5px;
 }
 
+textarea {
+    resize: none;
+}
+
 input {
     margin: 2px;
 }
