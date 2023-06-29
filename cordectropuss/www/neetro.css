@@ -498,7 +498,11 @@ hr {
 }
 
 .message1:hover {
-    background-color: #ffffff;
+    background-color: lime;
+}
+
+.message1 * {
+    color: transparent;
 }
 
 .message2 {
