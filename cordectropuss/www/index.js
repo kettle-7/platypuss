@@ -192,7 +192,7 @@ fetchUser(localStorage.getItem('sid')).then(res => {
     document.getElementById("changePfp").src = authUrl + res.pfp;
     document.getElementById("acsusername").value = res.unam;
     document.getElementById("tag").innerText = "@" + res.tag;
-    document.getElementById("acsabm").innerText = abm;
+    if (abm) document.getElementById("acsabm").innerText = abm;
     document.ppures = res;
   }
   if (loggedin) {
@@ -604,7 +604,7 @@ function userInfo(id) {
 }
 function ping(id) {
   if (premyum) return;
-  document.getElementById("msgtxt").value += ` [@${id}] `;
+  document.getElementById("msgtxt").innerText += ` [@${id}] `;
   document.getElementById("msgtxt").focus();
 }
 function moreMessages() {
