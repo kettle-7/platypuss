@@ -19,7 +19,7 @@
 
 * {
     font-family: Inter, sans-serif;
-    color: #ffffff;
+    color: lightsalmon;
 }
 
 #send {
@@ -31,7 +31,7 @@ h1 {
 }
 
 button {
-    color: white;
+    color: lime;
     background-color: #ffffff;
     border: 1px solid #888888;
     border-radius: 5px;
