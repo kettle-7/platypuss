@@ -598,9 +598,7 @@ function userInfo(id) {
     document.getElementById('uifparent').style.display = 'flex';
     document.getElementById('uifabm').innerText = res.aboutMe.text;
     if (res.aboutMe.premyum) {
-      document.getElementById('uifabm').innerHtml += `
-<img src="./nitro.png" alt="" class="neetro"/>
-            `;
+      document.getElementById('neetro').hidden = false;
     }
   });
 }
