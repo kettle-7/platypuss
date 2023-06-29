@@ -1,0 +1,68 @@
+{
+    "files": {
+        "/main.css": {
+            "type": "text/css",
+            "path": "main.css"
+        },
+        "/neetro.css": {
+            "type": "text/css",
+            "path": "neetro.css"
+        },
+        "/index.js": {
+            "type": "application/javascript",
+            "path": "index.js"
+        },
+        "/login.js": {
+            "type": "application/javascript",
+            "path": "login.js"
+        },
+        "/mdpage.js": {
+            "type": "application/javascript",
+            "path": "mdpage.js"
+        },
+        "/index.html": {
+            "type": "text/html",
+            "path": "index.html"
+        },
+        "/.html": {
+            "type": "text/html",
+            "path": "index.html"
+        },
+        "/tos.html": {
+            "type": "text/html",
+            "path": "tos.html"
+        },
+        "/tos.md": {
+            "type": "text/markdown",
+            "path": "tos.md"
+        },
+        "/icon.png": {
+            "type": "image/png",
+            "path": "icon.png"
+        },
+        "/swim1.png": {
+            "type": "image/png",
+            "path": "swim1.png"
+        },
+        "/nitro.png": {
+            "type": "image/png",
+            "path": "nitro.png"
+        },
+        "/login.html": {
+            "type": "text/html",
+            "path": "login.html"
+        },
+        "/disc.html": {
+            "type": "text/html",
+            "path": "disc.html"
+        },
+        "/google148b32a3196ad8a2.html": {
+            "type": "text/html",
+            "path": "google148b32a3196ad8a2.html"
+        },
+        "/LICENSE.txt": {
+            "type": "text/plain",
+            "path": "LICENSE"
+        }
+    }
+}

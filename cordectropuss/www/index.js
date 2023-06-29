@@ -186,6 +186,8 @@ fetchUser(localStorage.getItem('sid')).then(res => {
     abm = res.aboutMe.text;
     if (res.aboutMe.premyum) {
       premyum = true;
+      document.head.removeChild(document.getElementById("ss1"));
+      document.getElementById("ss0").href = "neetro.css";
     }
     document.getElementById("pfp").src = authUrl + res.pfp;
     document.getElementById("username").innerText = "Logged in as " + res.unam;
@@ -599,6 +601,8 @@ function userInfo(id) {
     document.getElementById('uifabm').innerText = res.aboutMe.text;
     if (res.aboutMe.premyum) {
       document.getElementById('neetro').hidden = false;
+    } else {
+      document.getElementById('neetro').hidden = true;
     }
   });
 }
