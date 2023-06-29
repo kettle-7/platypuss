@@ -781,7 +781,8 @@ function clientLoad() {
 
     setTimeout(() => {
       if (opensocks < 1) {
-        document.getElementById("everything").removeChild(document.getElementById("actualpagecontainer"));
+        document.getElementById("loadingScreen").className += " fadeOut";
+        //document.getElementById("everything").removeChild(document.getElementById("actualpagecontainer"));
       }
     }, 3000);
     let sers = JSON.parse(h.responseText);
