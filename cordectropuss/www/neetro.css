@@ -19,7 +19,7 @@
 
 * {
     font-family: Inter, sans-serif;
-    color: rgb(255, 234, 225);
+    color: #f1f1f1;
 }
 
 #send {
@@ -722,9 +722,7 @@ hr {
 }
 
 .textBox {
-    background-color: #f3f3f3;
-    border-color: chocolate;
-    box-shadow: 2px 2px 5px #dedede inset;
+    opacity: 0;
 }
 
 .textBox:focus {
