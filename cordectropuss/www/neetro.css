@@ -327,11 +327,11 @@ input {
 }
 
 #left {
-    background: linear-gradient(to right, #272727, #232323);
+    background: linear-gradient(to right, green, yellow);
 }
 
 #right {
-    background: linear-gradient(to right, #232323, #272727);
+    background: linear-gradient(to right, yellow, green);
 }
 
 #loadMoreMessages {
