@@ -596,6 +596,12 @@ function userInfo(id) {
     document.getElementById("uifusername").innerText = res.unam;
     document.getElementById("uiftag").innerText = "@" + res.tag;
     document.getElementById('uifparent').style.display = 'flex';
+    document.getElementById('uifabm').innerText = res.aboutMe.text;
+    if (res.aboutMe.premyum) {
+      document.getElementById('uifabm').innerHtml += `
+<img src="./nitro.png" alt="" class="neetro"/>
+            `;
+    }
   });
 }
 function ping(id) {
