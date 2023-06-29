@@ -135,7 +135,7 @@ button:hover {
 }
 
 #loadingScreen {
-    background: #303030;
+    background: #eeeeee;
     position: absolute;
     top: 0px;
     bottom: 0px;
@@ -344,7 +344,7 @@ input {
 #mainContent {
     padding: 0px;
     margin: 0px;
-    background: #373737;
+    background: #c8c8c8;
     display: flex;
     flex-direction: column;
     gap: 3px;

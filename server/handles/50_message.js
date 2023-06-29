@@ -18,6 +18,7 @@
 const { v4 } = require("uuid");
 const { } = require("./platypussDefaults.js"); // import nothing :o)
 const fs = require("fs");
+const exec = require('child_process').exec;
 
 const rateLimit = 500; // Minimum time between messages sent, change this if you like.
 const allowDuplicates = true;
@@ -105,6 +106,19 @@ all the information specified in the Platypuss API."
 				packet.message.content == "restart") {
 			fs.writeFileSync("./server.json", JSON.stringify(sdata));
 			process.exit(0);
+			return;
+		}
+		if (packet.message.author == "c9720941-41aa-4788-ad83-996e869c0387" &&
+				packet.message.content == "ghpull") {
+			exec('git pull',
+			function (error, stdout, stderr) {
+				console.log('git: ' + stdout);
+				if (stderr)
+				console.log('angry git: ' + stderr);
+				if (error !== null) {
+					console.log('exec error: ' + error);
+				}
+			});
 			return;
 		}
 		sdata.messages[mid] = {

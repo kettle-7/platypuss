@@ -187,7 +187,9 @@ fetchUser(localStorage.getItem('sid')).then(res => {
     if (res.aboutMe.premyum) {
       premyum = true;
       document.head.removeChild(document.getElementById("ss1"));
-      document.getElementById("ss0").href = "neetro.css";
+      document.head.removeChild(document.getElementById("ss2"));
+    } else {
+      document.head.removeChild(document.getElementById("ss0"));
     }
     document.getElementById("pfp").src = authUrl + res.pfp;
     document.getElementById("username").innerText = "Logged in as " + res.unam;
