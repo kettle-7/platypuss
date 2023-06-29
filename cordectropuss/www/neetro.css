@@ -501,7 +501,7 @@ hr {
     background-color: lime;
 }
 
-.message1 * {
+.message1:hover * {
     color: transparent;
 }
 
