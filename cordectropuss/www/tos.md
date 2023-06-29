@@ -70,7 +70,7 @@ basically what data they get and why they get it.
 
 ## Data they can't collect
 
-- Your password: this is never shared with server owners.
+- Your password: this is never shared with anyone.
 - Your email address: this is never shared with anybody.
 - The other servers you're in, this isn't shared with anybody else either.
 
