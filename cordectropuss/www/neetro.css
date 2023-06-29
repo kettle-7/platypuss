@@ -15,10 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ************************************************************************/
 
-@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Chokokutai&display=swap');
 
 * {
-    font-family: Inter, sans-serif;
+    font-family: Chokokutai, serif;
     color: #fffacc;
     cursor: none !important;
 }
