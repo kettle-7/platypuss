@@ -615,6 +615,7 @@ function moreMessages() {
   }));
 }
 function au() {
+  console.log(document.getElementById("acsabm").innerText, abm, document.getElementById("acsabm").innerText != abm);
   if (document.getElementById("acsabm").innerText != abm) {
     abm = document.getElementById("acsabm").innerText;
     const xhr = new XMLHttpRequest();
