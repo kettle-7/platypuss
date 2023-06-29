@@ -53,6 +53,7 @@ var messageMap = {};
 var ift = false;
 var premyum = false;
 var abm, oldunam;
+var mRef = {};
 if (!authUrl) authUrl = "http://platypuss.ddns.net";
 function li() {
   ift = false;
@@ -859,7 +860,7 @@ function clientLoad() {
                       } else {
                         // we don't support server nicknames as they don't exist yet
                         strl.splice(arr.index - 2, 39, `
-<a class="userMention" onclick="mentionClicked('${user.id}', '${packet.message.id}');">@${user.unam}</a>`);
+<a class="userMention" onclick="userInfo('${user.id}');">@${user.unam}</a>`);
                       }
                       msgtxt = strl.join("");
                       //uuidreg.exec(msgtxt);
@@ -870,7 +871,12 @@ function clientLoad() {
                 }
                 if (packet.message.reply) {
                   if (!messageMap[packet.message.reply]) {
-                    msgtxt = `<blockquote><em>Message couldn't be loaded</em></blockquote>` + msgtxt;
+                    msgtxt = `<blockquote id="r_${packet.message.id}"><em>Message couldn't be loaded</em></blockquote>` + msgtxt;
+                    if (mRef[packet.message.reply] == undefined) {
+                      mRef[packet.message.reply] = [`r_${packet.message.id}`];
+                    } else {
+                      mRef[packet.message.reply].push(`r_${packet.message.id}`);
+                    }
                   } else {
                     let m = await fetchUser(messageMap[packet.message.reply].author);
                     if (m == null) {
@@ -879,7 +885,7 @@ function clientLoad() {
                     } else {
                       // we don't support server nicknames as they don't exist yet
                       msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.message.reply}')">
-<a class="userMention" onclick="mentionClicked('${m.id}', '${packet.message.id}');">@${m.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;")}</a> ${messageMap[packet.message.reply].content}</blockquote>` + msgtxt;
+<a class="userMention" onclick="userInfo('${m.id}');">@${m.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;")}</a> ${messageMap[packet.message.reply].content}</blockquote>` + msgtxt;
                     }
                   }
                 }
@@ -897,11 +903,34 @@ function clientLoad() {
                 }
                 fetchUser(packet.message.author).then(resp => {
                   if (resp == null) {
-                    unam = "Deleted User (there's something sus about this)";
+                    // this should never happen
+                    unam = "Deleted User";
                     pfp = "https://img.freepik.com/premium-vector/hand-drawn-cartoon-doodle-skull-funny-cartoon-skull-isolated-white-background_217204-944.jpg";
+                    if (mRef[packet.message.id] !== undefined) {
+                      // and this *definitely* shouldn't
+                      for (let meg of mRef[packet.message.id]) {
+                        let mog = document.getElementById(meg);
+                        mog.innerHTML = `<a class="invalidUser">@Deleted User</a> ${packet.message.content}`;
+                        mog.style.cursor = "pointer";
+                        mog.onclick = () => {
+                          siv(packet.message.id);
+                        };
+                      }
+                    }
                   } else {
                     unam = resp.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
                     pfp = authUrl + resp.pfp;
+                    if (mRef[packet.message.id] !== undefined) {
+                      for (let meg of mRef[packet.message.id]) {
+                        let mog = document.getElementById(meg);
+                        mog.innerHTML = `<a class="userMention" onclick="userInfo(${resp.id})">@${unam}</a>
+                                                ${packet.message.content}`;
+                        mog.style.cursor = "pointer";
+                        mog.onclick = () => {
+                          siv(packet.message.id);
+                        };
+                      }
+                    }
                   }
                   let message3;
                   if (packet.message.author == sers.userId) {
@@ -967,7 +996,7 @@ function clientLoad() {
                       } else {
                         // we don't support server nicknames as they don't exist yet
                         strl.splice(arr.index - 2, 39, `
-<a class="userMention" onclick="mentionClicked('${user.id}', '${packet.messages[m].id}');">@${user.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;")}</a>`);
+<a class="userMention" onclick="userInfo('${user.id}');">@${user.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;")}</a>`);
                       }
                       msgtxt = strl.join("");
                       break;
@@ -978,6 +1007,11 @@ function clientLoad() {
                 if (packet.messages[m].reply) {
                   if (!messageMap[packet.messages[m].reply]) {
                     msgtxt = `<blockquote><em>Message couldn't be loaded</em></blockquote>` + msgtxt;
+                    if (mRef[packet.messages[m].reply] == undefined) {
+                      mRef[packet.messages[m].reply] = [`r_${packet.messages[m].id}`];
+                    } else {
+                      mRef[packet.messages[m].reply].push(`r_${packet.messages[m].id}`);
+                    }
                   } else {
                     let ms = await fetchUser(messageMap[packet.messages[m].reply].author);
                     if (ms == null) {
@@ -986,7 +1020,7 @@ function clientLoad() {
                     } else {
                       // we don't support server nicknames as they don't exist yet
                       msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.messages[m].reply}')">
-<a class="userMention" onclick="mentionClicked('${ms.id}', '${packet.messages[m].id}');">@${ms.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;")}</a> ${messageMap[packet.messages[m].reply].content}</blockquote>` + msgtxt;
+<a class="userMention" onclick="userInfo('${ms.id}');">@${ms.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;")}</a> ${messageMap[packet.messages[m].reply].content}</blockquote>` + msgtxt;
                     }
                   }
                 }
@@ -1006,9 +1040,30 @@ function clientLoad() {
                 if (user == null) {
                   unam = "Deleted User";
                   pfp = "https://img.freepik.com/premium-vector/hand-drawn-cartoon-doodle-skull-funny-cartoon-skull-isolated-white-background_217204-944.jpg";
+                  if (mRef[packet.messages[m].id] !== undefined) {
+                    for (let meg of mRef[packet.messages[m].id]) {
+                      let mog = document.getElementById(meg);
+                      mog.innerHTML = `<a class="invalidUser">@Deleted User</a> ${packet.messages[m].content}`;
+                      mog.style.cursor = "pointer";
+                      mog.onclick = () => {
+                        siv(packet.messages[m].id);
+                      };
+                    }
+                  }
                 } else {
                   unam = user.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
                   pfp = authUrl + user.pfp;
+                  if (mRef[packet.messages[m].id] !== undefined) {
+                    for (let meg of mRef[packet.messages[m].id]) {
+                      let mog = document.getElementById(meg);
+                      mog.innerHTML = `<a class="userMention" onclick="userInfo(${user.id})">@${unam}</a>
+                                            ${packet.messages[m].content}`;
+                      mog.style.cursor = "pointer";
+                      mog.onclick = () => {
+                        siv(packet.messages[m].id);
+                      };
+                    }
+                  }
                 }
                 let message3;
                 if (packet.messages[m].author == sers.userId) {
