@@ -32,7 +32,7 @@ h1 {
 
 button {
     color: white;
-    background-color: #373737;
+    background-color: #ffffff;
     border: 1px solid #888888;
     border-radius: 5px;
     padding: 2px;
@@ -44,7 +44,7 @@ button {
 
 button:active {
     box-shadow: 1px 1px 5px black inset !important;
-    background-color: #373737 !important;
+    background-color: #ffffff !important;
 }
 
 .chonk {
@@ -58,7 +58,7 @@ button:active {
 }
 
 button:hover {
-    background-color: #202020;
+    background-color: #eeeeee;
 }
 
 .dangerous {
@@ -100,7 +100,7 @@ button:hover {
     border: 0px solid #888888;
     border-radius: 5px;
     background: #474747;
-    box-shadow: 0px 0px 20px #000000;
+    box-shadow: 0px 0px 20px springgreen;
     padding-left: 10px;
     padding-right: 10px;
     padding-bottom: 10px;
@@ -116,14 +116,14 @@ button:hover {
     right: 0px;
     top: 0px;
     bottom: 0px;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(69, 4, 20, 0.5);
 }
 
 #inviteparent {
     background-image: url(swim1.png);
     background-size: cover;
     background-position: center;
-    background-color: #1b1b1b;
+    background-color: #dadada;
 }
 
 #inviteparent img {
@@ -153,6 +153,14 @@ button:hover {
     font-size: xx-large;
 }
 
+#p {
+    overflow: auto;
+    width: min-content;
+    max-width: 90vw;
+    max-height: 90vh;
+    background-color: darkkhaki;
+}
+
 .fadeOut {
     visibility: hidden;
     opacity: 0;
@@ -161,14 +169,14 @@ button:hover {
 
 #accountInfo {
     position: absolute;
-    box-shadow: 0px 0px 12px #000000;
+    box-shadow: 0px 0px 12px cornflowerblue;
     right: 8px;
     top: 70px;
 }
 
 code {
     font-family: "Ubuntu Mono", "Lucida Sans", monospace, mono;
-    background-color: #484848;
+    background-color: #aaaaaa;
     border: 1px solid #888888;
     border-radius: 5px;
     padding: 2px;
@@ -181,7 +189,7 @@ pre > code {
 }
 
 pre {
-    background-color: #484848;
+    background-color: #aaaaaa;
     border: 2px solid #888888;
     border-radius: 5px;
     padding: 3px;
@@ -210,7 +218,7 @@ table {
 th, td {
     padding: 5px;
     border-radius: 4px;
-    background: linear-gradient(#373737, #303030);
+    background: linear-gradient(#ffffff, #f0f0f0);
 }
 
 blockquote p {
@@ -219,7 +227,7 @@ blockquote p {
 }
 
 a > h1 {
-    color: #ffffff;
+    color: navy;
     text-decoration: none;
     display: inline;
 }
@@ -238,7 +246,7 @@ body {
 
 header {
     color: #f0f0f0;
-    background: linear-gradient(#272727, #202020);
+    background: linear-gradient(#e0e0e0, #dadada);
     display: flex;
     flex-direction: row;
     justify-content: stretch;
@@ -257,7 +265,7 @@ header h1 {
 }
 
 body {
-    background-color: #272727;
+    background-color: #e0e0e0;
     width: 100%;
     height: 100%;
 }
@@ -269,7 +277,7 @@ body {
 }
 
 input, textarea {
-    background-color: #484848;
+    background-color: chocolate;
     color: #ffffff;
     border: 1px solid #0075db;
     border-radius: 5px;
@@ -313,7 +321,7 @@ input {
     top: 0px;
     left: 0px;
     right: 0px;
-    box-shadow: inset 0px 0px 15px black;
+    box-shadow: inset 0px 0px 15px brown;
 }
 
 .sidePane {
@@ -363,7 +371,7 @@ input {
 #mainContentContainer {
     padding: 0px;
     margin: 0px;
-    background: #373737;
+    background: #ffffff;
     display: flex;
     flex-direction: column;
     gap: 3px;
@@ -383,13 +391,13 @@ input {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    border: 2px solid #eeeeee;
-    background: #373737;
+    border: 2px solid navy;
+    background: #ffffff;
 }
 
 .sericon:hover {
-    background: #0075db;
-    border: 4px solid white;
+    background: #662679;
+    border: 4px solid chartreuse;
 }
 
 .invisibutton {
@@ -413,7 +421,7 @@ input {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    border: 2px solid #eeeeee;
+    border: 2px solid navy;
     /*background: #171717;*/
     cursor: pointer;
     object-fit: cover;
@@ -438,7 +446,7 @@ input {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    box-shadow: 1px 1px 2px rgba(69, 4, 20, 0.5);
     background: transparent;
     cursor: pointer;
     object-fit: cover;
@@ -470,7 +478,7 @@ input {
 }
 
 .timestomp {
-    color: #aaaaaa;
+    color: blue;
     display: none;
 }
 
@@ -490,7 +498,7 @@ hr {
 }
 
 .message1:hover {
-    background-color: #303030;
+    background-color: #f0f0f0;
 }
 
 .message2 {
@@ -511,10 +519,10 @@ hr {
 
 .message2 img {
     border-radius: 8px;
-    box-shadow: 2px 2px 10px black;
+    box-shadow: 2px 2px 10px chocolate;
     height: 20vh;
     padding: 1px;
-    background-color: #505050;
+    background-color: #bbbbbb;
 }
 
 .neetro {
@@ -522,7 +530,7 @@ hr {
     box-shadow: 2px 2px 10px black;
     height: 20vh;
     padding: 1px;
-    background-color: #505050;
+    background-color: #bbbbbb;
 }
 
 .message2 a {
@@ -570,8 +578,8 @@ hr {
     display: flex;
     flex-direction: row;
     gap: 3px;
-    border: 1px solid #888888;
-    box-shadow: 1px 1px 5px black;
+    border: 1px solid blueviolet;
+    box-shadow: 1px 1px 5px chocolate;
     align-content: center;
     border-radius: 5px;
     width: fit-content;
@@ -579,13 +587,13 @@ hr {
 
 @keyframes pulse {
     0% {
-      background-color: #303030;
+      background-color: #f0f0f0;
     }
     50% {
-        background-color: #252d35;
+        background-color: lightseagreen;
     }
     100% {
-      background-color: #303030;
+      background-color: #f0f0f0;
     }
   }
 
@@ -609,8 +617,8 @@ hr {
 }
 
 .invalidUser {
-    color: #ffdddd;
-    background: rgba(255, 0, 0, 0.2);
+    color: #220000;
+    background: rgba(255, 102, 102, 0.2);
     padding: 4px;
     /*border: 1px solid #880000;*/
     border-radius: 5px;
@@ -618,8 +626,8 @@ hr {
 }
 
 .userMention {
-    color: #aadbff;
-    background: rgba(0, 153, 255, 0.2);
+    color: #002200;
+    background: rgba(96, 192, 255, 0.2);
     padding: 4px;
     /*border: 1px solid #880000;*/
     border-radius: 5px;
@@ -639,7 +647,7 @@ hr {
     left: 0px;
     min-width: 0;
     max-width: 100vw;
-    background-color: #171717;
+    background-color: #dedede;
     border-radius: 5px;
     padding: 2px;
     margin: 5px;
@@ -658,7 +666,7 @@ hr {
 
 #fileDeleteMessage {
     padding-left: 5px;
-    border-top: 1px solid #696969;
+    border-top: 1px solid goldenrod;
 }
 
 #fileUploadSpace > img {
@@ -674,14 +682,14 @@ hr {
 }
 
 ::-webkit-scrollbar {
-    background-color: #282828;
+    background-color: #e8e;
     width: 10px;
     border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb {
     border-radius: 5px;
-    background-color: #888888;
+    background-color: blue;
     width: 10px;
     box-shadow: 0 0 5px grey; 
 }
@@ -690,7 +698,7 @@ hr {
     outline: 0;
     outline-color: transparent;
     outline-style: none;
-    box-shadow: 0px 0px 3px #888888 !important;
+    box-shadow: 0px 0px 3px chocolate !important;
 }
 
 .banner {
@@ -710,26 +718,26 @@ hr {
 }
 
 .textBox {
-    background-color: #303030;
-    border-color: #888888;
-    box-shadow: 2px 2px 5px #1b1b1b inset;
+    background-color: #f3f3f3;
+    border-color: chocolate;
+    box-shadow: 2px 2px 5px #dedede inset;
 }
 
 .textBox:focus {
-    background-color: #303030;
-    border: 1px solid #0075db;
+    background-color: #f3f3f3;
+    border: 1px solid #0e3f12;
 }
 
 .labelInDisguise {
     background: none;
     border: none;
-    color: #ffffff;
+    color: black;
     max-width: max-content;
 }
 
 .labelInDisguise:focus {
-    background-color: #303030;
-    box-shadow: 2px 2px 5px #1b1b1b inset;
+    background-color: #f8f8f8;
+    box-shadow: 2px 2px 5px #dedede inset;
     border: 1px solid #0075db;
     border-radius: 5px;
 }
