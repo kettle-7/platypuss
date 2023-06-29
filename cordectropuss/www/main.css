@@ -712,6 +712,7 @@ hr {
     background: none;
     border: none;
     color: #ffffff;
+    max-width: max-content;
 }
 
 .labelInDisguise:focus {
