@@ -192,7 +192,7 @@ fetchUser(localStorage.getItem('sid')).then(res => {
     document.getElementById("changePfp").src = authUrl + res.pfp;
     document.getElementById("acsusername").value = res.unam;
     document.getElementById("tag").innerText = "@" + res.tag;
-    if (abm) document.getElementById("acsabm").innerText = abm;
+    if (abm) document.getElementById("acsabm").value = abm;
     document.ppures = res;
   }
   if (loggedin) {
@@ -604,7 +604,7 @@ function userInfo(id) {
 }
 function ping(id) {
   if (premyum) return;
-  document.getElementById("msgtxt").innerText += ` [@${id}] `;
+  document.getElementById("msgtxt").value += ` [@${id}] `;
   document.getElementById("msgtxt").focus();
 }
 function moreMessages() {
@@ -616,8 +616,8 @@ function moreMessages() {
 }
 function au() {
   console.log(document.getElementById("acsabm").value, abm, document.getElementById("acsabm").value != abm);
-  if (document.getElementById("acsabm").innerText != abm) {
-    abm = document.getElementById("acsabm").innerText;
+  if (document.getElementById("acsabm").value != abm) {
+    abm = document.getElementById("acsabm").value;
     const xhr = new XMLHttpRequest();
     xhr.open("POST", authUrl + '/abmcfg?id=' + localStorage.getItem("sid"), true);
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
