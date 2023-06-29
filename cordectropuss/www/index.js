@@ -81,7 +81,6 @@ sure to read the <a href='./tos.html'>terms of service</a> before creating an ac
 function doTheLoginThingy() {
   let unam = document.getElementById("unam").value;
   let pwd1 = document.getElementById("pwd1").value;
-  unam = unam.replace(/ /g, '-');
   if (ift) {
     // if you're making a new account
     let pwd2 = document.getElementById("pwd2").value;
