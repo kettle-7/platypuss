@@ -909,10 +909,12 @@ function clientLoad() {
                     if (mRef[packet.message.id] !== undefined) {
                       // and this *definitely* shouldn't
                       for (let meg of mRef[packet.message.id]) {
+                        let mog;
                         try {
-                          let mog = document.getElementById(meg);
+                          mog = document.getElementById(meg);
                         } catch (e) {
-                          console.error(e, meg);
+                          console.error(e);
+                          console.log(meg);
                           continue;
                         }
                         mog.innerHTML = `<a class="invalidUser">@Deleted User</a> ${packet.message.content}`;
@@ -927,10 +929,12 @@ function clientLoad() {
                     pfp = authUrl + resp.pfp;
                     if (mRef[packet.message.id] !== undefined) {
                       for (let meg of mRef[packet.message.id]) {
+                        let mog;
                         try {
-                          let mog = document.getElementById(meg);
+                          mog = document.getElementById(meg);
                         } catch (e) {
-                          console.error(e, meg);
+                          console.error(e);
+                          console.log(meg);
                           continue;
                         }
                         mog.innerHTML = `<a class="userMention" onclick="userInfo(${resp.id})">@${unam}</a>
@@ -1052,10 +1056,12 @@ function clientLoad() {
                   pfp = "https://img.freepik.com/premium-vector/hand-drawn-cartoon-doodle-skull-funny-cartoon-skull-isolated-white-background_217204-944.jpg";
                   if (mRef[packet.messages[m].id] !== undefined) {
                     for (let meg of mRef[packet.messages[m].id]) {
+                      let mog;
                       try {
-                        let mog = document.getElementById(meg);
+                        mog = document.getElementById(meg);
                       } catch (e) {
-                        console.error(e, meg);
+                        console.error(e);
+                        console.log(meg);
                         continue;
                       }
                       mog.innerHTML = `<a class="invalidUser">@Deleted User</a> ${packet.messages[m].content}`;
@@ -1070,10 +1076,12 @@ function clientLoad() {
                   pfp = authUrl + user.pfp;
                   if (mRef[packet.messages[m].id] !== undefined) {
                     for (let meg of mRef[packet.messages[m].id]) {
+                      let mog;
                       try {
-                        let mog = document.getElementById(meg);
+                        mog = document.getElementById(meg);
                       } catch (e) {
-                        console.error(e, meg);
+                        console.error(e);
+                        console.log(meg);
                         continue;
                       }
                       mog.innerHTML = `<a class="userMention" onclick="userInfo(${user.id})">@${unam}</a>
