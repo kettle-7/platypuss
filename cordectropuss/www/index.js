@@ -912,9 +912,9 @@ function clientLoad() {
                         let mog = document.getElementById(meg);
                         mog.innerHTML = `<a class="invalidUser">@Deleted User</a> ${packet.message.content}`;
                         mog.style.cursor = "pointer";
-                        mog.onclick = () => {
+                        mog.addEventListener(() => {
                           siv(packet.message.id);
-                        };
+                        });
                       }
                     }
                   } else {
@@ -926,9 +926,9 @@ function clientLoad() {
                         mog.innerHTML = `<a class="userMention" onclick="userInfo(${resp.id})">@${unam}</a>
                                                 ${packet.message.content}`;
                         mog.style.cursor = "pointer";
-                        mog.onclick = () => {
+                        mog.addEventListener(() => {
                           siv(packet.message.id);
-                        };
+                        });
                       }
                     }
                   }
@@ -1045,9 +1045,9 @@ function clientLoad() {
                       let mog = document.getElementById(meg);
                       mog.innerHTML = `<a class="invalidUser">@Deleted User</a> ${packet.messages[m].content}`;
                       mog.style.cursor = "pointer";
-                      mog.onclick = () => {
+                      mog.addEventListener(() => {
                         siv(packet.messages[m].id);
-                      };
+                      });
                     }
                   }
                 } else {
@@ -1059,9 +1059,9 @@ function clientLoad() {
                       mog.innerHTML = `<a class="userMention" onclick="userInfo(${user.id})">@${unam}</a>
                                             ${packet.messages[m].content}`;
                       mog.style.cursor = "pointer";
-                      mog.onclick = () => {
+                      mog.addEventListener(() => {
                         siv(packet.messages[m].id);
-                      };
+                      });
                     }
                   }
                 }
