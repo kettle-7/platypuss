@@ -912,6 +912,7 @@ function clientLoad() {
                         let mog;
                         try {
                           mog = document.getElementById(meg);
+                          assert(mog);
                         } catch (e) {
                           console.error(e);
                           console.log(meg);
@@ -932,6 +933,7 @@ function clientLoad() {
                         let mog;
                         try {
                           mog = document.getElementById(meg);
+                          assert(mog);
                         } catch (e) {
                           console.error(e);
                           console.log(meg);
@@ -1059,6 +1061,7 @@ function clientLoad() {
                       let mog;
                       try {
                         mog = document.getElementById(meg);
+                        assert(mog);
                       } catch (e) {
                         console.error(e);
                         console.log(meg);
@@ -1079,6 +1082,7 @@ function clientLoad() {
                       let mog;
                       try {
                         mog = document.getElementById(meg);
+                        assert(mog);
                       } catch (e) {
                         console.error(e);
                         console.log(meg);
