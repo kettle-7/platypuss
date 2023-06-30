@@ -909,15 +909,7 @@ function clientLoad() {
                     if (mRef[packet.message.id] !== undefined) {
                       // and this *definitely* shouldn't
                       for (let meg of mRef[packet.message.id]) {
-                        let mog;
-                        try {
-                          mog = document.getElementById(meg);
-                          assert(mog);
-                        } catch (e) {
-                          console.error(e);
-                          console.log(meg);
-                          continue;
-                        }
+                        let mog = document.getElementById(meg);
                         mog.innerHTML = `<a class="invalidUser">@Deleted User</a> ${packet.message.content}`;
                         mog.style.cursor = "pointer";
                         mog.onclick = () => {
@@ -930,15 +922,7 @@ function clientLoad() {
                     pfp = authUrl + resp.pfp;
                     if (mRef[packet.message.id] !== undefined) {
                       for (let meg of mRef[packet.message.id]) {
-                        let mog;
-                        try {
-                          mog = document.getElementById(meg);
-                          assert(mog);
-                        } catch (e) {
-                          console.error(e);
-                          console.log(meg);
-                          continue;
-                        }
+                        let mog = document.getElementById(meg);
                         mog.innerHTML = `<a class="userMention" onclick="userInfo(${resp.id})">@${unam}</a>
                                                 ${packet.message.content}`;
                         mog.style.cursor = "pointer";
@@ -1022,7 +1006,7 @@ function clientLoad() {
                 }
                 if (packet.messages[m].reply) {
                   if (!messageMap[packet.messages[m].reply]) {
-                    msgtxt = `<blockquote><em>Message couldn't be loaded</em></blockquote>` + msgtxt;
+                    msgtxt = `<blockquote id="r_${packet.messages[m].id}"><em>Message couldn't be loaded</em></blockquote>` + msgtxt;
                     if (mRef[packet.messages[m].reply] == undefined) {
                       mRef[packet.messages[m].reply] = [`r_${packet.messages[m].id}`];
                     } else {
@@ -1058,15 +1042,7 @@ function clientLoad() {
                   pfp = "https://img.freepik.com/premium-vector/hand-drawn-cartoon-doodle-skull-funny-cartoon-skull-isolated-white-background_217204-944.jpg";
                   if (mRef[packet.messages[m].id] !== undefined) {
                     for (let meg of mRef[packet.messages[m].id]) {
-                      let mog;
-                      try {
-                        mog = document.getElementById(meg);
-                        assert(mog);
-                      } catch (e) {
-                        console.error(e);
-                        console.log(meg);
-                        continue;
-                      }
+                      let mog = document.getElementById(meg);
                       mog.innerHTML = `<a class="invalidUser">@Deleted User</a> ${packet.messages[m].content}`;
                       mog.style.cursor = "pointer";
                       mog.onclick = () => {
@@ -1079,15 +1055,7 @@ function clientLoad() {
                   pfp = authUrl + user.pfp;
                   if (mRef[packet.messages[m].id] !== undefined) {
                     for (let meg of mRef[packet.messages[m].id]) {
-                      let mog;
-                      try {
-                        mog = document.getElementById(meg);
-                        assert(mog);
-                      } catch (e) {
-                        console.error(e);
-                        console.log(meg);
-                        continue;
-                      }
+                      let mog = document.getElementById(meg);
                       mog.innerHTML = `<a class="userMention" onclick="userInfo(${user.id})">@${unam}</a>
                                             ${packet.messages[m].content}`;
                       mog.style.cursor = "pointer";
