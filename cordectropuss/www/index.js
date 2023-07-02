@@ -561,11 +561,12 @@ document.getElementById("p").addEventListener("click", e => {
 document.getElementById("uifpopup").addEventListener("click", e => {
   e.stopPropagation();
 });
-window.addEventListener("keypress", e => {
-  console.log(e);
-  au();
-  if (e.key == "Escape") for (let e of ["accountInfoParent", "P", "inviteparent", "acsparent", "uifparent", "dacparent", "cpwdparent"]) {
-    document.getElementById(e).style.display = "none";
+document.addEventListener("keydown", e => {
+  if (e.key == "Escape") {
+    au();
+    for (let e of ["accountInfoParent", "P", "inviteparent", "acsparent", "uifparent", "dacparent", "cpwdparent"]) {
+      document.getElementById(e).style.display = "none";
+    }
   }
 });
 if (authUrl != url.protocol + "//" + url.host && url.protocol == "http:" && !localStorage.getItem("forceAuth")) {
