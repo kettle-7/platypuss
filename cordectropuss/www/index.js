@@ -607,7 +607,7 @@ function userInfo(id) {
     document.getElementById("uifusername").innerText = res.unam;
     document.getElementById("uiftag").innerText = "@" + res.tag;
     document.getElementById('uifparent').style.display = 'flex';
-    document.getElementById('uifabm').innerText = res.aboutMe.text;
+    document.getElementById('uifabm').innerHTML = converty.convert(res.aboutMe.text);
     if (res.aboutMe.premyum) {
       document.getElementById('neetro').hidden = false;
     } else {
