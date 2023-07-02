@@ -561,8 +561,9 @@ document.getElementById("p").addEventListener("click", e => {
 document.getElementById("uifpopup").addEventListener("click", e => {
   e.stopPropagation();
 });
-document.addEventListener("keypress", e => {
+window.addEventListener("keypress", e => {
   console.log(e);
+  au();
   if (e.key == "Escape") for (let e of ["accountInfoParent", "P", "inviteparent", "acsparent", "uifparent", "dacparent", "cpwdparent"]) {
     document.getElementById(e).style.display = "none";
   }
