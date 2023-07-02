@@ -630,7 +630,6 @@ function moreMessages() {
   }));
 }
 function au() {
-  console.log(document.getElementById("acsabm").value, abm, document.getElementById("acsabm").value != abm);
   if (document.getElementById("acsabm").value != abm) {
     abm = document.getElementById("acsabm").value;
     const xhr = new XMLHttpRequest();
