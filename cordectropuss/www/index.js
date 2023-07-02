@@ -561,6 +561,12 @@ document.getElementById("p").addEventListener("click", e => {
 document.getElementById("uifpopup").addEventListener("click", e => {
   e.stopPropagation();
 });
+document.addEventListener("keypress", e => {
+  console.log(e);
+  if (e.key == "Escape") for (let e of ["accountInfoParent", "P", "inviteparent", "acsparent", "uifparent", "dacparent", "cpwdparent"]) {
+    document.getElementById(e).style.display = "none";
+  }
+});
 if (authUrl != url.protocol + "//" + url.host && url.protocol == "http:" && !localStorage.getItem("forceAuth")) {
   localStorage.setItem("authUrl", url.protocol + "//" + url.host);
   window.location.reload();
