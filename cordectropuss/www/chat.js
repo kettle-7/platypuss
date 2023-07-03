@@ -85,8 +85,6 @@ fetchUser(localStorage.getItem('sid')).then(res => {
     document.ppures = res;
   }
   if (loggedin) {
-    document.getElementById("header").removeChild(document.getElementById("login"));
-    document.getElementById("header").removeChild(document.getElementById("signup"));
     document.getElementById("upload").addEventListener('click', e => {
       var input = document.createElement('input');
       input.type = 'file';
@@ -385,9 +383,6 @@ document.getElementById("cpwdpopup").addEventListener("click", e => {
   e.stopPropagation();
 });
 document.getElementById("dacpopup").addEventListener("click", e => {
-  e.stopPropagation();
-});
-document.getElementById("p").addEventListener("click", e => {
   e.stopPropagation();
 });
 document.getElementById("uifpopup").addEventListener("click", e => {
