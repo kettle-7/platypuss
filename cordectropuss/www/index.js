@@ -420,6 +420,7 @@ fetchUser(localStorage.getItem('sid')).then(res => {
         };
         xhr.send();
       });
+      document.getElementById("loadingScreen").className += " fadeOut";
     }
   } else {
     document.getElementById("header").removeChild(document.getElementById("pfp"));
