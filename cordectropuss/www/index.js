@@ -17,6 +17,7 @@
 
 // °^° i am pingu
 const cyrb53 = (str, seed = 20) => {
+  // random hashing algorithm off stack overflow
   let h1 = 0xdeadbeef ^ seed,
     // dead beef
     h2 = 0x41c6ce57 ^ seed;
@@ -182,7 +183,10 @@ function fetchUser(id) {
   });
 }
 fetchUser(localStorage.getItem('sid')).then(res => {
-  if (res == null) loggedin = false;else {
+  if (res == null) {
+    loggedin = false;
+    document.head.removeChild(document.getElementById("ss0"));
+  } else {
     oldunam = res.unam;
     abm = res.aboutMe.text;
     if (res.aboutMe.premyum) {
