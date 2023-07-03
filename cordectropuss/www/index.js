@@ -268,7 +268,6 @@ fetchUser(localStorage.getItem('sid')).then(res => {
           if (r.status == 200) {
             document.body.removeChild(document.getElementById('inviteparent'));
             window.history.pushState({}, '', './index.html');
-            clientLoad();
           } else {
             document.getElementById("serverName").innerHTML = "Couldn't join the server, try again later?";
           }
@@ -337,7 +336,6 @@ fetchUser(localStorage.getItem('sid')).then(res => {
           if (r.status == 200) {
             document.body.removeChild(document.getElementById('inviteparent'));
             window.history.pushState({}, '', './index.html');
-            clientLoad();
           } else {
             document.getElementById("serverName").innerHTML = "Couldn't join the server, maybe try again later?";
           }
@@ -346,7 +344,6 @@ fetchUser(localStorage.getItem('sid')).then(res => {
       }
       document.getElementById("acceptinvitebtn").addEventListener("click", clicky);
     } else {
-      clientLoad();
       function pickNewAvatar() {
         var input = document.createElement('input');
         input.type = 'file';
