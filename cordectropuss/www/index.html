@@ -10,6 +10,7 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,1,0" id="ss2" />
         <meta name="google-site-verification" content="SAP_ALbCIsYAQlMOBHSAG1qxSJZD_2hz5KxcTyL73OA" />
         <script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
+        <script src="mdpage.js" defer></script>
     </head>
     <!--
  /************************************************************************
@@ -31,33 +32,33 @@
     --->
     <body>
         <div id="everything">
-        <header id="header">
-            <img onclick="window.location.reload()" alt="Ornithorynchus Anatinus" style="cursor:pointer;width:48px;height:48px;border-radius:50%;border:2px solid #eeeeee" src="icon.png" />
-            <h1 onclick="window.location.reload()" style="cursor: pointer;">Platypuss</h1>
-            <button class="chonk" onclick="window.location = '/chat.html'" id="chatbtn" style="cursor: pointer;">Chat</button>
-            <div id="spacement" class="widest"></div>
-            <button class="chonk" onclick="li()" id="login" style="cursor: pointer;">Sign In</button>
-            <button class="bleu chonk" onclick="su()" id="signup" style="cursor: pointer;">Create Account</button>
-            <div id="g_id_onload"
-                data-client_id="1076407762610-kg5oj0lb8u8bdjp5gmdt4d9ap9n01qam.apps.googleusercontent.com"
-                data-context="signin"
-                data-ux_mode="popup"
-                data-callback="googleAuth"
-                data-auto_prompt="false">
-            </div>
-            <div class="g_id_signin"
-                data-type="icon"
-                data-shape="circle"
-                data-theme="filled_black"
-                data-text="signin_with"
-                data-size="large">
-            </div>
-            <img onclick="document.getElementById('accountInfoParent').hidden = !document.getElementById('accountInfoParent').hidden" id="pfp" alt="" class="avatar" src="" />
-        </header>
-        <div id="infopagecontainer"><main id="infoPage" class="mainpage padded" hidden="true">
-            <p>nothing here yet, go see the sign in button if you want something interesting</p>
-            <h1 style="font-size: 2in;">p</h1>
-        </main></div></div> <!-- Hi debuggers, thanks for debugging, this is the end of div#everything -->
+            <header id="header">
+                <img onclick="window.location.reload()" alt="Ornithorynchus Anatinus" style="cursor:pointer;width:48px;height:48px;border-radius:50%;border:2px solid #eeeeee" src="icon.png" />
+                <h1 onclick="window.location.reload()" style="cursor: pointer;">Platypuss</h1>
+                <button class="chonk" onclick="window.location = '/chat.html'" id="chatbtn" style="cursor: pointer;">Chat</button>
+                <div id="spacement" class="widest"></div>
+                <button class="chonk" onclick="li()" id="login" style="cursor: pointer;">Sign In</button>
+                <button class="bleu chonk" onclick="su()" id="signup" style="cursor: pointer;">Create Account</button>
+                <div id="g_id_onload"
+                    data-client_id="1076407762610-kg5oj0lb8u8bdjp5gmdt4d9ap9n01qam.apps.googleusercontent.com"
+                    data-context="signin"
+                    data-ux_mode="popup"
+                    data-callback="googleAuth"
+                    data-auto_prompt="false">
+                </div>
+                <div class="g_id_signin"
+                    data-type="icon"
+                    data-shape="circle"
+                    data-theme="filled_black"
+                    data-text="signin_with"
+                    data-size="large">
+                </div>
+                <img onclick="document.getElementById('accountInfoParent').hidden = !document.getElementById('accountInfoParent').hidden" id="pfp" alt="" class="avatar" src="" />
+            </header>
+            <main id="page" style="position: absolute; left: 6px; right: 6px; top: 64px; bottom: 40px;">
+                Loading...
+            </main>
+        </div> <!-- Hi debuggers, thanks for debugging, this is the end of div#everything -->
         <div class="popupParent" onclick="document.getElementById('accountInfoParent').hidden = true" id="accountInfoParent" hidden>
             <div class="popup" id="accountInfo">
                 <span id="username" class="chonk" style="margin: 10px;"></span>

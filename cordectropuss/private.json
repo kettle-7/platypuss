@@ -40,6 +40,10 @@
             "type": "text/markdown",
             "path": "tos.md"
         },
+        "/index.md": {
+            "type": "text/markdown",
+            "path": "tos.md"
+        },
         "/icon.png": {
             "type": "image/png",
             "path": "icon.png"
