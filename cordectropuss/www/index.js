@@ -64,7 +64,7 @@ function li() {
     if (e.key == "Enter") doTheLoginThingy();
   });
   document.getElementById("lit1").innerHTML = document.getElementById("lit1").innerHTML.replace(/Create Account/g, "Sign In");
-  document.getElementById("lit2").innerHTML = 'Welcome back! If you don\'t already have an account please <a href="#" onclick="su()">create an account</a> instead.';
+  document.getElementById("lit2").innerHTML = 'Welcome back! If you don\'t already have an account <br> please <a href="#" onclick="su()">create an account</a> instead.';
   document.getElementById("lit3").innerText = document.getElementById("lit3").innerText.replace(/Create Account/g, "Sign In");
   return;
 }
@@ -76,8 +76,8 @@ function su() {
     if (e.key == "Enter") doTheLoginThingy();
   });
   document.getElementById("lit1").innerHTML = document.getElementById("lit1").innerHTML.replace(/Sign In/g, "Create Account");
-  document.getElementById("lit2").innerHTML = "Welcome to Platypuss! If this is not your first time with us please <a href='#' onclick='li()'>sign in</a> instead. Please make\n\
-sure to read the <a href='./tos.html'>terms of service</a> before creating an account.";
+  document.getElementById("lit2").innerHTML = "Welcome to Platypuss! If this is not your first time <br> with us please <a href='#' onclick='li()'>sign in</a> instead. Please make\n\
+<br> sure to read the <a href='./tos.html'>terms of service</a><br> before creating an account.";
   document.getElementById("lit3").innerText = document.getElementById("lit3").innerText.replace(/Sign In/g, "Create Account");
 }
 function doTheLoginThingy() {
