@@ -42,7 +42,7 @@
         },
         "/index.md": {
             "type": "text/markdown",
-            "path": "tos.md"
+            "path": "index.md"
         },
         "/icon.png": {
             "type": "image/png",
