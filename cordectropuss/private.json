@@ -12,9 +12,9 @@
             "type": "application/javascript",
             "path": "index.js"
         },
-        "/login.js": {
+        "/chat.js": {
             "type": "application/javascript",
-            "path": "login.js"
+            "path": "chat.js"
         },
         "/mdpage.js": {
             "type": "application/javascript",
@@ -23,6 +23,10 @@
         "/index.html": {
             "type": "text/html",
             "path": "index.html"
+        },
+        "/chat.html": {
+            "type": "text/html",
+            "path": "chat.html"
         },
         "/.html": {
             "type": "text/html",

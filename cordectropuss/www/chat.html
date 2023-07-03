@@ -34,10 +34,7 @@
         <header id="header">
             <img onclick="window.location.reload()" alt="Ornithorynchus Anatinus" style="cursor:pointer;width:48px;height:48px;border-radius:50%;border:2px solid #eeeeee" src="icon.png" />
             <h1 onclick="window.location.reload()" style="cursor: pointer;">Platypuss</h1>
-            <button class="chonk" onclick="window.location = '/chat.html'" id="chatbtn" style="cursor: pointer;">Chat</button>
             <div id="spacement" class="widest"></div>
-            <button class="chonk" onclick="li()" id="login" style="cursor: pointer;">Sign In</button>
-            <button class="bleu chonk" onclick="su()" id="signup" style="cursor: pointer;">Create Account</button>
             <div id="g_id_onload"
                 data-client_id="1076407762610-kg5oj0lb8u8bdjp5gmdt4d9ap9n01qam.apps.googleusercontent.com"
                 data-context="signin"
@@ -54,9 +51,30 @@
             </div>
             <img onclick="document.getElementById('accountInfoParent').hidden = !document.getElementById('accountInfoParent').hidden" id="pfp" alt="" class="avatar" src="" />
         </header>
-        <div id="infopagecontainer"><main id="infoPage" class="mainpage padded" hidden="true">
-            <p>nothing here yet, go see the sign in button if you want something interesting</p>
-            <h1 style="font-size: 2in;">p</h1>
+        <div id="actualpagecontainer"><main id="actualPage" class="mainpage" hidden="true"> 
+            <div class="sidePane" id="left">
+            </div>
+            <div id="mainContentContainer">
+                <div id="messageArea">
+                    <button onclick="moreMessages();" id="loadMoreMessages" class="chonk">Load More Messages</button>
+                    <div style="flex-grow: 1;"></div>
+                    <div id="mainContent"></div>
+                </div>
+                <span id="fileDeleteMessage" hidden>Click a file to delete it</span>
+                <div id="progress" hidden><div id="progress2"></div></div>
+                <div id="fileUploadSpace"></div>
+                <div id="longMessageBoxContainer">
+                    <textarea id="msgtxt" class="textBox chonk" placeholder="Type a message" cols="1" maxlength="2000"></textarea>
+                    <button id="upload" class="msgbtn chonk" style="border-color: #888888;">
+                        <span class="material-symbols-outlined">publish</span>
+                    </button>
+                    <button id="send" class="msgbtn chonk" style="border-color: #888888;">
+                        <span class="material-symbols-outlined">send</span>
+                    </button>
+                </div>
+            </div>
+            <div class="sidePane" id="right">
+            </div>
         </main></div></div> <!-- Hi debuggers, thanks for debugging, this is the end of div#everything -->
         <div class="popupParent" onclick="document.getElementById('accountInfoParent').hidden = true" id="accountInfoParent" hidden>
             <div class="popup" id="accountInfo">
@@ -65,18 +83,6 @@
                 <button class="dangerous chonk" id="logout" onclick="logout()">Sign Out</button>
             </div>
         </div>
-        <div id="P" class="popupParent" style="display: none;" onclick="document.getElementById('P').style.display = 'none'"><div id="p" class="popup">
-            <h2 id="lit1">Sign In</h2>
-            <span id="lit2">Welcome back! If you don't already have an account <br> please <a href="#" onclick="su()">create an account</a> instead.</span>
-            <div id="loginform">
-                <div style="display:grid;grid-template-columns:auto auto;">
-                <label style="font-size: large;">Username </label><input style="font-size: large;" type="text" id="unam" class="textBox"/>
-                <label style="font-size: large;">Password </label><input style="font-size: large;" type="password" id="pwd1" class="textBox"/>
-                <label style="font-size: large;" id="pr1">Confirm Password </label><input style="font-size: large;" type="password" id="pwd2" class="textBox"/>
-                </div><br>
-                <button style="cursor: pointer; font-size: large;" onclick="doTheLoginThingy()" id="lit3">Sign In</button>
-            </div>
-        </div></div>
         <div class="popupParent" id="inviteparent" hidden>
             <div class="centred popup" id="invitepopup">
                 <div class="banner" style="padding-top:10px;">
@@ -143,7 +149,7 @@
                 <div style="flex-grow:1;"></div>
                 <!-- <span id="cpwdnc" hidden>Sorry, that's not your current password.</span>
                 <input type="password" id="oldPwd" class="chonk textBox" placeholder="Current Password" /> -->
-                <span id="nonmatch" hidden>Sorry, that's not your current password.</span>
+                <span id="nonmatch" hidden>Sorry, that's not your current password.</span> <!-- I don't think we actually use this but idk -->
                 <input name="DummyUsername" type="text" style="display:none;"> <!-- firefox to stop thinking that the message box is username -->
                 <input type="password" id="newPwd" class="chonk textBox" placeholder="New Password" />
                 <input type="password" id="newPwd2" class="chonk textBox" placeholder="Confirm Password" />
@@ -158,10 +164,11 @@
             <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
         </div>
         <!-- Load React. -->
-        <!-- Note: when deploying, replace "development.js" with "production.min.js". -->
+        <!-- Note: when deploying, replace "development.js" with "production.min.js". --
         <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
         <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-        <script src="index.js"></script>
+        <---->
+        <script src="chat.js"></script>
         <!-- boring google sign in shit -->
         <!--<script src="https://accounts.google.com/gsi/client" async defer></script>-->
     </body>
