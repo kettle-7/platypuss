@@ -93,10 +93,10 @@
             <h2 id="lit1">Sign In</h2>
             <span id="lit2">Welcome back! If you don't already have an account <br> please <a href="#" onclick="su()">create an account</a> instead.</span>
             <div id="loginform">
-                <div style="display:grid;grid-template-rows:auto auto auto;">
-                <label style="font-size: large;">Username </label><input style="font-size: large;" type="text" id="unam" class="textBox"/><br>
-                <label style="font-size: large;">Password </label><input style="font-size: large;" type="password" id="pwd1" class="textBox"/><br>
-                <div id="pwdbox"><label style="font-size: large;">Confirm Password </label><input style="font-size: large;" type="password" id="pwd2" class="textBox"/><br></div>
+                <div style="display:grid;grid-template-columns:auto auto;">
+                <label style="font-size: large;">Username </label><input style="font-size: large;" type="text" id="unam" class="textBox"/>
+                <label style="font-size: large;">Password </label><input style="font-size: large;" type="password" id="pwd1" class="textBox"/>
+                <label style="font-size: large;" id="pr1">Confirm Password </label><input style="font-size: large;" type="password" id="pwd2" class="textBox"/>
                 </div><br>
                 <button style="cursor: pointer; font-size: large;" onclick="doTheLoginThingy()" id="lit3">Sign In</button>
             </div>

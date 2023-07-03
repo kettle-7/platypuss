@@ -59,7 +59,8 @@ if (!authUrl) authUrl = "http://platypuss.ddns.net";
 function li() {
   ift = false;
   document.getElementById('P').style.display = 'flex';
-  document.getElementById("pwdbox").hidden = true;
+  document.getElementById("pwd2").hidden = true;
+  document.getElementById("pr1").hidden = true;
   document.getElementById("pwd1").addEventListener("keypress", e => {
     if (e.key == "Enter") doTheLoginThingy();
   });
@@ -71,7 +72,8 @@ function li() {
 function su() {
   ift = true;
   document.getElementById('P').style.display = 'flex';
-  document.getElementById("pwdbox").hidden = false;
+  document.getElementById("pwd2").hidden = false;
+  document.getElementById("pr1").hidden = false;
   document.getElementById("pwd2").addEventListener("keypress", e => {
     if (e.key == "Enter") doTheLoginThingy();
   });
