@@ -44,6 +44,10 @@
             "type": "text/markdown",
             "path": "index.md"
         },
+        "/.md": {
+            "type": "text/markdown",
+            "path": "index.md"
+        },
         "/icon.png": {
             "type": "image/png",
             "path": "icon.png"
