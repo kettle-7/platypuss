@@ -8,6 +8,7 @@ temp.js
 
 # We don't need these
 platforms/
+.vs/
 
 # Logs 
 logs
