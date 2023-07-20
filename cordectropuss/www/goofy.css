@@ -20,6 +20,7 @@
 * {
     font-family: Inter, sans-serif;
     color: #00aa00;
+    cursor: not-allowed !important;
 }
 
 #send {
