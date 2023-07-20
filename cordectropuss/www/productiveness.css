@@ -327,11 +327,11 @@ input {
 }
 
 #left {
-    background: linear-gradient(to right, #eeeeee, #232323);
+    background: linear-gradient(to right, #eeeeee, #e0e0e0);
 }
 
 #right {
-    background: linear-gradient(to right, #232323, #eeeeee);
+    background: linear-gradient(to right, #e0e0e0, #eeeeee);
 }
 
 #loadMoreMessages {
@@ -479,6 +479,9 @@ input {
     text-align: center;
     height: 100%;
     width: 100%;
+}
+.material-symbols-outlined {
+    color: white !important;
 }
 
 .message1.hover .timestomp, .message1:hover .timestomp {
