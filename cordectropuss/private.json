@@ -8,6 +8,10 @@
             "type": "text/css",
             "path": "neetro.css"
         },
+        "/goofy.css": {
+            "type": "text/css",
+            "path": "goofy.css"
+        },
         "/productiveness.css": {
             "type": "text/css",
             "path": "productiveness.css"

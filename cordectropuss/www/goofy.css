@@ -19,7 +19,7 @@
 
 * {
     font-family: Inter, sans-serif;
-    color: #ffffff;
+    color: green;
 }
 
 #send {
@@ -32,8 +32,8 @@ h1 {
 
 button {
     color: white;
-    background-color: #373737;
-    border: 1px solid #888888;
+    background-color: springgreen;
+    border: 1px solid lime;
     border-radius: 5px;
     padding: 2px;
     padding-left: 10px;
@@ -44,7 +44,7 @@ button {
 
 button:active {
     box-shadow: 1px 1px 5px black inset !important;
-    background-color: #373737 !important;
+    background-color: springgreen !important;
 }
 
 .chonk {
@@ -58,7 +58,7 @@ button:active {
 }
 
 button:hover {
-    background-color: #202020;
+    background-color: springgreen;
 }
 
 .dangerous {
@@ -97,9 +97,9 @@ button:hover {
     height: fit-content;
     display: flex;
     flex-direction: column;
-    border: 0px solid #888888;
+    border: 0px solid lime;
     border-radius: 5px;
-    background: #474747;
+    background: springgreen;
     box-shadow: 0px 0px 20px #000000;
     padding-left: 10px;
     padding-right: 10px;
@@ -123,7 +123,7 @@ button:hover {
     background-image: url(swim1.png);
     background-size: cover;
     background-position: center;
-    background-color: #1b1b1b;
+    background-color: springgreen;
 }
 
 #inviteparent img {
@@ -135,7 +135,7 @@ button:hover {
 }
 
 #loadingScreen {
-    background: #303030;
+    background: springgreen;
     position: absolute;
     top: 0px;
     bottom: 0px;
@@ -168,8 +168,8 @@ button:hover {
 
 code {
     font-family: "Ubuntu Mono", "Lucida Sans", monospace, mono;
-    background-color: #484848;
-    border: 1px solid #888888;
+    background-color: springgreen;
+    border: 1px solid lime;
     border-radius: 5px;
     padding: 2px;
 }
@@ -181,8 +181,8 @@ pre > code {
 }
 
 pre {
-    background-color: #484848;
-    border: 2px solid #888888;
+    background-color: springgreen;
+    border: 2px solid lime;
     border-radius: 5px;
     padding: 3px;
 }
@@ -192,7 +192,7 @@ a {
 }
 
 blockquote {
-    border-left: 3px solid #888888;
+    border-left: 3px solid lime;
     margin-left: 0;
     padding: 5px;
 }
@@ -203,14 +203,14 @@ table, th, td {
 }
 
 table {
-    background: #272727;
+    background: springgreen;
     border-radius: 5px;
 }
 
 th, td {
     padding: 5px;
     border-radius: 4px;
-    background: linear-gradient(#373737, #303030);
+    background: linear-gradient(springgreen, springgreen);
 }
 
 blockquote p {
@@ -219,7 +219,7 @@ blockquote p {
 }
 
 a > h1 {
-    color: #ffffff;
+    color: green;
     text-decoration: none;
     display: inline;
 }
@@ -237,8 +237,8 @@ body {
 }
 
 header {
-    color: #f0f0f0;
-    background: linear-gradient(#272727, #202020);
+    color: green;
+    background: linear-gradient(springgreen, springgreen);
     display: flex;
     flex-direction: row;
     justify-content: stretch;
@@ -249,7 +249,7 @@ header {
     padding-bottom: 0px;
     align-items: center;
     height: fit-content;
-    border-bottom: 1px solid #888888;
+    border-bottom: 1px solid lime;
 }
 
 header h1 {
@@ -257,7 +257,7 @@ header h1 {
 }
 
 body {
-    background-color: #272727;
+    background-color: springgreen;
     width: 100%;
     height: 100%;
 }
@@ -269,8 +269,8 @@ body {
 }
 
 input, textarea {
-    background-color: #484848;
-    color: #ffffff;
+    background-color: springgreen;
+    color: green;
     border: 1px solid #0075db;
     border-radius: 5px;
 }
@@ -327,11 +327,11 @@ input {
 }
 
 #left {
-    background: linear-gradient(to right, #272727, #232323);
+    background: linear-gradient(to right, springgreen, springgreen);
 }
 
 #right {
-    background: linear-gradient(to right, #232323, #272727);
+    background: linear-gradient(to right, springgreen, springgreen);
 }
 
 #loadMoreMessages {
@@ -344,7 +344,7 @@ input {
 #mainContent {
     padding: 0px;
     margin: 0px;
-    background: #373737;
+    background: springgreen;
     display: flex;
     flex-direction: column;
     gap: 3px;
@@ -363,7 +363,7 @@ input {
 #mainContentContainer {
     padding: 0px;
     margin: 0px;
-    background: #373737;
+    background: springgreen;
     display: flex;
     flex-direction: column;
     gap: 3px;
@@ -383,8 +383,8 @@ input {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    border: 2px solid #eeeeee;
-    background: #373737;
+    border: 2px solid green;
+    background: springgreen;
 }
 
 .sericon:hover {
@@ -413,8 +413,8 @@ input {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    border: 2px solid #eeeeee;
-    /*background: #171717;*/
+    border: 2px solid green;
+    /*background: springgreen;*/
     cursor: pointer;
     object-fit: cover;
     align-self: center;
@@ -470,7 +470,7 @@ input {
 }
 
 .timestomp {
-    color: #aaaaaa;
+    color: green;
     display: none;
 }
 
@@ -486,11 +486,11 @@ input {
 }
 
 hr {
-    border: 2px solid #888888;
+    border: 2px solid lime;
 }
 
 .message1:hover {
-    background-color: #303030;
+    background-color: springgreen;
 }
 
 .message2 {
@@ -514,7 +514,7 @@ hr {
     box-shadow: 2px 2px 10px black;
     height: 20vh;
     padding: 1px;
-    background-color: #505050;
+    background-color: springgreen;
 }
 
 .neetro {
@@ -522,7 +522,7 @@ hr {
     box-shadow: 2px 2px 10px black;
     height: 20vh;
     padding: 1px;
-    background-color: #505050;
+    background-color: springgreen;
 }
 
 .message2 a {
@@ -570,7 +570,7 @@ hr {
     display: flex;
     flex-direction: row;
     gap: 3px;
-    border: 1px solid #888888;
+    border: 1px solid lime;
     box-shadow: 1px 1px 5px black;
     align-content: center;
     border-radius: 5px;
@@ -579,13 +579,13 @@ hr {
 
 @keyframes pulse {
     0% {
-      background-color: #303030;
+      background-color: springgreen;
     }
     50% {
-        background-color: #252d35;
+        background-color: lime;
     }
     100% {
-      background-color: #303030;
+      background-color: springgreen;
     }
   }
 
@@ -609,7 +609,7 @@ hr {
 }
 
 .invalidUser {
-    color: #ffdddd;
+    color: green;
     background: rgba(255, 0, 0, 0.2);
     padding: 4px;
     /*border: 1px solid #880000;*/
@@ -618,7 +618,7 @@ hr {
 }
 
 .userMention {
-    color: #aadbff;
+    color: green;
     background: rgba(0, 153, 255, 0.2);
     padding: 4px;
     /*border: 1px solid #880000;*/
@@ -639,7 +639,7 @@ hr {
     left: 0px;
     min-width: 0;
     max-width: 100vw;
-    background-color: #171717;
+    background-color: springgreen;
     border-radius: 5px;
     padding: 2px;
     margin: 5px;
@@ -674,14 +674,14 @@ hr {
 }
 
 ::-webkit-scrollbar {
-    background-color: #282828;
+    background-color: springgreen;
     width: 10px;
     border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb {
     border-radius: 5px;
-    background-color: #888888;
+    background-color: lime;
     width: 10px;
     box-shadow: 0 0 5px grey; 
 }
@@ -690,7 +690,7 @@ hr {
     outline: 0;
     outline-color: transparent;
     outline-style: none;
-    box-shadow: 0px 0px 3px #888888 !important;
+    box-shadow: 0px 0px 3px lime !important;
 }
 
 .banner {
@@ -710,26 +710,26 @@ hr {
 }
 
 .textBox {
-    background-color: #303030;
-    border-color: #888888;
-    box-shadow: 2px 2px 5px #1b1b1b inset;
+    background-color: springgreen;
+    border-color: lime;
+    box-shadow: 2px 2px 5px springgreen inset;
 }
 
 .textBox:focus {
-    background-color: #303030;
+    background-color: springgreen;
     border: 1px solid #0075db;
 }
 
 .labelInDisguise {
     background: none;
     border: none;
-    color: #ffffff;
+    color: green;
     max-width: max-content;
 }
 
 .labelInDisguise:focus {
-    background-color: #303030;
-    box-shadow: 2px 2px 5px #1b1b1b inset;
+    background-color: springgreen;
+    box-shadow: 2px 2px 5px springgreen inset;
     border: 1px solid #0075db;
     border-radius: 5px;
 }
