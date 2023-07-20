@@ -32,7 +32,7 @@ h1 {
 
 button {
     color: black;
-    background: linear-gradient(#e0e0e0, #d4d4d4, #d4d4d4, #c8c8c8);
+    background: linear-gradient(#e0e0e0, #c4c4c4, #c4c4c4, #a8a8a8);
     border: 1px solid #888888;
     border-radius: 5px;
     padding: 2px;
@@ -44,7 +44,7 @@ button {
 
 button:active {
     box-shadow: 1px 1px 5px black inset !important;
-    background: linear-gradient(#c8c8c8, #d4d4d4, #d4d4d4, #e0e0e0) !important;
+    background: linear-gradient(#a8a8a8, #c4c4c4, #c4c4c4, #e0e0e0) !important;
 }
 
 button:focus {
