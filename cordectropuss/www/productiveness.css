@@ -612,7 +612,7 @@ hr {
 }
 
 .invalidUser {
-    color: #ffdddd;
+    color: #ff4444;
     background: rgba(255, 0, 0, 0.2);
     padding: 4px;
     /*border: 1px solid #880000;*/
@@ -621,7 +621,7 @@ hr {
 }
 
 .userMention {
-    color: #aadbff;
+    color: #4444ff;
     background: rgba(0, 153, 255, 0.2);
     padding: 4px;
     /*border: 1px solid #880000;*/
