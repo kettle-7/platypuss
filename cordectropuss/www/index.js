@@ -544,3 +544,21 @@ function userInfo(id) {
     }
   });
 }
+function au() {
+  if (document.getElementById("acsabm").value != abm) {
+    abm = document.getElementById("acsabm").value;
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", authUrl + '/abmcfg?id=' + localStorage.getItem("sid"), true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.send(JSON.stringify({
+      text: abm
+    }));
+  }
+  if (document.getElementById("acsusername").value != oldunam) {
+    if (premyum) return;
+    oldunam = document.getElementById("acsusername").value;
+    const hrx = new XMLHttpRequest();
+    hrx.open("GET", authUrl + '/unamcfg?id=' + localStorage.getItem("sid") + '&unam=' + encodeURIComponent(oldunam), true);
+    hrx.send();
+  }
+}
