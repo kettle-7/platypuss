@@ -48,8 +48,8 @@ button:active {
 }
 
 button:focus {
-    box-shadow: 1px 1px 5px black inset !important;
-    background-color: #f6f6f6 !important;
+    box-shadow: 1px 1px 5px #444444 inset;
+    background-color: #f6f6f6;
 }
 
 .chonk {
@@ -693,7 +693,7 @@ hr {
     outline-color: transparent;
     outline-style: none;
     border: 2px inset #0075db;
-    box-shadow: 0px 0px 3px black !important;
+    box-shadow: 0px 0px 3px black;
 }
 
 .banner {
