@@ -39,11 +39,11 @@ button {
     padding-left: 10px;
     padding-right: 10px;
     cursor: pointer;
-    box-shadow: 1px 1px 5px white;
+    box-shadow: 1px 1px 5px black;
 }
 
 button:active {
-    box-shadow: 1px 1px 5px white inset !important;
+    box-shadow: 1px 1px 5px black inset !important;
     background-color: #dddddd !important;
 }
 
@@ -78,12 +78,12 @@ button:hover {
 }
 
 .bleu:active {
-    box-shadow: 1px 1px 5px white inset !important;
+    box-shadow: 1px 1px 5px black inset !important;
     background-color: #0075db !important;
 }
 
 .dangerous:active {
-    box-shadow: 1px 1px 5px white inset !important;
+    box-shadow: 1px 1px 5px black inset !important;
     background-color: crimson !important;
 }
 
@@ -100,7 +100,7 @@ button:hover {
     border: 0px solid #888888;
     border-radius: 5px;
     background: #d0d0d0;
-    box-shadow: 0px 0px 20px white;
+    box-shadow: 0px 0px 20px black;
     padding-left: 10px;
     padding-right: 10px;
     padding-bottom: 10px;
@@ -161,7 +161,7 @@ button:hover {
 
 #accountInfo {
     position: absolute;
-    box-shadow: 0px 0px 12px white;
+    box-shadow: 0px 0px 12px black;
     right: 8px;
     top: 70px;
 }
@@ -313,7 +313,7 @@ input {
     top: 0px;
     left: 0px;
     right: 0px;
-    box-shadow: inset 0px 0px 15px white;
+    box-shadow: inset 0px 0px 15px black;
 }
 
 .sidePane {
@@ -514,7 +514,7 @@ hr {
 
 .message2 img {
     border-radius: 8px;
-    box-shadow: 2px 2px 10px white;
+    box-shadow: 2px 2px 10px black;
     height: 20vh;
     padding: 1px;
     background-color: #505050;
@@ -522,7 +522,7 @@ hr {
 
 .neetro {
     border-radius: 8px;
-    box-shadow: 2px 2px 10px white;
+    box-shadow: 2px 2px 10px black;
     height: 20vh;
     padding: 1px;
     background-color: #505050;
@@ -574,7 +574,7 @@ hr {
     flex-direction: row;
     gap: 3px;
     border: 1px solid #888888;
-    box-shadow: 1px 1px 5px white;
+    box-shadow: 1px 1px 5px black;
     align-content: center;
     border-radius: 5px;
     width: fit-content;
@@ -761,10 +761,10 @@ hr {
     width: 64px;
     height: 64px;
     margin: 8px;
-    border: 8px solid #fff;
+    border: 8px solid black;
     border-radius: 50%;
     animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-    border-color: #fff transparent transparent transparent;
+    border-color: black transparent transparent transparent;
   }
   .lds-ring div:nth-child(1) {
     animation-delay: -0.45s;
