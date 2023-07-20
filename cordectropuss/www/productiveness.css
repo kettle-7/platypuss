@@ -188,7 +188,7 @@ pre {
 }
 
 a {
-    color: #4aa9fc;
+    color: #0075db;
 }
 
 blockquote {
@@ -337,7 +337,7 @@ input {
 #mainContent {
     padding: 0px;
     margin: 0px;
-    background: #dddddd;
+    background: #eeeeee;
     display: flex;
     flex-direction: column;
     gap: 3px;
@@ -356,7 +356,7 @@ input {
 #mainContentContainer {
     padding: 0px;
     margin: 0px;
-    background: #dddddd;
+    background: #eeeeee;
     display: flex;
     flex-direction: column;
     gap: 3px;
@@ -411,6 +411,7 @@ input {
     cursor: pointer;
     object-fit: cover;
     align-self: center;
+    padding-top: 8px;
 }
 
 #longMessageBoxContainer {
@@ -463,7 +464,7 @@ input {
 }
 
 .timestomp {
-    color: #aaaaaa;
+    color: #666;
     display: none;
 }
 
