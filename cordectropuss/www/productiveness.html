@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,maximum-scale=1"/>
+        <title>Platypuss</title>
+        <link href="neetro.css" rel="stylesheet" id="ss0"/>
+        <link href="productiveness.css" rel="stylesheet" id="ss1"/>
+        <link rel="icon" type="image/png" href="./icon.png"/>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,1,0" id="ss2" />
+        <meta name="google-site-verification" content="SAP_ALbCIsYAQlMOBHSAG1qxSJZD_2hz5KxcTyL73OA" />
+        <script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
+    </head>
+    <!--
+ /************************************************************************
+ * Copyright 2021-2023 Ben Keppel                                        *
+ *                                                                       *
+ * This program is free software: you can redistribute it and/or modify  *
+ * it under the terms of the GNU General Public License as published by  *
+ * the Free Software Foundation, either version 3 of the License, or     *
+ * (at your option) any later version.                                   *
+ *                                                                       *
+ * This program is distributed in the hope that it will be useful,       *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ * GNU General Public License for more details.                          *
+ *                                                                       *
+ * You should have received a copy of the GNU General Public License     *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
+ ************************************************************************/
+    --->
+    <body>
+        <div id="everything">
+        <header id="header">
+            <img onclick="window.location = '/index.html'" alt="Ornithorynchus Anatinus" class="avatar" src="icon.png" />
+            <h1 onclick="window.location = '/index.html'" style="cursor: pointer;">Platypuss</h1>
+            <div id="spacement" class="widest"></div>
+            <div id="g_id_onload"
+                data-client_id="1076407762610-kg5oj0lb8u8bdjp5gmdt4d9ap9n01qam.apps.googleusercontent.com"
+                data-context="signin"
+                data-ux_mode="popup"
+                data-callback="googleAuth"
+                data-auto_prompt="false">
+            </div>
+            <div class="g_id_signin"
+                data-type="icon"
+                data-shape="circle"
+                data-theme="filled_black"
+                data-text="signin_with"
+                data-size="large">
+            </div>
+            <img onclick="document.getElementById('accountInfoParent').hidden = !document.getElementById('accountInfoParent').hidden" id="pfp" alt="" class="avatar" src="" />
+        </header>
+        <div id="actualpagecontainer"><main id="actualPage" class="mainpage" hidden="true"> 
+            <div class="sidePane" id="left">
+            </div>
+            <div id="mainContentContainer">
+                <div id="messageArea">
+                    <button onclick="moreMessages();" id="loadMoreMessages" class="chonk">Load More Messages</button>
+                    <div style="flex-grow: 1;"></div>
+                    <div id="mainContent"></div>
+                </div>
+                <span id="fileDeleteMessage" hidden>Click a file to delete it</span>
+                <div id="progress" hidden><div id="progress2"></div></div>
+                <div id="fileUploadSpace"></div>
+                <div id="longMessageBoxContainer">
+                    <textarea id="msgtxt" class="textBox chonk" placeholder="Type a message" cols="1" maxlength="2000"></textarea>
+                    <button id="upload" class="msgbtn chonk" style="border-color: #888888;">
+                        <span class="material-symbols-outlined">publish</span>
+                    </button>
+                    <button id="send" class="msgbtn chonk" style="border-color: #888888;">
+                        <span class="material-symbols-outlined">send</span>
+                    </button>
+                </div>
+            </div>
+            <div class="sidePane" id="right">
+            </div>
+        </main></div></div> <!-- Hi debuggers, thanks for debugging, this is the end of div#everything -->
+        <div class="popupParent" onclick="document.getElementById('accountInfoParent').hidden = true" id="accountInfoParent" hidden>
+            <div class="popup" id="accountInfo">
+                <span id="username" class="chonk" style="margin: 10px;"></span>
+                <button class="chonk" onclick="document.getElementById('acsparent').style.display = 'flex'; document.getElementById('accountInfoParent').hidden = true">Account Settings</button>
+                <button class="dangerous chonk" id="logout" onclick="logout()">Sign Out</button>
+            </div>
+        </div>
+        <div class="popupParent" id="inviteparent" hidden>
+            <div class="centred popup" id="invitepopup">
+                <div class="banner" style="padding-top:10px;">
+                    <img class="avatar" id="inviteIcon" style="width:96px;height:96px;padding: 0px;margin-right:10px;"/>
+                    <h2 style="text-align:center;flex-grow: 1;" id="serinvitetitle">Invite to server</h2>
+                </div>
+                <p id="serverName">
+                    You've been invited to join a server!<br>
+                    Unfortunately either the link is invalid
+                    or the server is currently down. Please
+                    contact the server owner to resolve the issue.
+                </p>
+                <button class="bleu chonk" id="acceptinvitebtn">Accept</button>
+                <button class="chonk" id="invdecline" onclick="document.body.removeChild(document.getElementById('inviteparent'));window.history.pushState({}, '', '/');clientLoad();">Decline</button>
+            </div>
+        </div>
+        <div class="popupParent" id="acsparent" onclick="au();document.getElementById('acsparent').style.display = 'none'" hidden>
+            <div class="centred popup" id="acspopup">
+                <h2 style="text-align:center;">Account Settings</h2>
+                <div id="profBanner" class="banner">
+                    <div style="width:96px;height:96px; padding: 0px;position: relative;display: block;" class="avatar">
+                        <span style="width:100px;height:100px;position: absolute;margin: 0px; padding: 0px;left: 0px;top: 0px;display: flex;justify-content: center;align-items: center;">
+                            <span style="width:fit-content;height:fit-content;text-align: center;margin: auto;">Change</span>
+                        </span>
+                        <img class="avatar" id="changePfp" src="" style="width:96px;height:96px;position: absolute;margin: 0px; padding: 0px;left: 0px;top: 0px;border: none;"/>
+                    </div>
+                    <h2><input type="text" id="acsusername" maxlength="30" class="labelInDisguise" value="(username)" size="10"></input></h2><span id="tag"></span>
+                </div>
+                <span id="avatarTooBig" hidden>Sorry, that file is too big, the maximum size is 5MB.</span>
+                <textarea class="textBox" id="acsabm" style="padding:2px;" placeholder="Tell us more about you..." maxlength="2000"></textarea>
+                <button class="dangerous chonk" id="acsdelacc"
+                    onclick="document.getElementById('dacparent').style.display = 'flex';document.getElementById('acsparent').style.display = 'none';"
+                    >Delete Account</button>
+                <button class="chonk" id="acscpwd"
+                    onclick="document.getElementById('cpwdparent').style.display = 'flex'; document.getElementById('acsparent').style.display = 'none'"
+                    >Change Password</button>
+                <button class="chonk" id="acssave" onclick="au();document.getElementById('acsparent').style.display = 'none';">Done</button>
+            </div>
+        </div>
+        <div class="popupParent" id="uifparent" onclick="document.getElementById('uifparent').style.display = 'none'" hidden>
+            <div class="centred popup" id="uifpopup">
+                <br>
+                <div id="uifbanner" class="banner">
+                    <div style="width:96px;height:96px; padding: 0px;position: relative;display: block;" class="avatar">
+                        <img class="avatar" id="uifpfp" src="" style="width:96px;height:96px;position: absolute;margin: 0px; padding: 0px;left: 0px;top: 0px;border: none;"/>
+                    </div>
+                    <h2 id="uifusername">(username)</h2><span id="uiftag"></span>
+                </div>
+                <p id="uifabm"></p>
+                <img src="./nitro.png" alt="" class="neetro" id="neetro" hidden/>
+            </div>
+        </div>
+        <div class="popupParent" id="dacparent" onclick="document.getElementById('dacparent').style.display = 'none'" hidden>
+            <div class="centred popup" id="dacpopup">
+                <h2 style="text-align:center;">Delete Account</h2>
+                <span>Do you really want to do that?</span>
+                <button class="dangerous chonk" id="dodel">Yes</button>
+                <button class="bleu chonk" id="nodel" onclick="document.getElementById('dacparent').style.display = 'none';">No</button>
+            </div>
+        </div>
+        <div class="popupParent" id="cpwdparent" onclick="document.getElementById('cpwdparent').style.display = 'none'" hidden>
+            <div class="centred popup" id="cpwdpopup">
+                <h2 style="text-align:center;">Change Password</h2>
+                <div style="flex-grow:1;"></div>
+                <!-- <span id="cpwdnc" hidden>Sorry, that's not your current password.</span>
+                <input type="password" id="oldPwd" class="chonk textBox" placeholder="Current Password" /> -->
+                <span id="nonmatch" hidden>Sorry, that's not your current password.</span> <!-- I don't think we actually use this but idk -->
+                <input name="DummyUsername" type="text" style="display:none;"> <!-- firefox to stop thinking that the message box is username -->
+                <input type="password" id="newPwd" class="chonk textBox" placeholder="New Password" />
+                <input type="password" id="newPwd2" class="chonk textBox" placeholder="Confirm Password" />
+                <button class="chonk" id="cpwdsave">Save</button>
+                <button class="chonk" id="cpwdcncl" onclick="document.getElementById('cpwdparent').style.display = 'none';">Cancel</button>
+            </div>
+        </div>
+        <div id="loadingScreen">
+            <p id="loadingText">
+                Loading...
+            </p>
+            <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+        </div>
+        <!-- Load React. -->
+        <!-- Note: when deploying, replace "development.js" with "production.min.js". --
+        <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+        <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+        <---->
+        <script src="chat.js"></script>
+        <!-- boring google sign in shit -->
+        <!--<script src="https://accounts.google.com/gsi/client" async defer></script>-->
+    </body>
+</html>
