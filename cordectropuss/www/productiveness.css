@@ -47,6 +47,11 @@ button:active {
     background-color: #dddddd !important;
 }
 
+button:focus {
+    box-shadow: 1px 1px 5px black inset !important;
+    background-color: #f6f6f6 !important;
+}
+
 .chonk {
     padding: 5px;
     font-size: 14pt;
@@ -99,7 +104,7 @@ button:hover {
     flex-direction: column;
     border: 0px solid #888888;
     border-radius: 5px;
-    background: #d0d0d0;
+    background: linear-gradient(to bottom, #fff, #d0d0d0 64px, #d0d0d0);
     box-shadow: 0px 0px 20px black;
     padding-left: 10px;
     padding-right: 10px;
@@ -687,7 +692,8 @@ hr {
     outline: 0;
     outline-color: transparent;
     outline-style: none;
-    box-shadow: 0px 0px 3px #888888 !important;
+    border: 2px inset #0075db;
+    box-shadow: 0px 0px 3px black !important;
 }
 
 .banner {
