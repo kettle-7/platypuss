@@ -424,6 +424,7 @@ fetchUser(localStorage.getItem('sid')).then(res => {
     }
   } else {
     document.getElementById("header").removeChild(document.getElementById("pfp"));
+    document.getElementById("everything").removeChild(document.getElementById("actualpagecontainer"));
     if (url.searchParams.has("invite")) {
       let inviteCode = url.searchParams.get("invite");
       let ip = [

@@ -10,7 +10,7 @@ temp.js
 platforms/
 .vs/
 
-# Logs 
+# Logs
 logs
 *.log
 npm-debug.log*

@@ -65,7 +65,7 @@ function fetchUser(id) {
 }
 fetchUser(localStorage.getItem('sid')).then(res => {
   if (res == null) {
-    window.location = "./index.html";
+    if (!url.searchParams.has("invite") && !localStorage.getItem("pendingInvite")) window.location = "./index.html";
   } else {
     oldunam = res.unam;
     abm = res.aboutMe.text;
@@ -137,7 +137,7 @@ fetchUser(localStorage.getItem('sid')).then(res => {
         window.location.reload(); // page to infinitely reload. the most likely response from the user is the
       } // page being closed and mild confusion which is not ideal but not dangerous.
       let sers = JSON.parse(h.responseText);
-      if (Object.keys(sers.servers).length === 0) {
+      if (Object.keys(sers.servers).length === 0 && !url.searchParams.has("invite") && !localStorage.getItem("pendingInvite")) {
         // None
         window.location = "./index.html";
       }
@@ -201,7 +201,7 @@ fetchUser(localStorage.getItem('sid')).then(res => {
         r.onload = () => {
           if (r.status == 200) {
             document.body.removeChild(document.getElementById('inviteparent'));
-            window.history.pushState({}, '', './index.html');
+            window.history.pushState({}, '', './chat.html');
             clientLoad();
           } else {
             document.getElementById("serverName").innerHTML = "Couldn't join the server, try again later?";
@@ -272,7 +272,7 @@ fetchUser(localStorage.getItem('sid')).then(res => {
         r.onload = () => {
           if (r.status == 200) {
             document.body.removeChild(document.getElementById('inviteparent'));
-            window.history.pushState({}, '', './index.html');
+            window.history.pushState({}, '', './chat.html');
             clientLoad();
           } else {
             document.getElementById("serverName").innerHTML = "Couldn't join the server, maybe try again later?";
@@ -361,14 +361,14 @@ fetchUser(localStorage.getItem('sid')).then(res => {
       });
     }
   } else {
-    window.location = "./index.html";
+    if (!url.searchParams.has("invite") && !localStorage.getItem("pendingInvite")) window.location = "./index.html";
   }
 }, () => {
   if (url.host.startsWith("http://192.168") && !localStorage.getItem("forceAuth")) {
     localStorage.setItem("authUrl", "http://192.168.1.69:3000");
     window.location.reload();
   }
-  window.location = "./index.html";
+  if (!url.searchParams.has("invite") && !localStorage.getItem("pendingInvite")) window.location = "./index.html";
 });
 document.getElementById("accountInfo").addEventListener("click", e => {
   e.stopPropagation();
