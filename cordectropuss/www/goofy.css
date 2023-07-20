@@ -19,7 +19,7 @@
 
 * {
     font-family: Inter, sans-serif;
-    color: green;
+    color: #00aa00;
 }
 
 #send {
@@ -31,7 +31,7 @@ h1 {
 }
 
 button {
-    color: green;
+    color: #00aa00;
     background-color: springgreen;
     border: 1px solid lime;
     border-radius: 5px;
@@ -188,7 +188,7 @@ pre {
 }
 
 a {
-    color: green;
+    color: #00aa00;
 }
 
 blockquote {
@@ -219,7 +219,7 @@ blockquote p {
 }
 
 a > h1 {
-    color: green;
+    color: #00aa00;
     text-decoration: none;
     display: inline;
 }
@@ -237,7 +237,7 @@ body {
 }
 
 header {
-    color: green;
+    color: #00aa00;
     background: linear-gradient(springgreen, springgreen);
     display: flex;
     flex-direction: row;
@@ -270,7 +270,7 @@ body {
 
 input, textarea {
     background-color: springgreen;
-    color: green;
+    color: #00aa00;
     border: 1px solid #0075db;
     border-radius: 5px;
 }
@@ -383,13 +383,13 @@ input {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    border: 2px solid green;
+    border: 2px solid #00aa00;
     background: springgreen;
 }
 
 .sericon:hover {
     background: #0075db;
-    border: 4px solid green;
+    border: 4px solid #00aa00;
 }
 
 .invisibutton {
@@ -413,7 +413,7 @@ input {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    border: 2px solid green;
+    border: 2px solid #00aa00;
     /*background: springgreen;*/
     cursor: pointer;
     object-fit: cover;
@@ -470,7 +470,7 @@ input {
 }
 
 .timestomp {
-    color: green;
+    color: #00aa00;
     display: none;
 }
 
@@ -609,7 +609,7 @@ hr {
 }
 
 .invalidUser {
-    color: green;
+    color: #00aa00;
     background: rgba(255, 0, 0, 0.2);
     padding: 4px;
     /*border: 1px solid #880000;*/
@@ -618,7 +618,7 @@ hr {
 }
 
 .userMention {
-    color: green;
+    color: #00aa00;
     background: rgba(0, 153, 255, 0.2);
     padding: 4px;
     /*border: 1px solid #880000;*/
@@ -723,7 +723,7 @@ hr {
 .labelInDisguise {
     background: none;
     border: none;
-    color: green;
+    color: #00aa00;
     max-width: max-content;
 }
 
