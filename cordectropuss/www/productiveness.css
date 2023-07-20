@@ -481,7 +481,7 @@ input {
     width: 100%;
 }
 .material-symbols-outlined {
-    color: white !important;
+    color: black !important;
 }
 
 .message1.hover .timestomp, .message1:hover .timestomp {
