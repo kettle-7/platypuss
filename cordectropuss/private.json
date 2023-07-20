@@ -8,6 +8,14 @@
             "type": "text/css",
             "path": "neetro.css"
         },
+        "/productiveness.css": {
+            "type": "text/css",
+            "path": "productiveness.css"
+        },
+        "/productiveness.html": {
+            "type": "text/html",
+            "path": "productiveness.html"
+        },
         "/index.js": {
             "type": "application/javascript",
             "path": "index.js"
