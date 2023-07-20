@@ -489,6 +489,7 @@ input {
 
 hr {
     border: 2px solid #888888;
+    width: 100%;
 }
 
 .message1:hover {
