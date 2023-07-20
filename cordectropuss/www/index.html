@@ -59,14 +59,14 @@
                 Loading...
             </main>
         </div> <!-- Hi debuggers, thanks for debugging, this is the end of div#everything -->
-        <div class="popupParent" onclick="document.getElementById('accountInfoParent').hidden = true" id="accountInfoParent" hidden>
+        <div class="popupParent" onmousedown="document.getElementById('accountInfoParent').hidden = true" id="accountInfoParent" hidden>
             <div class="popup" id="accountInfo">
                 <span id="username" class="chonk" style="margin: 10px;"></span>
                 <button class="chonk" onclick="document.getElementById('acsparent').style.display = 'flex'; document.getElementById('accountInfoParent').hidden = true">Account Settings</button>
                 <button class="dangerous chonk" id="logout" onclick="logout()">Sign Out</button>
             </div>
         </div>
-        <div id="P" class="popupParent" style="display: none;" onclick="document.getElementById('P').style.display = 'none'"><div id="p" class="popup">
+        <div id="P" class="popupParent" style="display: none;" onmousedown="document.getElementById('P').style.display = 'none'"><div id="p" class="popup">
             <h2 id="lit1">Sign In</h2>
             <span id="lit2">Welcome back! If you don't already have an account <br> please <a href="#" onclick="su()">create an account</a> instead.</span>
             <div id="loginform">
@@ -94,7 +94,7 @@
                 <button class="chonk" id="invdecline" onclick="document.body.removeChild(document.getElementById('inviteparent'));window.history.pushState({}, '', '/');clientLoad();">Decline</button>
             </div>
         </div>
-        <div class="popupParent" id="acsparent" onclick="au();document.getElementById('acsparent').style.display = 'none'" hidden>
+        <div class="popupParent" id="acsparent" onmousedown="au();document.getElementById('acsparent').style.display = 'none'" hidden>
             <div class="centred popup" id="acspopup">
                 <h2 style="text-align:center;">Account Settings</h2>
                 <div id="profBanner" class="banner">
@@ -117,7 +117,7 @@
                 <button class="chonk" id="acssave" onclick="au();document.getElementById('acsparent').style.display = 'none';">Done</button>
             </div>
         </div>
-        <div class="popupParent" id="uifparent" onclick="document.getElementById('uifparent').style.display = 'none'" hidden>
+        <div class="popupParent" id="uifparent" onmousedown="document.getElementById('uifparent').style.display = 'none'" hidden>
             <div class="centred popup" id="uifpopup">
                 <br>
                 <div id="uifbanner" class="banner">
@@ -130,7 +130,7 @@
                 <img src="./nitro.png" alt="" class="neetro" id="neetro" hidden/>
             </div>
         </div>
-        <div class="popupParent" id="dacparent" onclick="document.getElementById('dacparent').style.display = 'none'" hidden>
+        <div class="popupParent" id="dacparent" onmousedown="document.getElementById('dacparent').style.display = 'none'" hidden>
             <div class="centred popup" id="dacpopup">
                 <h2 style="text-align:center;">Delete Account</h2>
                 <span>Do you really want to do that?</span>
@@ -138,7 +138,7 @@
                 <button class="bleu chonk" id="nodel" onclick="document.getElementById('dacparent').style.display = 'none';">No</button>
             </div>
         </div>
-        <div class="popupParent" id="cpwdparent" onclick="document.getElementById('cpwdparent').style.display = 'none'" hidden>
+        <div class="popupParent" id="cpwdparent" onmousedown="document.getElementById('cpwdparent').style.display = 'none'" hidden>
             <div class="centred popup" id="cpwdpopup">
                 <h2 style="text-align:center;">Change Password</h2>
                 <div style="flex-grow:1;"></div>
