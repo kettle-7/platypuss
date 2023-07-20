@@ -406,7 +406,7 @@ input {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    border: 2px solid #272727;
+    border: none;
     /*background: #f6f6f6;*/
     cursor: pointer;
     object-fit: cover;
