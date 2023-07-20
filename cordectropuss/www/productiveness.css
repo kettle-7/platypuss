@@ -324,14 +324,7 @@ input {
     padding: 3px;
     flex-grow: 0;
     flex-shrink: 0;
-}
-
-#left {
-    background: linear-gradient(to right, #eeeeee, #e0e0e0);
-}
-
-#right {
-    background: linear-gradient(to right, #e0e0e0, #eeeeee);
+    background: #d0d0d0;
 }
 
 #loadMoreMessages {
