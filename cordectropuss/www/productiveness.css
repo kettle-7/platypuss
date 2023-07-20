@@ -566,7 +566,7 @@ hr {
     display: flex;
     flex-direction: row;
     gap: 3px;
-    border: 1px solid #888888;
+    border: none;
     box-shadow: 1px 1px 5px black;
     align-content: center;
     border-radius: 5px;
