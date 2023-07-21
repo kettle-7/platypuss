@@ -4,8 +4,8 @@
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,maximum-scale=1"/>
         <title>Platypuss</title>
-        <link href="neetro.css" rel="stylesheet" id="ss0"/>
-        <link href="main.css" rel="stylesheet" id="ss1"/>
+        <link href="darkn.css" rel="stylesheet" id="ss0"/> <!-- we don't need two stylesheets here but i can't be assed -->
+        <link href="dark.css" rel="stylesheet" id="ss1"/>
         <link rel="icon" type="image/png" href="./icon.png"/>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,1,0" id="ss2" />
         <meta name="google-site-verification" content="SAP_ALbCIsYAQlMOBHSAG1qxSJZD_2hz5KxcTyL73OA" />
@@ -108,12 +108,16 @@
                 </div>
                 <span id="avatarTooBig" hidden>Sorry, that file is too big, the maximum size is 5MB.</span>
                 <textarea class="textBox" id="acsabm" style="padding:2px;" placeholder="Tell us more about you..." maxlength="2000"></textarea>
-                <button class="dangerous chonk" id="acsdelacc"
-                    onclick="document.getElementById('dacparent').style.display = 'flex';document.getElementById('acsparent').style.display = 'none';"
-                    >Delete Account</button>
+                <label class="switch">Use light theme
+                    <input type="checkbox">
+                    <span class="slider round"></span>
+                </label>
                 <button class="chonk" id="acscpwd"
                     onclick="document.getElementById('cpwdparent').style.display = 'flex'; document.getElementById('acsparent').style.display = 'none'"
                     >Change Password</button>
+                <button class="dangerous chonk" id="acsdelacc"
+                    onclick="document.getElementById('dacparent').style.display = 'flex';document.getElementById('acsparent').style.display = 'none';"
+                    >Delete Account</button>
                 <button class="chonk" id="acssave" onclick="au();document.getElementById('acsparent').style.display = 'none';">Done</button>
             </div>
         </div>

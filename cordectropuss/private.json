@@ -1,24 +1,20 @@
 {
     "files": {
-        "/main.css": {
+        "/dark.css": {
             "type": "text/css",
-            "path": "main.css"
+            "path": "dark.css"
         },
-        "/neetro.css": {
+        "/darkn.css": {
             "type": "text/css",
-            "path": "neetro.css"
+            "path": "darkn.css"
         },
-        "/goofy.css": {
+        "/lightn.css": {
             "type": "text/css",
-            "path": "goofy.css"
+            "path": "lightn.css"
         },
-        "/productiveness.css": {
+        "/light.css": {
             "type": "text/css",
-            "path": "productiveness.css"
-        },
-        "/productiveness.html": {
-            "type": "text/html",
-            "path": "productiveness.html"
+            "path": "light.css"
         },
         "/index.js": {
             "type": "application/javascript",

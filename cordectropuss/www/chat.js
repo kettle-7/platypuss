@@ -73,8 +73,10 @@ fetchUser(localStorage.getItem('sid')).then(res => {
       premyum = true;
       document.head.removeChild(document.getElementById("ss1"));
       document.head.removeChild(document.getElementById("ss2"));
+      if (localStorage.getItem("theme") == "light") document.getElementById("ss0").href = "/lightn.css";
     } else {
       document.head.removeChild(document.getElementById("ss0"));
+      if (localStorage.getItem("theme") == "light") document.getElementById("ss1").href = "/light.css";
     }
     document.getElementById("pfp").src = authUrl + res.pfp;
     document.getElementById("username").innerText = "Logged in as " + res.unam;
@@ -370,22 +372,22 @@ fetchUser(localStorage.getItem('sid')).then(res => {
   }
   if (!url.searchParams.has("invite") && !localStorage.getItem("pendingInvite")) window.location = "./index.html";
 });
-document.getElementById("accountInfo").addEventListener("click", e => {
+document.getElementById("accountInfo").addEventListener("mousedown", e => {
   e.stopPropagation();
 });
-document.getElementById("invitepopup").addEventListener("click", e => {
+document.getElementById("invitepopup").addEventListener("mousedown", e => {
   e.stopPropagation();
 });
-document.getElementById("acspopup").addEventListener("click", e => {
+document.getElementById("acspopup").addEventListener("mousedown", e => {
   e.stopPropagation();
 });
-document.getElementById("cpwdpopup").addEventListener("click", e => {
+document.getElementById("cpwdpopup").addEventListener("mousedown", e => {
   e.stopPropagation();
 });
-document.getElementById("dacpopup").addEventListener("click", e => {
+document.getElementById("dacpopup").addEventListener("mousedown", e => {
   e.stopPropagation();
 });
-document.getElementById("uifpopup").addEventListener("click", e => {
+document.getElementById("uifpopup").addEventListener("mousedown", e => {
   e.stopPropagation();
 });
 document.addEventListener("keydown", e => {
