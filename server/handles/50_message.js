@@ -46,11 +46,9 @@ all the information specified in the Platypuss API."
 		}
 		//if (!(/[\!@#$%\^&\*()_+\-=\[\]{};':"\\|,.<>\/?A-Za-z0-9]/.test(packet.message.content)) && !packet) {
 		if (packet.message.content.replace(/[ \t\r\n]/g, "").length < 1) {
-			skill = true;
-			if (packet.message.uploads) {
-				if (packet.message.uploads.length != 0) {
-					skill = false;
-				}
+			let skill = true;
+			for (let _ of packet.message.uploads) {
+				skill = false;
 			}
 			if (skill)
 				packet.ws.send(JSON.stringify({
