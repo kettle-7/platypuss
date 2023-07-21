@@ -113,11 +113,12 @@
                     <label class="switch">
                         <input type="checkbox">
                         <span class="slider round" onclick="
-localStorage.setItem('theme', localStorage.getItem('theme') == 'light' ? 'dark' : 'light');
+let theme = localStorage.getItem('theme');
+localStorage.setItem('theme', theme == 'light' ? 'dark' : 'light');
 if (document.getElementById('ss1'))
-    document.getElementById('ss1').href = document.getElementById('ss1').href == '/light.css' ? '/dark.css' : '/light.css';
+    document.getElementById('ss1').href = theme == 'light' ? '/dark.css' : '/light.css';
 else
-    document.getElementById('ss0').href = document.getElementById('ss0').href == '/lightn.css' ? '/darkn.css' : '/lightn.css';
+    document.getElementById('ss0').href = theme == 'light' ? '/darkn.css' : '/lightn.css';
                         "></span>
                     </label>
                 </div>
