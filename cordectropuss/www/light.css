@@ -445,6 +445,10 @@ input {
     cursor: pointer;
     object-fit: cover;
 }
+#profBanner .avatar {
+    min-width: 96px !important;
+    min-height: 96px !important;
+}
 
 #left .avatar {
     width: 48px;
