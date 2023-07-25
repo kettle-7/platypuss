@@ -542,14 +542,17 @@ function ke(e) {
           });
         }
       }
-      if (edit == false) ws.send(JSON.stringify({
-        eventType: "message",
-        message: {
-          content: document.getElementById("msgtxt").value,
-          reply: reply ? reply : undefined,
-          uploads: uploads ? uploads : undefined
-        }
-      }));else {
+      console.log(edit);
+      if (edit == false) {
+        ws.send(JSON.stringify({
+          eventType: "message",
+          message: {
+            content: document.getElementById("msgtxt").value,
+            reply: reply ? reply : undefined,
+            uploads: uploads ? uploads : undefined
+          }
+        }));
+      } else {
         ws.send(JSON.stringify({
           eventType: "messageEdit",
           id: edit,
@@ -973,6 +976,9 @@ function clientLoad() {
               break;
             case "messageDeleted":
               document.getElementById(`message_${packet.messageId}`).style.display = "none";
+              break;
+            case "messageEdited":
+              document.getElementById(`message_${packet.messageId}`).innerText = "✨ undefined behaviour ✨";
               break;
             case "connected":
               document.getElementById("loadingScreen").className += " fadeOut";

@@ -130,7 +130,7 @@ all the information specified in the Platypuss API."
 		for (let client of wss.clients) {
 			if (client.loggedinbytoken)
 			client.send(JSON.stringify({
-				eventType: "messageEdit",
+				eventType: "messageEdited",
 				message: {
 					content: packet.message.content,
 					stamp: packet.message.stamp,
