@@ -39,16 +39,16 @@ button {
     padding-left: 10px;
     padding-right: 10px;
     cursor: pointer;
-    box-shadow: 1px 1px 5px black;
+    box-shadow: 1px 1px 3px black;
 }
 
 button:active {
-    box-shadow: 1px 1px 5px black inset !important;
+    box-shadow: 1px 1px 3px black inset !important;
     background: linear-gradient(#a8a8a8, #c4c4c4, #c4c4c4, #e0e0e0) !important;
 }
 
 button:focus {
-    box-shadow: 1px 1px 5px #444444 inset;
+    box-shadow: 1px 1px 3px #444444 inset;
     background-color: #f6f6f6;
 }
 
@@ -83,12 +83,12 @@ button:hover {
 }
 
 .bleu:active {
-    box-shadow: 1px 1px 5px black inset !important;
+    box-shadow: 1px 1px 3px black inset !important;
     background-color: #0075db !important;
 }
 
 .dangerous:active {
-    box-shadow: 1px 1px 5px black inset !important;
+    box-shadow: 1px 1px 3px black inset !important;
     background-color: crimson !important;
 }
 
@@ -105,7 +105,7 @@ button:hover {
     border: 0px solid #888888;
     border-radius: 5px;
     background: linear-gradient(to bottom, #fff, #d0d0d0 64px, #d0d0d0);
-    box-shadow: 0px 0px 20px black;
+    box-shadow: 0px 0px 10px black;
     padding-left: 10px;
     padding-right: 10px;
     padding-bottom: 10px;
@@ -167,7 +167,7 @@ button:hover {
 
 #accountInfo {
     position: absolute;
-    box-shadow: 0px 0px 12px black;
+    box-shadow: 0px 0px 6px black;
     right: 8px;
     top: 70px;
 }
@@ -319,7 +319,7 @@ input {
     top: 0px;
     left: 0px;
     right: 0px;
-    box-shadow: inset 0px 0px 15px black;
+    box-shadow: inset 0px 0px 6px black;
 }
 
 .sidePane {
@@ -438,7 +438,7 @@ input {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
     background: transparent;
     cursor: pointer;
     object-fit: cover;
@@ -515,7 +515,7 @@ hr {
 
 .message2 img {
     border-radius: 8px;
-    box-shadow: 2px 2px 10px black;
+    box-shadow: 2px 2px 5px black;
     height: 20vh;
     padding: 1px;
     background-color: #bbbbbb;
@@ -523,7 +523,7 @@ hr {
 
 .neetro {
     border-radius: 8px;
-    box-shadow: 2px 2px 10px black;
+    box-shadow: 2px 2px 5px black;
     height: 20vh;
     padding: 1px;
     background-color: #bbbbbb;
@@ -575,7 +575,7 @@ hr {
     flex-direction: row;
     gap: 3px;
     border: none;
-    box-shadow: 1px 1px 5px black;
+    box-shadow: 1px 1px 3px black;
     align-content: center;
     border-radius: 5px;
     width: fit-content;
@@ -687,7 +687,7 @@ hr {
     border-radius: 5px;
     background-color: #888888;
     width: 10px;
-    box-shadow: 0 0 5px grey; 
+    box-shadow: 0 0 3px grey; 
 }
 
 :focus {
@@ -695,7 +695,7 @@ hr {
     outline-color: transparent;
     outline-style: none;
     border: 1px solid #0075db;
-    box-shadow: 0px 0px 3px black;
+    box-shadow: 0px 0px 2px black;
 }
 
 .banner {
@@ -717,7 +717,7 @@ hr {
 .textBox {
     background-color: #e5e5e5;
     border-color: #888888;
-    box-shadow: 2px 2px 5px #1b1b1b inset;
+    box-shadow: 2px 2px 2px #1b1b1b inset;
 }
 
 .textBox:focus {
@@ -734,7 +734,7 @@ hr {
 
 .labelInDisguise:focus {
     background-color: #e5e5e5;
-    box-shadow: 2px 2px 5px #1b1b1b inset;
+    box-shadow: 2px 2px 2px #1b1b1b inset;
     border: 1px solid #0075db;
     border-radius: 5px;
 }
