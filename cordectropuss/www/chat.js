@@ -542,7 +542,7 @@ function ke(e) {
           });
         }
       }
-      if (!edit) ws.send(JSON.stringify({
+      if (edit == false) ws.send(JSON.stringify({
         eventType: "message",
         message: {
           content: document.getElementById("msgtxt").value,
