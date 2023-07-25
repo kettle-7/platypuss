@@ -727,7 +727,7 @@ hr {
 
 .labelInDisguise {
     background: none;
-    border: none;
+    border: 1px solid transparent;
     color: black;
     max-width: max-content;
 }

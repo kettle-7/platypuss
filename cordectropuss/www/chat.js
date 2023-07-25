@@ -43,6 +43,7 @@ var ift = false;
 var premyum = false;
 var abm, oldunam;
 var mRef = {};
+var edit = false;
 if (!authUrl) authUrl = "http://platypuss.ddns.net";
 function fetchUser(id) {
   return new Promise((resolve, reject) => {
@@ -418,6 +419,12 @@ function deleteMessage(id, server) {
   }));
   document.getElementById("msgtxt").focus();
 }
+function editMessage(id, server) {
+  if (premyum) return;
+  edit = id;
+  document.getElementById("msgtxt").value = messageMap[id].content;
+  document.getElementById("msgtxt").focus();
+}
 function googleAuth(argv) {
   console.log(argv);
 }
@@ -438,7 +445,7 @@ function userInfo(id) {
     document.getElementById("uifusername").innerText = res.unam;
     document.getElementById("uiftag").innerText = "@" + res.tag;
     document.getElementById('uifparent').style.display = 'flex';
-    document.getElementById('uifabm').innerHTML = converty.makeHtml(res.aboutMe.text);
+    document.getElementById('uifabm').innerHTML = converty.makeHtml(res.aboutMe.text.replace(/\</g, "&lt;"));
     if (res.aboutMe.premyum) {
       document.getElementById('neetro').hidden = false;
     } else {
@@ -535,14 +542,23 @@ function ke(e) {
           });
         }
       }
-      ws.send(JSON.stringify({
+      if (!edit) ws.send(JSON.stringify({
         eventType: "message",
         message: {
           content: document.getElementById("msgtxt").value,
           reply: reply ? reply : undefined,
           uploads: uploads ? uploads : undefined
         }
-      }));
+      }));else {
+        ws.send(JSON.stringify({
+          eventType: "messageEdit",
+          id: edit,
+          message: {
+            content: document.getElementById("msgtxt").value
+          }
+        }));
+        edit = false;
+      }
       document.getElementById("msgtxt").value = "";
       document.getElementById("msgtxt").rows = 2;
       if (reply) {
@@ -577,14 +593,23 @@ function ce(e) {
         });
       }
     }
-    ws.send(JSON.stringify({
+    if (!edit) ws.send(JSON.stringify({
       eventType: "message",
       message: {
         content: document.getElementById("msgtxt").value,
         reply: reply ? reply : undefined,
         uploads: uploads ? uploads : undefined
       }
-    }));
+    }));else {
+      ws.send(JSON.stringify({
+        eventType: "messageEdit",
+        id: edit,
+        message: {
+          content: document.getElementById("msgtxt").value
+        }
+      }));
+      edit = false;
+    }
     document.getElementById("msgtxt").value = "";
     document.getElementById("msgtxt").rows = 2;
     if (reply) {
@@ -771,6 +796,7 @@ function clientLoad() {
                   if (packet.message.author == sers.userId) {
                     message3 = `
 <div class="message3">
+    <button class="material-symbols-outlined" onclick="editMessage('${packet.message.id}', '${serveur}');">Edit</button>
     <button class="material-symbols-outlined" onclick="deleteMessage('${packet.message.id}', '${serveur}');">Delete</button>
     <button class="material-symbols-outlined" onclick="replyTo('${packet.message.id}', '${serveur}');">Reply</button>
 </div>`;
@@ -904,6 +930,7 @@ function clientLoad() {
                 if (packet.messages[m].author == sers.userId) {
                   message3 = `
 <div class="message3">
+    <button class="material-symbols-outlined" onclick="editMessage('${packet.messages[m].id}', '${serveur}');">Edit</button>
     <button class="material-symbols-outlined" onclick="deleteMessage('${packet.messages[m].id}', '${serveur}');">Delete</button>
     <button class="material-symbols-outlined" onclick="replyTo('${packet.messages[m].id}', '${serveur}');">Reply</button>
 </div>`;
