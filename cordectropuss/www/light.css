@@ -436,6 +436,8 @@ input {
 
 .avatar {
     width: 48px;
+    min-width: 48px !important;
+    min-height: 48px !important;
     height: 48px;
     border-radius: 50%;
     box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
