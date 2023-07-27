@@ -65,7 +65,7 @@ function fetchUser(id) {
   });
 }
 fetchUser(localStorage.getItem('sid')).then(res => {
-  if (res == null) {
+  if (res == null || localStorage.getItem('sid') == null) {
     if (!url.searchParams.has("invite") && !localStorage.getItem("pendingInvite")) window.location = "./index.html";
   } else {
     oldunam = res.unam;
@@ -136,9 +136,11 @@ fetchUser(localStorage.getItem('sid')).then(res => {
     h.open('GET', authUrl + '/sload?id=' + localStorage.getItem('sid'), true);
     h.onload = () => {
       if (h.status != 200) {
-        // warning: this code might fail if something has gone wrong, and thus cause the 
-        window.location.reload(); // page to infinitely reload. the most likely response from the user is the
-      } // page being closed and mild confusion which is not ideal but not dangerous.
+        localStorage.clear();
+        if (url.searchParams.has("invite")) localStorage.setItem("pendingInvite", url.searchParams.get("invite"));
+        if (url.searchParams.has("invip")) localStorage.setItem("pendingInvip", url.searchParams.get("invip"));
+        window.location.reload();
+      }
       let sers = JSON.parse(h.responseText);
       if (Object.keys(sers.servers).length === 0 && !url.searchParams.has("invite") && !localStorage.getItem("pendingInvite")) {
         // None

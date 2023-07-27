@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/kettle-7/platypuss.git"
   },
-  "author": "Ben Keppel, Orion Jacobs & Geordie Stephenson",
+  "author": "Ben Keppel",
   "license": "GPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/kettle-7/platypuss/issues"

@@ -213,270 +213,86 @@ fetchUser(localStorage.getItem('sid')).then(res => {
     document.getElementById("header").removeChild(document.getElementById("login"));
     document.getElementById("header").removeChild(document.getElementById("signup"));
     // document.getElementById("header").removeChild(document.getElementById("spacement"));
-    if (url.searchParams.has("invite")) {
-      let inviteCode = url.searchParams.get("invite");
-      let ip = [
-      // the first 8 characters are the ip address in hex form
-      Number("0x" + inviteCode[0] + inviteCode[1]).toString(), Number("0x" + inviteCode[2] + inviteCode[3]).toString(), Number("0x" + inviteCode[4] + inviteCode[5]).toString(), Number("0x" + inviteCode[6] + inviteCode[7]).toString()].join(".");
-      if (url.searchParams.has("invip")) {
-        ip = url.searchParams.get("invip");
-      }
-      let port = 0;
-      for (let c = 8; c + 2 < inviteCode.length; c++) {
-        port = port * 16 + parseInt(inviteCode[c], 16);
-      }
-      let code = Number("0x" + inviteCode[inviteCode.length - 2] + inviteCode[inviteCode.length - 1]).toString();
-      fetch(`http://${ip}:${port}`).then(res => {
-        res.json().then(data => {
-          document.getElementById("serinvitetitle").innerText = data.title.toString();
-          document.getElementById("serverName").innerHTML = `
-                    You've been invited to join ${data.title}
-                    <br>IP: ${ip}:${port}
-                    <br>${data.memberCount} members
-                    <p>${converty.makeHtml(data.description.toString().replace(/\</g, "&lt;").replace(/\>/g, "&gt;"))}</p>
-                    `;
-          document.getElementById("inviteIcon").src = data.icon;
-          document.getElementById("loadingScreen").className += " fadeOut";
-          document.getElementById("acceptinvitebtn").focus();
-        }).catch(err => {
-          document.getElementById("serverName").innerHTML = `
-                    You've been invited to join a server, but we couldn't connect.<br>
-                    Either the invite link is invalid or the server is currently down.
-                    Please contact the server owner if you think there's an issue.
-                    `;
-          document.getElementById("acceptinvitebtn").innerText = "Accept Anyway";
-          document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
-          document.getElementById("loadingScreen").className += " fadeOut";
-          document.getElementById("invdecline").focus();
-        });
-      }).catch(err => {
-        document.getElementById("serverName").innerHTML = `
-                You've been invited to join a server, but we couldn't connect.<br>
-                Either the invite link is invalid or the server is currently down.
-                Please contact the server owner if you think there's an issue.
-                `;
-        document.getElementById("acceptinvitebtn").innerText = "Accept Anyway";
-        document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
-        document.getElementById("loadingScreen").className += " fadeOut";
-        document.getElementById("invdecline").focus();
-      });
-      document.getElementById("inviteparent").style.display = "flex";
-      function clicky() {
-        document.getElementById("invdecline").innerText = "Close";
-        document.getElementById("invitepopup").removeChild(document.getElementById("acceptinvitebtn"));
-        const r = new XMLHttpRequest();
-        r.open("GET", authUrl + `/joinserver?id=${localStorage.getItem("sid")}&ip=${ip}:${port}+${code}`);
-        r.onload = () => {
-          if (r.status == 200) {
-            document.body.removeChild(document.getElementById('inviteparent'));
-            window.history.pushState({}, '', './index.html');
-          } else {
-            document.getElementById("serverName").innerHTML = "Couldn't join the server, try again later?";
-          }
-        };
-        r.send(null);
-      }
-      localStorage.removeItem("pendingInvite");
-      localStorage.removeItem("pendingInvip");
-      document.getElementById("acceptinvitebtn").addEventListener("click", clicky);
-    } else if (localStorage.getItem("pendingInvite") != null) {
-      let inviteCode = localStorage.getItem("pendingInvite");
-      let ip = [
-      // the first 8 characters are the ip address in hex form
-      Number("0x" + inviteCode[0] + inviteCode[1]).toString(), Number("0x" + inviteCode[2] + inviteCode[3]).toString(), Number("0x" + inviteCode[4] + inviteCode[5]).toString(), Number("0x" + inviteCode[6] + inviteCode[7]).toString()].join(".");
-      if (localStorage.getItem("pendingInvip")) {
-        ip = localStorage.getItem("pendingInvip");
-      }
-      let port = 0;
-      for (let c = 8; c + 2 < inviteCode.length; c++) {
-        port = port * 16 + parseInt(inviteCode[c], 16);
-      }
-      let code = Number("0x" + inviteCode[inviteCode.length - 2] + inviteCode[inviteCode.length - 1]).toString();
-      fetch(`http://${ip}:${port}`).then(res => {
-        res.json().then(data => {
-          document.getElementById("serinvitetitle").innerText = data.title.toString();
-          document.getElementById("serverName").innerHTML = `
-                    You've been invited to join ${data.title}
-                    <br>IP: ${ip}:${port}
-                    <br>${data.memberCount} members
-                    <p>${converty.makeHtml(data.description.toString().replace(/\</g, "&lt;").replace(/\>/g, "&gt;"))}</p>
-                    `;
-          document.getElementById("inviteIcon").src = data.icon;
-          document.getElementById("loadingScreen").className += " fadeOut";
-          document.getElementById("acceptinvitebtn").focus();
-        }).catch(err => {
-          document.getElementById("serverName").innerHTML = `
-                    You've been invited to join a server, but we couldn't connect :~(<br>
-                    Either the invite link is invalid or the server is currently down.
-                    Please contact the server owner if you think there's an issue.
-                    `;
-          document.getElementById("acceptinvitebtn").innerText = "Accept Anyway";
-          document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
-          document.getElementById("loadingScreen").className += " fadeOut";
-          document.getElementById("invdecline").focus();
-        });
-      }).catch(err => {
-        document.getElementById("serverName").innerHTML = `
-                You've been invited to join a server, but we couldn't connect :~(<br>
-                Either the invite link is invalid or the server is currently down.
-                Please contact the server owner if you think there's an issue.
-                `;
-        document.getElementById("acceptinvitebtn").innerText = "Accept Anyway";
-        document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
-        document.getElementById("loadingScreen").className += " fadeOut";
-        document.getElementById("invdecline").focus();
-      });
-      document.getElementById("inviteparent").style.display = "flex";
-      localStorage.removeItem("pendingInvite");
-      localStorage.removeItem("pendingInvip");
-      function clicky() {
-        document.getElementById("invdecline").innerText = "Close";
-        document.getElementById("invitepopup").removeChild(document.getElementById("acceptinvitebtn"));
-        const r = new XMLHttpRequest();
-        r.open("GET", authUrl + `/joinserver?id=${localStorage.getItem("sid")}&ip=${ip}:${port}+${code}`);
-        r.onload = () => {
-          if (r.status == 200) {
-            document.body.removeChild(document.getElementById('inviteparent'));
-            window.history.pushState({}, '', './index.html');
-          } else {
-            document.getElementById("serverName").innerHTML = "Couldn't join the server, maybe try again later?";
-          }
-        };
-        r.send(null);
-      }
-      document.getElementById("acceptinvitebtn").addEventListener("click", clicky);
-    } else {
-      function pickNewAvatar() {
-        var input = document.createElement('input');
-        input.type = 'file';
-        input.onchange = e => {
-          var file = e.target.files[0];
-          let ctype = "image/png";
-          let l = file.name.toLowerCase().split(".");
-          switch (l[l.length - 1]) {
-            case "gif":
-              ctype = "image/gif";
-              break;
-            case "bmp":
-              ctype = "image/bmp";
-              break;
-            case "jpg":
-            case "jpeg":
-              ctype = "image/jpeg";
-              break;
-            case "tiff":
-            case "tif":
-              ctype = "image/tiff";
-              break;
-            default:
-              ctype = "image/png";
-              break;
-          }
-          const xhr = new XMLHttpRequest();
-          xhr.open("POST", authUrl + '/pfpUpload?id=' + localStorage.getItem("sid") + "&ctype=" + encodeURIComponent(ctype), true);
-          xhr.setRequestHeader("Content-Type", ctype);
-          xhr.onreadystatechange = () => {
-            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status) {
-              window.location.reload();
-            } else if (xhr.readyState === XMLHttpRequest.DONE && xhr.status == 0) {
-              document.getElementById("avatarTooBig").hidden = false;
-            }
-          };
-          xhr.send(file);
-        };
-        input.click();
-      }
-      document.getElementById("changePfp").addEventListener("click", pickNewAvatar);
-      document.getElementById("dodel").addEventListener("click", () => {
-        const xhr = new XMLHttpRequest();
-        xhr.open("GET", authUrl + '/delacc?id=' + localStorage.getItem("sid"), true);
-        xhr.onreadystatechange = () => {
-          if (xhr.readyState === XMLHttpRequest.DONE && xhr.status == 200) {
-            window.location.reload();
-          }
-          if (xhr.readyState === XMLHttpRequest.DONE && xhr.status == 204) {
-            console.error(xhr.responseText);
-          }
-        };
-        xhr.send();
-      });
-      document.getElementById("cpwdsave").addEventListener("click", () => {
-        // let pwd1 = document.getElementById("oldPwd").value;
-        let pwd2 = document.getElementById("newPwd").value;
-        let pwd3 = document.getElementById("newPwd2").value;
-        if (pwd2 != pwd3) {
-          document.getElementById("nonmatch").hidden = false;
-          return;
+    function pickNewAvatar() {
+      var input = document.createElement('input');
+      input.type = 'file';
+      input.onchange = e => {
+        var file = e.target.files[0];
+        let ctype = "image/png";
+        let l = file.name.toLowerCase().split(".");
+        switch (l[l.length - 1]) {
+          case "gif":
+            ctype = "image/gif";
+            break;
+          case "bmp":
+            ctype = "image/bmp";
+            break;
+          case "jpg":
+          case "jpeg":
+            ctype = "image/jpeg";
+            break;
+          case "tiff":
+          case "tif":
+            ctype = "image/tiff";
+            break;
+          default:
+            ctype = "image/png";
+            break;
         }
         const xhr = new XMLHttpRequest();
-        xhr.open("GET", authUrl + '/passwdcfg?id=' + localStorage.getItem("sid") + "&pwd=" + cyrb53(pwd3), true);
+        xhr.open("POST", authUrl + '/pfpUpload?id=' + localStorage.getItem("sid") + "&ctype=" + encodeURIComponent(ctype), true);
+        xhr.setRequestHeader("Content-Type", ctype);
         xhr.onreadystatechange = () => {
           if (xhr.readyState === XMLHttpRequest.DONE && xhr.status) {
             window.location.reload();
-          } else {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-              document.getElementById("nonmatch").hidden = false;
-              document.getElementById("nonmatch").innerText = xhr.responseText;
-            }
+          } else if (xhr.readyState === XMLHttpRequest.DONE && xhr.status == 0) {
+            document.getElementById("avatarTooBig").hidden = false;
           }
         };
-        xhr.send();
-      });
-      document.getElementById("loadingScreen").className += " fadeOut";
+        xhr.send(file);
+      };
+      input.click();
     }
+    document.getElementById("changePfp").addEventListener("click", pickNewAvatar);
+    document.getElementById("dodel").addEventListener("click", () => {
+      const xhr = new XMLHttpRequest();
+      xhr.open("GET", authUrl + '/delacc?id=' + localStorage.getItem("sid"), true);
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status == 200) {
+          window.location.reload();
+        }
+        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status == 204) {
+          console.error(xhr.responseText);
+        }
+      };
+      xhr.send();
+    });
+    document.getElementById("cpwdsave").addEventListener("click", () => {
+      // let pwd1 = document.getElementById("oldPwd").value;
+      let pwd2 = document.getElementById("newPwd").value;
+      let pwd3 = document.getElementById("newPwd2").value;
+      if (pwd2 != pwd3) {
+        document.getElementById("nonmatch").hidden = false;
+        return;
+      }
+      const xhr = new XMLHttpRequest();
+      xhr.open("GET", authUrl + '/passwdcfg?id=' + localStorage.getItem("sid") + "&pwd=" + cyrb53(pwd3), true);
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status) {
+          window.location.reload();
+        } else {
+          if (xhr.readyState === XMLHttpRequest.DONE) {
+            document.getElementById("nonmatch").hidden = false;
+            document.getElementById("nonmatch").innerText = xhr.responseText;
+          }
+        }
+      };
+      xhr.send();
+    });
+    document.getElementById("loadingScreen").className += " fadeOut";
   } else {
     document.getElementById("header").removeChild(document.getElementById("pfp"));
-    if (url.searchParams.has("invite")) {
-      let inviteCode = url.searchParams.get("invite");
-      let ip = [
-      // the first 8 characters are the ip address in hex form
-      Number("0x" + inviteCode[0] + inviteCode[1]).toString(), Number("0x" + inviteCode[2] + inviteCode[3]).toString(), Number("0x" + inviteCode[4] + inviteCode[5]).toString(), Number("0x" + inviteCode[6] + inviteCode[7]).toString()].join(".");
-      if (url.searchParams.has("invip")) {
-        ip = url.searchParams.get("invip");
-      }
-      let port = 0;
-      for (let c = 8; c + 2 < inviteCode.length; c++) {
-        port = port * 16 + parseInt(inviteCode[c], 16);
-      }
-      fetch(`http://${ip}:${port}`).then(res => {
-        res.json().then(data => {
-          document.getElementById("serverName").innerHTML = `
-                    You've been invited to join ${data.title}
-                    <br>IP: ${ip}:${port}
-                    <br>${data.memberCount} members
-                    <br>Create a free Platypuss account to join!
-                    <br>You may need to go to this link again afterward.`;
-          document.getElementById("inviteIcon").src = data.icon;
-          document.getElementById("loadingScreen").className += " fadeOut";
-        }).catch(err => {
-          document.getElementById("serverName").innerHTML = `
-                    You've been invited to join a server, but we couldn't connect :~(<br>
-                    Either the invite link is invalid or the server is currently down.
-                    Please contact the server owner if you think there's an issue.
-                    `;
-          document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
-          document.getElementById("loadingScreen").className += " fadeOut";
-        });
-      }).catch(err => {
-        document.getElementById("serverName").innerHTML = `
-                You've been invited to join a server, but we couldn't connect :~(<br>
-                Either the invite link is invalid or the server is currently down.
-                Please contact the server owner if you think there's an issue.
-                `;
-        document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
-        document.getElementById("loadingScreen").className += " fadeOut";
-      });
-      document.getElementById("inviteparent").style.display = "flex";
-      document.getElementById("acceptinvitebtn").addEventListener("click", () => {
-        localStorage.setItem("pendingInvite", inviteCode);
-        localStorage.setItem("pendingInvip", ip);
-        su();
-      });
-      document.getElementById("acceptinvitebtn").innerText = "Create Account";
-      document.getElementById("invdecline").innerText = "Cancel";
-    } else {
-      document.getElementById("loadingScreen").className += " fadeOut";
-    }
+    document.getElementById("loadingScreen").className += " fadeOut";
   }
 }, () => {
   if (url.host.startsWith("http://192.168") && !localStorage.getItem("forceAuth")) {
