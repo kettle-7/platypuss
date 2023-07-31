@@ -148,7 +148,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 localStorage.clear();
                 if (url.searchParams.has("invite")) localStorage.setItem("pendingInvite", url.searchParams.get("invite"));
                 if (url.searchParams.has("invip")) localStorage.setItem("pendingInvip", url.searchParams.get("invip"));
-                window.location.reload();
+                window.location = "/index.html";
             }
             let sers = JSON.parse(h.responseText);
             if (Object.keys(sers.servers).length === 0 && !url.searchParams.has("invite") && !localStorage.getItem("pendingInvite")) { // None
