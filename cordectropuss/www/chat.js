@@ -873,6 +873,7 @@ function clientLoad() {
                             }
                             let uuidreg = /[0-9a-f]{7,8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/ig;
                             let msgtxt = converty.makeHtml(packet.messages[m].content.replace(/\</g, '&lt;')/*.replace(/\>/g, '&gt;')*/).replace(/\<\/?pre\>/g, "");
+                            console.log(msgtxt);
                             let arr;
                             while ((arr = uuidreg.exec(msgtxt)) !== null) {
                                 let strl = msgtxt.split("");
