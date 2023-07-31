@@ -734,7 +734,7 @@ function clientLoad() {
                             messageMap[packet.message.id] = packet.message;
                             // looks like absolute gibberish, matches uuids
                             let uuidreg = /[0-9a-f]{7,8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/ig;
-                            let msgtxt = converty.makeHtml(packet.message.content.replace(/\</g, '&lt;')/*.replace(/\>/g, '&gt;')*/).replace(/\<\/?pre\>/g);
+                            let msgtxt = converty.makeHtml(packet.message.content.replace(/\</g, '&lt;')/*.replace(/\>/g, '&gt;')*/);
                             let arr;
                             while ((arr = uuidreg.exec(msgtxt)) !== null) {
                                 let strl = msgtxt.split("");
@@ -872,7 +872,7 @@ function clientLoad() {
                                 continue;
                             }
                             let uuidreg = /[0-9a-f]{7,8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/ig;
-                            let msgtxt = converty.makeHtml(packet.messages[m].content.replace(/\</g, '&lt;')/*.replace(/\>/g, '&gt;')*/).replace(/\<\/?pre\>/g);
+                            let msgtxt = converty.makeHtml(packet.messages[m].content.replace(/\</g, '&lt;')/*.replace(/\>/g, '&gt;')*/).replace(/\<\/?pre\>/g, "");
                             let arr;
                             while ((arr = uuidreg.exec(msgtxt)) !== null) {
                                 let strl = msgtxt.split("");
