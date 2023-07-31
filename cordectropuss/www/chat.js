@@ -679,8 +679,9 @@ function clientLoad() {
     h.open('GET', authUrl+'/sload?id='+localStorage.getItem('sid'), true);
     h.onload = () => {
         if (h.status != 200) {        // warning: this code might fail if something has gone wrong, and thus cause the 
-            window.location.reload(); // page to infinitely reload. the most likely response from the user is the
-        }                             // page being closed and mild confusion which is not ideal but not dangerous.
+            localStorage.clear();     // page to infinitely reload. the most likely response from the user is the
+            window.location = "/";    // page being closed and mild confusion which is not ideal but not dangerous.
+        }
 
         setTimeout(() => {
             if (opensocks < 1) {
