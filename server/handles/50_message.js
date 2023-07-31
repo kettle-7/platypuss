@@ -21,6 +21,7 @@ const fs = require("fs");
 const exec = require('child_process').exec;
 
 const rateLimit = 500; // Minimum time between messages sent, change this if you like.
+const maxLength = 2000; // Maximum length of messages that can be sent, change this one if you want as well UwU.
 const allowDuplicates = true;
 
 module.exports = {
@@ -36,18 +37,18 @@ all the information specified in the Platypuss API."
 			}));
 			return; // don't shove the broken packet on all the clients,
 		}           // technically we can but it's antisocial behaviour
-		if (packet.message.content.length > 2000) {
+		if (packet.message.content.length > maxLength) {
 			packet.ws.send(JSON.stringify({
 				"eventType": "error",
 				"code": "tooLong",
-				"explanation": "That message is too long. Please keep under 2KB. This is to help prevent spam and abuse of the server."
+				"explanation": "That message is too long. Please keep under " + (maxLength / 1000).toString() + "KB. This is to help prevent spam and abuse of the server."
 			}));
 			return;
 		}
 		//if (!(/[\!@#$%\^&\*()_+\-=\[\]{};':"\\|,.<>\/?A-Za-z0-9]/.test(packet.message.content)) && !packet) {
 		if (packet.message.content.replace(/[ \t\r\n]/g, "").length < 1) {
 			let skill = true;
-			for (let _ of packet.message.uploads) {
+			if (packet.message.uploads.length) {
 				skill = false;
 			}
 			if (skill)
