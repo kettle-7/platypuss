@@ -16,7 +16,6 @@
  ************************************************************************/
 
 // The return of the Kettle3D®™ Tilde Faces©®™ is neigh :~)
-// hopefully this breaks any unicode-sensitive scraper type codes >:3
 
 var converty = new showdown.Converter({
     noHeaderId: true,
