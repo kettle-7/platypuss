@@ -16,6 +16,10 @@
             "type": "text/css",
             "path": "light.css"
         },
+        "/loadingScreen.css": {
+            "type": "text/css",
+            "path": "loadingScreen.css"
+        },
         "/index.js": {
             "type": "application/javascript",
             "path": "index.js"
