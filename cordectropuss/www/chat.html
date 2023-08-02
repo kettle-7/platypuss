@@ -141,7 +141,7 @@
                 <h2 style="text-align:center;">Delete Account</h2>
                 <span>Do you really want to do that?</span>
                 <button class="dangerous chonk" id="dodel">Yes</button>
-                <button class="bleu chonk" id="nodel" onclick="document.getElementById('dacparent').style.display = 'none';">No</button>
+                <button class="bleu chonk" id="nodel" onclick="document.getElementById('acsparent').style.display = 'flex'; document.getElementById('dacparent').style.display = 'none';">No</button>
             </div>
         </div>
         <div class="popupParent" id="cpwdparent" onmousedown="document.getElementById('cpwdparent').style.display = 'none'" hidden>
@@ -155,7 +155,7 @@
                 <input type="password" id="newPwd" class="chonk textBox" placeholder="New Password" />
                 <input type="password" id="newPwd2" class="chonk textBox" placeholder="Confirm Password" />
                 <button class="chonk" id="cpwdsave">Save</button>
-                <button class="chonk" id="cpwdcncl" onclick="document.getElementById('cpwdparent').style.display = 'none';">Cancel</button>
+                <button class="chonk" id="cpwdcncl" onclick="document.getElementById('acsparent').style.display = 'flex'; document.getElementById('cpwdparent').style.display = 'none';">Cancel</button>
             </div>
         </div>
         <div id="loadingScreen">
