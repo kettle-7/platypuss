@@ -97,7 +97,7 @@
                     contact the server owner to resolve the issue.
                 </p>
                 <button class="bleu chonk" id="acceptinvitebtn">Accept</button>
-                <button class="chonk" id="invdecline" onclick="document.body.removeChild(document.getElementById('inviteparent'));window.history.pushState({}, '', '/');clientLoad();">Decline</button>
+                <button class="chonk" id="invdecline" onclick="window.location = '/chat.html'">Decline</button>
             </div>
         </div>
         <div class="popupParent" id="acsparent" onmousedown="au();document.getElementById('acsparent').style.display = 'none'" hidden>
