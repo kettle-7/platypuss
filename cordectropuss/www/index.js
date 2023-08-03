@@ -211,7 +211,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
         document.getElementById("pfp").src = authUrl + res.pfp;
         document.getElementById("username").innerText = "Logged in as " + res.unam;
         document.getElementById("changePfp").src = authUrl + res.pfp;
-        document.getElementById("acsusername").value = res.unam;
+        document.getElementById("acsusername").innerText = res.unam;
         document.getElementById("tag").innerText = "@" + res.tag;
         if (abm)
             document.getElementById("acsabm").value = abm;
@@ -399,9 +399,9 @@ function au() {
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         xhr.send(JSON.stringify({text:abm}));
     }
-    if (document.getElementById("acsusername").value != oldunam) {
+    if (document.getElementById("acsusername").innerText != oldunam) {
         if (premyum) return;
-        oldunam = document.getElementById("acsusername").value;
+        oldunam = document.getElementById("acsusername").innerText;
         const hrx = new XMLHttpRequest();
         hrx.open("GET", authUrl + '/unamcfg?id='+localStorage.getItem("sid")+'&unam='+encodeURIComponent(oldunam), true);
         hrx.send();
