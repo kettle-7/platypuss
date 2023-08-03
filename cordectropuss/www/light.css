@@ -68,6 +68,7 @@ button:hover {
 
 .dangerous {
     background: linear-gradient(#ff4f72, #dc143c, #dc143c, #b00023);
+    color: white !important;
 }
 
 .bleu {
