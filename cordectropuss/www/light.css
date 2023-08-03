@@ -477,7 +477,10 @@ input {
 }
 
 hr {
-    border: 2px solid #888888;
+    border: none;
+    height: 4px;
+    background: linear-gradient(to bottom, #999, #ddd);
+    border-radius: 2px;
     width: 100%;
 }
 
