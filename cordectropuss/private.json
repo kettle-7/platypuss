@@ -2,7 +2,7 @@
     "files": {
         "/dark.css": {
             "type": "text/css",
-            "path": "dark.css"
+            "path": "../"
         },
         "/darkn.css": {
             "type": "text/css",
