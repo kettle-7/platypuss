@@ -39,11 +39,11 @@ button {
     padding-left: 10px;
     padding-right: 10px;
     cursor: pointer;
-    box-shadow: 1px 1px 3px black;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 button:active {
-    box-shadow: 1px 1px 3px black inset !important;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5) inset !important;
     background: linear-gradient(#a8a8a8, #c4c4c4, #c4c4c4, #e0e0e0) !important;
 }
 
@@ -84,12 +84,12 @@ button:hover {
 }
 
 .bleu:active {
-    box-shadow: 1px 1px 3px black inset !important;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5) inset !important;
     background-color: #0075db !important;
 }
 
 .dangerous:active {
-    box-shadow: 1px 1px 3px black inset !important;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5) inset !important;
     background: linear-gradient(#b00023, #dc143c, #dc143c, #ff4f72) !important;
 }
 
@@ -301,7 +301,7 @@ input {
     top: 0px;
     left: 0px;
     right: 0px;
-    box-shadow: inset 0px 0px 6px black;
+    box-shadow: inset 0px 0px 6px rgba(0, 0, 0, 0.5);
 }
 
 .sidePane {
@@ -503,7 +503,7 @@ hr {
 
 .message2 img {
     border-radius: 8px;
-    box-shadow: 2px 2px 5px black;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
     height: 20vh;
     padding: 1px;
     background-color: #bbbbbb;
@@ -511,7 +511,7 @@ hr {
 
 .neetro {
     border-radius: 8px;
-    box-shadow: 2px 2px 5px black;
+    box-shadow: 2px 2px 5px rgba(61, 226, 11, 0.5);
     height: 20vh;
     padding: 1px;
     background-color: #bbbbbb;
@@ -563,7 +563,7 @@ hr {
     flex-direction: row;
     gap: 3px;
     border: none;
-    box-shadow: 1px 1px 3px black;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
     align-content: center;
     border-radius: 5px;
     width: fit-content;
@@ -683,7 +683,7 @@ hr {
     outline-color: transparent;
     outline-style: none;
     border: 1px solid #0075db;
-    box-shadow: 0px 0px 2px black;
+    box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.5);
 }
 
 .banner {
@@ -705,7 +705,7 @@ hr {
 .textBox {
     background-color: #e5e5e5;
     border-color: #888888;
-    box-shadow: 2px 2px 2px #1b1b1b inset;
+    box-shadow: 2px 2px 2px #1b1b1b88 inset;
 }
 
 .textBox:focus {
@@ -722,7 +722,7 @@ hr {
 
 .labelInDisguise:focus {
     background-color: #e5e5e5;
-    box-shadow: 2px 2px 2px #1b1b1b inset;
+    box-shadow: 2px 2px 2px #1b1b1b88 inset;
     border: 1px solid #0075db;
     border-radius: 5px;
 }
