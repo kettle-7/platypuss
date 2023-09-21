@@ -17,6 +17,21 @@
 
 // The return of the Kettle3D®™ Tilde Faces©®™ is neigh :~)
 
+const cyrb53 = (str, seed = 20) => { // random hashing algorithm off stack overflow
+    let h1 = 0xdeadbeef ^ seed, // dead beef
+    h2 = 0x41c6ce57 ^ seed;
+    for (let i = 0, ch; i < str.length; i++) {
+        ch = str.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+
+    return (h2>>>0).toString(16).padStart(8,0)+(h1>>>0).toString(16).padStart(8,0);
+};
+
 var converty = new showdown.Converter({
     noHeaderId: true,
     simplifiedAutoLink: true,
@@ -873,7 +888,6 @@ function clientLoad() {
                             }
                             let uuidreg = /[0-9a-f]{7,8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/ig;
                             let msgtxt = converty.makeHtml(packet.messages[m].content.replace(/\</g, '&lt;')/*.replace(/\>/g, '&gt;')*/);
-                            console.log(msgtxt);
                             let arr;
                             while ((arr = uuidreg.exec(msgtxt)) !== null) {
                                 let strl = msgtxt.split("");
@@ -1014,6 +1028,7 @@ function clientLoad() {
                         document.getElementById(`message_${packet.messageId}`).style.display = "none";
                         break;
                     case "messageEdited":
+                        console.log(`message_${packet.messageId}`);
                         document.getElementById(`message_${packet.messageId}`).innerText = "✨ undefined behaviour ✨";
                         break;
                     case "connected":
