@@ -1028,8 +1028,8 @@ function clientLoad() {
                         document.getElementById(`message_${packet.messageId}`).style.display = "none";
                         break;
                     case "messageEdited":
-                        console.log(`message_${packet.messageId}`);
-                        document.getElementById(`message_${packet.messageId}`).innerText = "✨ undefined behaviour ✨";
+                        console.log(`message_${packet.message.id}`);
+                        document.getElementById(`message_${packet.message.id}`).innerText = "✨ undefined behaviour ✨";
                         break;
                     case "connected":
                         document.getElementById("loadingScreen").className += " fadeOut";
