@@ -91,7 +91,7 @@ all the information specified in the Platypuss API."
 				"explanation": "no"
 			}));
 			return;
-		}
+		}/*
 		if (packet.ws.lastInteractionSent == undefined) {
 			packet.ws.lastInteractionSent = Date.now();
 			packet.ws.lastMessage = packet.message.content;
@@ -111,7 +111,7 @@ all the information specified in the Platypuss API."
 		else {
 			packet.ws.lastInteractionSent = Date.now();
 			packet.ws.lastMessage = packet.message.content;
-		}
+		}*/
 	    let	mid = packet.id;
 	    let author = packet.ws.uid;
 		packet.message.author = author;
