@@ -90,7 +90,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
         oldunam = res.unam;
         abm = res.aboutMe.text;
         if (res.aboutMe.premyum) {
-            // premyum = true;
+            premyum = true;
             document.head.removeChild(document.getElementById("ss1"));
             document.head.removeChild(document.getElementById("ss2"));
             if (localStorage.getItem("theme") == "light")
