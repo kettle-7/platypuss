@@ -391,8 +391,8 @@ function userInfo(id) {
 }
 
 function au() {
-    if (document.getElementById("acsabm").value != abm && document.getElementById("acsabm").value.length <= 2000) {
-        abm = document.getElementById("acsabm").value;
+    if (document.getElementById("acsabm").innerText != abm && document.getElementById("acsabm").innerText.length <= 2000) {
+        abm = document.getElementById("acsabm").innerText;
 
         const xhr = new XMLHttpRequest();
         xhr.open("POST", authUrl + '/abmcfg?id='+localStorage.getItem("sid"), true);
