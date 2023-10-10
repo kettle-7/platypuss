@@ -671,7 +671,7 @@ function ce(e) {
 }
 
 function tpaste(e) {
-    console.log(clipboardData);
+    console.log(e.clipboardData);
 }
 
 document.getElementById("msgtxt").addEventListener("keypress", ke);
