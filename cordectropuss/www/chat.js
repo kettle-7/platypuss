@@ -864,8 +864,8 @@ function clientLoad() {
 <div class="message1" id="message_${packet.message.id}">
     <img src="${pfp}" class="avatar" onclick="userInfo('${packet.message.author}');"/>
     <div class="message2">
-    <span><strong class="chonk" onclick="userInfo('${packet.message.author}');">${unam}</strong>
-    <span class="timestomp">@${resp ? resp.tag : "None"} at ${new Date(packet.message.stamp).toLocaleString()}</span></span>
+    <span><strong class="chonk" onclick="userInfo('${packet.message.author}');">${unam
+        }</strong><span class="timestomp">@${resp ? resp.tag : "None"} at ${new Date(packet.message.stamp).toLocaleString()}</span></span>
         <p>${msgtxt}</p>
     </div>${message3}
 </div>
@@ -1003,8 +1003,8 @@ function clientLoad() {
 <div class="message1" id="message_${packet.messages[m].id}">
     <img src="${pfp}" class="avatar" onclick="userInfo('${packet.messages[m].author}');"/>
     <div class="message2">
-        <span><strong class="chonk" onclick="userInfo('${packet.messages[m].author}');">${unam}</strong>
-        <span class="timestomp">@${user ? user.tag : "None"} at ${new Date(packet.messages[m].stamp).toLocaleString()}</span></span>
+        <span><strong class="chonk" onclick="userInfo('${packet.messages[m].author}');">${unam
+        }</strong><span class="timestomp">@${user ? user.tag : "None"} at ${new Date(packet.messages[m].stamp).toLocaleString()}</span></span>
         <p>${msgtxt}</p>
     </div>${message3}
 </div>
