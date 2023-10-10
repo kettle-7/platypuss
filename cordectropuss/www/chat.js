@@ -670,9 +670,9 @@ function ce(e) {
     });
 }
 
-function tpaste(e) {
+document.getElemenetById("msgtxt").addEventListener("paste", function (e) {
     console.log(e.clipboardData);
-}
+});
 
 document.getElementById("msgtxt").addEventListener("keypress", ke);
 document.getElementById("send").addEventListener("click", ce);
