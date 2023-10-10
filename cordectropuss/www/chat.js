@@ -523,7 +523,7 @@ function moreMessages() {
 }
 
 function au() {
-    if (document.getElementById("acsabm").value != abm) {
+    if (document.getElementById("acsabm").value != abm && document.getElementById("acsabm").value.length <= 2000) {
         abm = document.getElementById("acsabm").value;
 
         const xhr = new XMLHttpRequest();
@@ -531,7 +531,7 @@ function au() {
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         xhr.send(JSON.stringify({text:abm}));
     }
-    if (document.getElementById("acsusername").innerText != oldunam) {
+    if (document.getElementById("acsusername").innerText != oldunam && document.getElementById("acsusername").value.length <= 30) {
         if (premyum) return;
         oldunam = document.getElementById("acsusername").innerText;
         const hrx = new XMLHttpRequest();
