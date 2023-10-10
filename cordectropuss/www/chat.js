@@ -669,6 +669,11 @@ function ce(e) {
         document.getElementById("msgtxt").focus();
     });
 }
+
+function tpaste(e) {
+    console.log(clipboardData);
+}
+
 document.getElementById("msgtxt").addEventListener("keypress", ke);
 document.getElementById("send").addEventListener("click", ce);
 var elapsed;
