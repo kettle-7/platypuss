@@ -670,7 +670,7 @@ function ce(e) {
     });
 }
 
-document.getElemenetById("msgtxt").addEventListener("paste", function (e) {
+document.getElementById("msgtxt").addEventListener("paste", function (e) {
     console.log(e.clipboardData);
 });
 
