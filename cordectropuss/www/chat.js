@@ -673,7 +673,7 @@ function ce(e) {
 }
 
 document.getElementById("msgtxt").addEventListener("paste", function (e) {
-    console.log(e.clipboardData);
+    console.log(e.clipboardData.getData("url"), e.clipboardData.files);
 });
 
 document.getElementById("msgtxt").addEventListener("keypress", ke);
