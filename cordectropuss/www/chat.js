@@ -793,8 +793,8 @@ function clientLoad() {
                                 } else {
                                     let m = await fetchUser(messageMap[packet.message.reply].author);
                                     if (m == null) {
-                                        msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.message.reply}')">
-                                        <a class="invalidUser">@Deleted User</a> ${messageMap[packet.message.reply].content}</blockquote>` + msgtxt;
+                                        msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.message.reply
+                                            }')"><a class="invalidUser">@Deleted User</a> ${messageMap[packet.message.reply].content}</blockquote>` + msgtxt;
                                     } else {
                                         // we don't support server nicknames as they don't exist yet
                                         msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.message.reply}')">
@@ -932,8 +932,8 @@ function clientLoad() {
                                 } else {
                                     let ms = await fetchUser(messageMap[packet.messages[m].reply].author);
                                     if (ms == null) {
-                                        msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.messages[m].reply}')">
-                                        <a class="invalidUser">@Deleted User</a> ${messageMap[packet.messages[m].reply].content}</blockquote>` + msgtxt;
+                                        msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.messages[m].reply
+                                            }')"><a class="invalidUser">@Deleted User</a> ${messageMap[packet.messages[m].reply].content}</blockquote>` + msgtxt;
                                     } else {
                                         // we don't support server nicknames as they don't exist yet
                                         msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.messages[m].reply}')">
