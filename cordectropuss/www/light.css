@@ -455,7 +455,6 @@ input {
     padding: 5px;
     gap: 5px;
     border: 0px solid transparent;
-    white-space: break-spaces;
 }
 
 .timestomp {
@@ -537,6 +536,7 @@ hr {
     padding: 3px;
     padding-left: 0px;
     gap: 3px;
+    white-space: break-spaces;
 }
 
 .message3 button {
