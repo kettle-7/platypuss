@@ -531,7 +531,7 @@ function au() {
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         xhr.send(JSON.stringify({text:abm}));
     }
-    if (document.getElementById("acsusername").innerText != oldunam && document.getElementById("acsusername").value.length <= 30) {
+    if (document.getElementById("acsusername").innerText != oldunam && document.getElementById("acsusername").innerText.length <= 30) {
         if (premyum) return;
         oldunam = document.getElementById("acsusername").innerText;
         const hrx = new XMLHttpRequest();
