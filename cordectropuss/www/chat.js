@@ -178,6 +178,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 Number("0x"+inviteCode[2]+inviteCode[3]).toString(),
                 Number("0x"+inviteCode[4]+inviteCode[5]).toString(),
                 Number("0x"+inviteCode[6]+inviteCode[7]).toString()].join(".");
+            let ogip = ip;
             if (url.searchParams.has("invip")) {
                 ip = url.searchParams.get("invip");
             }
@@ -227,7 +228,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 document.getElementById("invdecline").innerText = "Close";
                 document.getElementById("invitepopup").removeChild(document.getElementById("acceptinvitebtn"));
                 const r = new XMLHttpRequest();
-                r.open("GET", authUrl+`/joinserver?id=${localStorage.getItem("sid")}&ip=${ip}:${port}+${code}`);
+                r.open("GET", authUrl+`/joinserver?id=${localStorage.getItem("sid")}&ip=${ip}:${port}+${code}${"+"+ogip}`);
                 r.onload = () => {
                     if (r.status == 200) {
                         document.body.removeChild(document.getElementById('inviteparent'));
@@ -249,6 +250,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 Number("0x"+inviteCode[2]+inviteCode[3]).toString(),
                 Number("0x"+inviteCode[4]+inviteCode[5]).toString(),
                 Number("0x"+inviteCode[6]+inviteCode[7]).toString()].join(".");
+            let ogip = ip;
             if (localStorage.getItem("pendingInvip")) {
                 ip = localStorage.getItem("pendingInvip");
             }
@@ -300,7 +302,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 document.getElementById("invdecline").innerText = "Close";
                 document.getElementById("invitepopup").removeChild(document.getElementById("acceptinvitebtn"));
                 const r = new XMLHttpRequest();
-                r.open("GET", authUrl+`/joinserver?id=${localStorage.getItem("sid")}&ip=${ip}:${port}+${code}`);
+                r.open("GET", authUrl+`/joinserver?id=${localStorage.getItem("sid")}&ip=${ip}:${port}+${code}${"+"+ogip}`);
                 r.onload = () => {
                     if (r.status == 200) {
                         document.body.removeChild(document.getElementById('inviteparent'));
@@ -716,6 +718,7 @@ function clientLoad() {
             ips.push(serveur);
             let ip = serveur.split(' ')[0];
             let code = serveur.split(' ')[1];
+            let ogip = serveur.split(' ')[2];
             let url = ("ws://"+ip.toString());
             let ws = new WebSocket(url);
             document.getElementById("left").innerHTML = "";
@@ -735,6 +738,7 @@ function clientLoad() {
                 sockets[serveur] = ws;
                 ws.send(JSON.stringify({
                     eventType: "login",
+                    ogip: ogip,
                     code: code,
                     sid: sers.servers[serveur]
                 }));
