@@ -1,5 +1,5 @@
  /************************************************************************
- * Copyright 2020-2023 Ben Keppel                                        *
+ * Copyright 2020-2023 Ben Keppel, Marley Carroll                        *
  *                                                                       *
  * This program is free software: you can redistribute it and/or modify  *
  * it under the terms of the GNU General Public License as published by  *
@@ -572,7 +572,7 @@ function imageUpload(imgs, callback) {
     };
     document.getElementById("progress").hidden = false;
     xhr.upload.onprogress = (e) => {
-        document.getElementById("progress2").style.marginRight = `${e.loaded/e.total*100}%`
+        document.getElementById("progress2").style.marginRight = `${100-(e.loaded/e.total*100)}%`
     };
     xhr.send(formData);
 }
