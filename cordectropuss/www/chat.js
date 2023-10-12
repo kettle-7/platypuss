@@ -592,7 +592,7 @@ function ke(e) {
                 if (res[0] == "E") {
                     document.getElementById("progress").innerText = res;
                     document.getElementById("progress").hidden = false;
-                    document.getElementById("progress").style.marginRight = "0px";
+                    document.getElementById("progress").style.marginRight = "100%";
                     return;
                 }
                 responseText = JSON.parse(res);
@@ -637,7 +637,7 @@ function ce(e) {
             if (res[0] == "E") {
                 document.getElementById("progress").innerText = res;
                 document.getElementById("progress").hidden = false;
-                document.getElementById("progress").style.marginRight = "0px";
+                document.getElementById("progress").style.marginRight = "100%";
                 return;
             }
             responseText = JSON.parse(res);
