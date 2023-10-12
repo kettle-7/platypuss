@@ -674,11 +674,12 @@ function ce(e) {
 
 document.getElementById("msgtxt").addEventListener("paste", function (e) {
     console.log(e.clipboardData.getData("url"), e.clipboardData.files);
- 
+    
     document.getElementById("mainContentContainer").addEventListener("drop", (e) => {
         e.preventDefault();
         const files = e.clipboardData.files;
         for (let file of files) {
+            console.log(file);
             if (Object.keys(uploadQueue).every(f => uploadQueue[f].name !== file.name)) {
                 file.id = Math.random().toString().replace(/[.]/g, ""); // should be good
                 uploadQueue[file.id] = file;
