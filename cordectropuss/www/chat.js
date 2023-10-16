@@ -1060,7 +1060,129 @@ function clientLoad() {
                         break;
                     case "messageEdited":
                         console.log(`message_${packet.message.id}`);
-                        document.getElementById(`message_${packet.message.id}`).innerText = "✨ undefined behaviour ✨";
+                           messageMap[packet.message.id] = packet.message;
+                           // looks like absolute gibberish, matches uuids
+                           let uuidreg = /[0-9a-f]{7,8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/ig;
+                           let msgtxt = converty.makeHtml(packet.message.content.replace(/\</g, '&lt;')/*.replace(/\>/g, '&gt;')*/);
+                           let arr;
+                           while ((arr = uuidreg.exec(msgtxt)) !== null) {
+                               let strl = msgtxt.split("");
+                               if (strl[arr.index + 35] == "]") {
+                                   strl.splice(arr.index, 0, "0");
+                               }
+                               if (strl[arr.index + 36] != "]" || strl[arr.index - 2] != "[") {
+                                   continue;
+                               }
+                               let t = strl[arr.index - 1];
+                               switch(t) {
+                                   case "@":
+                                       let user = await fetchUser(arr[0]);
+                                       if (user == null) {
+                                           strl.splice(arr.index - 2, 39, `<a class="invalidUser">@Deleted User</a>`);
+                                       } else {
+                                           // we don't support server nicknames as they don't exist yet
+                                           strl.splice(arr.index - 2, 39, `
+<a class="userMention" onclick="userInfo('${user.id}');">@${user.unam}</a>`);
+                                       }
+                                       msgtxt = strl.join("");
+                                       //uuidreg.exec(msgtxt);
+                                       break;
+                                   default:
+                                       break;
+                               }
+                           }
+                           if (packet.message.reply) {
+                               if (!messageMap[packet.message.reply]) {
+                                   msgtxt = `<blockquote id="r_${packet.message.id}"><em>Message couldn't be loaded</em></blockquote>` + msgtxt;
+                                   if (mRef[packet.message.reply] == undefined) {
+                                       mRef[packet.message.reply] = [`r_${packet.message.id}`];
+                                   } else {
+                                       mRef[packet.message.reply].push(`r_${packet.message.id}`);
+                                   }
+                               } else {
+                                   let m = await fetchUser(messageMap[packet.message.reply].author);
+                                   if (m == null) {
+                                       msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.message.reply
+                                           }')"><a class="invalidUser">@Deleted User</a> ${messageMap[packet.message.reply].content}</blockquote>` + msgtxt;
+                                   } else {
+                                       // we don't support server nicknames as they don't exist yet
+                                       msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.message.reply}')">
+<a class="userMention" onclick="userInfo('${m.id}');">@${m.unam
+                                           .replace(/\</g, "&lt;")
+                                           .replace(/\>/g, "&gt;")
+                                       }</a> ${messageMap[packet.message.reply].content}</blockquote>` + msgtxt;
+                                   }
+                               }
+                           }
+
+                           if (packet.message.uploads) {
+                               for (let upload of packet.message.uploads) {
+                                   if (upload.type.startsWith("image/") && !premyum) {
+                                       msgtxt += `\n<br><a target="_blank" href="${authUrl+upload.url}"><img src="${authUrl+upload.url}"></a>`;
+                                       continue;
+                                   }
+                                   msgtxt += `
+                                       <div class="upload">
+                                           <span class="material-symbols-outlined">draft</span><a class="uploadName" target="_blank" href="${authUrl+upload.url}">${upload.name}</a>
+                                       </div>`;
+                               }
+                           }
+
+                           fetchUser(packet.message.author).then((resp) => {
+                               if (resp == null) { // this should never happen
+                                   unam = "Deleted User";
+                                   pfp = "https://img.freepik.com/premium-vector/hand-drawn-cartoon-doodle-skull-funny-cartoon-skull-isolated-white-background_217204-944.jpg";
+                                   if (mRef[packet.message.id] !== undefined) { // and this *definitely* shouldn't
+                                       for (let meg of mRef[packet.message.id]) {
+                                           let mog = document.getElementById(meg);
+                                           mog.innerHTML = `<a class="invalidUser">@Deleted User</a> ${packet.message.content}`;
+                                           mog.style.cursor = "pointer";
+                                           mog.addEventListener("click", () => { siv(packet.message.id) });
+                                       }
+                                   }
+                               }
+                               else {
+                                   unam = resp.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
+                                   pfp = authUrl + resp.pfp;
+                                   if (mRef[packet.message.id] !== undefined) {
+                                       for (let meg of mRef[packet.message.id]) {
+                                           let mog = document.getElementById(meg);
+                                           mog.innerHTML = `<a class="userMention" onclick="userInfo(${resp.id})">@${unam}</a>
+                                               ${packet.message.content}`;
+                                           mog.style.cursor = "pointer";
+                                           mog.addEventListener("click", () => { siv(packet.message.id) });
+                                       }
+                                   }
+                               }
+                               let message3;
+                               if (packet.message.author == sers.userId) {
+                                   message3 = `
+<div class="message3">
+   <button class="material-symbols-outlined" onclick="editMessage('${packet.message.id}', '${serveur}');">Edit</button>
+   <button class="material-symbols-outlined" onclick="deleteMessage('${packet.message.id}', '${serveur}');">Delete</button>
+   <button class="material-symbols-outlined" onclick="replyTo('${packet.message.id}', '${serveur}');">Reply</button>
+</div>`;
+                               } else {
+                                   message3 = `
+<div class="message3">
+   <button class="material-symbols-outlined" onclick="ping('${packet.message.author}');">alternate_email</button>
+   <button class="material-symbols-outlined" onclick="replyTo('${packet.message.id}', '${serveur}');">Reply</button>
+</div>`;
+                               }
+                               document.getElementById(`message_${packet.message.id}`).innerHTML = `
+   <img src="${pfp}" class="avatar" onclick="userInfo('${packet.message.author}');"/>
+   <div class="message2">
+   <span><strong class="chonk" onclick="userInfo('${packet.message.author}');">${unam
+       }</strong><span class="timestomp">@${resp ? resp.tag : "None"} at ${new Date(packet.message.stamp).toLocaleString()}</span></span>
+       <p>${msgtxt}</p>
+   </div>${message3}
+`;
+                               if (ma.scrollHeight < ma.scrollTop  + (2 * ma.clientHeight)) {
+                                   ma.scrollTo(ma.scrollLeft, ma.scrollHeight - ma.clientHeight);
+                               }
+                               if (document.visibilityState == "hidden" && sers.userId != packet.message.author)
+                                   new Audio(authUrl+'/uploads/93c70e82-b447-4794-99d9-3ab070d659ea/f3cb5ab570a29417524422d17b4e4a4db33b5900df8127688ffcf352df17383f79e1cfa87d9c6ab9ce4b47e90d231d22a805597dd719fbf01fe6da6d047d7290').play();
+                           });
                         break;
                     case "connected":
                         document.getElementById("loadingScreen").className += " fadeOut";
