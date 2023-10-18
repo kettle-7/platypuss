@@ -823,8 +823,8 @@ function clientLoad() {
                                             }')"><a class="invalidUser">@Deleted User</a> ${messageMap[packet.message.reply].content}</blockquote>` + msgtxt;
                                     } else {
                                         // we don't support server nicknames as they don't exist yet
-                                        msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.message.reply}')">
-<a class="userMention" onclick="userInfo('${m.id}');">@${m.unam
+                                        msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.message.reply
+}')"><a class="userMention" onclick="userInfo('${m.id}');">@${m.unam
                                             .replace(/\</g, "&lt;")
                                             .replace(/\>/g, "&gt;")
                                         }</a> ${messageMap[packet.message.reply].content}</blockquote>` + msgtxt;
@@ -962,8 +962,8 @@ function clientLoad() {
                                             }')"><a class="invalidUser">@Deleted User</a> ${messageMap[packet.messages[m].reply].content}</blockquote>` + msgtxt;
                                     } else {
                                         // we don't support server nicknames as they don't exist yet
-                                        msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.messages[m].reply}')">
-<a class="userMention" onclick="userInfo('${ms.id}');">@${ms.unam
+                                        msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.messages[m].reply
+}')"><a class="userMention" onclick="userInfo('${ms.id}');">@${ms.unam
                                             .replace(/\</g, "&lt;")
                                             .replace(/\>/g, "&gt;")
                                         }</a> ${messageMap[packet.messages[m].reply].content}</blockquote>` + msgtxt;
@@ -1106,8 +1106,8 @@ function clientLoad() {
                                            }')"><a class="invalidUser">@Deleted User</a> ${messageMap[packet.message.reply].content}</blockquote>` + msgtxt;
                                    } else {
                                        // we don't support server nicknames as they don't exist yet
-                                       msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.message.reply}')">
-<a class="userMention" onclick="userInfo('${m.id}');">@${m.unam
+                                       msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.message.reply
+}')"><a class="userMention" onclick="userInfo('${m.id}');">@${m.unam
                                            .replace(/\</g, "&lt;")
                                            .replace(/\>/g, "&gt;")
                                        }</a> ${messageMap[packet.message.reply].content}</blockquote>` + msgtxt;
