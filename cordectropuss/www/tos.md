@@ -12,20 +12,17 @@ as a result of your use or misuse of the software. You can use it, modify it,
 share it, etc. under the terms of the
 [GNU Public License V3](https://www.gnu.org/licenses/gpl-3.0.html). By using
 the software you are saying that you agree to those terms. I believe in
-open-source software, so the server and client are both open sourced and
-available on GitHub (note for nerds: the website source code available on
-GitHub is in regular JS form, you can contact me to request an up-to-date zip
-file of the original JSX sources if you care). The usual common sense
-applies, don't say that you made it (or anybody else except for me), don't
-complain if it doesn't work the way you want it to, but do tell me about any
-bugs because I do actually want to fix them.
+open-source software, so the "reference" server and client are both open
+sourced and available on GitHub. The usual common sense applies, don't say
+that you made it (or anybody else except for me), don't try take me to court
+if it doesn't work the way you want it to, but do tell me about any bugs
+because I do actually want to fix them.
 
-## I have the right to stop you from using the software:
+## I reserve the right to stop you from using the software:
 
 - If you claim to have made it,
-- If you are using it to harm other people or
-- If you are attempting to exploit bugs in the software without my permission
-  or for malicious purposes.
+- If you are using it or trying to use it to harm other people or
+- If you are attempting to exploit bugs in the software for malicious purposes.
 
 ## Data the software collects about you
 
@@ -35,8 +32,8 @@ can make it actually work the way it should, this includes:
   have to because it's quite annoying to try and do. I don't have any reason
   to look at your email address either, it's stored safely in a database. The
   only reason I collect it at all is so that I can try to prevent people from
-  making lots of accounts (you can just use another email address but that's
-  annoying for most people). I don't share your address with anyone.
+  making lots of accounts (you can just use another e-mail address but that's
+  enough to deter most people). I don't share your e-mail address with anyone.
 - Your password: I can't see your password. It's encrypted on the client side
   (in your browser before you click the Sign In button) so I can't actually
   see it, I can only see a jumble of letters that is generated that is nearly
