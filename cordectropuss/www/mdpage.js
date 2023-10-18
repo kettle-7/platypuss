@@ -31,6 +31,10 @@ var converty = new showdown.Converter({
 
 fetch(`${window.location.toString().replace(/.html/g, "") + ".md"}`).then(res => {
     res.text().then(txt => {
-        document.getElementById("page").innerHTML = converty.makeHtml(txt) + "<br><br>";
+        let lines = txt.split('\n');
+        let out = '';
+        document.getElementById("ptitle").innerHTML = lines[0];
+        for (let c = 1; c < lines.length; c++) { out += lines[c] + '\n' }
+        document.getElementById("page").innerHTML = converty.makeHtml(out) + "<br><br>";
     });
 });
