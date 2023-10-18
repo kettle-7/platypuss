@@ -527,6 +527,7 @@ function moreMessages() {
 function au() {
     if (document.getElementById("acsabm").innerText != abm && document.getElementById("acsabm").innerText.length <= 2000) {
         abm = document.getElementById("acsabm").innerText;
+        console.log(abm);
 
         const xhr = new XMLHttpRequest();
         xhr.open("POST", authUrl + '/abmcfg?id='+localStorage.getItem("sid"), true);
