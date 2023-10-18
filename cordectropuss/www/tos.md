@@ -20,7 +20,7 @@ applies, don't say that you made it (or anybody else except for me), don't
 complain if it doesn't work the way you want it to, but do tell me about any
 bugs because I do actually want to fix them.
 
-## I can stop you from using the software:
+## I have the right to stop you from using the software:
 
 - If you claim to have made it,
 - If you are using it to harm other people or
