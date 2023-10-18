@@ -1030,7 +1030,7 @@ function clientLoad() {
     <img src="${pfp}" class="avatar" onclick="userInfo('${packet.messages[m].author}');"/>
     <div class="message2">
         <span><strong class="chonk" onclick="userInfo('${packet.messages[m].author}');">${unam
-        }</strong><span class="timestomp">@${user ? user.tag : "None"} at ${new Date(packet.messages[m].stamp).toLocaleString()}${packet.message.edited ? ", last edited "+new Date(packet.message.edited).toLocaleString() : ""}</span></span>
+        }</strong><span class="timestomp">@${user ? user.tag : "None"} at ${new Date(packet.messages[m].stamp).toLocaleString()}${packet.messages[m].edited ? ", last edited "+new Date(packet.messages[m].edited).toLocaleString() : ""}</span></span>
         <p>${msgtxt}</p>
     </div>${message3}
 </div>
