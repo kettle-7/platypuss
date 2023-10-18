@@ -46,7 +46,15 @@
         },
         "/tos.html": {
             "type": "text/html",
-            "path": "tos.html"
+            "path": "mdpage.html"
+        },
+        "/carp.html": {
+            "type": "text/html",
+            "path": "mdpage.html"
+        },
+        "/carp.md": {
+            "type": "text/markdown",
+            "path": "carp.md"
         },
         "/tos.md": {
             "type": "text/markdown",
