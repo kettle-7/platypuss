@@ -1,3 +1,4 @@
+Terms of Service | Platypuss
 # Terms of Service
 
 I would strongly reccommend reading this document, as it outlines a lot of
