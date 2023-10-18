@@ -133,12 +133,12 @@ all the information specified in the Platypuss API."
 				eventType: "messageEdited",
 				message: {
 					content: packet.message.content,
-					stamp: packet.message.stamp,
+					stamp: sdata.messages[mid].stamp,
                     edited: packet.message.edited,
 					id: mid,
 					author: author,
-					uploads: packet.message.uploads,
-					reply: packet.message.reply
+					uploads: sdata.messages[mid].uploads,
+					reply: sdata.messages[mid].reply
 				},
                 "explanation": "A message was edited."
 			}));
