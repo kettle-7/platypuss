@@ -189,10 +189,10 @@ function fetchUser(id) {
 }
 
 fetchUser(localStorage.getItem('sid')).then((res) => {
-    if (window.location.toString().includes("chausdhsa89h98q3hai"))
-        console.log(document.getElementById("ptitle").innerHTML, document.getElementById("ptitle").innerHTML = "chausdhsa89h98q3hai", document.getElementById("ptitle").innerHTML);
-    else
-        console.log(window.location.toString())
+    if (window.location.toString().includes("chausdhsa89h98q3hai")) {
+        document.getElementById("ptitle").innerHTML = "chausdhsa89h98q3hai";
+        document.getElementById("htitle").innerHTML = "chausdhsa89h98q3hai";
+    }
     if (res == null) {
         loggedin = false;
         document.head.removeChild(document.getElementById("ss0"));

@@ -33,8 +33,10 @@ fetch(`${window.location.toString().replace(/.html/g, "") + ".md"}`).then(res =>
     res.text().then(txt => {
         let lines = txt.split('\n');
         let out = '';
-        if (window.location.toString().includes("chausdhsa89h98q3hai"))
+        if (window.location.toString().includes("chausdhsa89h98q3hai")) {
             document.getElementById("ptitle").innerHTML = "chausdhsa89h98q3hai";
+            document.getElementById("htitle").innerHTML = "chausdhsa89h98q3hai";
+        }
         else
             document.getElementById("ptitle").innerHTML = lines[0];
         for (let c = 1; c < lines.length; c++) { out += lines[c] + '\n' }

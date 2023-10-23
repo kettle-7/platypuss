@@ -82,8 +82,10 @@ function fetchUser(id) {
 }
 
 fetchUser(localStorage.getItem('sid')).then((res) => {
-    if (window.location.toString().includes("chausdhsa89h98q3hai"))
+    if (window.location.toString().includes("chausdhsa89h98q3hai")) {
         document.getElementById("ptitle").innerHTML = "chausdhsa89h98q3hai";
+        document.getElementById("htitle").innerHTML = "chausdhsa89h98q3hai";
+    }
     if (res == null || localStorage.getItem('sid') == null) {
         if (!url.searchParams.has("invite") && !localStorage.getItem("pendingInvite"))
         window.location = "./index.html";
