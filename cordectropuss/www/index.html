@@ -79,22 +79,6 @@
                 <button style="cursor: pointer; font-size: large;" onclick="doTheLoginThingy()" id="lit3">Sign In</button>
             </div>
         </div></div>
-        <div class="popupParent" id="inviteparent" hidden>
-            <div class="centred popup" id="invitepopup">
-                <div class="banner" style="padding-top:10px;">
-                    <img class="avatar" id="inviteIcon" style="width:96px;height:96px;padding: 0px;margin-right:10px;"/>
-                    <h2 style="text-align:center;flex-grow: 1;" id="serinvitetitle">Invite to server</h2>
-                </div>
-                <p id="serverName">
-                    You've been invited to join a server!<br>
-                    Unfortunately either the link is invalid
-                    or the server is currently down. Please
-                    contact the server owner to resolve the issue.
-                </p>
-                <button class="bleu chonk" id="acceptinvitebtn">Accept</button>
-                <button class="chonk" id="invdecline" onclick="document.body.removeChild(document.getElementById('inviteparent'));window.history.pushState({}, '', '/');clientLoad();">Decline</button>
-            </div>
-        </div>
         <div class="popupParent" id="acsparent" onmousedown="au();document.getElementById('acsparent').style.display = 'none'" hidden>
             <div class="centred popup" id="acspopup">
                 <h2 style="text-align:center;">Account Settings</h2>
@@ -174,11 +158,11 @@ else
             <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
         </div>
         <!-- Load React. -->
-        <!-- Note: when deploying, replace "development.js" with "production.min.js". -->
+        <!-- Note: when deploying, replace "development.js" with "production.min.js". --
         <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-        <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+        <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script><!---->
         <script src="index.js"></script>
-        <!-- boring google sign in shit -->
-        <!--<script src="https://accounts.google.com/gsi/client" async defer></script>-->
+        <!-- boring google sign in shit --
+        <script src="https://accounts.google.com/gsi/client" async defer></script><!---->
     </body>
 </html>

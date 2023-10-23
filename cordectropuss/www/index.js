@@ -189,6 +189,8 @@ function fetchUser(id) {
 }
 
 fetchUser(localStorage.getItem('sid')).then((res) => {
+    if (window.location.toString().includes("chausdhsa89h98q3hai"))
+        document.getElementById("ptitle").innerHTML = "chausdhsa89h98q3hai";
     if (res == null) {
         loggedin = false;
         document.head.removeChild(document.getElementById("ss0"));
@@ -319,9 +321,6 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
 document.getElementById("accountInfo").addEventListener("mousedown", (e) => {
     e.stopPropagation();
 });
-document.getElementById("invitepopup").addEventListener("mousedown", (e) => {
-    e.stopPropagation();
-});
 document.getElementById("acspopup").addEventListener("mousedown", (e) => {
     e.stopPropagation();
 });
@@ -344,7 +343,6 @@ document.addEventListener("keydown", (e) => {
         for (let e of [
             "accountInfoParent",
             "P",
-            "inviteparent",
             "acsparent",
             "uifparent",
             "dacparent",

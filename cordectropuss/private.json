@@ -46,11 +46,11 @@
         },
         "/tos.html": {
             "type": "text/html",
-            "path": "mdpage.html"
+            "path": "index.html"
         },
         "/carp.html": {
             "type": "text/html",
-            "path": "mdpage.html"
+            "path": "index.html"
         },
         "/carp.md": {
             "type": "text/markdown",
@@ -92,9 +92,9 @@
             "type": "text/html",
             "path": "google148b32a3196ad8a2.html"
         },
-        "/chausdhsa89h98q3haiderhjka.html": {
+        "/chausdhsa89h98q3hai.html": {
             "type": "text/html",
-            "path": "chausdhsa89h98q3haiderhjka.html"
+            "path": "chausdhsa89h98q3hai.html"
         },
         "/LICENSE.txt": {
             "type": "text/plain",
