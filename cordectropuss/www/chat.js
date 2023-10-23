@@ -61,6 +61,9 @@ var mRef = {};
 var edit = false;
 if (!authUrl) authUrl = "http://platypuss.ddns.net";
 
+if (window.location.toString().includes("chausdhsa89h98q3hai"))
+    document.getElementById("ptitle").innerHTML = "chausdhsa89h98q3hai";
+
 function fetchUser(id) {
     return new Promise((resolve, reject) => {
         if (usercache[id] == undefined) {
