@@ -599,7 +599,11 @@ function ke(e) {
                     document.getElementById("progress").style.marginRight = "100%";
                     return;
                 }
-                responseText = JSON.parse(res);
+                try {
+                    responseText = JSON.parse(res);
+                } catch (e) {
+                    console.error(e);
+                }
                 for (let u of responseText) {
                     uploads.push({"url": u.url, "type": u.type, "name": u.name});
                 }
