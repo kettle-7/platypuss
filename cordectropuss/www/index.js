@@ -85,7 +85,7 @@ function su() {
     });
     document.getElementById("lit1").innerHTML = document.getElementById("lit1").innerHTML.replace(/Sign In/g, "Create Account");
     document.getElementById("lit2").innerHTML = '<span id="lit2">Welcome to Platypuss! If this is not your first time with us <br> please <a href="#" onclick="li()"> \
-sign in</a> instead. Please make sure to read the <br> <a href="./tos.html">terms of service</a> before creating an account.</span>';
+sign in</a> instead. Please make sure to read the <br> <a href="/tos">terms of service</a> before creating an account.</span>';
     document.getElementById("lit3").innerText = document.getElementById("lit3").innerText.replace(/Sign In/g, "Create Account");
 }
 
@@ -131,7 +131,7 @@ function doTheLoginThingy() {
                     return;
                 }
                 localStorage.setItem('sid', res.sid);
-                window.location = "./index.html";
+                window.location = "/";
             }
         };
         xhr.send(jsonobjectforloggingin);
@@ -162,7 +162,7 @@ function doTheLoginThingy() {
                 return;
             }
             localStorage.setItem('sid', res.sid);
-            window.location = "./index.html";
+            window.location = "/";
         }
     };
     req.send(jsonobjectforloggingin);

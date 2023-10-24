@@ -88,7 +88,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
     }
     if (res == null || localStorage.getItem('sid') == null) {
         if (!url.searchParams.has("invite") && !localStorage.getItem("pendingInvite"))
-        window.location = "./index.html";
+        window.location = "/";
     }
     else {
         oldunam = res.unam;
@@ -167,11 +167,11 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 localStorage.clear();
                 if (url.searchParams.has("invite")) localStorage.setItem("pendingInvite", url.searchParams.get("invite"));
                 if (url.searchParams.has("invip")) localStorage.setItem("pendingInvip", url.searchParams.get("invip"));
-                window.location = "/index.html";
+                window.location = "/";
             }
             let sers = JSON.parse(h.responseText);
             if (Object.keys(sers.servers).length === 0 && !url.searchParams.has("invite") && !localStorage.getItem("pendingInvite")) { // None
-                window.location = "./index.html";
+                window.location = "/";
             }
         };
         h.send();
@@ -236,7 +236,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 r.onload = () => {
                     if (r.status == 200) {
                         document.body.removeChild(document.getElementById('inviteparent'));
-                        window.history.pushState({}, '', './chat.html');
+                        window.history.pushState({}, '', '/chat');
                         clientLoad();
                     } else {
                         document.getElementById("serverName").innerHTML = "Couldn't join the server, try again later?";
@@ -310,7 +310,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 r.onload = () => {
                     if (r.status == 200) {
                         document.body.removeChild(document.getElementById('inviteparent'));
-                        window.history.pushState({}, '', './chat.html');
+                        window.history.pushState({}, '', '/chat');
                         clientLoad();
                     } else {
                         document.getElementById("serverName").innerHTML = "Couldn't join the server, maybe try again later?";
@@ -405,7 +405,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
     }
     else {
         if (!url.searchParams.has("invite") && !localStorage.getItem("pendingInvite"))
-        window.location = "./index.html";
+        window.location = "/";
     }
 }, () => {
     if (url.host.startsWith("http://192.168") && !localStorage.getItem("forceAuth")) {
@@ -413,7 +413,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
         window.location.reload();
     }
     if (!url.searchParams.has("invite") && !localStorage.getItem("pendingInvite"))
-    window.location = "./index.html";
+    window.location = "/";
 });
 
 document.getElementById("accountInfo").addEventListener("mousedown", (e) => {
@@ -459,7 +459,7 @@ if (authUrl != url.protocol + "//" + url.host && url.protocol == "http:" && !loc
 
 function logout() {
     localStorage.clear();
-    window.location = "./index.html";
+    window.location = "/";
 }
 
 var sockets = {};
