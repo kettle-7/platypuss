@@ -86,7 +86,7 @@ button:hover {
 
 .bleu:active {
     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5) inset !important;
-    background: linear-gradient(#025aa8, #0075db, #0075db, #2295fa);
+    background: linear-gradient(#025aa8, #0075db, #0075db, #2295fa) !important;
 }
 
 .dangerous:active {
