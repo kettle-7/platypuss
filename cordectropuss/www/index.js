@@ -364,7 +364,7 @@ if (authUrl != url.protocol + "//" + url.host && url.protocol == "http:" && !loc
 }
 
 function logout() {
-    localStorage.clear();
+    localStorage.removeItem("sid");
     window.location.reload();
 }
 
