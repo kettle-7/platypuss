@@ -353,7 +353,6 @@ document.addEventListener("keydown", (e) => {
             "cpwdparent"
         ]) {
             document.getElementById(e).style.display = "none";
-            document.getElementById(e).addEventListener("scroll", (e) => { e.stopPropagation(); }); // don't scroll the page behind a popup
         }
     }
 });
