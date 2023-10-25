@@ -72,11 +72,12 @@ button:hover {
 }
 
 .bleu {
-    background: #0075db;
+    background: linear-gradient(#2295fa, #0075db, #0075db, #025aa8);
+    color: white !important;
 }
 
 .bleu:hover {
-    background: #005baa;
+    background: linear-gradient(#319dfc, #0e79d7, #0e79d7, #115fa3);
 }
 
 .dangerous:hover {
@@ -85,7 +86,7 @@ button:hover {
 
 .bleu:active {
     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5) inset !important;
-    background-color: #0075db !important;
+    background: linear-gradient(#025aa8, #0075db, #0075db, #2295fa);
 }
 
 .dangerous:active {
