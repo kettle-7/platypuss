@@ -32,51 +32,52 @@
     --->
     <body>
         <div id="everything">
-        <header id="header">
-            <img onclick="window.location = '/'" alt="Ornithorynchus Anatinus" class="avatar" src="icon.png" />
-            <h1 onclick="window.location = '/'" style="cursor: pointer;" id="htitle">Platypuss</h1>
-            <div id="spacement" class="widest"></div>
-            <div id="g_id_onload"
-                data-client_id="1076407762610-kg5oj0lb8u8bdjp5gmdt4d9ap9n01qam.apps.googleusercontent.com"
-                data-context="signin"
-                data-ux_mode="popup"
-                data-callback="googleAuth"
-                data-auto_prompt="false">
-            </div>
-            <div class="g_id_signin"
-                data-type="icon"
-                data-shape="circle"
-                data-theme="filled_black"
-                data-text="signin_with"
-                data-size="large">
-            </div>
-            <img onclick="document.getElementById('accountInfoParent').hidden = !document.getElementById('accountInfoParent').hidden" id="pfp" alt="" class="avatar" src="" />
-        </header>
-        <div id="actualpagecontainer"><main id="actualPage" class="mainpage" hidden="true"> 
-            <div class="sidePane" id="left">
-            </div>
-            <div id="mainContentContainer" dropzone="copy">
-                <div id="messageArea">
-                    <button onclick="moreMessages();" id="loadMoreMessages" class="chonk">Load More Messages</button>
-                    <div style="flex-grow: 1;"></div>
-                    <div id="mainContent"></div>
+            <header id="header">
+                <img onclick="window.location = '/'" alt="Ornithorynchus Anatinus" class="avatar" src="icon.png" />
+                <h1 onclick="window.location = '/'" style="cursor: pointer;" id="htitle">Platypuss</h1>
+                <div id="spacement" class="widest"></div>
+                <div id="g_id_onload"
+                    data-client_id="1076407762610-kg5oj0lb8u8bdjp5gmdt4d9ap9n01qam.apps.googleusercontent.com"
+                    data-context="signin"
+                    data-ux_mode="popup"
+                    data-callback="googleAuth"
+                    data-auto_prompt="false">
                 </div>
-                <span id="fileDeleteMessage" hidden>Click a file to delete it</span>
-                <div id="progress" hidden><div id="progress2"></div></div>
-                <div id="fileUploadSpace"></div>
-                <div id="longMessageBoxContainer">
-                    <textarea id="msgtxt" class="textBox chonk" placeholder="Type a message" cols="1" maxlength="2000" onpaste="tpaste()"></textarea>
-                    <button id="upload" class="msgbtn chonk" style="border-color: #888888;">
-                        <span class="material-symbols-outlined">publish</span>
-                    </button>
-                    <button id="send" class="msgbtn chonk" style="border-color: #888888;">
-                        <span class="material-symbols-outlined">send</span>
-                    </button>
+                <div class="g_id_signin"
+                    data-type="icon"
+                    data-shape="circle"
+                    data-theme="filled_black"
+                    data-text="signin_with"
+                    data-size="large">
                 </div>
-            </div>
-            <div class="sidePane" id="right">
-            </div>
-        </main></div></div> <!-- Hi debuggers, thanks for debugging, this is the end of div#everything -->
+                <img onclick="document.getElementById('accountInfoParent').hidden = !document.getElementById('accountInfoParent').hidden" id="pfp" alt="" class="avatar" src="" />
+            </header>
+            <div id="actualpagecontainer"><main id="actualPage" class="mainpage" hidden="true"> 
+                <div class="sidePane" id="left">
+                </div>
+                <div id="mainContentContainer" dropzone="copy">
+                    <div id="messageArea">
+                        <button onclick="moreMessages();" id="loadMoreMessages" class="chonk">Load More Messages</button>
+                        <div style="flex-grow: 1;"></div>
+                        <div id="mainContent"></div>
+                    </div>
+                    <span id="fileDeleteMessage" hidden>Click a file to delete it</span>
+                    <div id="progress" hidden><div id="progress2"></div></div>
+                    <div id="fileUploadSpace"></div>
+                    <div id="longMessageBoxContainer">
+                        <textarea id="msgtxt" class="textBox chonk" placeholder="Type a message" cols="1" maxlength="2000" onpaste="tpaste()"></textarea>
+                        <button id="upload" class="msgbtn chonk" style="border-color: #888888;">
+                            <span class="material-symbols-outlined">publish</span>
+                        </button>
+                        <button id="send" class="msgbtn chonk" style="border-color: #888888;">
+                            <span class="material-symbols-outlined">send</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="sidePane" id="right">
+                </div>
+            </main></div>
+        </div> <!-- Hi debuggers, thanks for debugging, this is the end of div#everything -->
         <div class="popupParent" onmousedown="document.getElementById('accountInfoParent').hidden = true" id="accountInfoParent" hidden>
             <div class="popup" id="accountInfo">
                 <span id="username" class="chonk" style="margin: 10px;"></span>
