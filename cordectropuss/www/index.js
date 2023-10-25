@@ -197,6 +197,8 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
         loggedin = false;
         document.head.removeChild(document.getElementById("ss0"));
         document.getElementById("header").removeChild(document.getElementById("chatbtn"));
+        if (localStorage.getItem("theme") == "light")
+            document.getElementById("ss1").href = "/light.css";
     }
     else {
         oldunam = res.unam;

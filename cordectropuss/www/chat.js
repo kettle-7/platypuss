@@ -89,6 +89,8 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
     if (res == null || localStorage.getItem('sid') == null) {
         if (!url.searchParams.has("invite") && !localStorage.getItem("pendingInvite"))
         window.location = "/";
+        if (localStorage.getItem("theme") == "light")
+            document.getElementById("ss1").href = "/light.css";
     }
     else {
         oldunam = res.unam;
