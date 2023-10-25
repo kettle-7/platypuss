@@ -628,12 +628,7 @@ hr {
     padding-bottom: 10vh;
     padding-right: 10vw;
     padding-left: 10vw;
-    margin: 0px;
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    bottom: 0pt;
-    min-height: 0;
+    overflow: scroll;
 }
 
 #progress {

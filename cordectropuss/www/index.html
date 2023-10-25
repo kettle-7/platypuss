@@ -56,9 +56,11 @@
                 </div>
                 <img onclick="document.getElementById('accountInfoParent').hidden = !document.getElementById('accountInfoParent').hidden" id="pfp" alt="" class="avatar" src="" />
             </header>
-            <main id="page" class="mainpage" style="position: absolute; left: 6px; right: 6px; top: 64px; bottom: 40px;">
-                Loading...
-            </main>
+            <div id="scrollContainer">
+                <main id="page" class="mainpage" style="position: absolute; left: 6px; right: 6px; top: 64px; bottom: 40px;">
+                    Loading...
+                </main>
+            </div>
         </div>
         <div class="popupParent" onmousedown="document.getElementById('accountInfoParent').hidden = true" id="accountInfoParent" hidden>
             <div class="popup" id="accountInfo">
