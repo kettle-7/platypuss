@@ -35,6 +35,15 @@ module.exports = {
             res.on('end', () => {
                 let data;
                 try {
+                    data = Buffer.concat(chunks).toString('utf8');
+                    if (data == "not an user id") {
+                        packet.ws.send(JSON.stringify({
+                            eventType: "error",
+                            code: "notUser",
+                            explanation: "Your account wasn't found. Please try logging out and then in again to see if this resolves the issue."
+                        }))
+                        return sdata;
+                    }
                     data = JSON.parse(Buffer.concat(chunks).toString('utf8'));
                     packet.ws.loggedinbytoken = true;
                     packet.ws.uid = data.id;
