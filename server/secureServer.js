@@ -16,6 +16,7 @@
  ************************************************************************/
 
 const { WebSocketServer } = require('ws');
+const https = require('https');
 const http = require('http');
 const { readFileSync, readdirSync, writeFileSync } = require("fs");
 const path = require('path');
@@ -27,7 +28,8 @@ var handlers = {};
 const handlePath = path.join(__dirname, 'handles');
 // we don't want to load README.md, any JSON config or platypussDefaults.js as they're all definitely not event handles
 const handleFiles = readdirSync(handlePath).filter(file => file.endsWith('.js') && !file.includes("platypussDefaults"));
-
+const sslCert = readFileSync(conf.sslCertPath);
+const sslKey = readFileSync(conf.sslKeyPath);
 for (const file of handleFiles) {
 	const filePath = path.join(handlePath, file);
 	const handler = require(filePath);
@@ -43,7 +45,9 @@ for (const file of handleFiles) {
     }
 }
 
-const httpser = http.createServer((req, res) => {
+const httpser = https.createServer({
+    cert: sslCert, key: sslKey
+}, (req, res) => {
     res.writeHead(200, {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*"

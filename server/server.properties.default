@@ -8,5 +8,7 @@
         "public": "false",
         "icon": "icon.png",
         "memberCount": "lots of"
-    }
+    },
+    "sslCertPath": "./cert.pem",
+    "sslKeyPath": "./key.pem"
 }
