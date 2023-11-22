@@ -10,6 +10,9 @@ temp.js
 platforms/
 .vs/
 
+# why mac gotta be funky like that
+.DS_Store/
+
 # Logs
 logs
 *.log
