@@ -57,7 +57,7 @@ var ift = false;
 var premyum = false;
 var abm, oldunam;
 var mRef = {};
-if (!authUrl) authUrl = "http://platypuss.ddns.net";
+if (!authUrl) authUrl = "https://platypuss.ddns.net";
 
 function li() {
     ift = false;
@@ -315,7 +315,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
     }
 }, () => {
     if (url.host.startsWith("http://192.168") && !localStorage.getItem("forceAuth")) {
-        localStorage.setItem("authUrl", "http://192.168.1.69:3000");
+        localStorage.setItem("authUrl", "http://192.168.1.66:3000");
         window.location.reload();
     }
     document.getElementById("header").removeChild(document.getElementById("pfp"));
@@ -357,8 +357,8 @@ document.addEventListener("keydown", (e) => {
     }
 });
 
-// IMPORTANT: remove this if you're ripping off my client please
-if (authUrl != url.protocol + "//" + url.host && url.protocol == "http:" && !localStorage.getItem("forceAuth")) {
+// IMPORTANT: remove this if you're ripping off my client please lol
+if (authUrl != url.protocol + "//" + url.host && (url.protocol == "http:" || url.protocol == "https:") && !localStorage.getItem("forceAuth")) {
     localStorage.setItem("authUrl", url.protocol + "//" + url.host);
     window.location.reload();
 }

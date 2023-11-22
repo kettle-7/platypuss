@@ -59,7 +59,7 @@ var premyum = false;
 var abm, oldunam;
 var mRef = {};
 var edit = false;
-if (!authUrl) authUrl = "http://platypuss.ddns.net";
+if (!authUrl) authUrl = "https://platypuss.ddns.net";
 
 function fetchUser(id) {
     return new Promise((resolve, reject) => {
@@ -411,7 +411,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
     }
 }, () => {
     if (url.host.startsWith("http://192.168") && !localStorage.getItem("forceAuth")) {
-        localStorage.setItem("authUrl", "http://192.168.1.69:3000");
+        localStorage.setItem("authUrl", "http://192.168.1.66:3000");
         window.location.reload();
     }
     if (!url.searchParams.has("invite") && !localStorage.getItem("pendingInvite"))
@@ -454,7 +454,7 @@ document.addEventListener("keydown", (e) => {
     }
 });
 
-if (authUrl != url.protocol + "//" + url.host && url.protocol == "http:" && !localStorage.getItem("forceAuth")) {
+if (authUrl != url.protocol + "//" + url.host && (url.protocol == "http:" || url.protocol == "https:") && !localStorage.getItem("forceAuth")) {
     localStorage.setItem("authUrl", url.protocol + "//" + url.host);
     window.location.reload();
 }
