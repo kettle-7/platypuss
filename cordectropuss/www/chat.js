@@ -752,7 +752,7 @@ function clientLoad() {
             let ip = serveur.split(' ')[0];
             let code = serveur.split(' ')[1];
             let ogip = serveur.split(' ')[2];
-            let url = ("ws://"+ip.toString());
+            let url = ((url.protocol == "https:" ? "wss" : "ws") + "://"+ip.toString());
             let ws = new WebSocket(url);
             document.getElementById("left").innerHTML = "";
             breaks.push(setTimeout(() => {
