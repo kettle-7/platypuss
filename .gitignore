@@ -8,7 +8,7 @@ platforms/
 .vs/
 
 # why mac gotta be funky like that
-.DS_Store/
+.DS_Store
 
 # Logs
 logs
