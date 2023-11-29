@@ -161,22 +161,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
             }
             document.getElementById("msgtxt").focus();
         });
-        // document.getElementById("header").removeChild(document.getElementById("spacement"));
-        const h = new XMLHttpRequest();
-        h.open('GET', authUrl+'/sload?id='+localStorage.getItem('sid'), true);
-        h.onload = () => {
-            if (h.status != 200) {
-                localStorage.clear();
-                if (url.searchParams.has("invite")) localStorage.setItem("pendingInvite", url.searchParams.get("invite"));
-                if (url.searchParams.has("invip")) localStorage.setItem("pendingInvip", url.searchParams.get("invip"));
-                window.location = "/";
-            }
-            let sers = JSON.parse(h.responseText);
-            if (Object.keys(sers.servers).length === 0 && !url.searchParams.has("invite") && !localStorage.getItem("pendingInvite")) { // None
-                window.location = "/";
-            }
-        };
-        h.send();
+        
         if (url.searchParams.has("invite")) {
             let inviteCode = url.searchParams.get("invite");
             let ip = [ // the first 8 characters are the ip address in hex form
@@ -322,6 +307,21 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
             }
             document.getElementById("acceptinvitebtn").addEventListener("click", clicky);
         } else {
+            const h = new XMLHttpRequest();
+            h.open('GET', authUrl+'/sload?id='+localStorage.getItem('sid'), true);
+            h.onload = () => {
+                if (h.status != 200) {
+                    localStorage.removeItem("sid");
+                    if (url.searchParams.has("invite")) localStorage.setItem("pendingInvite", url.searchParams.get("invite"));
+                    if (url.searchParams.has("invip")) localStorage.setItem("pendingInvip", url.searchParams.get("invip"));
+                    window.location = "/";
+                }
+                let sers = JSON.parse(h.responseText);
+                if (Object.keys(sers.servers).length === 0 && !url.searchParams.has("invite") && !localStorage.getItem("pendingInvite")) { // None
+                    window.location = "/";
+                }
+            };
+            h.send();
             clientLoad();
             function pickNewAvatar() {
                 var input = document.createElement('input');
@@ -733,9 +733,9 @@ function clientLoad() {
     const h = new XMLHttpRequest();
     h.open('GET', authUrl+'/sload?id='+localStorage.getItem('sid'), true);
     h.onload = () => {
-        if (h.status != 200) {        // warning: this code might fail if something has gone wrong, and thus cause the 
-            localStorage.clear();     // page to infinitely reload. the most likely response from the user is the
-            window.location = "/";    // page being closed and mild confusion which is not ideal but not dangerous.
+        if (h.status != 200) {              // warning: this code might fail if something has gone wrong, and thus cause the 
+            localStorage.removeItem("sid"); // page to infinitely reload. the most likely response from the user is the
+            window.location = "/";          // page being closed and mild confusion which is not ideal but not dangerous.
         }
 
         setTimeout(() => {
