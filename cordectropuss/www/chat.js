@@ -178,7 +178,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 port = port * 16 + parseInt(inviteCode[c], 16);
             }
             let code = Number("0x"+inviteCode[inviteCode.length - 2]+inviteCode[inviteCode.length - 1]).toString();
-            fetch(`http://${ip}:${port}`).then(res => {
+            fetch(`http${url.protocol == "https:" ? "s" : ""}://${ip}:${port}`).then(res => {
                 res.json().then(data => {
                     document.getElementById("serinvitetitle").innerText = data.title.toString();
                     document.getElementById("serverName").innerHTML = `
@@ -250,7 +250,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 port = port * 16 + parseInt(inviteCode[c], 16);
             }
             let code = Number("0x"+inviteCode[inviteCode.length - 2]+inviteCode[inviteCode.length - 1]).toString();
-            fetch(`http://${ip}:${port}`).then(res => {
+            fetch(`http${url.protocol == "https:" ? "s" : ""}://${ip}:${port}`).then(res => {
                 res.json().then(data => {
                     document.getElementById("serinvitetitle").innerText = data.title.toString();
                     document.getElementById("serverName").innerHTML = `
