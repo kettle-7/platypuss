@@ -1,13 +1,9 @@
 {
   "name": "cordectropuss",
   "version": "1.0.0",
-  "description": "Cordova / Electron client for Platypuss",
+  "description": "A web client for Platypuss",
   "main": "index.js",
-  "dependencies": {
-    "cordova-electron": "^3.1.0",
-    "electron": "^22.3.25",
-    "electron-builder": "^22.14.13"
-  },
+  "dependencies": { },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
