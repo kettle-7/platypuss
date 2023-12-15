@@ -16,6 +16,9 @@
  ************************************************************************/
 
 // °^° i am pingu
+const ereg = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi
+
+/** yes i just used const to define a function what are you going to do about it */
 const cyrb53 = (str, seed = 20) => { // random hashing algorithm off stack overflow
     let h1 = 0xdeadbeef ^ seed, // dead beef
     h2 = 0x41c6ce57 ^ seed;
@@ -57,13 +60,15 @@ var ift = false;
 var premyum = false;
 var abm, oldunam;
 var mRef = {};
-if (!authUrl) authUrl = "https://platypuss.ddns.net";
+if (!authUrl) authUrl = "https://platypuss.net";
 
 function li() {
     ift = false;
     document.getElementById('P').style.display = 'flex';
     document.getElementById("pwd2").hidden = true;
     document.getElementById("pr1").hidden = true;
+    document.getElementById("pr2").hidden = true;
+    document.getElementById("unam").hidden = true;
     document.getElementById("pwd1").addEventListener("keypress", (e) => {
         if (e.key == "Enter")
             doTheLoginThingy();
@@ -79,6 +84,8 @@ function su() {
     document.getElementById('P').style.display = 'flex';
     document.getElementById("pwd2").hidden = false;
     document.getElementById("pr1").hidden = false;
+    document.getElementById("pr2").hidden = false;
+    document.getElementById("unam").hidden = false;
     document.getElementById("pwd2").addEventListener("keypress", (e) => {
         if (e.key == "Enter")
             doTheLoginThingy();
@@ -91,8 +98,9 @@ sign in</a> instead. Please make sure to read the <br> <a href="/tos">terms of s
 
 function doTheLoginThingy() {
     let unam = document.getElementById("unam").value;
+    let email = document.getElementById("email").value;
     let pwd1 = document.getElementById("pwd1").value;
-    if (ift) { // if you're making a new account
+    if (ift) { // if you're making a new account rather than logging into an existing one
         let pwd2 = document.getElementById("pwd2").value;
         if (pwd1 != pwd2) {
             document.getElementById("lit2").innerText = "Your passwords don't match.";
@@ -108,8 +116,9 @@ function doTheLoginThingy() {
         }
         let jsonobjectforloggingin = JSON.stringify({ // i want long variable name
             "ift": ift,
-            "ser": "122.62.122.75:3000",
+            "ser": "example.com", // reserved domain and therefore won't be used by anyone
             "unam": unam,
+            "email": email,
             "pwd": cyrb53(pwd1)
         });
         const xhr = new XMLHttpRequest();
@@ -118,20 +127,11 @@ function doTheLoginThingy() {
         xhr.onreadystatechange = () => { // Call a function when the state changes.
             if (xhr.readyState === XMLHttpRequest.DONE && xhr.status) {
                 let res = JSON.parse(xhr.responseText);
-                if (ift && res.exists) {
-                    document.getElementById("lit2").innerHTML = 'An account with that username already exists, would you like to <a onclick="su()">log in</a> instead?';
+                if (res.exists) {
+                    document.getElementById("lit2").innerHTML = 'You\'ve already made an account with that email address, would you like to <a onclick="li()">log in</a> instead?';
                     return;
                 }
-                if (!ift && !res.exists) {
-                    document.getElementById("lit2").innerText = "There's no account with that username, did you misspell it?";
-                    return;
-                }
-                if (!ift && !res.pwd) {
-                    document.getElementById("lit2").innerText = "That password isn't correct, did you misspell it?";
-                    return;
-                }
-                localStorage.setItem('sid', res.sid);
-                window.location = "/";
+                document.getElementById("lit2").innerHTML = 'An email has now been sent to that address, please check your inbox for a link to verify your account.';
             }
         };
         xhr.send(jsonobjectforloggingin);
@@ -139,8 +139,8 @@ function doTheLoginThingy() {
     }
     let jsonobjectforloggingin = JSON.stringify({ // i want long variable name
         "ift": ift,
-        "ser": "122.62.122.75:3000",
-        "unam": unam,
+        "ser": "example.com",
+        "email": email,
         "pwd": cyrb53(pwd1)
     });
     const req = new XMLHttpRequest();
@@ -149,15 +149,11 @@ function doTheLoginThingy() {
     req.onreadystatechange = () => { // Call a function when the state changes.
         if (req.readyState === XMLHttpRequest.DONE && (req.status == 200 || req.status == 204)) {
             let res = JSON.parse(req.responseText);
-            if (ift && res.exists) {
-                document.getElementById("lit2").innerText = "An account with that username already exists ;-;";
+            if (!res.exists) {
+                document.getElementById("lit2").innerText = "There's no account with that email address, would you like to <a onclick=\"su()\">make a new account</a> instead?";
                 return;
             }
-            if (!ift && !res.exists) {
-                document.getElementById("lit2").innerText = "There's no account with that username, did you misspell it?";
-                return;
-            }
-            if (!ift && !res.pwd) {
+            if (!res.pwd) {
                 document.getElementById("lit2").innerText = "That password isn't correct, did you misspell it?";
                 return;
             }
