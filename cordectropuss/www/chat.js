@@ -59,7 +59,7 @@ var premyum = false;
 var abm, oldunam;
 var mRef = {};
 var edit = false;
-if (!authUrl) authUrl = "https://platypuss.ddns.net";
+if (!authUrl) authUrl = "https://platypuss.net";
 
 function fetchUser(id) {
     return new Promise((resolve, reject) => {
