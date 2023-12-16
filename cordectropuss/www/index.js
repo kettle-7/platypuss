@@ -150,11 +150,11 @@ function doTheLoginThingy() {
         if (req.readyState === XMLHttpRequest.DONE && (req.status == 200 || req.status == 204)) {
             let res = JSON.parse(req.responseText);
             if (!res.exists) {
-                document.getElementById("lit2").innerText = "There's no account with that email address, would you like to <a onclick=\"su()\">make a new account</a> instead?";
+                document.getElementById("lit2").innerHTML = "There's no account with that email address, would you like to <a onclick=\"su()\">make a new account</a> instead?";
                 return;
             }
             if (!res.pwd) {
-                document.getElementById("lit2").innerText = "That password isn't correct, did you misspell it?";
+                document.getElementById("lit2").innerHTML = "That password isn't correct, did you misspell it?";
                 return;
             }
             localStorage.setItem('sid', res.sid);
