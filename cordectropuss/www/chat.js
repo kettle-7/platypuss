@@ -62,20 +62,27 @@ var edit = false;
 if (!authUrl) authUrl = "https://platypuss.net";
 
 function fetchUser(id) {
+    console.log("a");
     return new Promise((resolve, reject) => {
+        console.log("b");
         if (usercache[id] == undefined) {
+            console.log("c");
             const x = new XMLHttpRequest();
             x.open('GET', authUrl+'/uinfo?id='+id, true);
             x.onload = () => {
+                console.log("e");
                 if (x.status != 200) {
+                    console.log("f");
                     resolve(null);
                     return;
                 }
+                console.log("g");
                 usercache[id] = JSON.parse(x.responseText);
                 resolve(usercache[id]);
             };
             x.send();
         } else {
+            console.log("d");
             resolve(usercache[id]);
         }
     });
