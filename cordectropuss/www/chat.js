@@ -191,6 +191,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
         document.getElementById("htitle").innerHTML = "chausdhsa89h98q3hai";
     }
     if (res == null || localStorage.getItem('sid') == null) {
+        loggedin = false;
         document.head.removeChild(document.getElementById("ss0"));
         if (!url.searchParams.has("invite") && !localStorage.getItem("pendingInvite"));
         window.location = "/";
@@ -198,7 +199,6 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
             document.getElementById("ss1").href = "/light.css";
     }
     else {
-        loggedin = false;
         oldunam = res.unam;
         abm = res.aboutMe.text;
         if (res.aboutMe.premyum) {
