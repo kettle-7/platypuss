@@ -1456,12 +1456,12 @@ function clientLoad() {
                         console.log(packet);
                         if (!packet.manifest)
                             packet.manifest = {};
-                        if (!packet.icon) {
-                            packet.icon = "./icon.png";
+                        if (!packet.manifest.icon) {
+                            packet.manifest.icon = "./icon.png";
                         }
                         let icomg = document.createElement("img");
                         icomg.className = "serverIcon avatar";
-                        icomg.src = packet.icon;
+                        icomg.src = packet.manifest.icon;
                         console.log(icomg);
                         icomg.addEventListener("click", () => {focusedServer=serveur;clientLoad();});
                         document.getElementById("left").appendChild(icomg);

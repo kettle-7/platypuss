@@ -87,7 +87,7 @@ module.exports = {
                     packet.ws.send(JSON.stringify({
                         eventType: "connected",
                         explanation: "You've connected to the server successfully.",
-                        icon: sdata.properties.icon
+                        manifest: sdata.properties.manifest
                     }));
                     packet.ws.send(JSON.stringify({
                         eventType: "messages",
