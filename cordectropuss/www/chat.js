@@ -1216,7 +1216,6 @@ function clientLoad() {
                                         msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.messages[m].reply
                                             }')"><a class="invalidUser">@Deleted User</a> ${messageMap[packet.messages[m].reply].content}</blockquote>` + msgtxt;
                                     } else {
-                                        // we don't support server nicknames as they don't exist yet
                                         msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.messages[m].reply
 }')"><a class="userMention" onclick="userInfo('${ms.id}');">@${ms.unam
                                             .replace(/\</g, "&lt;")
@@ -1280,7 +1279,17 @@ function clientLoad() {
     <button class="material-symbols-outlined" onclick="replyTo('${packet.messages[m].id}', '${serveur}');">Reply</button>
 </div>`;
                             }
-                            txt += `
+                            if (packet.messages[m].special) {
+                                message3 = ``;
+                                txt += `
+    <div class="message1" id="message_${packet.messages[m].id}">
+        <div class="message2">
+            <span>${msgtxt}</span><span class="timestomp">${packet.messages[m].stamp == undefined ? "" : " at " + new Date(packet.messages[m].stamp).toLocaleString()}</span>
+        </div>${message3}
+    </div>
+    `;
+                            } else {
+                                txt += `
 <div class="message1" id="message_${packet.messages[m].id}">
     <img src="${pfp}" class="avatar" onclick="userInfo('${packet.messages[m].author}');"/>
     <div class="message2">
@@ -1290,6 +1299,7 @@ function clientLoad() {
     </div>${message3}
 </div>
 `;
+                            }
                             if (m + 1 == packet.messages.length) { // is this the last message
                                 document.getElementById("mainContent").innerHTML = txt + document.getElementById("mainContent").innerHTML;
                                 ma.scrollTo(ma.scrollLeft, ma.scrollHeight - scrollBottom);
