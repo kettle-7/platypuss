@@ -62,27 +62,20 @@ var edit = false;
 if (!authUrl) authUrl = "https://platypuss.net";
 
 function fetchUser(id) {
-    console.log("a");
     return new Promise((resolve, reject) => {
-        console.log("b");
         if (usercache[id] == undefined) {
-            console.log("c");
             const x = new XMLHttpRequest();
             x.open('GET', authUrl+'/uinfo?id='+id, true);
             x.onload = () => {
-                console.log("e");
                 if (x.status != 200) {
-                    console.log("f");
                     resolve(null);
                     return;
                 }
-                console.log("g");
                 usercache[id] = JSON.parse(x.responseText);
                 resolve(usercache[id]);
             };
             x.send();
         } else {
-            console.log("d");
             resolve(usercache[id]);
         }
     });
@@ -197,12 +190,9 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
         document.getElementById("ptitle").innerHTML = "chausdhsa89h98q3hai";
         document.getElementById("htitle").innerHTML = "chausdhsa89h98q3hai";
     }
-    console.warn(res);
     if (res == null || localStorage.getItem('sid') == null) {
         loggedin = false;
         document.head.removeChild(document.getElementById("ss0"));
-        if (!url.searchParams.has("invite") && !localStorage.getItem("pendingInvite"))
-            window.location = "/";
         if (localStorage.getItem("theme") == "light")
             document.getElementById("ss1").href = "/light.css";
     }
