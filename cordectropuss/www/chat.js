@@ -1445,6 +1445,7 @@ function clientLoad() {
                             focusedServer = serveur;
                             document.getElementById("msgtxt").focus();
                         }
+                        console.log(packet);
                         if (!packet.manifest)
                             packet.manifest = {};
                         if (!packet.manifest.icon) {
@@ -1453,6 +1454,7 @@ function clientLoad() {
                         let icomg = document.createElement("img");
                         icomg.className = "serverIcon avatar";
                         icomg.src = packet.manifest.icon;
+                        console.log(icomg);
                         icomg.addEventListener("click", () => {focusedServer=serveur;clientLoad();});
                         document.getElementById("left").appendChild(icomg);
                         break;
