@@ -353,7 +353,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                     xhr.open("POST", authUrl+'/pfpUpload?id='+localStorage.getItem("sid")+"&ctype="+encodeURIComponent(ctype), true);
                     xhr.setRequestHeader("Content-Type", ctype);
                     xhr.onreadystatechange = () => {
-                        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status = 200) {
+                        if (xhr.readyState === XMLHttpRequest.DONE && xhr.status == 200) {
                             window.location.reload();
                         }
                         else if (xhr.readyState === XMLHttpRequest.DONE && xhr.status == 0) {
