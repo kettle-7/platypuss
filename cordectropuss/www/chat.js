@@ -81,6 +81,110 @@ function fetchUser(id) {
     });
 }
 
+function li() {
+    ift = false;
+    document.getElementById('P').style.display = 'flex';
+    document.getElementById("pwd2").hidden = true;
+    document.getElementById("pr1").hidden = true;
+    document.getElementById("pr2").hidden = true;
+    document.getElementById("unam").hidden = true;
+    document.getElementById("pwd1").addEventListener("keypress", (e) => {
+        if (e.key == "Enter")
+            doTheLoginThingy();
+    });
+    document.getElementById("lit1").innerHTML = document.getElementById("lit1").innerHTML.replace(/Create Account/g, "Sign In");
+    document.getElementById("lit2").innerHTML = 'Welcome back! If you don\'t already have an account <br> please <a href="#" onclick="su()">create an account</a> instead.';
+    document.getElementById("lit3").innerText = document.getElementById("lit3").innerText.replace(/Create Account/g, "Sign In");
+    return;
+}
+
+function su() {
+    ift = true;
+    document.getElementById('P').style.display = 'flex';
+    document.getElementById("pwd2").hidden = false;
+    document.getElementById("pr1").hidden = false;
+    document.getElementById("pr2").hidden = false;
+    document.getElementById("unam").hidden = false;
+    document.getElementById("pwd2").addEventListener("keypress", (e) => {
+        if (e.key == "Enter")
+            doTheLoginThingy();
+    });
+    document.getElementById("lit1").innerHTML = document.getElementById("lit1").innerHTML.replace(/Sign In/g, "Create Account");
+    document.getElementById("lit2").innerHTML = '<span id="lit2">Welcome to Platypuss! If this is not your first time with us <br> please <a href="#" onclick="li()"> \
+sign in</a> instead. Please make sure to read the <br> <a href="/tos" target="_blank">terms of service</a> before creating an account.</span>';
+    document.getElementById("lit3").innerText = document.getElementById("lit3").innerText.replace(/Sign In/g, "Create Account");
+}
+
+function doTheLoginThingy() {
+    let unam = document.getElementById("unam").value;
+    let email = document.getElementById("email").value;
+    let pwd1 = document.getElementById("pwd1").value;
+    if (ift) { // if you're making a new account rather than logging into an existing one
+        let pwd2 = document.getElementById("pwd2").value;
+        if (pwd1 != pwd2) {
+            document.getElementById("lit2").innerText = "Your passwords don't match.";
+            return;
+        }
+        if (unam == "") {
+            document.getElementById("lit2").innerText = "Please fill this out, you can't just make an account without an username...";
+            return;
+        }
+        if (pwd1 == "") {
+            document.getElementById("lit2").innerText = "Please fill this out, you can't just make an account without a password...";
+            return;
+        }
+        let jsonobjectforloggingin = JSON.stringify({ // i want long variable name
+            "ift": ift,
+            "ser": "example.com", // reserved domain and therefore won't be used by anyone
+            "unam": unam,
+            "email": email,
+            "pwd": cyrb53(pwd1)
+        });
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", authUrl + '/li', true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = () => { // Call a function when the state changes.
+            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status) {
+                let res = JSON.parse(xhr.responseText);
+                if (res.exists) {
+                    document.getElementById("lit2").innerHTML = 'You\'ve already made an account with that email address, would you like to <a onclick="li()">log in</a> instead?';
+                    return;
+                }
+                document.getElementById("lit2").innerHTML = 'An email has now been sent to that address, \
+please check your inbox for a link to verify your account. After you\'ve done that you\'ll need to reload \
+this page to join the server.';
+            }
+        };
+        xhr.send(jsonobjectforloggingin);
+        return;
+    }
+    let jsonobjectforloggingin = JSON.stringify({ // i want long variable name
+        "ift": ift,
+        "ser": "example.com",
+        "email": email,
+        "pwd": cyrb53(pwd1)
+    });
+    const req = new XMLHttpRequest();
+    req.open("POST", authUrl + '/li', true);
+    req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    req.onreadystatechange = () => { // Call a function when the state changes.
+        if (req.readyState === XMLHttpRequest.DONE && (req.status == 200 || req.status == 204)) {
+            let res = JSON.parse(req.responseText);
+            if (!res.exists) {
+                document.getElementById("lit2").innerHTML = "There's no account with that email address, would you like to <a onclick=\"su()\">make a new account</a> instead?";
+                return;
+            }
+            if (!res.pwd) {
+                document.getElementById("lit2").innerHTML = "That password isn't correct, did you misspell it?";
+                return;
+            }
+            localStorage.setItem('sid', res.sid);
+            window.location.reload();
+        }
+    };
+    req.send(jsonobjectforloggingin);
+}
+
 fetchUser(localStorage.getItem('sid')).then((res) => {
     if (window.location.toString().includes("chausdhsa89h98q3hai")) {
         document.getElementById("ptitle").innerHTML = "chausdhsa89h98q3hai";
@@ -93,6 +197,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
             document.getElementById("ss1").href = "/light.css";
     }
     else {
+        loggedin = false;
         oldunam = res.unam;
         abm = res.aboutMe.text;
         if (res.aboutMe.premyum) {
@@ -180,6 +285,9 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
             let code = Number("0x"+inviteCode[inviteCode.length - 2]+inviteCode[inviteCode.length - 1]).toString();
             fetch(`http${url.protocol == "https:" ? "s" : ""}://${ip}:${port}`).then(res => {
                 res.json().then(data => {
+                    if (data.description == undefined) {
+                        data.description = "This server has no description, it's too cool to be described.";
+                    }
                     document.getElementById("serinvitetitle").innerText = data.title.toString();
                     document.getElementById("serverName").innerHTML = `
                     You've been invited to join ${data.title}
@@ -252,6 +360,9 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
             let code = Number("0x"+inviteCode[inviteCode.length - 2]+inviteCode[inviteCode.length - 1]).toString();
             fetch(`http${url.protocol == "https:" ? "s" : ""}://${ip}:${port}`).then(res => {
                 res.json().then(data => {
+                    if (data.description == undefined) {
+                        data.description = "This server has no description, it's too cool to be described.";
+                    }
                     document.getElementById("serinvitetitle").innerText = data.title.toString();
                     document.getElementById("serverName").innerHTML = `
                     You've been invited to join ${data.title}
@@ -406,16 +517,159 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
         }
     }
     else {
-        if (!url.searchParams.has("invite") && !localStorage.getItem("pendingInvite"))
-        window.location = "/";
+        if (url.searchParams.has("invite")) {
+            let inviteCode = url.searchParams.get("invite");
+            let ip = [ // the first 8 characters are the ip address in hex form
+                Number("0x"+inviteCode[0]+inviteCode[1]).toString(),
+                Number("0x"+inviteCode[2]+inviteCode[3]).toString(),
+                Number("0x"+inviteCode[4]+inviteCode[5]).toString(),
+                Number("0x"+inviteCode[6]+inviteCode[7]).toString()].join(".");
+            let ogip = ip;
+            if (url.searchParams.has("invip")) {
+                ip = url.searchParams.get("invip");
+            }
+            let port = 0;
+            for (let c = 8; c + 2 < inviteCode.length; c++) {
+                port = port * 16 + parseInt(inviteCode[c], 16);
+            }
+            let code = Number("0x"+inviteCode[inviteCode.length - 2]+inviteCode[inviteCode.length - 1]).toString();
+            fetch(`http${url.protocol == "https:" ? "s" : ""}://${ip}:${port}`).then(res => {
+                res.json().then(data => {
+                    if (data.description == undefined) {
+                        data.description = "This server has no description, it's too cool to be described.";
+                    }
+                    document.getElementById("serinvitetitle").innerText = data.title.toString();
+                    document.getElementById("serverName").innerHTML = `
+                    You've been invited to join ${data.title}
+                    <br>IP: ${ip}:${port}
+                    <br>${data.memberCount} members
+                    <p>${converty.makeHtml(data.description.toString().replace(/\</g, "&lt;").replace(/\>/g, "&gt;"))}</p>
+                    `;
+                    document.getElementById("inviteIcon").src = data.icon;
+                    document.getElementById("loadingScreen").className += " fadeOut";
+                    document.getElementById("acceptinvitebtn").focus();
+                }).catch(err => {
+                    console.error(err);
+                    document.getElementById("serverName").innerHTML = `
+                    You've been invited to join a server, but we couldn't connect.<br>
+                    Either the invite link is invalid or the server is currently down.
+                    Please contact the server owner if you think there's an issue.
+                    `;
+                    document.getElementById("acceptinvitebtn").hidden = true;
+                    document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
+                    document.getElementById("loadingScreen").className += " fadeOut";
+                    document.getElementById("invdecline").focus();
+                    document.getElementById("invdecline").innerText = "Close";
+                    document.getElementById("invdecline").onclick = () => { window.close() };
+                });
+            }).catch(err => {
+                console.error(err);
+                document.getElementById("serverName").innerHTML = `
+                You've been invited to join a server, but we couldn't connect.<br>
+                Either the invite link is invalid or the server is currently down.
+                Please contact the server owner if you think there's an issue.
+                `;
+                document.getElementById("acceptinvitebtn").hidden = true;
+                document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
+                document.getElementById("loadingScreen").className += " fadeOut";
+                document.getElementById("invdecline").focus();
+                document.getElementById("invdecline").innerText = "Close";
+                document.getElementById("invdecline").onclick = () => { window.close() };
+            });
+            document.getElementById("inviteparent").style.display = "flex";
+            function clicky () {
+                document.getElementById("invdecline").innerText = "Close";
+                document.getElementById("invitepopup").removeChild(document.getElementById("acceptinvitebtn"));
+                su();
+            }
+            localStorage.removeItem("pendingInvite");
+            localStorage.removeItem("pendingInvip");
+            document.getElementById("acceptinvitebtn").addEventListener("click", clicky);
+        } else if (localStorage.getItem("pendingInvite") != null) {
+            let inviteCode = localStorage.getItem("pendingInvite");
+            let ip = [ // the first 8 characters are the ip address in hex form
+                Number("0x"+inviteCode[0]+inviteCode[1]).toString(),
+                Number("0x"+inviteCode[2]+inviteCode[3]).toString(),
+                Number("0x"+inviteCode[4]+inviteCode[5]).toString(),
+                Number("0x"+inviteCode[6]+inviteCode[7]).toString()].join(".");
+            let ogip = ip;
+            if (localStorage.getItem("pendingInvip")) {
+                ip = localStorage.getItem("pendingInvip");
+            }
+            let port = 0;
+            for (let c = 8; c + 2 < inviteCode.length; c++) {
+                port = port * 16 + parseInt(inviteCode[c], 16);
+            }
+            let code = Number("0x"+inviteCode[inviteCode.length - 2]+inviteCode[inviteCode.length - 1]).toString();
+            fetch(`http${url.protocol == "https:" ? "s" : ""}://${ip}:${port}`).then(res => {
+                res.json().then(data => {
+                    if (data.description == undefined) {
+                        data.description = "This server has no description, it's too cool to be described.";
+                    }
+                    document.getElementById("serinvitetitle").innerText = data.title.toString();
+                    document.getElementById("serverName").innerHTML = `
+                    You've been invited to join ${data.title}
+                    <br>IP: ${ip}:${port}
+                    <br>${data.memberCount} members
+                    <p>${converty.makeHtml(data.description.toString().replace(/\</g, "&lt;").replace(/\>/g, "&gt;"))}</p>
+                    `;
+                    document.getElementById("inviteIcon").src = data.icon;
+                    document.getElementById("loadingScreen").className += " fadeOut";
+                    document.getElementById("acceptinvitebtn").focus();
+                }).catch(err => {
+                    console.error(err);
+                    document.getElementById("serverName").innerHTML = `
+                    You've been invited to join a server, but we couldn't connect :~(<br>
+                    Either the invite link is invalid or the server is currently down.
+                    Please contact the server owner if you think there's an issue.
+                    `;
+                    document.getElementById("acceptinvitebtn").hidden = true;
+                    document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
+                    document.getElementById("loadingScreen").className += " fadeOut";
+                    document.getElementById("invdecline").focus();
+                    document.getElementById("invdecline").innerText = "Close";
+                    document.getElementById("invdecline").onclick = () => { window.close() };
+                });
+            }).catch(err => {
+                console.error(err);
+                document.getElementById("serverName").innerHTML = `
+                You've been invited to join a server, but we couldn't connect :~(<br>
+                Either the invite link is invalid or the server is currently down.
+                Please contact the server owner if you think there's an issue.
+                `;
+                document.getElementById("acceptinvitebtn").hidden = true;
+                document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
+                document.getElementById("loadingScreen").className += " fadeOut";
+                document.getElementById("invdecline").focus();
+                document.getElementById("invdecline").innerText = "Close";
+                document.getElementById("invdecline").onclick = () => { window.close() };
+            });
+            document.getElementById("inviteparent").style.display = "flex";
+            localStorage.removeItem("pendingInvite");
+            localStorage.removeItem("pendingInvip");
+            function clicky () {
+                document.getElementById("invdecline").innerText = "Close";
+                document.getElementById("invitepopup").removeChild(document.getElementById("acceptinvitebtn"));
+                const r = new XMLHttpRequest();
+                r.open("GET", authUrl+`/joinserver?id=${localStorage.getItem("sid")}&ip=${ip}:${port}+${code}${"+"+ogip}`);
+                r.onload = () => {
+                    if (r.status == 200) {
+                        document.body.removeChild(document.getElementById('inviteparent'));
+                        window.history.pushState({}, '', '/chat');
+                        clientLoad();
+                    } else {
+                        document.getElementById("serverName").innerHTML = "Couldn't join the server, maybe try again later?";
+                    }
+                };
+                r.send(null);
+            }
+            document.getElementById("acceptinvitebtn").addEventListener("click", clicky);
+        } else {
+            window.location = "/";
+        }
     }
 }, () => {
-    if (url.host.startsWith("http://192.168") && !localStorage.getItem("forceAuth")) {
-        localStorage.setItem("authUrl", "http://192.168.1.66:3000");
-        window.location.reload();
-    }
-    if (!url.searchParams.has("invite") && !localStorage.getItem("pendingInvite"))
-    window.location = "/";
+    document.getElementById("loadingText").innerHTML = "Something went wrong, click <a href='/'>here</a> to return to our homepage."
 });
 
 document.getElementById("accountInfo").addEventListener("mousedown", (e) => {
