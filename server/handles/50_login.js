@@ -16,6 +16,7 @@
  ************************************************************************/
 
 const http = require("http");
+const { v4 } = require("uuid");
 const { User } = require("./platypussDefaults.js");
 
 module.exports = {
@@ -48,8 +49,16 @@ module.exports = {
                     packet.ws.loggedinbytoken = true;
                     packet.ws.uid = data.id;
                     if (!(data.id in sdata.users)) {
-                        console.log(`${data.unam} has joined us today`);
+                        console.log(`${data.unam} has joined us today.`);
                         sdata.users[data.id] = new User(data.id);
+                        let mid = v4();
+                        sdata.messages[mid] = {
+                            special: true,
+                            content: `${data.unam} has joined us today.`,
+                            stamp: Date.now(),
+                            id: mid,
+                            author: "server"
+                        }
                         for (let client of wss.clients) {
                             if (client != packet.ws && client.loggedinbytoken)
                             client.send(JSON.stringify({
