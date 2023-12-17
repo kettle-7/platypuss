@@ -191,7 +191,8 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
         document.getElementById("htitle").innerHTML = "chausdhsa89h98q3hai";
     }
     if (res == null || localStorage.getItem('sid') == null) {
-        if (!url.searchParams.has("invite") && !localStorage.getItem("pendingInvite"))
+        document.head.removeChild(document.getElementById("ss0"));
+        if (!url.searchParams.has("invite") && !localStorage.getItem("pendingInvite"));
         window.location = "/";
         if (localStorage.getItem("theme") == "light")
             document.getElementById("ss1").href = "/light.css";
