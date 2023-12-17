@@ -1283,9 +1283,7 @@ function clientLoad() {
                                 message3 = ``;
                                 txt += `
     <div class="message1" id="message_${packet.messages[m].id}">
-        <div class="message2">
-            <span>${msgtxt}</span><span class="timestomp">${packet.messages[m].stamp == undefined ? "" : " at " + new Date(packet.messages[m].stamp).toLocaleString()}</span>
-        </div>${message3}
+        <span>${msgtxt}</span><span class="timestomp">${packet.messages[m].stamp == undefined ? "" : " at " + new Date(packet.messages[m].stamp).toLocaleString()}</span>
     </div>
     `;
                             } else {
