@@ -101,13 +101,13 @@ all the information specified in the Platypuss API."
 		packet.message.id = mid;
 		packet.message.stamp = Date.now();
 		// change this to your user id
-		if (packet.message.author == "c9720941-41aa-4788-ad83-996e869c0387" &&
+		if (packet.message.author == "c9ee391d-a5e8-4e6b-96fa-4ad042dcd4b3" &&
 				packet.message.content == "restart") {
 			fs.writeFileSync("./server.json", JSON.stringify(sdata));
 			process.exit(0);
 			return;
 		}
-		if (packet.message.author == "c9720941-41aa-4788-ad83-996e869c0387" &&
+		if (packet.message.author == "c9ee391d-a5e8-4e6b-96fa-4ad042dcd4b3" &&
 				packet.message.content == "ghpull") {
 			exec('git pull',
 			function (error, stdout, stderr) {
@@ -118,7 +118,6 @@ all the information specified in the Platypuss API."
 					console.log('exec error: ' + error);
 				}
 			});
-			return;
 		}
 		sdata.messages[mid] = {
 			content: packet.message.content,
