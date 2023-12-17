@@ -410,9 +410,9 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                         window.history.pushState({}, '', '/chat');
                         clientLoad();
                     } else {
-                        document.getElementById("serverName").innerHTML = "Couldn't join the server, maybe try again later?";
+                        document.getElementById("serverName").innerHTML = "Couldn't join the server, try again later?";
                     }
-                };
+                }
                 r.send(null);
             }
             document.getElementById("acceptinvitebtn").addEventListener("click", clicky);
@@ -579,6 +579,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
             function clicky () {
                 document.getElementById("invdecline").innerText = "Close";
                 document.getElementById("invitepopup").removeChild(document.getElementById("acceptinvitebtn"));
+                document.getElementById("invitepopup").style.display = "none";
                 su();
             }
             localStorage.removeItem("pendingInvite");
@@ -649,18 +650,8 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
             function clicky () {
                 document.getElementById("invdecline").innerText = "Close";
                 document.getElementById("invitepopup").removeChild(document.getElementById("acceptinvitebtn"));
-                const r = new XMLHttpRequest();
-                r.open("GET", authUrl+`/joinserver?id=${localStorage.getItem("sid")}&ip=${ip}:${port}+${code}${"+"+ogip}`);
-                r.onload = () => {
-                    if (r.status == 200) {
-                        document.body.removeChild(document.getElementById('inviteparent'));
-                        window.history.pushState({}, '', '/chat');
-                        clientLoad();
-                    } else {
-                        document.getElementById("serverName").innerHTML = "Couldn't join the server, maybe try again later?";
-                    }
-                };
-                r.send(null);
+                document.getElementById("invitepopup").style.display = "none";
+                su();
             }
             document.getElementById("acceptinvitebtn").addEventListener("click", clicky);
         } else {
