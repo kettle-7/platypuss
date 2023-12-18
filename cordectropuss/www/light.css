@@ -458,6 +458,10 @@ input {
     border: 0px solid transparent;
 }
 
+.message1 > span > p {
+    margin: 0px;
+}
+
 .timestomp {
     color: #666;
     display: none;
