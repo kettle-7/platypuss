@@ -1,5 +1,5 @@
  /************************************************************************
- * Copyright 2020-2023 Ben Keppel                                        *
+ * Copyright 2020-2023 Moss Finder                                       *
  *                                                                       *
  * This program is free software: you can redistribute it and/or modify  *
  * it under the terms of the GNU General Public License as published by  *
