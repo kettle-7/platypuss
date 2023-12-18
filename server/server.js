@@ -44,11 +44,9 @@ for (const file of handleFiles) {
 }
 
 const httpser = http.createServer((req, res) => {
-    let url = new URL(req.url, req.headers.host);
-    if (url.protocol == "https") {
-        req.destroy();
-        return;
-    }
+    if (req.url == "http://") return;
+    if (req.url == "https://") return;
+    if (req.url.startsWith("https")) return;
     res.writeHead(200, {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*"
