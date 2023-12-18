@@ -44,6 +44,10 @@ for (const file of handleFiles) {
 }
 
 const httpser = http.createServer((req, res) => {
+    let url = new URL(req.url, req.headers.host);
+    if (url.protocol == "https") {
+        req.destroy();
+    }
     res.writeHead(200, {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*"
@@ -161,6 +165,6 @@ for (let part of conf.ip.split(".")) {
 }
 // the invite code must be at least 16
 code += parseInt(conf.port, 10).toString(16) + parseInt(conf.inviteCode, 10).toString(16);
-inviteUrl = `http://platypuss.ddns.net/?invite=${code}`;
+inviteUrl = `http://platypuss.net/chat?invite=${code}`;
 
 console.log(`The server is currently running on port ${conf.port}, join at ${inviteUrl}`);
