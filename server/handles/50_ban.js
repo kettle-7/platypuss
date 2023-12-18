@@ -1,5 +1,5 @@
  /************************************************************************
- * Copyright 2020-2023 Ben Keppel                                        *
+ * Copyright 2020-2023 Ben Keppel, Moss Finder                           *
  *                                                                       *
  * This program is free software: you can redistribute it and/or modify  *
  * it under the terms of the GNU General Public License as published by  *
@@ -24,19 +24,19 @@
             packet.ws.send(JSON.stringify({
                 eventType: "error",
                 code: "missingId",
-                explanation: "Ban event requires the uid of the user"
+                explanation: "Ban event requires the ID of the user to be banned"
             }));
             return;
         }
         if (sdata.users[packet.uid] == undefined) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
-                code: "nonexistantUser",
+                code: "nonexistentUser",
                 explanation: "The client requested a modification to a non-existent user"
             }));
             return;
         }
-        if (!sdata.properties.admins.contains(packet.ws.uid)) {
+        if (!sdata.properties.admins.includes(packet.ws.uid)) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
                 code: "noPerm",
@@ -60,6 +60,6 @@ all the information specified in the Platypuss API."
                 client.close();
             }
         }
-		return sdata;
+	return sdata;
     }
 };
