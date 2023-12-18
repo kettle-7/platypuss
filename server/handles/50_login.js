@@ -68,6 +68,13 @@ module.exports = {
                             }));
                         }
                     } else {
+                        if (sdata.users[packet.ws.uid].banned) {
+                            packet.ws.send(JSON.stringify({
+                                eventType: "banned",
+                                explanation: `You have been banned from this server :3`
+                            }));
+                            return;
+                        }
                         console.log(`${data.unam} connected to the server.`);
                         for (let client of wss.clients) {
                             if (client != packet.ws && client.loggedinbytoken)
