@@ -128,6 +128,20 @@
                 </div>
                 <span id="avatarTooBig" hidden>Sorry, that file is too big, the maximum size is 5MB.</span>
                 <textarea class="textBox" id="acsabm" style="padding:2px;" placeholder="Tell us more about you..." maxlength="2000" rows="5"></textarea>
+                <div class="message1">
+                    <label style="align-self: center;">Use light theme</label>
+                    <label class="switch">
+                        <input type="checkbox">
+                        <span class="slider round" onclick="
+let theme = localStorage.getItem('theme');
+localStorage.setItem('theme', theme == 'light' ? 'dark' : 'light');
+if (document.getElementById('ss1'))
+    document.getElementById('ss1').href = theme == 'light' ? '/dark.css' : '/light.css';
+else
+    document.getElementById('ss0').href = theme == 'light' ? '/darkn.css' : '/lightn.css';
+                        "></span>
+                    </label>
+                </div>
                 <button class="dangerous chonk" id="acsdelacc"
                     onclick="document.getElementById('dacparent').style.display = 'flex';document.getElementById('acsparent').style.display = 'none';"
                     >Delete Account</button>

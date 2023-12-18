@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ************************************************************************/
 
-const http = require("http");
+const https = require("https");
 const { v4 } = require("uuid");
 const { User } = require("./platypussDefaults.js");
 
@@ -29,7 +29,7 @@ module.exports = {
                 explanation: "You are not invited to the server or the invite you have been sent is expired."
             }));
         }
-        http.get(`http://${sdata.properties.authAddr}/uinfo?id=${packet.sid}`, (res) => {
+        https.get(`https://${sdata.properties.authAddr}/uinfo?id=${packet.sid}`, (res) => {
             let chunks = [];
             res.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
             res.on('error', (err) => reject(err));
