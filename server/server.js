@@ -47,6 +47,7 @@ const httpser = http.createServer((req, res) => {
     let url = new URL(req.url, req.headers.host);
     if (url.protocol == "https") {
         req.destroy();
+        return;
     }
     res.writeHead(200, {
         "Content-Type": "application/json",
