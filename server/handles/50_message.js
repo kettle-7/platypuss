@@ -48,6 +48,7 @@ all the information specified in the Platypuss API."
 		//if (!(/[\!@#$%\^&\*()_+\-=\[\]{};':"\\|,.<>\/?A-Za-z0-9]/.test(packet.message.content)) && !packet) {
 		if (packet.message.content.replace(/[ \t\r\n]/g, "").length < 1) {
 			let skill = true;
+			console.log(packet.message.uploads);
 			if (packet.message.uploads.length) {
 				skill = false;
 			}
