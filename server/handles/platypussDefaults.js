@@ -24,7 +24,7 @@ module.exports = {
     defaultPerms: [
         "message.send",
         "message.read",
-        "message.old"
+        "message.history"
     ],
 
     User: class {

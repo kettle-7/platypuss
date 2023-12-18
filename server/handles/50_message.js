@@ -95,6 +95,14 @@ all the information specified in the Platypuss API."
 			packet.ws.lastInteractionSent = Date.now();
 			packet.ws.lastMessage = packet.message.content;
 		}
+		if (!sdata.users[packet.ws.uid].globalPerms.includes("message.send")) {
+			packet.ws.send(JSON.stringify({
+				"eventType": "error",
+				"code": "noPerm",
+				"explanation": "You can do not that."
+			}));
+			return;
+		}
 	    let	mid = v4();
 	    let author = packet.ws.uid;
 		packet.message.author = author;
@@ -129,7 +137,7 @@ all the information specified in the Platypuss API."
 		};
 		console.log(`<${author}> ${packet.message.content}`);
 		for (let client of wss.clients) {
-			if (client.loggedinbytoken)
+			if (client.loggedinbytoken && sdata.users[client.uid].globalPerms.includes("message.read"))
 			client.send(JSON.stringify({
 				eventType: "message",
 				message: {
