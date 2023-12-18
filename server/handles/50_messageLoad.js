@@ -20,6 +20,14 @@
  module.exports = {
 	eventType: "messageLoad",
 	execute: function (sdata, wss, packet) {
+        if (!(sdata.users[packet.ws.uid].globalPerms.includes("message.history") && sdata.users[packet.ws.uid].globalPerms.includes("message.read"))) {
+            packet.ws.send(JSON.stringify({
+                eventType: "error",
+                code: "noPerm",
+                explanation: "You can't do that"
+            }));
+            return;
+        }
         let max = 20;
         let start = 0;
         if (packet.max != undefined)

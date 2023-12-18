@@ -94,13 +94,16 @@ module.exports = {
                     packet.ws.send(JSON.stringify({
                         eventType: "connected",
                         explanation: "You've connected to the server successfully.",
-                        manifest: sdata.properties.manifest
+                        manifest: sdata.properties.manifest,
+                        permissions: sdata.users[packet.ws.uid].globalPerms
                     }));
-                    packet.ws.send(JSON.stringify({
-                        eventType: "messages",
-                        messages: msgstld,
-                        isTop: (mids.length <= 50)
-                    }));
+                    if (sdata.users[packet.ws.uid].globalPerms.includes("message.history") && sdata.users[packet.ws.uid].globalPerms.includes("message.read")) {
+                        packet.ws.send(JSON.stringify({
+                            eventType: "messages",
+                            messages: msgstld,
+                            isTop: (mids.length <= 50)
+                        }));
+                    }
                     return sdata;
                 } catch (e) {
                     console.log(e);

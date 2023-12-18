@@ -128,7 +128,7 @@ all the information specified in the Platypuss API."
 		};
 		console.log(`<${author}> ${packet.message.content}`);
 		for (let client of wss.clients) {
-			if (client.loggedinbytoken)
+			if (client.loggedinbytoken && sdata.users[client.uid].globalPerms.includes("message.read"))
 			client.send(JSON.stringify({
 				eventType: "messageEdited",
 				message: {
