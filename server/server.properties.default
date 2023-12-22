@@ -2,12 +2,13 @@
     "port": 5678,
     "inviteCode": 16,
     "ip": "127.0.0.1",
-    "authAddr": "122.62.122.75",
+    "authAddr": "https://platypuss.net",
     "manifest": {
-        "title": "Platypuss dev server",
+        "title": "Your New Server",
         "public": "false",
         "icon": "icon.png",
-        "memberCount": "lots of"
+        "memberCount": "no",
+        "description": ""
     },
     "sslCertPath": "./cert.pem",
     "sslKeyPath": "./key.pem"

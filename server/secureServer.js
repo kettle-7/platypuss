@@ -16,8 +16,8 @@
  ************************************************************************/
 
 const { WebSocketServer } = require('ws');
-const https = require('https');
 const http = require('http');
+const https = require('https');
 const { readFileSync, readdirSync, writeFileSync } = require("fs");
 const path = require('path');
 const { eventType } = require('./handles/50_message');
@@ -127,7 +127,7 @@ check your code thoroughly, otherwise please contact the developer."
         ws.on("error", console.log);
         ws.on("close", () => {
             writeFileSync(__dirname+"/server.json", JSON.stringify(sdata));
-            https.get(`https://${sdata.properties.authAddr}/uinfo?id=${ws.uid}`, (res) => {
+            https.get(`${sdata.properties.authAddr}/uinfo?id=${ws.uid}`, (res) => {
                 let chunks = [];
                 res.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
                 res.on('error', (err) => reject(err));
