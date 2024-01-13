@@ -686,7 +686,6 @@ document.addEventListener("keydown", (e) => {
         au();
         for (let e of [
             "accountInfoParent",
-            "P",
             "inviteparent",
             "acsparent",
             "uifparent",

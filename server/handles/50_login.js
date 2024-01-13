@@ -50,7 +50,7 @@ module.exports = {
                     packet.ws.uid = data.id;
                     if (!(data.id in sdata.users)) {
                         console.log(`${data.unam} has joined us today.`);
-                        sdata.users[data.id] = new User(data.id);
+                        sdata.users[data.id] = new User(data.id, data.tag);
                         let mid = v4();
                         sdata.messages[mid] = {
                             special: true,
@@ -95,7 +95,8 @@ module.exports = {
                         eventType: "connected",
                         explanation: "You've connected to the server successfully.",
                         manifest: sdata.properties.manifest,
-                        permissions: sdata.users[packet.ws.uid].globalPerms
+                        permissions: sdata.users[packet.ws.uid].globalPerms,
+                        isAdmin: sdata.properties.admins.includes(data.id)
                     }));
                     if (sdata.users[packet.ws.uid].globalPerms.includes("message.history") && sdata.users[packet.ws.uid].globalPerms.includes("message.read")) {
                         packet.ws.send(JSON.stringify({

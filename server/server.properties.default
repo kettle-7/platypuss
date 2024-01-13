@@ -10,6 +10,7 @@
         "memberCount": "no",
         "description": ""
     },
+    "admins": [],
     "sslCertPath": "./cert.pem",
     "sslKeyPath": "./key.pem"
 }
