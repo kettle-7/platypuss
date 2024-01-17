@@ -777,8 +777,8 @@ function moreMessages() {
 
 function sban() {
     sockets[focusedServer].send(JSON.stringify({
-        "type": "ban",
-        "uid": shown
+        eventType: "ban",
+        uid: shown
     }))
 }
 
