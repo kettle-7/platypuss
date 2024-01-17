@@ -64,6 +64,8 @@ module.exports = {
                             client.send(JSON.stringify({
                                 eventType: "welcome",
                                 user: data.id,
+                                globalPermissions: sdata.users[client.uid].globalPerms,
+                                isAdmin: sdata.properties.admins.includes(client.uid),
                                 explanation: `${data.unam} has joined us today.`
                             }));
                         }
@@ -81,6 +83,8 @@ module.exports = {
                             client.send(JSON.stringify({
                                 eventType: "join",
                                 user: data.id,
+                                globalPermissions: sdata.users[client.uid].globalPerms,
+                                isAdmin: sdata.properties.admins.includes(client.uid),
                                 explanation: `${data.unam} connected to the server.`
                             }));
                         }

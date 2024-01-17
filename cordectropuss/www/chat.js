@@ -712,6 +712,7 @@ var sockets = {};
 var loadedMessages = 0;
 var focusedServer;
 var reply;
+var peers = {};
 
 function deleteMessage(id, server) {
     if (premyum) return;
@@ -976,6 +977,7 @@ function clientLoad() {
     }
     elapsed = false;
     sockets = {};
+    peers = {};
     let opensocks = 0;
     let ips = [];
     document.getElementById("loadMoreMessages").hidden = false;
@@ -1474,6 +1476,7 @@ function clientLoad() {
                         icomg.addEventListener("click", () => {focusedServer=serveur;clientLoad();});
                         document.getElementById("left").appendChild(icomg);
                         if (focusedServer == serveur) {
+                            peers = packet.peers;
                             if (packet.isAdmin) {
                                 document.getElementById("userInfoAdminActions").hidden = false;
                             } else {
