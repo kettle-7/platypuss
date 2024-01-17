@@ -59,6 +59,7 @@ var premyum = false;
 var abm, oldunam;
 var mRef = {};
 var edit = false;
+var shown = null;
 if (!authUrl) authUrl = "https://platypuss.net";
 
 function fetchUser(id) {
@@ -745,6 +746,7 @@ function replyTo(id, server) {
 }
 
 function userInfo(id) {
+    shown = id;
     fetchUser(id).then(res => {
         document.getElementById("uifpfp").src = authUrl + res.pfp;
         document.getElementById("uifusername").innerText = res.unam;
@@ -771,6 +773,13 @@ function moreMessages() {
         max: 100,
         start: loadedMessages
     }));
+}
+
+function sban() {
+    sockets[focusedServer].send(JSON.stringify({
+        "type": "ban",
+        "uid": shown
+    }))
 }
 
 function au() {
