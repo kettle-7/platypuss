@@ -54,7 +54,8 @@ all the information specified in the Platypuss API."
 			}));
 			return; // don't shove the broken packet on all the clients,
 		}           // technically we can but it's antisocial behaviour uwu
-		sdata.users[packet.uid].banned = true;
+        if (!packet.unban) packet.unban = false;
+		sdata.users[packet.uid].banned = !packet.unban;
         for (let client of wss.clients) {
             if (client.uid == packet.ws.uid) {
                 client.close();

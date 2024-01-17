@@ -775,10 +775,11 @@ function moreMessages() {
     }));
 }
 
-function sban() {
+function sban(unban) {
     sockets[focusedServer].send(JSON.stringify({
         eventType: "ban",
-        uid: shown
+        uid: shown,
+        unban: unban
     }))
 }
 
