@@ -1462,7 +1462,6 @@ function clientLoad() {
                             focusedServer = serveur;
                             document.getElementById("msgtxt").focus();
                         }
-                        console.log(packet);
                         if (!packet.manifest)
                             packet.manifest = {};
                         if (!packet.manifest.icon) {
@@ -1474,11 +1473,22 @@ function clientLoad() {
                         console.log(icomg);
                         icomg.addEventListener("click", () => {focusedServer=serveur;clientLoad();});
                         document.getElementById("left").appendChild(icomg);
-                        if (packet.isAdmin) {
-                            document.getElementById("userInfoAdminActions").hidden = false;
-                        } else {
-                            document.getElementById("userInfoAdminActions").hidden = true;
+                        if (focusedServer == serveur) {
+                            if (packet.isAdmin) {
+                                document.getElementById("userInfoAdminActions").hidden = false;
+                            } else {
+                                document.getElementById("userInfoAdminActions").hidden = true;
+                            }
                         }
+                        break;
+                    case "banned":
+                        document.getElementById("loadingScreen").className += " fadeOut";
+                        if ("explanation" in packet)
+                            document.getElementById("mainContent").innerHTML += 
+                                '<div class="message1">'+packet.explanation+'</div>';
+                        else
+                            document.getElementById("mainContent").innerHTML +=
+                                '<pre class="message1"><code>'+event.data+'</code></pre>';
                         break;
                     case "join":
                     case "connecting":
