@@ -1474,6 +1474,11 @@ function clientLoad() {
                         console.log(icomg);
                         icomg.addEventListener("click", () => {focusedServer=serveur;clientLoad();});
                         document.getElementById("left").appendChild(icomg);
+                        if (packet.isAdmin) {
+                            document.getElementById("userInfoAdminActions").hidden = false;
+                        } else {
+                            document.getElementById("userInfoAdminActions").hidden = true;
+                        }
                         break;
                     case "join":
                     case "connecting":
