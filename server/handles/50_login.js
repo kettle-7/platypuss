@@ -91,13 +91,24 @@ module.exports = {
                         while (i < 0) i++;
                         msgstld.push(sdata.messages[mids[i]]);
                     }
-                    packet.ws.send(JSON.stringify({
+                    let obj = {
                         eventType: "connected",
                         explanation: "You've connected to the server successfully.",
                         manifest: sdata.properties.manifest,
                         permissions: sdata.users[packet.ws.uid].globalPerms,
                         isAdmin: sdata.properties.admins.includes(data.id)
-                    }));
+                    }
+                    obj.peers = {};
+                    for (let client of wss.clients) {
+                        if (client.readyState < 2 && client.loggedinbytoken && obj.peers[client.uid] == undefined) {
+                            obj.peers[client.uid] = {
+                                id: client.uid,
+                                globalPermissions: sdata.users[client.uid].globalPerms,
+                                isAdmin: sdata.properties.admins.includes(client.uid)
+                            }
+                        }
+                    }
+                    packet.ws.send(JSON.stringify(obj));
                     if (sdata.users[packet.ws.uid].globalPerms.includes("message.history") && sdata.users[packet.ws.uid].globalPerms.includes("message.read")) {
                         packet.ws.send(JSON.stringify({
                             eventType: "messages",
