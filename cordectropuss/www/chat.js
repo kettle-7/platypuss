@@ -1493,7 +1493,16 @@ function clientLoad() {
                             document.getElementById("mainContent").innerHTML +=
                                 '<pre class="message1"><code>'+event.data+'</code></pre>';
                         break;
+                    case "welcome":
+                        if ("explanation" in packet)
+                            document.getElementById("mainContent").innerHTML += 
+                                '<div class="message1">'+packet.explanation+'</div>';
+                        else
+                            document.getElementById("mainContent").innerHTML +=
+                                '<pre class="message1"><code>'+event.data+'</code></pre>';
                     case "join":
+                        peers[packet.user] = packet;
+                        break;
                     case "connecting":
                     case "disconnect":
                         if (packet.explanation && premyum) {

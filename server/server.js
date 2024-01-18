@@ -126,6 +126,12 @@ check your code thoroughly, otherwise please contact the developer."
         ws.on("error", console.log);
         ws.on("close", () => {
             writeFileSync(__dirname+"/server.json", JSON.stringify(sdata));
+            ws.readyState = 3;
+            for (let client of wss.clients) {
+                if (client.readyState < 2 && client.uid == ws.uid) {
+                    return; // don't tell others they disconnected if they have another client still connected
+                }
+            }
             http.get(`http://${sdata.properties.authAddr}/uinfo?id=${ws.uid}`, (res) => {
                 let chunks = [];
                 res.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
