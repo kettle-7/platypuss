@@ -109,14 +109,14 @@ all the information specified in the Platypuss API."
 		packet.message.author = author;
 		packet.message.id = mid;
 		packet.message.stamp = Date.now();
-		// change this to your user id
-		if (packet.message.author == "c9ee391d-a5e8-4e6b-96fa-4ad042dcd4b3" &&
+		
+		if (sdata.properties.admins.includes(packet.message.author) &&
 				packet.message.content == "restart") {
 			fs.writeFileSync("./server.json", JSON.stringify(sdata));
 			process.exit(0);
 			return;
 		}
-		if (packet.message.author == "c9ee391d-a5e8-4e6b-96fa-4ad042dcd4b3" &&
+		if (sdata.properties.admins.includes(packet.message.author) &&
 				packet.message.content == "ghpull") {
 			exec('git pull',
 			function (error, stdout, stderr) {
