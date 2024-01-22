@@ -1,5 +1,5 @@
  /************************************************************************
- * Copyright 2020-2023 Ben Keppel, Moss Finder                           *
+ * Copyright 2020-2023 Ben Keppel                                        *
  *                                                                       *
  * This program is free software: you can redistribute it and/or modify  *
  * it under the terms of the GNU General Public License as published by  *
@@ -18,13 +18,13 @@
  const { } = require("./platypussDefaults.js");
 
  module.exports = {
-	eventType: "ban",
+	eventType: "updatePermissions",
 	execute: function (sdata, wss, packet) {
         if (packet.uid == undefined) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
                 code: "missingField",
-                explanation: "Ban event requires the ID of the user to be banned"
+                explanation: "updatePermissions event requires the ID of the user to update the permissions of."
             }));
             return;
         }
@@ -32,7 +32,7 @@
             packet.ws.send(JSON.stringify({
                 eventType: "error",
                 code: "nonexistentUser",
-                explanation: "The client requested a modification to a non-existent user"
+                explanation: "The client requested a modification to a non-existent user."
             }));
             return;
         }
@@ -40,17 +40,27 @@
             packet.ws.send(JSON.stringify({
                 eventType: "error",
                 code: "noPerm",
-                explanation: "You can't do that"
+                explanation: "You need administrative permissions to update other people's permissions on this server."
             }));
             return;
         }
-        if (!packet.unban) packet.unban = false;
-		sdata.users[packet.uid].banned = !packet.unban;
-        for (let client of wss.clients) {
-            if (client.uid == packet.ws.uid) {
-                client.close();
-            }
+        if (packet.perms == undefined) {
+            packet.ws.send(JSON.stringify({
+                eventType: "error",
+                code: "missingField",
+                explanation: "updatePermissions event requires the new list of permissions to replace the user's current ones with."
+            }));
+            return;
         }
+        if (packet.perms.constructor !== Array) {
+            packet.ws.send(JSON.stringify({
+                eventType: "error",
+                code: "incorrectDataType",
+                explanation: "packet.perms must be a list / array."
+            }));
+            return;
+        }
+        sdata.users[packet.uid].globalPerms = packet.perms;
 		return sdata;
     }
 };
