@@ -546,7 +546,7 @@ hr {
     opacity: 0;
     display: none;
     width: fit-content;
-    height: fit-content;
+    height: 0px;
     top: 0px;
     bottom: 0px;
     flex-direction: column;
@@ -568,8 +568,12 @@ hr {
         justify-content: flex-start;
     }
 
-    .message3 * {
+    .message1:hover .message3 * {
         height: fit-content;
+    }
+
+    .message3 * {
+        height: 0px;
     }
 }
 
@@ -613,6 +617,7 @@ hr {
 .message1:hover .message3, .message1.hover .message3 {
     opacity: 1;
     display: flex;
+    height: fit-content;
 }
 
 .message2 > p {
