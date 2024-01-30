@@ -30,6 +30,18 @@ h1 {
     cursor: default;
 }
 
+h4 {
+    margin: 5px;
+}
+
+h5 {
+    margin: 2px;
+}
+
+h6 {
+    margin: 0px;
+}
+
 button {
     color: white;
     background-color: #373737;
