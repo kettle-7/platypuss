@@ -713,6 +713,7 @@ var loadedMessages = 0;
 var focusedServer;
 var reply;
 var peers = {};
+var lastMessageAuthor = null;
 
 function deleteMessage(id, server) {
     if (premyum) return;
@@ -980,6 +981,7 @@ function clientLoad() {
     peers = {};
     let opensocks = 0;
     let ips = [];
+    lastMessageAuthor = null;
     document.getElementById("loadMoreMessages").hidden = false;
     document.getElementById("mainContent").innerHTML = "";
     document.getElementById("left").innerHTML = "";
@@ -1152,16 +1154,28 @@ function clientLoad() {
     <button class="material-symbols-outlined" onclick="replyTo('${packet.message.id}', '${serveur}');">Reply</button>
 </div>`;
                                 }
-                                document.getElementById("mainContent").innerHTML += `
-<div class="message1" id="message_${packet.message.id}">
-    <img src="${pfp}" class="avatar" onclick="userInfo('${packet.message.author}');"/>
-    <div class="message2">
-    <span><strong class="chonk" onclick="userInfo('${packet.message.author}');">${unam
-        }</strong><span class="timestomp">@${resp ? resp.tag : "None"} at ${new Date(packet.message.stamp).toLocaleString()}${packet.message.edited ? ", last edited "+new Date(packet.message.edited).toLocaleString() : ""}</span></span>
-        <p>${msgtxt}</p>
-    </div>${message3}
-</div>
-`;
+                                if (lastMessageAuthor === packet.message.author) {
+                                    document.getElementById("mainContent").innerHTML += `
+                                    <div class="message1" id="message_${packet.message.id}">
+                                        <div style="width:48px;"></div>
+                                        <div class="message2">
+                                            <p>${msgtxt}</p>
+                                        </div>${message3}
+                                    </div>
+                                    `;
+                                } else {
+                                    document.getElementById("mainContent").innerHTML += `
+                                    <div class="message1" id="message_${packet.message.id}">
+                                        <img src="${pfp}" class="avatar" onclick="userInfo('${packet.message.author}');"/>
+                                        <div class="message2">
+                                        <span><strong class="chonk" onclick="userInfo('${packet.message.author}');">${unam
+                                            }</strong><span class="timestomp">@${resp ? resp.tag : "None"} at ${new Date(packet.message.stamp).toLocaleString()}${packet.message.edited ? ", last edited "+new Date(packet.message.edited).toLocaleString() : ""}</span></span>
+                                            <p>${msgtxt}</p>
+                                        </div>${message3}
+                                    </div>
+                                    `;
+                                    lastMessageAuthor = packet.message.author;
+                                }
                                 if (ma.scrollHeight < ma.scrollTop  + (2 * ma.clientHeight)) {
                                     ma.scrollTo(ma.scrollLeft, ma.scrollHeight - ma.clientHeight);
                                 }
