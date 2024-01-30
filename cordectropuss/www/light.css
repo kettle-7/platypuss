@@ -30,6 +30,18 @@ h1 {
     cursor: default;
 }
 
+h4 {
+    margin: 5px;
+}
+
+h5 {
+    margin: 2px;
+}
+
+h6 {
+    margin: 0px;
+}
+
 button {
     color: black;
     background: linear-gradient(#e0e0e0, #c4c4c4, #c4c4c4, #a8a8a8);
