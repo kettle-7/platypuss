@@ -168,7 +168,7 @@ this page to join the server.';
     const req = new XMLHttpRequest();
     req.open("POST", authUrl + '/li', true);
     req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    req.onreadystatechange = () => { // Call a function when the state changes.
+    req.onreadystatechange = () => {
         if (req.readyState === XMLHttpRequest.DONE && (req.status == 200 || req.status == 204)) {
             let res = JSON.parse(req.responseText);
             if (!res.exists) {

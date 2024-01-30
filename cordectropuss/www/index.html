@@ -144,8 +144,6 @@ else
             <div class="centred popup" id="cpwdpopup">
                 <h2 style="text-align:center;">Change Password</h2>
                 <div style="flex-grow:1;"></div>
-                <!-- <span id="cpwdnc" hidden>Sorry, that's not your current password.</span>
-                <input type="password" id="oldPwd" class="chonk textBox" placeholder="Current Password" /> -->
                 <span id="nonmatch" hidden>Sorry, that's not your current password.</span>
                 <input name="DummyUsername" type="text" style="display:none;"> <!-- firefox to stop thinking that the message box is username -->
                 <input type="password" id="newPwd" class="chonk textBox" placeholder="New Password" />
@@ -160,12 +158,6 @@ else
             </p>
             <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
         </div>
-        <!-- Load React. -->
-        <!-- Note: when deploying, replace "development.js" with "production.min.js". --
-        <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-        <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script><!---->
         <script src="index.js"></script>
-        <!-- boring google sign in shit --
-        <script src="https://accounts.google.com/gsi/client" async defer></script><!---->
     </body>
 </html>
