@@ -1143,7 +1143,7 @@ function clientLoad() {
                                 if (packet.message.author == sers.userId) {
                                     message3 = `
 <div class="message3">
-    ${lastMessageAuthor === packet.message.author ? `<span class="timestomp" style="position:relative;top:4px;">@${resp ? resp.tag : "None"} at ${new Date(packet.message.stamp).toLocaleString()}${packet.message.edited ? ", last edited "+new Date(packet.message.edited).toLocaleString() : ""}</span>` : ""}
+    ${lastMessageAuthor === packet.message.author ? `<span class="timestomp" style="position:relative;top:5px;">@${resp ? resp.tag : "None"} at ${new Date(packet.message.stamp).toLocaleString()}${packet.message.edited ? ", last edited "+new Date(packet.message.edited).toLocaleString() : ""}</span>` : ""}
     <button class="material-symbols-outlined" onclick="editMessage('${packet.message.id}', '${serveur}');">Edit</button>
     <button class="material-symbols-outlined" onclick="deleteMessage('${packet.message.id}', '${serveur}');">Delete</button>
     <button class="material-symbols-outlined" onclick="replyTo('${packet.message.id}', '${serveur}');">Reply</button>
@@ -1151,7 +1151,7 @@ function clientLoad() {
                                 } else {
                                     message3 = `
 <div class="message3">
-    ${lastMessageAuthor === packet.message.author ? `<span class="timestomp" style="position:relative;top:4px;">@${resp ? resp.tag : "None"} at ${new Date(packet.message.stamp).toLocaleString()}${packet.message.edited ? ", last edited "+new Date(packet.message.edited).toLocaleString() : ""}</span>` : ""}
+    ${lastMessageAuthor === packet.message.author ? `<span class="timestomp" style="position:relative;top:5px;">@${resp ? resp.tag : "None"} at ${new Date(packet.message.stamp).toLocaleString()}${packet.message.edited ? ", last edited "+new Date(packet.message.edited).toLocaleString() : ""}</span>` : ""}
     <button class="material-symbols-outlined" onclick="ping('${packet.message.author}');">alternate_email</button>
     <button class="material-symbols-outlined" onclick="replyTo('${packet.message.id}', '${serveur}');">Reply</button>
 </div>`;
@@ -1460,24 +1460,26 @@ function clientLoad() {
                                if (packet.message.author == sers.userId) {
                                    message3 = `
 <div class="message3">
-   <button class="material-symbols-outlined" onclick="editMessage('${packet.message.id}', '${serveur}');">Edit</button>
-   <button class="material-symbols-outlined" onclick="deleteMessage('${packet.message.id}', '${serveur}');">Delete</button>
-   <button class="material-symbols-outlined" onclick="replyTo('${packet.message.id}', '${serveur}');">Reply</button>
+    ${lastMessageAuthor === packet.messages[m].author ? `<span class="timestomp" style="position:relative;top:5px;">@${resp ? resp.tag : "None"} at ${new Date(packet.messages[m].stamp).toLocaleString()}${packet.messages[m].edited ? ", last edited "+new Date(packet.messages[m].edited).toLocaleString() : ""}</span>` : ""}
+    <button class="material-symbols-outlined" onclick="editMessage('${packet.message.id}', '${serveur}');">Edit</button>
+    <button class="material-symbols-outlined" onclick="deleteMessage('${packet.message.id}', '${serveur}');">Delete</button>
+    <button class="material-symbols-outlined" onclick="replyTo('${packet.message.id}', '${serveur}');">Reply</button>
 </div>`;
                                } else {
                                    message3 = `
 <div class="message3">
-   <button class="material-symbols-outlined" onclick="ping('${packet.message.author}');">alternate_email</button>
-   <button class="material-symbols-outlined" onclick="replyTo('${packet.message.id}', '${serveur}');">Reply</button>
+    ${lastMessageAuthor === packet.messages[m].author ? `<span class="timestomp" style="position:relative;top:5px;">@${resp ? resp.tag : "None"} at ${new Date(packet.messages[m].stamp).toLocaleString()}${packet.messages[m].edited ? ", last edited "+new Date(packet.messages[m].edited).toLocaleString() : ""}</span>` : ""}
+    <button class="material-symbols-outlined" onclick="ping('${packet.message.author}');">alternate_email</button>
+    <button class="material-symbols-outlined" onclick="replyTo('${packet.message.id}', '${serveur}');">Reply</button>
 </div>`;
                                }
                                document.getElementById(`message_${packet.message.id}`).innerHTML = `
-   <img src="${pfp}" class="avatar" onclick="userInfo('${packet.message.author}');"/>
-   <div class="message2">
-   <span><strong class="chonk" onclick="userInfo('${packet.message.author}');">${unam
-       }</strong><span class="timestomp">@${resp ? resp.tag : "None"} at ${new Date(packet.message.stamp).toLocaleString()}${packet.message.edited ? ", last edited "+new Date(packet.message.edited).toLocaleString() : ""}</span></span>
-       <p>${msgtxt}</p>
-   </div>${message3}
+    <img src="${pfp}" class="avatar" onclick="userInfo('${packet.message.author}');"/>
+    <div class="message2">
+    <span><strong class="chonk" onclick="userInfo('${packet.message.author}');">${unam
+        }</strong><span class="timestomp">@${resp ? resp.tag : "None"} at ${new Date(packet.message.stamp).toLocaleString()}${packet.message.edited ? ", last edited "+new Date(packet.message.edited).toLocaleString() : ""}</span></span>
+        <p>${msgtxt}</p>
+    </div>${message3}
 `;
                                if (ma.scrollHeight < ma.scrollTop  + (2 * ma.clientHeight)) {
                                    ma.scrollTo(ma.scrollLeft, ma.scrollHeight - ma.clientHeight);
