@@ -443,6 +443,8 @@
      background: transparent;
      cursor: pointer;
      object-fit: cover;
+     filter: grayscale(100%);
+     opacity: 0.25;
  }
  
  #left .avatar {
