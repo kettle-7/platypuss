@@ -1296,7 +1296,7 @@ function clientLoad() {
                             if (packet.messages[m].author == sers.userId) {
                                 message3 = `
                                 <div class="message3">
-                                    ${lastMessagesAuthor === packet.messages[m].author ? `<span class="timestomp" style="position:relative;top:5px;">@${resp ? resp.tag : "None"} at ${new Date(packet.messages[m].stamp).toLocaleString()}${packet.messages[m].edited ? ", last edited "+new Date(packet.messages[m].edited).toLocaleString() : ""}</span>` : ""}
+                                    ${lastMessagesAuthor === packet.messages[m].author ? `<span class="timestomp" style="position:relative;top:5px;">@${user ? user.tag : "None"} at ${new Date(packet.messages[m].stamp).toLocaleString()}${packet.messages[m].edited ? ", last edited "+new Date(packet.messages[m].edited).toLocaleString() : ""}</span>` : ""}
                                     <button class="material-symbols-outlined" onclick="editMessage('${packet.messages[m].id}', '${serveur}');">Edit</button>
                                     <button class="material-symbols-outlined" onclick="deleteMessage('${packet.messages[m].id}', '${serveur}');">Delete</button>
                                     <button class="material-symbols-outlined" onclick="replyTo('${packet.messages[m].id}', '${serveur}');">Reply</button>
@@ -1304,7 +1304,7 @@ function clientLoad() {
                             } else {
                                 message3 = `
                                 <div class="message3">
-                                    ${lastMessagesAuthor === packet.messages[m].author ? `<span class="timestomp" style="position:relative;top:5px;">@${resp ? resp.tag : "None"} at ${new Date(packet.messages[m].stamp).toLocaleString()}${packet.messages[m].edited ? ", last edited "+new Date(packet.messages[m].edited).toLocaleString() : ""}</span>` : ""}
+                                    ${lastMessagesAuthor === packet.messages[m].author ? `<span class="timestomp" style="position:relative;top:5px;">@${user ? user.tag : "None"} at ${new Date(packet.messages[m].stamp).toLocaleString()}${packet.messages[m].edited ? ", last edited "+new Date(packet.messages[m].edited).toLocaleString() : ""}</span>` : ""}
                                     <button class="material-symbols-outlined" onclick="ping('${packet.messages[m].author}');">alternate_email</button>
                                     <button class="material-symbols-outlined" onclick="replyTo('${packet.messages[m].id}', '${serveur}');">Reply</button>
                                 </div>`;
