@@ -1159,7 +1159,7 @@ function clientLoad() {
                                 if (lastMessageAuthor === packet.message.author) {
                                     document.getElementById("mainContent").innerHTML += `
                                     <div class="message1" id="message_${packet.message.id}">
-                                        <div style="width:48px;"></div>
+                                        <div style="width:48px;flex-shrink:0;"></div>
                                         <div class="message2">
                                             <p>${msgtxt}</p>
                                         </div>${message3}
@@ -1320,7 +1320,7 @@ function clientLoad() {
                             } else if (lastMessagesAuthor === packet.messages[m].author) {
                                 txt += `
                                 <div class="message1" id="message_${packet.messages[m].id}">
-                                    <div style="width:48px;"></div>
+                                    <div style="width:48px;flex-shrink:0;"></div>
                                     <div class="message2">
                                         <p>${msgtxt}</p>
                                     </div>${message3}
