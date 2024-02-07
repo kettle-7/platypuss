@@ -444,6 +444,11 @@ input {
     border-radius: 25%;
 }
 
+#profBanner .avatar {
+    min-width: 96px !important;
+    min-height: 96px !important;
+}
+
 #acsusername {
     font-size: 16pt;
     font-weight: 900;
