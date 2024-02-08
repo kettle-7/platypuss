@@ -34,7 +34,7 @@
  button {
      color: color(rec2020 0.5 1 0.5);
      background-color: springgreen;
-     border: 1px solid lime;
+     border: 1px solid color(rec2020 0 1 0);
      border-radius: 5px;
      padding: 2px;
      padding-left: 10px;
@@ -98,7 +98,7 @@
      height: fit-content;
      display: flex;
      flex-direction: column;
-     border: 0px solid lime;
+     border: 0px solid color(rec2020 0 1 0);
      border-radius: 5px;
      background: springgreen;
      box-shadow: 0px 0px 20px #000000;
@@ -170,7 +170,7 @@
  code {
      font-family: "Ubuntu Mono", "Lucida Sans", monospace, mono;
      background-color: springgreen;
-     border: 1px solid lime;
+     border: 1px solid color(rec2020 0 1 0);
      border-radius: 5px;
      padding: 2px;
  }
@@ -183,7 +183,7 @@
  
  pre {
      background-color: springgreen;
-     border: 2px solid lime;
+     border: 2px solid color(rec2020 0 1 0);
      border-radius: 5px;
      padding: 3px;
  }
@@ -193,7 +193,7 @@
  }
  
  blockquote {
-     border-left: 3px solid lime;
+     border-left: 3px solid color(rec2020 0 1 0);
      margin-left: 0;
      padding: 5px;
  }
@@ -250,7 +250,7 @@
      padding-bottom: 0px;
      align-items: center;
      height: fit-content;
-     border-bottom: 1px solid lime;
+     border-bottom: 1px solid color(rec2020 0 1 0);
  }
  
  header h1 {
@@ -489,7 +489,7 @@
  }
  
  hr {
-     border: 2px solid lime;
+     border: 2px solid color(rec2020 0 1 0);
  }
  
  .message1:hover {
@@ -573,7 +573,7 @@
      display: flex;
      flex-direction: row;
      gap: 3px;
-     border: 1px solid lime;
+     border: 1px solid color(rec2020 0 1 0);
      box-shadow: 1px 1px 5px springgreen;
      align-content: center;
      border-radius: 5px;
@@ -585,7 +585,7 @@
        background-color: springgreen;
      }
      50% {
-         background-color: lime;
+         background-color: color(rec2020 0 1 0);
      }
      100% {
        background-color: springgreen;
@@ -684,7 +684,7 @@
  
  ::-webkit-scrollbar-thumb {
      border-radius: 5px;
-     background-color: lime;
+     background-color: color(rec2020 0 1 0);
      width: 10px;
      box-shadow: 0 0 5px grey; 
  }
@@ -693,7 +693,7 @@
      outline: 0;
      outline-color: transparent;
      outline-style: none;
-     box-shadow: 0px 0px 3px lime !important;
+     box-shadow: 0px 0px 3px color(rec2020 0 1 0) !important;
  }
  
  .banner {
@@ -714,7 +714,7 @@
  
  .textBox {
      background-color: springgreen;
-     border-color: lime;
+     border-color: color(rec2020 0 1 0);
      box-shadow: 2px 2px 5px springgreen inset;
  }
  
