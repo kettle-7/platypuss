@@ -19,7 +19,7 @@
 
  * {
      font-family: Inter, sans-serif;
-     color: #00aa00;
+     color: color(rec2020 0.5 1 0.5);
      cursor: not-allowed !important;
  }
  
@@ -32,7 +32,7 @@
  }
  
  button {
-     color: #00aa00;
+     color: color(rec2020 0.5 1 0.5);
      background-color: springgreen;
      border: 1px solid lime;
      border-radius: 5px;
@@ -189,7 +189,7 @@
  }
  
  a {
-     color: #00aa00;
+     color: color(rec2020 0.5 1 0.5);
  }
  
  blockquote {
@@ -220,7 +220,7 @@
  }
  
  a > h1 {
-     color: #00aa00;
+     color: color(rec2020 0.5 1 0.5);
      text-decoration: none;
      display: inline;
  }
@@ -238,7 +238,7 @@
  }
  
  header {
-     color: #00aa00;
+     color: color(rec2020 0.5 1 0.5);
      background: linear-gradient(springgreen, springgreen);
      display: flex;
      flex-direction: row;
@@ -271,7 +271,7 @@
  
  input, textarea {
      background-color: springgreen;
-     color: #00aa00;
+     color: color(rec2020 0.5 1 0.5);
      border: 1px solid #0075db;
      border-radius: 5px;
  }
@@ -473,7 +473,7 @@
  }
  
  .timestomp {
-     color: #00aa00;
+     color: color(rec2020 0.5 1 0.5);
      display: none;
  }
  
