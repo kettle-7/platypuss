@@ -1509,6 +1509,7 @@ function clientLoad() {
                             for (let peer of Object.values(peers)) {
                                 console.log(peer);
                                 let peerimg = document.createElement("img");
+                                peerimg.id = `peerlabel_${peer.id}`;
                                 peerimg.className = "serverIcon avatar";
                                 peerimg.src = (await fetchUser(peer.id)).pfp;
                                 peerimg.addEventListener("click", () => {userInfo(peer.id)});
