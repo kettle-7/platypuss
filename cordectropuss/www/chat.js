@@ -985,7 +985,7 @@ function clientLoad() {
     document.getElementById("loadMoreMessages").hidden = false;
     document.getElementById("mainContent").innerHTML = "";
     document.getElementById("left").innerHTML = "";
-    document.getElementById("right").innerHTML = "";
+    document.getElementById("right").innerHTML = "peers";
     let ma = document.getElementById("messageArea");
     const h = new XMLHttpRequest();
     h.open('GET', authUrl+'/sload?id='+localStorage.getItem('sid'), true);
@@ -1012,7 +1012,7 @@ function clientLoad() {
             let surl = ((url.protocol == "https:" ? "wss" : "ws") + "://"+ip.toString());
             let ws = new WebSocket(surl);
             document.getElementById("left").innerHTML = "";
-            document.getElementById("right").innerHTML = "";
+            document.getElementById("right").innerHTML = "peers";
             breaks.push(setTimeout(() => {
                 if (ws.readyState == 0) {
                     ws.close();
