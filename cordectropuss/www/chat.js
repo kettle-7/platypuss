@@ -1540,10 +1540,11 @@ function clientLoad() {
                             document.getElementById("mainContent").innerHTML +=
                                 '<pre class="message1"><code>'+event.data+'</code></pre>';
                     case "join":
-                        peers[packet.user] = packet;
+                        document.getElementById(`peerlabel_${packet.user}`).style.opacity = 1;
                         break;
-                    case "connecting":
                     case "disconnect":
+                        document.getElementById(`peerlabel_${packet.user}`).style.opacity = 0.5;
+                    case "connecting":
                         if (packet.explanation && premyum) {
                             document.getElementById("mainContent").innerHTML += 
                                 '<div class="message1">'+packet.explanation+'</div>';
