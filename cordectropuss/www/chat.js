@@ -1012,6 +1012,7 @@ function clientLoad() {
             let surl = ((url.protocol == "https:" ? "wss" : "ws") + "://"+ip.toString());
             let ws = new WebSocket(surl);
             document.getElementById("left").innerHTML = "";
+            document.getElementById("right").innerHTML = "";
             breaks.push(setTimeout(() => {
                 if (ws.readyState == 0) {
                     ws.close();
@@ -1505,6 +1506,13 @@ function clientLoad() {
                         document.getElementById("left").appendChild(icomg);
                         if (focusedServer == serveur) {
                             peers = packet.peers;
+                            for (let peer of peers) {
+                                let peerimg = document.createElement("img");
+                                peerimg.className = "serverIcon avatar";
+                                peerimg.src = await fetchUser(peer.id).pfp;
+                                peerimg.addEventListener("click", () => {userInfo(peer.id)});
+                                document.getElementById("right").appendChild(peerimg);
+                            }
                             console.log(peers);
                             if (packet.isAdmin) {
                                 document.getElementById("userInfoAdminActions").hidden = false;
