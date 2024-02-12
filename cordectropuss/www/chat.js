@@ -1506,7 +1506,7 @@ function clientLoad() {
                         document.getElementById("left").appendChild(icomg);
                         if (focusedServer == serveur) {
                             peers = packet.peers;
-                            for (let peer of peers) {
+                            for (let peer of Object.values(peers)) {
                                 let peerimg = document.createElement("img");
                                 peerimg.className = "serverIcon avatar";
                                 peerimg.src = await fetchUser(peer.id).pfp;
