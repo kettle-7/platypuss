@@ -103,13 +103,17 @@ module.exports = {
                         isAdmin: sdata.properties.admins.includes(data.id)
                     }
                     obj.peers = {};
+                    for (let user of Object.values(sdata.users)) {
+                        obj.peers[user.id] = {
+                            id: user.id,
+                            globalPermissions: user.globalPerms,
+                            isAdmin: sdata.properties.admins.includes(user.id),
+                            online: false
+                        }
+                    }
                     for (let client of wss.clients) {
-                        if (client.readyState < 2 && client.loggedinbytoken && obj.peers[client.uid] == undefined) {
-                            obj.peers[client.uid] = {
-                                id: client.uid,
-                                globalPermissions: sdata.users[client.uid].globalPerms,
-                                isAdmin: sdata.properties.admins.includes(client.uid)
-                            }
+                        if (client.readyState < 2 && client.loggedinbytoken && obj.peers[client.uid] != undefined) {
+                            obj.peers[client.uid].online = true;
                         }
                     }
                     packet.ws.send(JSON.stringify(obj));
