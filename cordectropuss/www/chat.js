@@ -1514,6 +1514,7 @@ function clientLoad() {
                                 peerimg.src = (await fetchUser(peer.id)).pfp;
                                 peerimg.addEventListener("click", () => {userInfo(peer.id)});
                                 if (!peer.online) peerimg.style.opacity = 0.5;
+                                document.getElementById(`peerlabel_${packet.user}`).style.filter = "grayscale";
                                 document.getElementById("right").appendChild(peerimg);
                             }
                             if (packet.isAdmin) {
@@ -1544,6 +1545,7 @@ function clientLoad() {
                         break;
                     case "disconnect":
                         document.getElementById(`peerlabel_${packet.user}`).style.opacity = 0.5;
+                        document.getElementById(`peerlabel_${packet.user}`).style.filter = "grayscale";
                     case "connecting":
                         if (packet.explanation && premyum) {
                             document.getElementById("mainContent").innerHTML += 
