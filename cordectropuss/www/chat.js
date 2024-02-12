@@ -1020,7 +1020,6 @@ function clientLoad() {
             }, 60000));
             ws.onerror = () => {
                 console.error(`Warning: couldn't connect to ${ip}, try check your internet connection or inform the owner(s) of the server.`);
-                console.log(elapsed);
                 if (elapsed) clientLoad();
             };
             ws.onopen = () => {
@@ -1502,11 +1501,11 @@ function clientLoad() {
                         let icomg = document.createElement("img");
                         icomg.className = "serverIcon avatar";
                         icomg.src = packet.manifest.icon;
-                        console.log(icomg);
                         icomg.addEventListener("click", () => {focusedServer=serveur;clientLoad();});
                         document.getElementById("left").appendChild(icomg);
                         if (focusedServer == serveur) {
                             peers = packet.peers;
+                            console.log(peers);
                             if (packet.isAdmin) {
                                 document.getElementById("userInfoAdminActions").hidden = false;
                             } else {
