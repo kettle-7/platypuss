@@ -319,6 +319,7 @@ input {
     padding: 3px;
     flex-grow: 0;
     flex-shrink: 0;
+    overflow-y: scroll;
 }
 
 #left {

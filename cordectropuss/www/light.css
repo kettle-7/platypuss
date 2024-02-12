@@ -327,6 +327,7 @@ input {
     flex-grow: 0;
     flex-shrink: 0;
     background: #d0d0d0;
+    overflow-y: scroll;
 }
 
 #loadMoreMessages {
