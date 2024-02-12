@@ -1507,13 +1507,13 @@ function clientLoad() {
                         if (focusedServer == serveur) {
                             peers = packet.peers;
                             for (let peer of Object.values(peers)) {
+                                console.log(peer);
                                 let peerimg = document.createElement("img");
                                 peerimg.className = "serverIcon avatar";
                                 peerimg.src = await fetchUser(peer.id).pfp;
                                 peerimg.addEventListener("click", () => {userInfo(peer.id)});
                                 document.getElementById("right").appendChild(peerimg);
                             }
-                            console.log(peers);
                             if (packet.isAdmin) {
                                 document.getElementById("userInfoAdminActions").hidden = false;
                             } else {
