@@ -1513,8 +1513,10 @@ function clientLoad() {
                                 peerimg.className = "serverIcon avatar";
                                 peerimg.src = (await fetchUser(peer.id)).pfp;
                                 peerimg.addEventListener("click", () => {userInfo(peer.id)});
-                                if (!peer.online) peerimg.style.opacity = 0.5;
-                                document.getElementById(`peerlabel_${packet.user}`).style.filter = "grayscale";
+                                if (!peer.online) {
+                                    peerimg.style.opacity = 0.5;
+                                    peerimg.style.filter = "grayscale";
+                                }
                                 document.getElementById("right").appendChild(peerimg);
                             }
                             if (packet.isAdmin) {
