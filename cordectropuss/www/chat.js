@@ -1510,7 +1510,7 @@ function clientLoad() {
                                 console.log(peer);
                                 let peerimg = document.createElement("img");
                                 peerimg.className = "serverIcon avatar";
-                                peerimg.src = await fetchUser(peer.id).pfp;
+                                peerimg.src = (await fetchUser(peer.id)).pfp;
                                 peerimg.addEventListener("click", () => {userInfo(peer.id)});
                                 document.getElementById("right").appendChild(peerimg);
                             }
