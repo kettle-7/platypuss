@@ -28,6 +28,7 @@ module.exports = {
                 code: "invalidInvite",
                 explanation: "You are not invited to the server or the invite you have been sent is expired."
             }));
+            return;
         }
         https.get(`${sdata.properties.authAddr}/uinfo?id=${packet.sid}`, (res) => {
             let chunks = [];

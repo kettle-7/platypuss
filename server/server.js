@@ -16,7 +16,7 @@
  ************************************************************************/
 
 const { WebSocketServer } = require('ws');
-const http = require('http');
+const http = require('https');
 const { readFileSync, readdirSync, writeFileSync } = require("fs");
 const path = require('path');
 const { eventType } = require('./handles/50_message');
