@@ -19,7 +19,6 @@ const { WebSocketServer } = require('ws');
 const http = require('https');
 const { readFileSync, readdirSync, writeFileSync } = require("fs");
 const path = require('path');
-const { eventType } = require('./handles/50_message');
 var conf = JSON.parse(readFileSync(__dirname+"/server.properties"));
 var sdata = JSON.parse(readFileSync(__dirname+"/server.json"));
 sdata.properties = conf;
