@@ -16,7 +16,8 @@
  ************************************************************************/
 
 const { WebSocketServer } = require('ws');
-const http = require('https');
+const https = require('https');
+const http = require('http');
 const { readFileSync, readdirSync, writeFileSync } = require("fs");
 const path = require('path');
 var conf = JSON.parse(readFileSync(__dirname+"/server.properties"));
@@ -131,7 +132,7 @@ check your code thoroughly, otherwise please contact the developer."
                     return; // don't tell others they disconnected if they have another client still connected
                 }
             }
-            http.get(`http://${sdata.properties.authAddr}/uinfo?id=${ws.uid}`, (res) => {
+            https.get(`https://${sdata.properties.authAddr}/uinfo?id=${ws.uid}`, (res) => {
                 let chunks = [];
                 res.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
                 res.on('error', (err) => reject(err));
@@ -169,6 +170,6 @@ for (let part of conf.ip.split(".")) {
 }
 // the invite code must be at least 16
 code += parseInt(conf.port, 10).toString(16) + parseInt(conf.inviteCode, 10).toString(16);
-inviteUrl = `http://platypuss.net/chat?invite=${code}`;
+inviteUrl = `https://platypuss.net/chat?invite=${code}`;
 
 console.log(`The server is currently running on port ${conf.port}, join at ${inviteUrl}`);
