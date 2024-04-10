@@ -1499,12 +1499,16 @@ function clientLoad() {
                         if (!packet.manifest.icon) {
                             packet.manifest.icon = "./icon.png";
                         }
+                        if (!packet.manifest.title) {
+                            packet.manifest.title = "untitled server";
+                        }
                         let icomg = document.createElement("img");
                         icomg.className = "serverIcon avatar";
                         icomg.src = packet.manifest.icon;
                         icomg.addEventListener("click", () => {focusedServer=serveur;clientLoad();});
                         document.getElementById("left").appendChild(icomg);
                         if (focusedServer == serveur) {
+                            document.getElementById("htitle").innerText = packet.manifest.title;
                             peers = packet.peers;
                             for (let peer of Object.values(peers)) {
                                 console.log(peer);
