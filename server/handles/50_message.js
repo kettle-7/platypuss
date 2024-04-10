@@ -20,7 +20,7 @@ const { } = require("./platypussDefaults.js"); // import nothing :o)
 const fs = require("fs");
 const exec = require('child_process').exec;
 
-const rateLimit = 500; // Minimum time between messages sent, change this if you like.
+const rateLimit = 2000; // Minimum time between messages sent, change this if you like.
 const maxLength = 2000; // Maximum length of messages that can be sent, change this one if you want as well UwU.
 const allowDuplicates = true; // Whether or not someone can send the same message more than once in a row, change this if you like too Nyaaa~!
 
@@ -47,18 +47,14 @@ all the information specified in the Platypuss API."
 		}
 		//if (!(/[\!@#$%\^&\*()_+\-=\[\]{};':"\\|,.<>\/?A-Za-z0-9]/.test(packet.message.content)) && !packet) {
 		if (packet.message.content.replace(/[ \t\r\n]/g, "").length < 1) {
-			let skill = true;
-			console.log(packet.message.uploads);
-			if (packet.message.uploads.length) {
-				skill = false;
-			}
-			if (skill)
+			if (!packet.message.uploads.length) {
 				packet.ws.send(JSON.stringify({
 					"eventType": "error",
 					"code": "invisibleMsg",
 					"explanation": "An attempt to stop invisible messages.<br><br><pre><code>"+JSON.stringify(packet.message)+"</code></pre>"
 				}));
-			return;
+				return;
+			}
 		}
 		if (packet.ws.lastMessage == packet.message.content && !allowDuplicates) {
 			packet.ws.send(JSON.stringify({
