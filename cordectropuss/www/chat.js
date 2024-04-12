@@ -1508,7 +1508,7 @@ function clientLoad() {
                         icomg.addEventListener("click", () => {focusedServer=serveur;clientLoad();});
                         document.getElementById("left").appendChild(icomg);
                         if (focusedServer == serveur) {
-                            document.getElementById("htitle").innerText = packet.manifest.title;
+                            document.getElementById("htitle").innerText = packet.manifest.title.toString();
                             peers = packet.peers;
                             for (let peer of Object.values(peers)) {
                                 console.log(peer);
