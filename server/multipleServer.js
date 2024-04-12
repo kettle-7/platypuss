@@ -26,11 +26,23 @@ const { WebSocketServer } = require('ws');
 const https = require('https');
 const { readFileSync, readdirSync, writeFileSync } = require("fs");
 const path = require('path');
-var conf = JSON.parse(readFileSync(__dirname+"/server.properties"));
 var sdata = JSON.parse(readFileSync(__dirname+"/server.json"));
+var conf = JSON.parse(readFileSync(__dirname+"/server.properties"));
 sdata.properties = conf;
 var handlers = {};
-var servers = conf.servers;
+for (let server in conf.servers) {
+    if (sdata[server]) {
+        sdata[server].properties = conf.servers[server];
+    } else {
+        sdata[server] = {
+            properties: conf.server[server],
+            messages: {},
+            rooms: {},
+            groups: {},
+            meta: {}
+        };
+    }
+}
 sdata.multiple = true;
 const handlePath = path.join(__dirname, 'handles');
 // we don't want to load README.md, any JSON config or platypussDefaults.js as they're all definitely not event handles
@@ -108,7 +120,7 @@ of the invite code."
                             }));
                             return;
                         }
-                        if (!(packet.ogip in sdata)) {
+                        if (!(packet.ogip in conf.servers)) {
                             packet.ws.send(JSON.stringify({
                                 eventType: "error",
                                 code: "nonExistent",
@@ -125,7 +137,6 @@ of the invite code."
                                 if (sdata[ws.ogip].handlerBlacklist.includes(handler.name))
                                     continue;
                             packet.ws = ws;
-                            sdata.properties = conf;
                             let ret = handler.execute(sdata[ws.ogip], wss, packet);
                             if (ret) sdata[ws.ogip] = ret;
                             ws = packet.ws;
@@ -171,7 +182,7 @@ check your code thoroughly, otherwise please contact the developer."
         ws.on("error", console.log);
         ws.on("close", () => {
             writeFileSync(__dirname+"/server.json", JSON.stringify(sdata));
-            https.get(`https://${sdata.properties.authAddr}/uinfo?id=${ws.uid}`, (res) => {
+            https.get(`https://${sdata[ws.ogip].properties.authAddr}/uinfo?id=${ws.uid}`, (res) => {
                 let chunks = [];
                 res.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
                 res.on('error', (err) => reject(err));
