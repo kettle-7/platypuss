@@ -72,8 +72,8 @@ httpser.listen(conf.port, () => {
                             code: "notLoggedIn",
                             explanation: 
 "This server requires a session token to be passed in order for any packets to\
- be accepted. If you are the developer of the client then please add sign-in\
- functionality."
+be accepted. If you are the developer of the client then please add sign-in\
+functionality."
                         }));
                         return;
                     }
@@ -91,16 +91,16 @@ httpser.listen(conf.port, () => {
                             code: "unknownEvent",
                             explanation: 
 "The server did not recognise the event type sent in the last packet, it may be\
- incomplete, using an outdated version of the API, or the client sent a faulty\
- packet. The only way to be sure which end is at fault is by checking the API\
- reference docs to see what event types should be supported."
+incomplete, using an outdated version of the API, or the client sent a faulty\
+packet. The only way to be sure which end is at fault is by checking the API\
+reference docs to see what event types should be supported."
                         }));
                         console.log(`\
 The server did not recognise the event type sent in the last packet, it may be\
- using an outdated version of the API, incomplete, or the client sent a faulty\
- packet. The only way to be sure which end is at fault is by checking the API\
- reference docs to see what event types should be supported.\n\nEvent type give\
- n: ${eventType}\n`);
+using an outdated version of the API, incomplete, or the client sent a faulty\
+packet. The only way to be sure which end is at fault is by checking the API\
+reference docs to see what event types should be supported.\n\nEvent type give\
+n: ${eventType}\n`);
                     }
                 } catch (e) {
                     writeFileSync(__dirname+"/server.json", JSON.stringify(sdata));
@@ -113,7 +113,7 @@ The server did not recognise the event type sent in the last packet, it may be\
                     code: "invalidJson",
                     explanation: 
 "The JSON data recieved in the previous packet was invalid or had no eventType\
- property. If you are the developer of the client that sent the packet please \
+property. If you are the developer of the client that sent the packet please \
 check your code thoroughly, otherwise please contact the developer."
                 }));
                 return;

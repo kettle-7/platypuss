@@ -1,4 +1,4 @@
- /************************************************************************
+/************************************************************************
  * Copyright 2020-2023 Ben Keppel                                        *
  *                                                                       *
  * This program is free software: you can redistribute it and/or modify  *
@@ -15,6 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ************************************************************************/
 
+// This version of the server is for if lots of platypuss servers are to be
+// hosted off the same device, in which case it makes more sense for them to
+// share one node process to improve memory usage rather than all being
+// separate. Platypuss is hosted off a single-core cpu so there is no
+// advantage to multithreading, although if you have a multi-core cpu and
+// plenty of ram then having separate processes may make more sense.
+
 const { WebSocketServer } = require('ws');
 const https = require('https');
 const { readFileSync, readdirSync, writeFileSync } = require("fs");
@@ -23,22 +30,25 @@ var conf = JSON.parse(readFileSync(__dirname+"/server.properties"));
 var sdata = JSON.parse(readFileSync(__dirname+"/server.json"));
 sdata.properties = conf;
 var handlers = {};
+var servers = conf.servers;
+sdata.multiple = true;
 const handlePath = path.join(__dirname, 'handles');
 // we don't want to load README.md, any JSON config or platypussDefaults.js as they're all definitely not event handles
 const handleFiles = readdirSync(handlePath).filter(file => file.endsWith('.js') && !file.includes("platypussDefaults"));
 const sslCert = readFileSync(conf.sslCertPath);
 const sslKey = readFileSync(conf.sslKeyPath);
 for (const file of handleFiles) {
-	const filePath = path.join(handlePath, file);
-	const handler = require(filePath);
-	if ('eventType' in handler && 'execute' in handler) {
-		if (handler.eventType in handlers) {
+    const filePath = path.join(handlePath, file);
+    var handler = require(filePath);
+    handler.name = file;
+    if ('eventType' in handler && 'execute' in handler) {
+        if (handler.eventType in handlers) {
             handlers[handler.eventType].push(handler);
         }
         else {
             handlers[handler.eventType] = [handler];
         }
-	} else {
+    } else {
         console.log(`Warning: event handle file ${filePath} is missing eventType or execute attribute`);
     }
 }
@@ -46,13 +56,22 @@ for (const file of handleFiles) {
 const httpser = https.createServer({
     cert: sslCert, key: sslKey
 }, (req, res) => {
-    res.writeHead(200, {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*"
-    });
-    let o = conf.manifest;
-    o.memberCount = Object.keys(sdata.users).length;
-    res.end(JSON.stringify(o));
+    let url = new URL(req.url, req.headers.host);
+    if (conf.manifests[url.pathname.replace(/\//g, "")]) {
+        let o = conf.manifests[url.pathname.replace(/\//g, "")];
+        o.memberCount = Object.keys(sdata.users).length;
+        res.writeHead(200, {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        });
+        res.end(JSON.stringify(o));
+    } else {
+        res.writeHead(403, {
+            "Content-Type": "text/plain",
+            "Access-Control-Allow-Origin": "*"
+        });
+        res.end("not found");
+    }
 });
 
 httpser.listen(conf.port, () => {
@@ -60,6 +79,7 @@ httpser.listen(conf.port, () => {
 
     wss.on('connection', function connection(ws) {
         ws.loggedinbytoken = false;
+        ws.ogip = "127.0.0.1";
         ws.on('message', function message(data) {
             try {
                 let packet = JSON.parse(data);
@@ -71,17 +91,43 @@ httpser.listen(conf.port, () => {
                             code: "notLoggedIn",
                             explanation: 
 "This server requires a session token to be passed in order for any packets to\
- be accepted. If you are the developer of the client then please add sign-in\
- functionality."
+be accepted. If you are the developer of the client then please add sign-in\
+functionality."
                         }));
                         return;
                     }
+                    if (eventType === "login" && eventType in handlers) {
+                        if (!packet.ogip) {
+                            packet.ws.send(JSON.stringify({
+                                eventType: "error",
+                                code: "missingSubserverID",
+                                explanation: "This server serves multiple \
+subservers through the same port. You need to specify which subserver to \
+join using the 'ogip' parameter, which is normally the first 8 characters \
+of the invite code."
+                            }));
+                            return;
+                        }
+                        if (!(packet.ogip in sdata)) {
+                            packet.ws.send(JSON.stringify({
+                                eventType: "error",
+                                code: "nonExistent",
+                                explanation: "That subserver does not exist."
+                            }))
+                            return;
+                        }
+                        ws.ogip = packet.ogip;
+                    }
                     if (eventType in handlers) {
                         for (let handler of handlers[eventType]) {
+                            // we can prevent certain subservers from recieving certain events
+                            if (sdata[ws.ogip].handlerBlacklist)
+                                if (sdata[ws.ogip].handlerBlacklist.includes(handler.name))
+                                    continue;
                             packet.ws = ws;
                             sdata.properties = conf;
-                            let ret = handler.execute(sdata, wss, packet);
-                            if (ret) sdata = ret;
+                            let ret = handler.execute(sdata[ws.ogip], wss, packet);
+                            if (ret) sdata[ws.ogip] = ret;
                             ws = packet.ws;
                         }
                     } else {
@@ -90,16 +136,16 @@ httpser.listen(conf.port, () => {
                             code: "unknownEvent",
                             explanation: 
 "The server did not recognise the event type sent in the last packet, it may be\
- incomplete, using an outdated version of the API, or the client sent a faulty\
- packet. The only way to be sure which end is at fault is by checking the API\
- reference docs to see what event types should be supported."
+incomplete, using an outdated version of the API, or the client sent a faulty\
+packet. The only way to be sure which end is at fault is by checking the API\
+reference docs to see what event types should be supported."
                         }));
                         console.log(`\
 The server did not recognise the event type sent in the last packet, it may be\
- using an outdated version of the API, incomplete, or the client sent a faulty\
- packet. The only way to be sure which end is at fault is by checking the API\
- reference docs to see what event types should be supported.\n\nEvent type give\
- n: ${eventType}\n`);
+using an outdated version of the API, incomplete, or the client sent a faulty\
+packet. The only way to be sure which end is at fault is by checking the API\
+reference docs to see what event types should be supported.\n\nEvent type give\
+n: ${eventType}\n`);
                     }
                 } catch (e) {
                     writeFileSync(__dirname+"/server.json", JSON.stringify(sdata));
@@ -112,7 +158,7 @@ The server did not recognise the event type sent in the last packet, it may be\
                     code: "invalidJson",
                     explanation: 
 "The JSON data recieved in the previous packet was invalid or had no eventType\
- property. If you are the developer of the client that sent the packet please \
+property. If you are the developer of the client that sent the packet please \
 check your code thoroughly, otherwise please contact the developer."
                 }));
                 return;
@@ -157,7 +203,7 @@ let code = "";
 for (let part of conf.ip.split(".")) {
     cp = parseInt(part, 10).toString(16);
     while (cp.length < 2) {
-    	cp = "0" + cp;
+        cp = "0" + cp;
     }
     code += cp;
 }
