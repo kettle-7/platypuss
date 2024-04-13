@@ -75,7 +75,7 @@ for (let server in conf) {
         sdata[server].properties = conf[server];
     } else {
         sdata[server] = {
-            properties: conf.server[server],
+            properties: conf[server],
             messages: {},
             rooms: {},
             groups: {},
