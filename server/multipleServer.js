@@ -31,11 +31,11 @@ const { randomInt } = require('crypto');
 
 if (!existsSync(__dirname+"/servers.properties")) {
     let sata = {
+        "port": questionInt("What port should the server bind to?\n> "),
         "sslCertPath": "./cert.pem",
         "sslKeyPath": "./key.pem"
     }
     sata[[randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255)].join(".")] = {
-        "port": questionInt("What port should the server bind to?\n> "),
         "inviteCode": randomInt(16, 256),
         "ip": "127.0.0.1",
         "authAddr": "https://platypuss.net",
@@ -258,8 +258,8 @@ for (let part of Object.keys(conf)[2].split(".")) {
     }
     code += cp;
 }
-// the invite code must be at least 16
-code += parseInt(conf[Object.keys(conf)[2]], 10).toString(16) + parseInt(conf[Object.keys(conf)[2]].inviteCode, 10).toString(16);
+// finally fixed the invite code needing to be at least 16, although i'd reccommend keeping it above 16 just in case
+code += parseInt(conf.port, 10).toString(16) + parseInt(conf[Object.keys(conf)[2]].inviteCode, 10).toString(16).padStart(2, "0");
 inviteUrl = `https://platypuss.net/chat?invite=${code}&invip=localhost`;
 
-console.log(`The server is currently running on port ${conf[Object.keys(conf)[2]].port}, join at ${inviteUrl}`);
+console.log(`The server is currently running on port ${conf.port}, join at ${inviteUrl}`);
