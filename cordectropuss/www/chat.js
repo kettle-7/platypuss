@@ -1026,6 +1026,7 @@ function clientLoad() {
             ws.onopen = () => {
                 opensocks++;
                 sockets[serveur] = ws;
+                console.log(ogip);
                 ws.send(JSON.stringify({
                     eventType: "login",
                     ogip: ogip,
