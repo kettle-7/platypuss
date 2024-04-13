@@ -166,7 +166,7 @@ of the invite code."
                             return;
                         }
                         if (!(packet.ogip in conf)) {
-                            packet.ws.send(JSON.stringify({
+                            ws.send(JSON.stringify({
                                 eventType: "error",
                                 code: "nonExistent",
                                 explanation: "That subserver does not exist."
