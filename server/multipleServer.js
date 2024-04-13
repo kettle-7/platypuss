@@ -24,15 +24,55 @@
 
 const { WebSocketServer } = require('ws');
 const https = require('https');
-const { readFileSync, readdirSync, writeFileSync } = require("fs");
+const { readFileSync, readdirSync, writeFileSync, existsSync } = require("fs");
 const path = require('path');
-var sdata = JSON.parse(readFileSync(__dirname+"/server.json"));
-var conf = JSON.parse(readFileSync(__dirname+"/server.properties"));
+const { questionInt, question, keyInYN } = require("readline-sync");
+const { randomInt } = require('crypto');
+
+if (!existsSync(__dirname+"/servers.properties")) {
+    let sata = {
+        "sslCertPath": "./cert.pem",
+        "sslKeyPath": "./key.pem"
+    }
+    sata[[randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255)].join(".")] = {
+        "port": questionInt("What port should the server bind to?\n> "),
+        "inviteCode": randomInt(16, 256),
+        "ip": "127.0.0.1",
+        "authAddr": "https://platypuss.net",
+        "manifest": {
+            "title": question("What would you like to name the server?\n> "),
+            "public": keyInYN("Will the server be public? "),
+            "icon": question("Please put in an image link for the server icon or leave blank for the default.\n> ", {defaultInput: "./icon.png"}),
+            "memberCount": 0,
+            "description": question("In one line how would you describe the server? This will show up on the invite page.\n> ")
+        },
+        "admins": []
+    };
+    writeFileSync(__dirname+"/servers.properties", JSON.stringify(sata));
+    console.log("The server should now be set up nicely, although currently \
+nobody has administrative permissions so you may want to edit the \
+servers.properties file and add your Platypuss user ID there. You'll need to \
+restart this server afterwards for the changes to be applied.");
+}
+var conf = JSON.parse(readFileSync(__dirname+"/servers.properties"));
+
+if (!existsSync(__dirname+"/servers.json")) {
+    let ide = {}
+    ide[Object.keys(conf)[2]] = {
+        "users": {},
+        "rooms": {},
+        "messages": {},
+        "groups": {},
+        "meta": {}
+    }
+    writeFileSync(__dirname+"/servers.json", JSON.stringify(ide));
+}
+var sdata = JSON.parse(readFileSync(__dirname+"/servers.json"));
 sdata.properties = conf;
 var handlers = {};
-for (let server in conf.servers) {
+for (let server in conf) {
     if (sdata[server]) {
-        sdata[server].properties = conf.servers[server];
+        sdata[server].properties = conf[server];
     } else {
         sdata[server] = {
             properties: conf.server[server],
@@ -120,7 +160,7 @@ of the invite code."
                             }));
                             return;
                         }
-                        if (!(packet.ogip in conf.servers)) {
+                        if (!(packet.ogip in conf)) {
                             packet.ws.send(JSON.stringify({
                                 eventType: "error",
                                 code: "nonExistent",
@@ -159,7 +199,7 @@ reference docs to see what event types should be supported.\n\nEvent type give\
 n: ${eventType}\n`);
                     }
                 } catch (e) {
-                    writeFileSync(__dirname+"/server.json", JSON.stringify(sdata));
+                    writeFileSync(__dirname+"/servers.json", JSON.stringify(sdata));
                     console.log (e);
                 }
             }
@@ -181,7 +221,7 @@ check your code thoroughly, otherwise please contact the developer."
         }));
         ws.on("error", console.log);
         ws.on("close", () => {
-            writeFileSync(__dirname+"/server.json", JSON.stringify(sdata));
+            writeFileSync(__dirname+"/servers.json", JSON.stringify(sdata));
             https.get(`https://${sdata[ws.ogip].properties.authAddr}/uinfo?id=${ws.uid}`, (res) => {
                 let chunks = [];
                 res.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
@@ -211,7 +251,7 @@ check your code thoroughly, otherwise please contact the developer."
 });
 
 let code = "";
-for (let part of conf.ip.split(".")) {
+for (let part of Object.keys(conf)[2].split(".")) {
     cp = parseInt(part, 10).toString(16);
     while (cp.length < 2) {
         cp = "0" + cp;
@@ -219,7 +259,7 @@ for (let part of conf.ip.split(".")) {
     code += cp;
 }
 // the invite code must be at least 16
-code += parseInt(conf.port, 10).toString(16) + parseInt(conf.inviteCode, 10).toString(16);
-inviteUrl = `https://platypuss.net/chat?invite=${code}`;
+code += parseInt(conf[Object.keys(conf)[2]], 10).toString(16) + parseInt(conf[Object.keys(conf)[2]].inviteCode, 10).toString(16);
+inviteUrl = `https://platypuss.net/chat?invite=${code}&invip=localhost`;
 
-console.log(`The server is currently running on port ${conf.port}, join at ${inviteUrl}`);
+console.log(`The server is currently running on port ${conf[Object.keys(conf)[2]].port}, join at ${inviteUrl}`);

@@ -18,9 +18,44 @@
 const { WebSocketServer } = require('ws');
 const https = require('https');
 const http = require('http');
-const { readFileSync, readdirSync, writeFileSync } = require("fs");
+const { readFileSync, readdirSync, writeFileSync, existsSync } = require("fs");
 const path = require('path');
+const { questionInt, question, keyInYN } = require("readline-sync");
+const { randomInt } = require('crypto');
+
+if (!existsSync(__dirname+"/server.properties")) {
+    writeFileSync(__dirname+"/server.properties", JSON.stringify({
+        "port": questionInt("What port should the server bind to?\n> "),
+        "inviteCode": randomInt(16, 256),
+        "ip": "127.0.0.1",
+        "authAddr": "https://platypuss.net",
+        "manifest": {
+            "title": question("What would you like to name the server?\n> "),
+            "public": keyInYN("Will the server be public? "),
+            "icon": question("Please put in an image link for the server icon or leave blank for the default.\n> ", {defaultInput: "./icon.png"}),
+            "memberCount": 0,
+            "description": question("In one line how would you describe the server? This will show up on the invite page.\n> ")
+        },
+        "admins": []
+    }));
+    console.log("The server should now be set up nicely, although currently \
+nobody has administrative permissions so you may want to edit the \
+server.properties file and add your Platypuss user ID there. You'll need to \
+restart this server afterwards for the changes to be applied.");
+}
+
 var conf = JSON.parse(readFileSync(__dirname+"/server.properties"));
+
+if (!existsSync(__dirname+"/server.json")) {
+    writeFileSync(__dirname+"/server.json", JSON.stringify({
+        "users": {},
+        "rooms": {},
+        "messages": {},
+        "groups": {},
+        "meta": {}
+    }));
+}
+
 var sdata = JSON.parse(readFileSync(__dirname+"/server.json"));
 sdata.properties = conf;
 var handlers = {};
