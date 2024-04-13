@@ -283,7 +283,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 port = port * 16 + parseInt(inviteCode[c], 16);
             }
             let code = Number("0x"+inviteCode[inviteCode.length - 2]+inviteCode[inviteCode.length - 1]).toString();
-            fetch(`http${url.protocol == "https:" ? "s" : ""}://${ip}:${port}`).then(res => {
+            fetch(`http${url.protocol == "https:" ? "s" : ""}://${ip}:${port}/${ogip}`).then(res => {
                 res.json().then(data => {
                     if (data.description == undefined) {
                         data.description = "This server has no description, it's too cool to be described.";
@@ -327,7 +327,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 document.getElementById("invdecline").innerText = "Close";
                 document.getElementById("invitepopup").removeChild(document.getElementById("acceptinvitebtn"));
                 const r = new XMLHttpRequest();
-                r.open("GET", authUrl+`/joinserver?id=${localStorage.getItem("sid")}&ip=${ip}:${port}+${code}${"+"+ogip}`);
+                r.open("GET", authUrl+`/joinserver?id=${localStorage.getItem("sid")}&ip=${ip}:${port}+${code}+${+ogip}`);
                 r.onload = () => {
                     if (r.status == 200) {
                         document.body.removeChild(document.getElementById('inviteparent'));
@@ -358,7 +358,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 port = port * 16 + parseInt(inviteCode[c], 16);
             }
             let code = Number("0x"+inviteCode[inviteCode.length - 2]+inviteCode[inviteCode.length - 1]).toString();
-            fetch(`http${url.protocol == "https:" ? "s" : ""}://${ip}:${port}`).then(res => {
+            fetch(`http${url.protocol == "https:" ? "s" : ""}://${ip}:${port}/${ogip}`).then(res => {
                 res.json().then(data => {
                     if (data.description == undefined) {
                         data.description = "This server has no description, it's too cool to be described.";
@@ -404,7 +404,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 document.getElementById("invdecline").innerText = "Close";
                 document.getElementById("invitepopup").removeChild(document.getElementById("acceptinvitebtn"));
                 const r = new XMLHttpRequest();
-                r.open("GET", authUrl+`/joinserver?id=${localStorage.getItem("sid")}&ip=${ip}:${port}+${code}${"+"+ogip}`);
+                r.open("GET", authUrl+`/joinserver?id=${localStorage.getItem("sid")}&ip=${ip}:${port}+${code}+${ogip}`);
                 r.onload = () => {
                     if (r.status == 200) {
                         document.body.removeChild(document.getElementById('inviteparent'));
@@ -533,7 +533,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 port = port * 16 + parseInt(inviteCode[c], 16);
             }
             let code = Number("0x"+inviteCode[inviteCode.length - 2]+inviteCode[inviteCode.length - 1]).toString();
-            fetch(`http${url.protocol == "https:" ? "s" : ""}://${ip}:${port}`).then(res => {
+            fetch(`http${url.protocol == "https:" ? "s" : ""}://${ip}:${port}/${ogip}`).then(res => {
                 res.json().then(data => {
                     if (data.description == undefined) {
                         data.description = "This server has no description, it's too cool to be described.";
@@ -602,7 +602,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 port = port * 16 + parseInt(inviteCode[c], 16);
             }
             let code = Number("0x"+inviteCode[inviteCode.length - 2]+inviteCode[inviteCode.length - 1]).toString();
-            fetch(`http${url.protocol == "https:" ? "s" : ""}://${ip}:${port}`).then(res => {
+            fetch(`http${url.protocol == "https:" ? "s" : ""}://${ip}:${port}/${ogip}`).then(res => {
                 res.json().then(data => {
                     if (data.description == undefined) {
                         data.description = "This server has no description, it's too cool to be described.";
