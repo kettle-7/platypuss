@@ -108,21 +108,26 @@ for (const file of handleFiles) {
 const httpser = https.createServer({
     cert: sslCert, key: sslKey
 }, (req, res) => {
-    let url = new URL(req.url, req.headers.host);
-    if (conf.manifests[url.pathname.replace(/\//g, "")]) {
-        let o = conf.manifests[url.pathname.replace(/\//g, "")];
-        o.memberCount = Object.keys(sdata.users).length;
-        res.writeHead(200, {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*"
-        });
-        res.end(JSON.stringify(o));
-    } else {
-        res.writeHead(403, {
-            "Content-Type": "text/plain",
-            "Access-Control-Allow-Origin": "*"
-        });
-        res.end("not found");
+    try {
+        let url = new URL(req.url, `https://${req.headers.host}`);
+        if (conf.manifests[url.pathname.replace(/\//g, "")]) {
+            let o = conf.manifests[url.pathname.replace(/\//g, "")];
+            o.memberCount = Object.keys(sdata.users).length;
+            res.writeHead(200, {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*"
+            });
+            res.end(JSON.stringify(o));
+        } else {
+            res.writeHead(403, {
+                "Content-Type": "text/plain",
+                "Access-Control-Allow-Origin": "*"
+            });
+            res.end("not found");
+        }
+    } catch (e) {
+        console.error(e);
+        res.end("oops that did work");
     }
 });
 
