@@ -327,7 +327,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 document.getElementById("invdecline").innerText = "Close";
                 document.getElementById("invitepopup").removeChild(document.getElementById("acceptinvitebtn"));
                 const r = new XMLHttpRequest();
-                r.open("GET", authUrl+`/joinserver?id=${localStorage.getItem("sid")}&ip=${ip}:${port}+${code}+${+ogip}`);
+                r.open("GET", authUrl+`/joinserver?id=${localStorage.getItem("sid")}&ip=${ip}:${port}+${code}+${ogip}`);
                 r.onload = () => {
                     if (r.status == 200) {
                         document.body.removeChild(document.getElementById('inviteparent'));
