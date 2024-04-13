@@ -110,9 +110,9 @@ const httpser = https.createServer({
 }, (req, res) => {
     try {
         let url = new URL(req.url, `https://${req.headers.host}`);
-        if (conf.manifests[url.pathname.replace(/\//g, "")]) {
-            let o = conf.manifests[url.pathname.replace(/\//g, "")];
-            o.memberCount = Object.keys(sdata.users).length;
+        if (conf[url.pathname.replace(/\//g, "")]) {
+            let o = conf[url.pathname.replace(/\//g, "")].manifest;
+            o.memberCount = Object.keys(sdata[url.pathname.replace(/\//g, "")].users).length;
             res.writeHead(200, {
                 "Content-Type": "application/json",
                 "Access-Control-Allow-Origin": "*"
