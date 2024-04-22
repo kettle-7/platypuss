@@ -1262,6 +1262,9 @@ function clientLoad() {
                                     if (upload.type.startsWith("image/") && !premyum) {
                                         msgtxt += `\n<br><a target="_blank" href="${authUrl+upload.url}"><img src="${authUrl+upload.url}"></a>`;
                                         continue;
+                                    } else if (upload.type.startsWith("video/") && !premyum) {
+                                        msgtxt += `\n<br><video controls height="250">
+                                        <source src="${authUrl+upload.url}" type="${upload.type}" /></video>`;
                                     }
                                     msgtxt += `
                                         <div class="upload">
