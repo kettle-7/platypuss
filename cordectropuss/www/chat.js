@@ -1104,10 +1104,10 @@ function clientLoad() {
                             if (packet.message.uploads) {
                                 for (let upload of packet.message.uploads) {
                                     if (upload.type.startsWith("image/") && !premyum) {
-                                        msgtxt += `\n<br><a target="_blank" href="${authUrl+upload.url}"><img src="${authUrl+upload.url}"></a>`;
+                                        msgtxt += `<a target="_blank" href="${authUrl+upload.url}"><img src="${authUrl+upload.url}"></a>`;
                                         continue;
                                     } else if (upload.type.startsWith("video/") && !premyum) {
-                                        msgtxt += `\n<br><video controls height="250">
+                                        msgtxt += `<video controls height="250">
                                         <source src="${authUrl+upload.url}" type="${upload.type}" /></video>`;
                                     }
                                     msgtxt += `
@@ -1260,10 +1260,10 @@ function clientLoad() {
                             if (packet.messages[m].uploads) {
                                 for (let upload of packet.messages[m].uploads) {
                                     if (upload.type.startsWith("image/") && !premyum) {
-                                        msgtxt += `\n<br><a target="_blank" href="${authUrl+upload.url}"><img src="${authUrl+upload.url}"></a>`;
+                                        msgtxt += `<a target="_blank" href="${authUrl+upload.url}"><img src="${authUrl+upload.url}"></a>`;
                                         continue;
                                     } else if (upload.type.startsWith("video/") && !premyum) {
-                                        msgtxt += `\n<br><video controls height="250">
+                                        msgtxt += `<video controls height="250">
                                         <source src="${authUrl+upload.url}" type="${upload.type}" /></video>`;
                                     }
                                     msgtxt += `
@@ -1429,7 +1429,7 @@ function clientLoad() {
                            if (packet.message.uploads) {
                                for (let upload of packet.message.uploads) {
                                    if (upload.type.startsWith("image/") && !premyum) {
-                                       msgtxt += `\n<br><a target="_blank" href="${authUrl+upload.url}"><img src="${authUrl+upload.url}"></a>`;
+                                       msgtxt += `<a target="_blank" href="${authUrl+upload.url}"><img src="${authUrl+upload.url}"></a>`;
                                        continue;
                                    }
                                    msgtxt += `
