@@ -171,7 +171,7 @@ of the invite code."
                             }));
                             return;
                         }
-                        console.log(packet.ogip, conf);
+                        
                         if (!(packet.ogip in conf)) {
                             ws.send(JSON.stringify({
                                 eventType: "error",
