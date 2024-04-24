@@ -763,7 +763,7 @@ function userInfo(id) {
         if (!document.getElementById("userInfoAdminActions").hidden) {
             for (let checkbox in checkboxes) {
                 checkboxes[checkbox].checked = peers[id].globalPermissions.includes(checkbox);
-                checkboxes[checkbox].onclick = () => {
+                checkboxes[checkbox].onchange = () => {
                     sockets[focusedServer].send(JSON.stringify({
                         eventType: "permissionChange",
                         uid: id,
