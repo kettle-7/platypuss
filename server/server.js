@@ -58,7 +58,7 @@ if (!existsSync(__dirname+"/server.json")) {
 
 var sdata = JSON.parse(readFileSync(__dirname+"/server.json"));
 sdata.properties = conf;
-sdata.clients = [];
+var clients = [];
 var handlers = {};
 const handlePath = path.join(__dirname, 'handles');
 // we don't want to load README.md, any JSON config or platypussDefaults.js as they're all definitely not event handles
@@ -97,7 +97,7 @@ httpser.listen(conf.port, () => {
 
     wss.on('connection', function connection(ws) {
         ws.loggedinbytoken = false;
-        sdata.clients.push(ws);
+        clients.push(ws);
         ws.on('message', function message(data) {
             try {
                 let packet = JSON.parse(data);
@@ -118,7 +118,9 @@ functionality."
                         for (let handler of handlers[eventType]) {
                             packet.ws = ws;
                             sdata.properties = conf;
+                            sdata.clients = clients;
                             let ret = handler.execute(sdata, wss, packet);
+                            delete sdata.clients;
                             if (ret) sdata = ret;
                             ws = packet.ws;
                         }
@@ -140,13 +142,7 @@ reference docs to see what event types should be supported.\n\nEvent type give\
 n: ${eventType}\n`);
                     }
                 } catch (e) {
-                    let savedsdata = {};
-                    for (let ser in sdata) {
-                        if (ser !== "clients" && ser !== "properties") {
-                            savedsdata[ser] = sdata[ser];
-                        }
-                    }
-                    writeFileSync(__dirname+"/server.json", JSON.stringify(savedsdata));
+                    writeFileSync(__dirname+"/server.json", JSON.stringify(sdata));
                     console.log (e);
                 }
             }
@@ -168,15 +164,9 @@ check your code thoroughly, otherwise please contact the developer."
         }));
         ws.on("error", console.log);
         ws.on("close", () => {
-            let savedsdata = {};
-            for (let ser in sdata) {
-                if (ser !== "clients" && ser !== "properties") {
-                    savedsdata[ser] = sdata[ser];
-                }
-            }
-            writeFileSync(__dirname+"/server.json", JSON.stringify(savedsdata));
+            writeFileSync(__dirname+"/server.json", JSON.stringify(sdata));
             ws.readyState = 3;
-            for (let client of sdata.clients) {
+            for (let client of clients) {
                 if (client.readyState < 2 && client.uid == ws.uid) {
                     return; // don't tell others they disconnected if they have another client still connected
                 }
@@ -189,7 +179,7 @@ check your code thoroughly, otherwise please contact the developer."
                     let data;
                     try {
                         data = JSON.parse(Buffer.concat(chunks).toString('utf8'));
-                        for (let client of sdata.clients) {
+                        for (let client of clients) {
                             if (client != ws && client.loggedinbytoken)
                             client.send(JSON.stringify({
                                 eventType: "disconnect",

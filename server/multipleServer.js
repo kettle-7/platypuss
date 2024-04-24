@@ -70,19 +70,20 @@ if (!existsSync(__dirname+"/servers.json")) {
 var sdata = JSON.parse(readFileSync(__dirname+"/servers.json"));
 sdata.properties = conf;
 var handlers = {};
+var clientses = {};
 for (let server in conf) {
+    clientses[server] = [];
     if (sdata[server]) {
         sdata[server].properties = conf[server];
-        sdata[server].clients = [];
     } else {
         sdata[server] = {
+            multiple: true,
             properties: conf[server],
             messages: {},
             rooms: {},
             groups: {},
             meta: {},
             users: {},
-            clients: []
         };
     }
 }
@@ -180,7 +181,7 @@ of the invite code."
                             return;
                         }
                         ws.ogip = packet.ogip;
-                        sdata[ws.ogip].clients.push(ws);
+                        clientses[ws.ogip].push(ws);
                     }
                     if (eventType in handlers) {
                         for (let handler of handlers[eventType]) {
@@ -189,7 +190,9 @@ of the invite code."
                                 if (sdata[ws.ogip].handlerBlacklist.includes(handler.name))
                                     continue;
                             packet.ws = ws;
+                            sdata.clients = clientses[ws.ogip];
                             let ret = handler.execute(sdata[ws.ogip], wss, packet);
+                            delete sdata.clients;
                             if (ret) sdata[ws.ogip] = ret;
                             ws = packet.ws;
                         }
@@ -211,17 +214,7 @@ reference docs to see what event types should be supported.\n\nEvent type give\
 n: ${eventType}\n`);
                     }
                 } catch (e) {
-                    let savedsdata = {};
-                    for (let ser in sdata) {
-                        if (ser !== "clients" && ser !== "properties") {
-                            let savedser = {};
-                            for (let property in sdata[ser]) {
-                                savedser[property] = sdata[ser][property];
-                            }
-                            savedsdata[ser] = savedser;
-                        }
-                    }
-                    writeFileSync(__dirname+"/servers.json", JSON.stringify(savedsdata));
+                    writeFileSync(__dirname+"/servers.json", JSON.stringify(sdata));
                     console.log (e);
                 }
             }
@@ -243,17 +236,7 @@ check your code thoroughly, otherwise please contact the developer."
         }));
         ws.on("error", console.log);
         ws.on("close", () => {
-            let savedsdata = {};
-            for (let ser in sdata) {
-                if (ser !== "clients" && ser !== "properties") {
-                    let savedser = {};
-                    for (let property in sdata[ser]) {
-                        savedser[property] = sdata[ser][property];
-                    }
-                    savedsdata[ser] = savedser;
-                }
-            }
-            writeFileSync(__dirname+"/servers.json", JSON.stringify(savedsdata));
+            writeFileSync(__dirname+"/servers.json", JSON.stringify(sdata));
             https.get(`https://${sdata[ws.ogip].properties.authAddr}/uinfo?id=${ws.uid}`, (res) => {
                 let chunks = [];
                 res.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
@@ -262,7 +245,7 @@ check your code thoroughly, otherwise please contact the developer."
                     let data;
                     try {
                         data = JSON.parse(Buffer.concat(chunks).toString('utf8'));
-                        for (let client of sdata[ws.ogip].clients) {
+                        for (let client of clientses[ws.ogip]) {
                             if (client != ws && client.loggedinbytoken)
                             client.send(JSON.stringify({
                                 eventType: "disconnect",
