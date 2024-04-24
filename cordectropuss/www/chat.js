@@ -1037,7 +1037,7 @@ function clientLoad() {
             }, 60000));
             ws.onerror = () => {
                 console.error(`Warning: couldn't connect to ${ip}, try check your internet connection or inform the owner(s) of the server.`);
-                if (elapsed) clientLoad();
+                if (elapsed && focusedServer == serveur) clientLoad();
             };
             ws.onopen = () => {
                 opensocks++;
@@ -1049,11 +1049,10 @@ function clientLoad() {
                     sid: sers.servers[serveur]
                 }));
             };
-            /*
             ws.onclose = () => {
                 console.error(`Warning: the server at ${ip} closed.`);
-                if (elapsed) clientLoad();
-            };*/
+                if (elapsed && focusedServer == serveur) clientLoad();
+            };
             ws.onmessage = async (event) => {
                 let packet = JSON.parse(event.data);
                 let unam, pfp;
