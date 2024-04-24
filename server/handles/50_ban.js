@@ -19,7 +19,7 @@
 
  module.exports = {
 	eventType: "ban",
-	execute: function (sdata, wss, packet) {
+	execute: function (sdata, wss, packet, clients) {
         if (packet.uid == undefined) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
@@ -46,7 +46,7 @@
         }
         if (!packet.unban) packet.unban = false;
 		sdata.users[packet.uid].banned = !packet.unban;
-        for (let client of sdata.clients) {
+        for (let client of clients) {
             if (client.uid == packet.ws.uid) {
                 client.close();
             }

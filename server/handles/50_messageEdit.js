@@ -19,7 +19,7 @@
 
  module.exports = {
 	eventType: "messageEdit",
-	execute: function (sdata, wss, packet) {
+	execute: function (sdata, wss, packet, clients) {
         if (packet.id == undefined) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
@@ -127,7 +127,7 @@ all the information specified in the Platypuss API."
 			reply: sdata.messages[mid].reply
 		};
 		console.log(`<${author}> ${packet.message.content}`);
-		for (let client of sdata.clients) {
+		for (let client of clients) {
 			if (client.loggedinbytoken && sdata.users[client.uid].globalPerms.includes("message.read"))
 			client.send(JSON.stringify({
 				eventType: "messageEdited",

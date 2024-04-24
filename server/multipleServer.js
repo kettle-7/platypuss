@@ -190,9 +190,7 @@ of the invite code."
                                 if (sdata[ws.ogip].handlerBlacklist.includes(handler.name))
                                     continue;
                             packet.ws = ws;
-                            sdata.clients = clientses[ws.ogip];
-                            let ret = handler.execute(sdata[ws.ogip], wss, packet);
-                            delete sdata.clients;
+                            let ret = handler.execute(sdata[ws.ogip], wss, packet, clientses[ws.ogip]);
                             if (ret) sdata[ws.ogip] = ret;
                             ws = packet.ws;
                         }

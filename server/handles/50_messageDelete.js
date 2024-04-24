@@ -19,7 +19,7 @@
 
  module.exports = {
 	eventType: "messageDelete",
-	execute: function (sdata, wss, packet) {
+	execute: function (sdata, wss, packet, clients) {
         if (packet.id == undefined) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
@@ -45,7 +45,7 @@
             return;
         }
         delete sdata.messages[packet.id];
-        for (let client of sdata.clients) {
+        for (let client of clients) {
             if (client.loggedinbytoken)
             client.send(JSON.stringify({
                 eventType: "messageDeleted",

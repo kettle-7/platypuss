@@ -118,9 +118,7 @@ functionality."
                         for (let handler of handlers[eventType]) {
                             packet.ws = ws;
                             sdata.properties = conf;
-                            sdata.clients = clients;
-                            let ret = handler.execute(sdata, wss, packet);
-                            delete sdata.clients;
+                            let ret = handler.execute(sdata, wss, packet, clients);
                             if (ret) sdata = ret;
                             ws = packet.ws;
                         }
