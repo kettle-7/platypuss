@@ -1,5 +1,5 @@
  /************************************************************************
- * Copyright 2020-2023 Ben Keppel, Marley Carroll                        *
+ * Copyright 2020-2024 Ben Keppel, Marley Carroll                        *
  *                                                                       *
  * This program is free software: you can redistribute it and/or modify  *
  * it under the terms of the GNU General Public License as published by  *
@@ -760,6 +760,11 @@ function userInfo(id) {
         } else {
             document.getElementById('neetro').hidden = true;
         }
+        if (!document.getElementById("userInfoAdminActions".hidden)) {
+            for (let checkbox in checkboxes) {
+                checkboxes[checkbox].checked;
+            }
+        }
     });
 }
 
@@ -968,6 +973,8 @@ document.getElementById("msgtxt").addEventListener("keypress", ke);
 document.getElementById("send").addEventListener("click", ce);
 var elapsed;
 breaks = [];
+var checkboxes = {};
+var globalPermissions = [];
 
 function clientLoad() {
     for (let socket of Object.values(sockets)) {
@@ -979,6 +986,7 @@ function clientLoad() {
     elapsed = false;
     sockets = {};
     peers = {};
+    globalPermissions = [];
     let opensocks = 0;
     let ips = [];
     lastMessageAuthor = null;
@@ -1517,6 +1525,7 @@ function clientLoad() {
                         if (focusedServer == serveur) {
                             document.getElementById("htitle").innerText = packet.manifest.title.toString();
                             peers = packet.peers;
+                            globalPermissions = packet.permissions;
                             for (let peer of Object.values(peers)) {
                                 console.log(peer);
                                 let peerimg = document.createElement("img");
@@ -1531,7 +1540,23 @@ function clientLoad() {
                                 document.getElementById("right").appendChild(peerimg);
                             }
                             if (packet.isAdmin) {
+                                checkboxes = {};
                                 document.getElementById("userInfoAdminActions").hidden = false;
+                                document.getElementById("userInfoPermissionChanges").innerHTML = "";
+                                for (let permission in packet.availablePermissions) {
+                                    let li = document.createElement("li");
+                                    let checkbox = document.createElement("input");
+                                    let checkboxlabel = document.createElement("label");
+                                    let label = packet.availablePermissions[permission];
+                                    li.appendChild(checkbox);
+                                    checkbox.type = "checkbox";
+                                    checkbox.id = "permissioncheckbox_"+permission;
+                                    checkboxlabel.for = "permissioncheckbox_"+permission;
+                                    li.appendChild(checkboxlabel);
+                                    checkboxlabel.innerText = label.charAt(0).toUpperCase() + label.slice(1);
+                                    checkboxes[permission] = checkbox;
+                                    document.getElementById("userInfoPermissionChanges").appendChild(li);
+                                }
                             } else {
                                 document.getElementById("userInfoAdminActions").hidden = true;
                             }
@@ -1565,6 +1590,25 @@ function clientLoad() {
                                 '<div class="message1">'+packet.explanation+'</div>';
                         }
                         break;
+                    case "permissionChange":
+                        if (packet.user !== sers.userId) {
+                            if (packet.value)
+                                peers[packet.user].globalPermissions.push(packet.permission);
+                            else
+                                while (peers[packet.user].globalPermissions.includes(packet.permission))
+                                    peers[packet.user].globalPermissions.splice(peers[packet.user].globalPermissions.indexOf(packet.permission), 1);
+                            break;
+                        } else {
+                            if (packet.value) {
+                                peers[packet.user].globalPermissions.push(packet.permission);
+                                globalPermissions.push(packet.permission);
+                            } else {
+                                while (peers[packet.user].globalPermissions.includes(packet.permission))
+                                    peers[packet.user].globalPermissions.splice(globalPermissions.indexOf(packet.permission), 1);
+                                while (globalPermissions.includes(packet.permission))
+                                    globalPermissions.splice(globalPermissions.indexOf(packet.permission), 1);
+                            }
+                        }
                     default:
                         if ("code" in packet) {
                             if (["nothingModify"].includes(packet.code) && !premyum) break;

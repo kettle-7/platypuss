@@ -17,7 +17,7 @@
 
 const https = require("https");
 const { v4 } = require("uuid");
-const { User } = require("./platypussDefaults.js");
+const { User, availablePerms } = require("./platypussDefaults.js");
 
 module.exports = {
 	eventType: "login",
@@ -101,6 +101,7 @@ module.exports = {
                         explanation: "You've connected to the server successfully.",
                         manifest: sdata.properties.manifest,
                         permissions: sdata.users[packet.ws.uid].globalPerms,
+                        availablePermissions: availablePerms,
                         isAdmin: sdata.properties.admins.includes(data.id)
                     }
                     obj.peers = {};

@@ -1,5 +1,5 @@
  /************************************************************************
- * Copyright 2020-2023 Ben Keppel                                        *
+ * Copyright 2020-2024 Ben Keppel                                        *
  *                                                                       *
  * This program is free software: you can redistribute it and/or modify  *
  * it under the terms of the GNU General Public License as published by  *
@@ -24,8 +24,23 @@ module.exports = {
     defaultPerms: [
         "message.send",
         "message.read",
-        "message.history"
+        "message.history",
+        "message.delete",
+        "message.edit",
+        "message.attach"
     ],
+
+    availablePerms: {
+        "message.send": "send text messages",
+        "message.read": "read text messages",
+        "message.history": "see messages sent while they were offline",
+        "message.delete": "delete their own messages",
+        "message.edit": "edit their own messages",
+        "message.attach": "attach files and images to their messages",
+        "moderation.delete": "delete other people's messages",
+        "moderation.ban": "ban others from the server",
+        "admin.permedit": "Edit other people's permissions (this does not include their own)"
+    },
 
     User: class {
         constructor(id) {

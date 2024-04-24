@@ -1,5 +1,5 @@
  /************************************************************************
- * Copyright 2020-2023 Ben Keppel, Moss Finder                           *
+ * Copyright 2020-2024 Ben Keppel, Moss Finder                           *
  *                                                                       *
  * This program is free software: you can redistribute it and/or modify  *
  * it under the terms of the GNU General Public License as published by  *
@@ -39,7 +39,7 @@
         if (!sdata.properties.admins.includes(packet.ws.uid)) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
-                code: "noPerm",
+                code: "noPermission",
                 explanation: "You can't do that"
             }));
             return;
