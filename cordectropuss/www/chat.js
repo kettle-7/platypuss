@@ -762,7 +762,7 @@ function userInfo(id) {
         }
         if (!document.getElementById("userInfoAdminActions".hidden)) {
             for (let checkbox in checkboxes) {
-                checkboxes[checkbox].checked;
+                checkboxes[checkbox].checked = usercache[id].globalPermissions.includes(checkbox);
             }
         }
     });
