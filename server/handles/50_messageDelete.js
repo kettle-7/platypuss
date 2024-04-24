@@ -45,7 +45,7 @@
             return;
         }
         delete sdata.messages[packet.id];
-        for (let client of wss.clients) {
+        for (let client of sdata.clients) {
             if (client.loggedinbytoken)
             client.send(JSON.stringify({
                 eventType: "messageDeleted",

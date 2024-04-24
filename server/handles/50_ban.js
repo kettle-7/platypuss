@@ -46,7 +46,7 @@
         }
         if (!packet.unban) packet.unban = false;
 		sdata.users[packet.uid].banned = !packet.unban;
-        for (let client of wss.clients) {
+        for (let client of sdata.clients) {
             if (client.uid == packet.ws.uid) {
                 client.close();
             }

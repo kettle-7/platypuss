@@ -73,13 +73,15 @@ var handlers = {};
 for (let server in conf) {
     if (sdata[server]) {
         sdata[server].properties = conf[server];
+        sdata[server].clients = [];
     } else {
         sdata[server] = {
             properties: conf[server],
             messages: {},
             rooms: {},
             groups: {},
-            meta: {}
+            meta: {},
+            clients: []
         };
     }
 }
@@ -132,7 +134,7 @@ const httpser = https.createServer({
 });
 
 httpser.listen(conf.port, () => {
-    const wss = new WebSocketServer({ clientTracking: true, server: httpser });
+    const wss = new WebSocketServer({ clientTracking: false, server: httpser });
 
     wss.on('connection', function connection(ws) {
         ws.loggedinbytoken = false;
@@ -175,6 +177,7 @@ of the invite code."
                             return;
                         }
                         ws.ogip = packet.ogip;
+                        sdata[ws.ogip].clients.push(ws);
                     }
                     if (eventType in handlers) {
                         for (let handler of handlers[eventType]) {
@@ -236,7 +239,7 @@ check your code thoroughly, otherwise please contact the developer."
                     let data;
                     try {
                         data = JSON.parse(Buffer.concat(chunks).toString('utf8'));
-                        for (let client of wss.clients) {
+                        for (let client of sdata[ws.ogip].clients) {
                             if (client != ws && client.loggedinbytoken)
                             client.send(JSON.stringify({
                                 eventType: "disconnect",

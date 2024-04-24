@@ -59,6 +59,7 @@ if (!existsSync(__dirname+"/server.json")) {
 
 var sdata = JSON.parse(readFileSync(__dirname+"/server.json"));
 sdata.properties = conf;
+sdata.clients = [];
 var handlers = {};
 const handlePath = path.join(__dirname, 'handles');
 // we don't want to load README.md, any JSON config or platypussDefaults.js as they're all definitely not event handles
@@ -93,10 +94,11 @@ const httpser = https.createServer({
 });
 
 httpser.listen(conf.port, () => {
-    const wss = new WebSocketServer({ clientTracking: true, server: httpser });
+    const wss = new WebSocketServer({ clientTracking: false, server: httpser });
 
     wss.on('connection', function connection(ws) {
         ws.loggedinbytoken = false;
+        sdata.clients.push(ws);
         ws.on('message', function message(data) {
             try {
                 let packet = JSON.parse(data);
@@ -136,7 +138,7 @@ The server did not recognise the event type sent in the last packet, it may be\
  using an outdated version of the API, incomplete, or the client sent a faulty\
  packet. The only way to be sure which end is at fault is by checking the API\
  reference docs to see what event types should be supported.\n\nEvent type give\
- n: ${eventType}\n`);
+n: ${eventType}\n`);
                     }
                 } catch (e) {
                     writeFileSync(__dirname+"/server.json", JSON.stringify(sdata));
@@ -162,6 +164,12 @@ check your code thoroughly, otherwise please contact the developer."
         ws.on("error", console.log);
         ws.on("close", () => {
             writeFileSync(__dirname+"/server.json", JSON.stringify(sdata));
+            ws.readyState = 3;
+            for (let client of sdata.clients) {
+                if (client.readyState < 2 && client.uid == ws.uid) {
+                    return; // don't tell others they disconnected if they have another client still connected
+                }
+            }
             https.get(`https://${sdata.properties.authAddr}/uinfo?id=${ws.uid}`, (res) => {
                 let chunks = [];
                 res.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
@@ -170,7 +178,7 @@ check your code thoroughly, otherwise please contact the developer."
                     let data;
                     try {
                         data = JSON.parse(Buffer.concat(chunks).toString('utf8'));
-                        for (let client of wss.clients) {
+                        for (let client of sdata.clients) {
                             if (client != ws && client.loggedinbytoken)
                             client.send(JSON.stringify({
                                 eventType: "disconnect",

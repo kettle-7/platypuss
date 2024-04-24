@@ -133,7 +133,7 @@ all the information specified in the Platypuss API."
 			reply: packet.message.reply
 		};
 		console.log(`<${author}> ${packet.message.content}`);
-		for (let client of wss.clients) {
+		for (let client of sdata.clients) {
 			if (client.loggedinbytoken && sdata.users[client.uid].globalPerms.includes("message.read"))
 			client.send(JSON.stringify({
 				eventType: "message",

@@ -60,7 +60,7 @@ module.exports = {
                             id: mid,
                             author: "server"
                         }
-                        for (let client of wss.clients) {
+                        for (let client of sdata.clients) {
                             if (client != packet.ws && client.loggedinbytoken)
                             client.send(JSON.stringify({
                                 eventType: "welcome",
@@ -79,7 +79,7 @@ module.exports = {
                             return;
                         }
                         console.log(`${data.unam} connected to the server.`);
-                        for (let client of wss.clients) {
+                        for (let client of sdata.clients) {
                             if (client != packet.ws && client.loggedinbytoken)
                             client.send(JSON.stringify({
                                 eventType: "join",
@@ -113,7 +113,7 @@ module.exports = {
                             online: false
                         }
                     }
-                    for (let client of wss.clients) {
+                    for (let client of sdata.clients) {
                         if (client.readyState < 2 && client.loggedinbytoken && obj.peers[client.uid] != undefined) {
                             obj.peers[client.uid].online = true;
                         }

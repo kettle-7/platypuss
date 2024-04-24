@@ -58,6 +58,7 @@ if (!existsSync(__dirname+"/server.json")) {
 
 var sdata = JSON.parse(readFileSync(__dirname+"/server.json"));
 sdata.properties = conf;
+sdata.clients = [];
 var handlers = {};
 const handlePath = path.join(__dirname, 'handles');
 // we don't want to load README.md, any JSON config or platypussDefaults.js as they're all definitely not event handles
@@ -92,10 +93,11 @@ const httpser = http.createServer((req, res) => {
 });
 
 httpser.listen(conf.port, () => {
-    const wss = new WebSocketServer({ clientTracking: true, server: httpser });
+    const wss = new WebSocketServer({ clientTracking: false, server: httpser });
 
     wss.on('connection', function connection(ws) {
         ws.loggedinbytoken = false;
+        sdata.clients.push(ws);
         ws.on('message', function message(data) {
             try {
                 let packet = JSON.parse(data);
@@ -162,7 +164,7 @@ check your code thoroughly, otherwise please contact the developer."
         ws.on("close", () => {
             writeFileSync(__dirname+"/server.json", JSON.stringify(sdata));
             ws.readyState = 3;
-            for (let client of wss.clients) {
+            for (let client of sdata.clients) {
                 if (client.readyState < 2 && client.uid == ws.uid) {
                     return; // don't tell others they disconnected if they have another client still connected
                 }
@@ -175,7 +177,7 @@ check your code thoroughly, otherwise please contact the developer."
                     let data;
                     try {
                         data = JSON.parse(Buffer.concat(chunks).toString('utf8'));
-                        for (let client of wss.clients) {
+                        for (let client of sdata.clients) {
                             if (client != ws && client.loggedinbytoken)
                             client.send(JSON.stringify({
                                 eventType: "disconnect",

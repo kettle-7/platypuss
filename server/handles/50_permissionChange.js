@@ -74,7 +74,7 @@
                 return; // don't need to do anything
             } else {
                 sdata.users[packet.ws.uid].globalPerms.push(packet.permission);
-                for (let client of wss.clients) {
+                for (let client of sdata.clients) {
                     if (client.uid == packet.ws.uid) {
                         client.send(JSON.stringify({
                             eventType: "permissionChange",
@@ -99,7 +99,7 @@
                 while (sdata.users[packet.ws.uid].globalPerms.includes(packet.permission)) {
                     sdata.users[packet.ws.uid].globalPerms.splice(sdata.users[packet.ws.uid].globalPerms.indexOf(packet.permission), 1);
                 }
-                for (let client of wss.clients) {
+                for (let client of sdata.clients) {
                     if (client.uid == packet.ws.uid) {
                         client.send(JSON.stringify({
                             eventType: "permissionChange",
