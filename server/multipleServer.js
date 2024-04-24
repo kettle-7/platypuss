@@ -28,6 +28,7 @@ const { readFileSync, readdirSync, writeFileSync, existsSync } = require("fs");
 const path = require('path');
 const { questionInt, question, keyInYN } = require("readline-sync");
 const { randomInt } = require('crypto');
+const { inspect } = require('util');
 
 if (!existsSync(__dirname+"/servers.properties")) {
     let sata = {
@@ -208,10 +209,7 @@ reference docs to see what event types should be supported.\n\nEvent type give\
 n: ${eventType}\n`);
                     }
                 } catch (e) {
-                    let clients = sdata.clients;
-                    delete sdata.clients;
-                    writeFileSync(__dirname+"/servers.json", JSON.stringify(sdata));
-                    sdata.clients = clients;
+                    writeFileSync(__dirname+"/servers.json", JSON.stringify(inspect(sdata)));
                     console.log (e);
                 }
             }
@@ -233,10 +231,7 @@ check your code thoroughly, otherwise please contact the developer."
         }));
         ws.on("error", console.log);
         ws.on("close", () => {
-            let clients = sdata.clients;
-            delete sdata.clients;
-            writeFileSync(__dirname+"/servers.json", JSON.stringify(sdata));
-            sdata.clients = clients;
+            writeFileSync(__dirname+"/servers.json", JSON.stringify(inspect(sdata)));
             https.get(`https://${sdata[ws.ogip].properties.authAddr}/uinfo?id=${ws.uid}`, (res) => {
                 let chunks = [];
                 res.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
