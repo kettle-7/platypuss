@@ -209,10 +209,10 @@ n: ${eventType}\n`);
                     }
                 } catch (e) {
                     let savedsdata = {};
-                    for (let ser of sdata) {
+                    for (let ser in sdata) {
                         if (ser !== "clients" && ser !== "properties") {
                             let savedser = {};
-                            for (let property of sdata[ser]) {
+                            for (let property in sdata[ser]) {
                                 savedser[property] = sdata[ser][property];
                             }
                             savedsdata[ser] = savedser;
@@ -241,10 +241,10 @@ check your code thoroughly, otherwise please contact the developer."
         ws.on("error", console.log);
         ws.on("close", () => {
             let savedsdata = {};
-            for (let ser of sdata) {
+            for (let ser in sdata) {
                 if (ser !== "clients" && ser !== "properties") {
                     let savedser = {};
-                    for (let property of sdata[ser]) {
+                    for (let property in sdata[ser]) {
                         savedser[property] = sdata[ser][property];
                     }
                     savedsdata[ser] = savedser;

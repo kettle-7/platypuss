@@ -141,7 +141,7 @@ n: ${eventType}\n`);
                     }
                 } catch (e) {
                     let savedsdata = {};
-                    for (let ser of sdata) {
+                    for (let ser in sdata) {
                         if (ser !== "clients" && ser !== "properties") {
                             savedsdata[ser] = sdata[ser];
                         }
@@ -169,7 +169,7 @@ check your code thoroughly, otherwise please contact the developer."
         ws.on("error", console.log);
         ws.on("close", () => {
             let savedsdata = {};
-            for (let ser of sdata) {
+            for (let ser in sdata) {
                 if (ser !== "clients" && ser !== "properties") {
                     savedsdata[ser] = sdata[ser];
                 }
