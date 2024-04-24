@@ -1605,7 +1605,7 @@ function clientLoad() {
                             else
                                 while (peers[packet.user].globalPermissions.includes(packet.permission))
                                     peers[packet.user].globalPermissions.splice(peers[packet.user].globalPermissions.indexOf(packet.permission), 1);
-                            break;
+                            //break;
                         } else {
                             if (packet.value) {
                                 peers[packet.user].globalPermissions.push(packet.permission);

@@ -61,7 +61,7 @@
             return;
         }
         // i don't really like how typeof returns a string (but then i also have no idea what i want it to do lmao)
-        if (packet.value == undefined || typeof packet.value !== typeof true) {
+        if (typeof packet.value !== typeof true) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
                 code: "missingField",
