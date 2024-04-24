@@ -78,10 +78,18 @@
                     if (client.uid == packet.ws.uid) {
                         client.send(JSON.stringify({
                             eventType: "permissionChange",
-                            user: packet.uid,
                             permission: packet.permission,
                             value: !!packet.value, // just to be sure it's boolean
+                            user: packet.uid,
                             explanation: `You can now ${availablePerms[packet.permission]}.`
+                        }));
+                    } else if (sdata.properties.admins.includes(client.uid)) {
+                        client.send(JSON.stringify({
+                            eventType: "permissionChange",
+                            permission: packet.permission,
+                            value: !!packet.value,
+                            user: packet.uid,
+                            explanation: `Someone else can now ${availablePerms[packet.permission]}.`
                         }));
                     }
                 }
