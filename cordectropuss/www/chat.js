@@ -1529,6 +1529,7 @@ function clientLoad() {
                         document.getElementById("left").appendChild(icomg);
                         if (focusedServer == serveur) {
                             document.getElementById("htitle").innerText = packet.manifest.title.toString();
+                            document.getElementById("hicon").src = packet.manifest.icon;
                             peers = packet.peers;
                             globalPermissions = packet.permissions;
                             for (let peer of Object.values(peers)) {
