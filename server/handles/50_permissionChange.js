@@ -119,6 +119,7 @@
                     }
                 }
             } else {
+                console.log("skill issue");
                 return;
             }
         }
