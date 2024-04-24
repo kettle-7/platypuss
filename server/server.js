@@ -140,7 +140,13 @@ reference docs to see what event types should be supported.\n\nEvent type give\
 n: ${eventType}\n`);
                     }
                 } catch (e) {
-                    writeFileSync(__dirname+"/server.json", JSON.stringify(sdata));
+                    let savedsdata = {};
+                    for (let ser of sdata) {
+                        if (ser !== "clients" && ser !== "properties") {
+                            savedsdata[ser] = sdata[ser];
+                        }
+                    }
+                    writeFileSync(__dirname+"/server.json", JSON.stringify(savedsdata));
                     console.log (e);
                 }
             }
@@ -162,7 +168,13 @@ check your code thoroughly, otherwise please contact the developer."
         }));
         ws.on("error", console.log);
         ws.on("close", () => {
-            writeFileSync(__dirname+"/server.json", JSON.stringify(sdata));
+            let savedsdata = {};
+            for (let ser of sdata) {
+                if (ser !== "clients" && ser !== "properties") {
+                    savedsdata[ser] = sdata[ser];
+                }
+            }
+            writeFileSync(__dirname+"/server.json", JSON.stringify(savedsdata));
             ws.readyState = 3;
             for (let client of sdata.clients) {
                 if (client.readyState < 2 && client.uid == ws.uid) {
