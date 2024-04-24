@@ -760,7 +760,7 @@ function userInfo(id) {
         } else {
             document.getElementById('neetro').hidden = true;
         }
-        if (!document.getElementById("userInfoAdminActions".hidden)) {
+        if (!document.getElementById("userInfoAdminActions").hidden) {
             for (let checkbox in checkboxes) {
                 checkboxes[checkbox].checked = usercache[id].globalPermissions.includes(checkbox);
             }
