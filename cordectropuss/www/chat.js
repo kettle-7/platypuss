@@ -763,6 +763,14 @@ function userInfo(id) {
         if (!document.getElementById("userInfoAdminActions").hidden) {
             for (let checkbox in checkboxes) {
                 checkboxes[checkbox].checked = peers[id].globalPermissions.includes(checkbox);
+                checkboxes[checkbox].onclick = () => {
+                    sockets[focusedServer].send(JSON.stringify({
+                        eventType: "permissionChange",
+                        uid: id,
+                        permission: checkbox,
+                        value: checkboxes[checkbox].checked
+                    }));
+                }
             }
         }
     });
