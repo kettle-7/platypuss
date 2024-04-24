@@ -1596,6 +1596,7 @@ function clientLoad() {
                         }
                         break;
                     case "permissionChange":
+                        console.log(packet);
                         if (packet.user !== sers.userId) {
                             if (packet.value)
                                 peers[packet.user].globalPermissions.push(packet.permission);
