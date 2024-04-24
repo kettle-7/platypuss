@@ -1559,7 +1559,7 @@ function clientLoad() {
                                     li.appendChild(checkbox);
                                     checkbox.type = "checkbox";
                                     checkbox.id = "permissioncheckbox_"+permission;
-                                    checkboxlabel.for = "permissioncheckbox_"+permission;
+                                    checkboxlabel.htmlFor = "permissioncheckbox_"+permission;
                                     li.appendChild(checkboxlabel);
                                     checkboxlabel.innerText = label.charAt(0).toUpperCase() + label.slice(1);
                                     checkboxes[permission] = checkbox;
