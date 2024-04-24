@@ -81,6 +81,7 @@ for (let server in conf) {
             rooms: {},
             groups: {},
             meta: {},
+            users: {},
             clients: []
         };
     }
