@@ -16,11 +16,19 @@
             "type": "text/css",
             "path": "light.css"
         },
+        "/vc.css": {
+            "type": "text/css",
+            "path": "vc.css"
+        },
         "/loadingScreen.css": {
             "type": "text/css",
             "path": "loadingScreen.css"
         },
         "/index.js": {
+            "type": "application/javascript",
+            "path": "index.js"
+        },
+        "/vc.js": {
             "type": "application/javascript",
             "path": "index.js"
         },
@@ -33,6 +41,14 @@
             "path": "mdpage.js"
         },
         "/index.html": {
+            "type": "text/html",
+            "path": "index.html"
+        },
+        "/vc.md": {
+            "type": "text/html",
+            "path": "vc.html"
+        },
+        "/vc.html": {
             "type": "text/html",
             "path": "index.html"
         },
