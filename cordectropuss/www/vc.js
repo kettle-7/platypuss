@@ -67,6 +67,7 @@ function fetchVoiceCallData() {
       if (packet.messages[0]) {
         if (packet.messages[0].content) {
           try {
+            console.log(packet.messages[0].content);
             res(JSON.parse(packet.messages[0].content));
             return;
           } catch (e) {
@@ -74,7 +75,7 @@ function fetchVoiceCallData() {
           }
         }
       }
-      rej(e);
+      rej();
     }
     ws.addEventListener("message", onmessage);
     ws.send(JSON.stringify({
