@@ -77,7 +77,7 @@ function fetchVoiceCallData() {
       rej(e);
     }
     ws.addEventListener("message", onmessage);
-    sockets[focusedServer].send(JSON.stringify({
+    ws.send(JSON.stringify({
         eventType: "messageLoad",
         max: 1,
         start: 0
