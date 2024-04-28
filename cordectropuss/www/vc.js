@@ -118,7 +118,7 @@ async function createRoom() {
   let vcdata = await fetchVoiceCallData();
   if (vcdata.rooms == undefined) vcdata.rooms = {};
   const roomId = `${Math.floor(Math.random()*(16^8)).toString(16)}`;
-  vcdata.rooms[roomId] = roomWithOffer;
+  vcdata.rooms[roomId].offer = roomWithOffer.offer;
   document.querySelector('#currentRoom').innerText = `Current room is ${roomId} - You are the caller!`
   localStream.getTracks().forEach(track => {
     peerConnection.addTrack(track, localStream);
@@ -216,7 +216,7 @@ async function joinRoomById(roomId) {
             sdp: answer.sdp
         }
     }
-    vcdata.rooms[roomId] = roomWithAnswer;
+    vcdata.rooms[roomId].answer = roomWithAnswer.answer;
     modifyVoiceCallData(vcdata);
 
     peerConnection.addEventListener('icecandidate', event => {
