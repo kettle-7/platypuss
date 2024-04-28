@@ -1200,7 +1200,7 @@ function clientLoad() {
                                     ma.scrollTo(ma.scrollLeft, ma.scrollHeight - ma.clientHeight);
                                 }
                                 if (document.visibilityState == "hidden" && sers.userId != packet.message.author)
-                                    new Audio(authUrl+'/uploads/93c70e82-b447-4794-99d9-3ab070d659ea/f3cb5ab570a29417524422d17b4e4a4db33b5900df8127688ffcf352df17383f79e1cfa87d9c6ab9ce4b47e90d231d22a805597dd719fbf01fe6da6d047d7290').play();
+                                    new Audio(authUrl+'/randomsand.wav').play();
                             });
                         }
                         break;
