@@ -30,7 +30,7 @@
         },
         "/vc.js": {
             "type": "application/javascript",
-            "path": "index.js"
+            "path": "vc.js"
         },
         "/chat.js": {
             "type": "application/javascript",
