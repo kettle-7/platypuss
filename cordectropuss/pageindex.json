@@ -50,7 +50,7 @@
         },
         "/vc.html": {
             "type": "text/html",
-            "path": "index.html"
+            "path": "vc.html"
         },
         "/chat.html": {
             "type": "text/html",
