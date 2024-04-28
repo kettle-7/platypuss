@@ -128,6 +128,10 @@ async function createRoom() {
     vcdata.rooms[roomId].callerCandidates = [];
   }
 
+  if (vcdata.rooms[roomId].calleeCandidates === undefined) {
+    vcdata.rooms[roomId].calleeCandidates = [];
+  }
+
   peerConnection.addEventListener('icecandidate', event => {
     if (!event.candidate) {
       console.log('Got final candidate!');
