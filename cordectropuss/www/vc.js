@@ -124,11 +124,11 @@ async function createRoom() {
     peerConnection.addTrack(track, localStream);
   });
 
-  if (vcdata.rooms[roomId].callerCandidates === undefined) {
+  if (!vcdata.rooms[roomId].callerCandidates) {
     vcdata.rooms[roomId].callerCandidates = [];
   }
 
-  if (vcdata.rooms[roomId].calleeCandidates === undefined) {
+  if (!vcdata.rooms[roomId].calleeCandidates) {
     vcdata.rooms[roomId].calleeCandidates = [];
   }
 
