@@ -369,10 +369,6 @@ var loadedMessages = 0;
 var focusedServer;
 var reply;
 
-function googleAuth(argv) {
-    console.log(argv);
-}
-
 function userInfo(id) {
     fetchUser(id).then(res => {
         document.getElementById("uifpfp").src = authUrl + res.pfp;

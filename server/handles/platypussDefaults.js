@@ -39,7 +39,7 @@ module.exports = {
         "message.attach": "attach files and images to their messages",
         "moderation.delete": "delete other people's messages",
         "moderation.ban": "ban others from the server",
-        "admin.permedit": "Edit other people's permissions (this does not include their own)"
+        "admin.permedit": "edit other people's permissions (this does not include their own)"
     },
 
     User: class {
