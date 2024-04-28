@@ -89,9 +89,11 @@ function fetchVoiceCallData() {
 function modifyVoiceCallData(newValue) {
   ws.send(JSON.stringify({
     eventType: "message",
-    content: JSON.stringify(newValue),
-    sentByRobots: true,
-    purposeOfSaidRobots: "global domination, of course :3"
+    message: {
+      content: JSON.stringify(newValue),
+      sentByRobots: true,
+      purposeOfSaidRobots: "global domination, of course :3"
+    }
   }));
 }
 
