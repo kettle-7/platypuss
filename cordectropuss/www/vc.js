@@ -5,7 +5,7 @@ const configuration = {
   iceServers: [
     {
       urls: [
-        'stun:192.168.1.77:6970'
+        'stun:localhost:6970'
       ],
     },
   ],
@@ -256,7 +256,7 @@ async function joinRoomById(roomId) {
 
 async function openUserMedia(e) {
   const stream = await navigator.mediaDevices.getUserMedia(
-      {/*video: true,*/ audio: true});
+      {video: true, audio: true});
   document.querySelector('#localVideo').srcObject = stream;
   localStream = stream;
   remoteStream = new MediaStream();
