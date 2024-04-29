@@ -5,7 +5,7 @@ const configuration = {
   iceServers: [
     {
       urls: [
-        'stun:stun.l.google.com:19302'
+        '192.168.1.77:6970'
       ],
     },
   ],
@@ -104,6 +104,9 @@ async function createRoom() {
   peerConnection = new RTCPeerConnection(configuration);
 
   registerPeerConnectionListeners();
+  localStream.getTracks().forEach(track => {
+    peerConnection.addTrack(track, localStream);
+  });
 
   const offer = await peerConnection.createOffer();
   await peerConnection.setLocalDescription(offer);
@@ -119,9 +122,6 @@ async function createRoom() {
   const roomId = `${Math.floor(Math.random()*(16**8)).toString(16)}`;
   vcdata.rooms[roomId] = roomWithOffer;
   document.querySelector('#currentRoom').innerText = `Current room is ${roomId} - You are the caller!`
-  localStream.getTracks().forEach(track => {
-    peerConnection.addTrack(track, localStream);
-  });
 
   if (!vcdata.rooms[roomId].callerCandidates) {
     vcdata.rooms[roomId].callerCandidates = [];
