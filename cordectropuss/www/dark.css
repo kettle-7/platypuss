@@ -105,7 +105,7 @@ button:hover {
 }
 
 .popup {
-    min-width: min-content !important;
+    width: min-content !important;
     max-width: 90%;
     height: fit-content;
     display: flex;
@@ -120,6 +120,7 @@ button:hover {
     gap: 5px;
     margin: auto;
     align-content: stretch;
+    max-height: 90%;
 }
 
 .popupParent {
