@@ -61,7 +61,10 @@ function fetchVoiceCallData() {
   return new Promise((res, rej) => {
     function onmessage(event) {
       let packet = JSON.parse(event.data);
-      if (packet.eventType !== "messages") return;
+      if (packet.eventType !== "messages") {
+        console.log(packet.explanation);
+        return;
+      };
       ws.removeEventListener("message", onmessage);
       if (packet.messages[0]) {
         if (packet.messages[0].content) {
@@ -154,7 +157,10 @@ async function createRoom() {
 
   ws.addEventListener("message", async (event) => {
     let packet = JSON.parse(event.data);
-    if (packet.eventType !== "message") return;
+    if (packet.eventType !== "message") {
+      console.log(packet.explanation);
+      return;
+    };
     vcdata = JSON.parse(packet.message.content);
     console.log('Got updated room');
     const data = vcdata.rooms[roomId];
@@ -239,7 +245,10 @@ async function joinRoomById(roomId) {
     let currentCallerCandidates = [];
     ws.addEventListener("message", async (event) => {
       let packet = JSON.parse(event.data);
-      if (packet.eventType !== "message") return;
+      if (packet.eventType !== "message") {
+        console.log(packet.explanation);
+        return;
+      };
       vcdata = JSON.parse(packet.message.content);
       console.log('Got updated room');
       if (vcdata.rooms[roomId].callerCandidates !== currentCallerCandidates) {
