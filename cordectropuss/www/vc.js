@@ -224,7 +224,7 @@ async function joinRoomById(roomId) {
         return;
       }
       console.log('Got candidate: ', event.candidate);
-      vcdata.rooms[roomId].calleeCandidates(event.candidate.toJSON());
+      vcdata.rooms[roomId].calleeCandidates.push(event.candidate.toJSON());
       modifyVoiceCallData(vcdata);
     });
 
