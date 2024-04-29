@@ -295,7 +295,6 @@ async function hangUp(e) {
   // Delete room on hangup
   if (roomId) {
     const vcdata = await fetchVoiceCallData();
-    const roomRef = db.collection('rooms').doc(roomId);
     const calleeCandidates = vcdata.rooms[roomId].calleeCandidates;
     calleeCandidates.forEach(async candidate => {
       await candidate.delete();
