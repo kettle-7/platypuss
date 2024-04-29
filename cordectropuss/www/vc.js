@@ -5,7 +5,7 @@ const configuration = {
   iceServers: [
     {
       urls: [
-        '192.168.1.77:6970'
+        'stun:192.168.1.77:6970'
       ],
     },
   ],
