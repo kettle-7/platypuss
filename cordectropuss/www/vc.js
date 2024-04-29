@@ -66,7 +66,7 @@ function fetchVoiceCallData() {
       if (packet.messages[0]) {
         if (packet.messages[0].content) {
           try {
-            console.log(packet.messages[0].content);
+            console.log("got", packet.messages[0].content);
             res(JSON.parse(packet.messages[0].content));
             return;
           } catch (e) {
@@ -86,6 +86,7 @@ function fetchVoiceCallData() {
 }
 
 function modifyVoiceCallData(newValue) {
+  console.log("sent", JSON.stringify(newValue));
   ws.send(JSON.stringify({
     eventType: "message",
     message: {
