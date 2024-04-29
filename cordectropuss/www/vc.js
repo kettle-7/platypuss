@@ -8,7 +8,7 @@ const configuration = {
         'turn:localhost:6970'
       ],
       username: "testing",
-      password: "testing"
+      credential: "testing"
     },
   ],
   iceCandidatePoolSize: 10,
