@@ -5,7 +5,7 @@ const configuration = {
   iceServers: [
     {
       urls: [
-        'stun:localhost:6970'
+        'turn:localhost:6970'
       ],
     },
   ],
