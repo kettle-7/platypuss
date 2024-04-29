@@ -20,8 +20,8 @@ const { } = require("./platypussDefaults.js"); // import nothing :o)
 const fs = require("fs");
 const exec = require('child_process').exec;
 
-const rateLimit = 2000; // Minimum time between messages sent, change this if you like.
-const maxLength = 2000; // Maximum length of messages that can be sent, change this one if you want as well UwU.
+const rateLimit = 1000; // Minimum time between messages sent, change this if you like.
+const maxLength = 5000; // Maximum length of messages that can be sent, change this one if you want as well UwU.
 const allowDuplicates = true; // Whether or not someone can send the same message more than once in a row, change this if you like too Nyaaa~!
 
 module.exports = {
