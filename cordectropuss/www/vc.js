@@ -202,6 +202,7 @@ async function joinRoomById(roomId) {
     peerConnection = new RTCPeerConnection(configuration);
     registerPeerConnectionListeners();
     localStream.getTracks().forEach(track => {
+      console.log(track, localStream);
       peerConnection.addTrack(track, localStream);
     });
 
