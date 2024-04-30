@@ -57,7 +57,7 @@ module.exports = {
             return;
         }
         packet.ws.inCall = packet.callName;
-        ws.callRooms[packet.callName].callee = packet.ws.uid;
+        wss.callRooms[packet.callName].callee = packet.ws.uid;
         packet.ws.send(JSON.stringify({
             "eventType": "callData",
             "callData": wss.callRooms[packet.callName]
