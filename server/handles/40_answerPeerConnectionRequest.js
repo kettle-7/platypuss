@@ -25,58 +25,58 @@ module.exports = {
             wss.callRooms = {};
         }
         if (!packet.ws.inCall) {
-            packet.ws.send({
+            packet.ws.send(JSON.stringify({
                 "eventType": "error",
                 "code": "notInCall",
                 "explanation": "You're not in a call."
-            });
+            }));
             return;
         }
         if (!wss.callRooms[packet.ws.inCall]) {
-            packet.ws.send({
+            packet.ws.send(JSON.stringify({
                 "eventType": "error",
                 "code": "notInCall",
                 "explanation": "You're not in that call."
-            });
+            }));
             return;
         }
         if (!packet.answer) {
-            packet.ws.send({
+            packet.ws.send(JSON.stringify({
                 "eventType": "error",
                 "code": "missingData",
                 "explanation": "The packet was missing the answer for the peer connection request."
-            });
+            }));
             return;
         }
         if (wss.callRooms[packet.ws.inCall].caller === packet.ws.uid) {
-            packet.ws.send({
+            packet.ws.send(JSON.stringify({
                 "eventType": "error",
                 "code": "nope",
                 "explanation": "As the caller you are meant to send an offer which is then answered by the callee."
-            });
+            }));
             return;
         } else if (wss.callRooms[packet.ws.inCall].callee === packet.ws.uid) {
             wss.callRooms[packet.ws.inCall].answer = packet.answer;
             for (let client of clients) {
                 if (client.inCall === packet.ws.inCall && client.uid !== packet.ws.uid) {
-                    client.send({
+                    client.send(JSON.stringify({
                         eventType: "callOfferAnswered",
                         answer: packet.answer
-                    });
+                    }));
                 }
             }
         } else {
-            packet.ws.send({
+            packet.ws.send(JSON.stringify({
                 "eventType": "error",
                 "code": "notInCall",
                 "explanation": "You're not in that call."
-            });
+            }));
             return;
         }
-        packet.ws.send({
+        packet.ws.send(JSON.stringify({
             "eventType": "callData",
             "callData": sdata.callRooms[packet.ws.inCall]
-        });
+        }));
         return sdata;
     }
 };

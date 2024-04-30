@@ -25,63 +25,63 @@ module.exports = {
             wss.callRooms = {};
         }
         if (!packet.ws.inCall) {
-            packet.ws.send({
+            packet.ws.send(JSON.stringify({
                 "eventType": "error",
                 "code": "notInCall",
                 "explanation": "You're not in a call."
-            });
+            }));
             return;
         }
         if (!wss.callRooms[packet.ws.inCall]) {
-            packet.ws.send({
+            packet.ws.send(JSON.stringify({
                 "eventType": "error",
                 "code": "notInCall",
                 "explanation": "You're not in that call."
-            });
+            }));
             return;
         }
         if (!packet.newCandidate) {
-            packet.ws.send({
+            packet.ws.send(JSON.stringify({
                 "eventType": "error",
                 "code": "missingData",
                 "explanation": "The packet was missing an ICE candidate to add."
-            });
+            }));
             return;
         }
         if (wss.callRooms[packet.ws.inCall].caller === packet.ws.uid) {
             wss.callRooms[packet.ws.inCall].callerCandidates.push(packet.newCandidate);
             for (let client of clients) {
                 if (client.inCall === packet.ws.inCall && client.uid !== packet.ws.uid) {
-                    client.send({
+                    client.send(JSON.stringify({
                         eventType: "newIceCandidate",
                         type: "callerCandidate",
                         candidate: packet.newCandidate
-                    });
+                    }));
                 }
             }
         } else if (wss.callRooms[packet.ws.inCall].callee === packet.ws.uid) {
             wss.callRooms[packet.ws.inCall].calleeCandidates.push(packet.newCandidate);
             for (let client of clients) {
                 if (client.inCall === packet.ws.inCall && client.uid !== packet.ws.uid) {
-                    client.send({
+                    client.send(JSON.stringify({
                         eventType: "newIceCandidate",
                         type: "calleeCandidate",
                         candidate: packet.newCandidate
-                    });
+                    }));
                 }
             }
         } else {
-            packet.ws.send({
+            packet.ws.send(JSON.stringify({
                 "eventType": "error",
                 "code": "notInCall",
                 "explanation": "You're not in that call."
-            });
+            }));
             return;
         }
-        packet.ws.send({
+        packet.ws.send(JSON.stringify({
             "eventType": "callData",
             "callData": sdata.callRooms[packet.ws.inCall]
-        });
+        }));
         return sdata;
     }
 };

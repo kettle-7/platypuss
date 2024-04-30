@@ -25,27 +25,27 @@ module.exports = {
             wss.callRooms = {};
         }
         if (packet.ws.inCall) {
-            packet.ws.send({
+            packet.ws.send(JSON.stringify({
                 "eventType": "error",
                 "code": "alreadyInCall",
                 "explanation": "You're already in a call."
-            });
+            }));
             return;
         }
         if (!packet.callName) {
-            packet.ws.send({
+            packet.ws.send(JSON.stringify({
                 "eventType": "error",
                 "code": "missingData",
                 "explanation": "You need to send an ID for this call, also please make it unique."
-            });
+            }));
             return;
         }
         if (wss.callRooms[packet.callname]) {
-            packet.ws.send({
+            packet.ws.send(JSON.stringify({
                 "eventType": "error",
                 "code": "nonUniqueCallID",
                 "explanation": "Someone's already in a call with that ID."
-            });
+            }));
             return;
         }
         wss.callRooms[packet.callName] = {
@@ -56,10 +56,10 @@ module.exports = {
             name: packet.callName
         };
         packet.ws.inCall = packet.callName;
-        packet.ws.send({
+        packet.ws.send(JSON.stringify({
             "eventType": "callData",
             "callData": wss.callRooms[packet.callName]
-        });
+        }));
         return sdata;
     }
 };

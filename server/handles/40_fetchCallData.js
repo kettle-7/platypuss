@@ -27,9 +27,9 @@ module.exports = {
         if (!packet.ws.inCall) {
             return;
         }
-        packet.ws.send({
+        packet.ws.send(JSON.stringify({
             "eventType": "callData",
             "callData": wss.callRooms[packet.ws.inCall]
-        });
+        }));
     }
 };
