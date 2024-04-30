@@ -2,7 +2,7 @@ mdc.ripple.MDCRipple.attachTo(document.querySelector('.mdc-button'));
 
 // DEfault configuration - Change these if you have a different STUN or TURN server.
 const configuration = {
-    /*iceServers: [
+    iceServers: [
         {
             urls: [
                 'turn:192.168.1.66:3000',
@@ -11,8 +11,7 @@ const configuration = {
             username: "testing",
             credential: "testing"
         },
-    ],*/
-    iceServers: [ { urls: ['stun:stun1.l.google.com:19302', 'stun:stun3.l.google.com:19302'] } ],
+    ],
     iceCandidatePoolSize: 0,
 };
 
