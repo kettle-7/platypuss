@@ -40,8 +40,7 @@ module.exports = {
             }));
             return;
         }
-        if (!wss.callRooms[packet.callname]) {
-            console.log(wss.callRooms);
+        if (!wss.callRooms[packet.callName]) {
             packet.ws.send(JSON.stringify({
                 "eventType": "error",
                 "code": "nonexistentCall",
