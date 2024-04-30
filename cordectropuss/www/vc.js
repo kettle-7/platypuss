@@ -170,7 +170,7 @@ async function joinRoomById(roomId) {
             console.log(packet.explanation);
             return;
         };
-        let callData = JSON.parse(packet.callData);
+        let callData = packet.callData;
         if (!callData.offer) {
             console.warn("Got the call data but there was no offer. This should never happen.");
             return;
