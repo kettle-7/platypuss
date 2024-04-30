@@ -5,11 +5,11 @@ const configuration = {
     iceServers: [
         {
             urls: [
-                //'turn:localhost:6970',
-                'stun:stun1.l.google.com:19302'
-            ]/*,
+                'turn:192.168.1.66:3000',
+                'turn:www.platypuss.net:3000'
+            ],
             username: "testing",
-            credential: "testing"*/
+            credential: "testing"
         },
     ],
     iceCandidatePoolSize: 10,
