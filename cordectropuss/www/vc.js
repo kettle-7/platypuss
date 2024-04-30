@@ -229,6 +229,10 @@ async function joinRoomById(roomId) {
         }
     }
     ws.addEventListener("message", callOfferHandle);
+    ws.send({
+        packetType: "joinCallRoom",
+        callName: roomId
+    });
 }
 
 async function openUserMedia(e) {
