@@ -75,7 +75,7 @@ module.exports = {
         }
         packet.ws.send(JSON.stringify({
             "eventType": "callData",
-            "callData": sdata.callRooms[packet.ws.inCall]
+            "callData": wss.callRooms[packet.ws.inCall]
         }));
         return sdata;
     }
