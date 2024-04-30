@@ -230,7 +230,7 @@ async function joinRoomById(roomId) {
     }
     ws.addEventListener("message", callOfferHandle);
     ws.send({
-        packetType: "joinCallRoom",
+        eventType: "joinCallRoom",
         callName: roomId
     });
 }
