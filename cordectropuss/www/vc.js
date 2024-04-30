@@ -5,7 +5,8 @@ const configuration = {
     iceServers: [
         {
             urls: [
-                'turn:localhost:6970'
+                //'turn:localhost:6970',
+                'stun:stun1.l.google.com:19302'
             ],
             username: "testing",
             credential: "testing"
