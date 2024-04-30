@@ -1,5 +1,5 @@
  /************************************************************************
- * Copyright 2020-2023 Ben Keppel                                        *
+ * Copyright 2020-2024 Ben Keppel                                        *
  *                                                                       *
  * This program is free software: you can redistribute it and/or modify  *
  * it under the terms of the GNU General Public License as published by  *
@@ -21,8 +21,8 @@ const fs = require("fs");
 const exec = require('child_process').exec;
 
 const rateLimit = 1000; // Minimum time between messages sent, change this if you like.
-const maxLength = 10000000000; // Maximum length of messages that can be sent, change this one if you want as well UwU.
-const allowDuplicates = true; // Whether or not someone can send the same message more than once in a row, change this if you like too Nyaaa~!
+const maxLength = 2000; // Maximum length of messages that can be sent, change this one if you want as well.
+const allowDuplicates = true; // Whether or not someone can send the same message more than once in a row, change this if you like too.
 
 module.exports = {
 	eventType: "message",

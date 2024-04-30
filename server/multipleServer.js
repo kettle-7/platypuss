@@ -90,6 +90,7 @@ for (let server in conf) {
 // insanity check
 writeFileSync(__dirname+"/servers.json", JSON.stringify(sdata));
 sdata.multiple = true;
+sdata.tls = true;
 const handlePath = path.join(__dirname, 'handles');
 // we don't want to load README.md, any JSON config or platypussDefaults.js as they're all definitely not event handles
 const handleFiles = readdirSync(handlePath).filter(file => file.endsWith('.js') && !file.includes("platypussDefaults"));
