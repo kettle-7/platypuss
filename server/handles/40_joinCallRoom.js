@@ -41,9 +41,10 @@ module.exports = {
             return;
         }
         if (!wss.callRooms[packet.callname]) {
+            console.log(wss.callRooms);
             packet.ws.send(JSON.stringify({
                 "eventType": "error",
-                "code": "nonUniqueCallID",
+                "code": "nonexistentCall",
                 "explanation": "That call doesn't exist."
             }));
             return;
@@ -62,6 +63,6 @@ module.exports = {
             "eventType": "callData",
             "callData": wss.callRooms[packet.callName]
         }));
-        return sdata;
+        return;
     }
 };

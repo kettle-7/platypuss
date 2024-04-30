@@ -77,6 +77,6 @@ module.exports = {
             "eventType": "callData",
             "callData": wss.callRooms[packet.ws.inCall]
         }));
-        return sdata;
+        return;
     }
 };
