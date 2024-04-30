@@ -164,7 +164,6 @@ function joinRoom() {
 }
 
 async function joinRoomById(roomId) {
-    let callOffer;
     async function callOfferHandle (event) {
         let packet = JSON.parse(event.data);
         if (packet.eventType !== "callData") {
