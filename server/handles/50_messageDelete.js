@@ -36,7 +36,9 @@
             }));
             return;
         }
-        if (sdata.messages[packet.id].author != packet.ws.uid) {
+        if (!(
+            (sdata.messages[packet.id].author != packet.ws.uid && sdata.users[packet.ws.uid].globalPerms.includes("message.delete"))
+            || sdata.users[packet.ws.uid].globalPerms.includes("moderation.delete"))) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
                 code: "noPerm",

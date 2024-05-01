@@ -1479,7 +1479,7 @@ function clientLoad() {
                                 }
                             }
                             let message3;
-                            if (packet.message.author == sers.userId) {
+                            if (packet.message.author == sers.userId && globalPermissions.includes("message.delete")) {
                                 message3 = `
 <div class="message3">
     <button class="material-symbols-outlined" onclick="editMessage('${packet.message.id}', '${serveur}');">Edit</button>
@@ -1491,6 +1491,8 @@ function clientLoad() {
 <div class="message3">
     <button class="material-symbols-outlined" onclick="ping('${packet.message.author}');">alternate_email</button>
     <button class="material-symbols-outlined" onclick="replyTo('${packet.message.id}', '${serveur}');">Reply</button>
+    ${globalPermissions.includes("moderation.delete") ? `<button class="material-symbols-outlined"
+    onclick="deleteMessage('${packet.message.id}', '${serveur}');">Delete</button>` : ""}
 </div>`;
                             }
                             document.getElementById(`message_${packet.message.id}`).innerHTML = `
