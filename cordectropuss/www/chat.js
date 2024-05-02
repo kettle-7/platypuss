@@ -1381,9 +1381,11 @@ function clientLoad() {
                         }, packet.delay);
                         break;
                     case "messageDeleted":
-                        document.getElementById(`message_${packet.messageId}`).style.display = "none";
+                        if (focusedServer == serveur)
+                            document.getElementById(`message_${packet.messageId}`).style.display = "none";
                         break;
                     case "messageEdited":
+                        if (focusedServer !== serveur) break;
                         messageMap[packet.message.id] = packet.message;
                         // looks like absolute gibberish, matches uuids
                         let uuidreg = /[0-9a-f]{7,8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/ig;
@@ -1570,6 +1572,7 @@ function clientLoad() {
                         }
                         break;
                     case "banned":
+                        if (focusedServer !== serveur) break;
                         document.querySelector("#loadingScreen").className += " fadeOut";
                         if ("explanation" in packet)
                             document.querySelector("#mainContent").innerHTML += 
@@ -1579,6 +1582,7 @@ function clientLoad() {
                                 '<pre class="message1"><code>'+event.data+'</code></pre>';
                         break;
                     case "welcome":
+                        if (focusedServer !== serveur) break;
                         if ("explanation" in packet)
                             document.querySelector("#mainContent").innerHTML += 
                                 '<div class="message1">'+packet.explanation+'</div>';
@@ -1586,18 +1590,22 @@ function clientLoad() {
                             document.querySelector("#mainContent").innerHTML +=
                                 '<pre class="message1"><code>'+event.data+'</code></pre>';
                     case "join":
+                        if (focusedServer !== serveur) break;
                         document.getElementById(`peerlabel_${packet.user}`).style.opacity = 1;
                         break;
                     case "disconnect":
+                        if (focusedServer !== serveur) break;
                         document.getElementById(`peerlabel_${packet.user}`).style.opacity = 0.5;
                         document.getElementById(`peerlabel_${packet.user}`).style.filter = "grayscale";
                     case "connecting":
+                        if (focusedServer !== serveur) break;
                         if (packet.explanation && premyum) {
                             document.querySelector("#mainContent").innerHTML += 
                                 '<div class="message1">'+packet.explanation+'</div>';
                         }
                         break;
                     case "permissionChange":
+                        if (focusedServer !== serveur) break;
                         console.log(packet);
                         if (packet.user !== sers.userId) {
                             if (packet.value)
@@ -1618,6 +1626,7 @@ function clientLoad() {
                             }
                         }
                     default:
+                        if (focusedServer !== serveur) break;
                         if ("code" in packet) {
                             if (["nothingModify"].includes(packet.code) && !premyum) break;
                             if (["invisibleMsg"].includes(packet.code) && !premyum) break;
