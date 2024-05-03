@@ -1160,19 +1160,21 @@ function clientLoad() {
                                 let message3;
                                 if (packet.message.author == sers.userId) {
                                     message3 = `
-<div class="message3">
-    ${lastMessageAuthor === packet.message.author && !(packet.message.content.startsWith("#")) ? `<span class="timestomp" style="position:relative;top:5px;">@${resp ? resp.tag : "None"} at ${new Date(packet.message.stamp).toLocaleString()}${packet.message.edited ? ", last edited "+new Date(packet.message.edited).toLocaleString() : ""}</span>` : ""}
-    <button class="material-symbols-outlined" onclick="editMessage('${packet.message.id}', '${serveur}');">Edit</button>
-    <button class="material-symbols-outlined" onclick="deleteMessage('${packet.message.id}', '${serveur}');">Delete</button>
-    <button class="material-symbols-outlined" onclick="replyTo('${packet.message.id}', '${serveur}');">Reply</button>
-</div>`;
+                                    <div class="message3">
+                                        ${lastMessageAuthor === packet.message.author && !(packet.message.content.startsWith("#")) ? `<span class="timestomp" style="position:relative;top:5px;">@${user ? user.tag : "None"} at ${new Date(packet.message.stamp).toLocaleString()}${packet.message.edited ? ", last edited "+new Date(packet.message.edited).toLocaleString() : ""}</span>` : ""}
+                                        <button class="material-symbols-outlined" onclick="editMessage('${packet.message.id}', '${serveur}');">Edit</button>
+                                        ${globalPermissions.includes("message.delete") ? `<button class="material-symbols-outlined" onclick="deleteMessage('${packet.message.id}', '${serveur}');">Delete</button>` : ""}
+                                        <button class="material-symbols-outlined" onclick="replyTo('${packet.message.id}', '${serveur}');">Reply</button>
+                                    </div>`;
                                 } else {
                                     message3 = `
-<div class="message3">
-    ${lastMessageAuthor === packet.message.author && !(packet.message.content.startsWith("#")) ? `<span class="timestomp" style="position:relative;top:5px;">@${resp ? resp.tag : "None"} at ${new Date(packet.message.stamp).toLocaleString()}${packet.message.edited ? ", last edited "+new Date(packet.message.edited).toLocaleString() : ""}</span>` : ""}
-    <button class="material-symbols-outlined" onclick="ping('${packet.message.author}');">alternate_email</button>
-    <button class="material-symbols-outlined" onclick="replyTo('${packet.message.id}', '${serveur}');">Reply</button>
-</div>`;
+                                    <div class="message3">
+                                        ${lastMessageAuthor === packet.message.author && !(packet.message.content.startsWith("#")) ? `<span class="timestomp" style="position:relative;top:5px;">@${user ? user.tag : "None"} at ${new Date(packet.message.stamp).toLocaleString()}${packet.message.edited ? ", last edited "+new Date(packet.message.edited).toLocaleString() : ""}</span>` : ""}
+                                        <button class="material-symbols-outlined" onclick="ping('${packet.message.author}');">alternate_email</button>
+                                        ${globalPermissions.includes("moderation.delete") ? `<button class="material-symbols-outlined"
+                                        onclick="deleteMessage('${packet.message.id}', '${serveur}');">Delete</button>` : ""}
+                                        <button class="material-symbols-outlined" onclick="replyTo('${packet.message.id}', '${serveur}');">Reply</button>
+                                    </div>`;
                                 }
                                 if (lastMessageAuthor === packet.message.author && !(packet.message.content.startsWith("#"))) {
                                     document.querySelector("#mainContent").innerHTML += `
@@ -1319,7 +1321,7 @@ function clientLoad() {
                                 <div class="message3">
                                     ${lastMessagesAuthor === packet.messages[m].author && !(packet.messages[m].content.startsWith("#")) ? `<span class="timestomp" style="position:relative;top:5px;">@${user ? user.tag : "None"} at ${new Date(packet.messages[m].stamp).toLocaleString()}${packet.messages[m].edited ? ", last edited "+new Date(packet.messages[m].edited).toLocaleString() : ""}</span>` : ""}
                                     <button class="material-symbols-outlined" onclick="editMessage('${packet.messages[m].id}', '${serveur}');">Edit</button>
-                                    <button class="material-symbols-outlined" onclick="deleteMessage('${packet.messages[m].id}', '${serveur}');">Delete</button>
+                                    ${globalPermissions.includes("message.delete") ? `<button class="material-symbols-outlined" onclick="deleteMessage('${packet.messages[m].id}', '${serveur}');">Delete</button>` : ""}
                                     <button class="material-symbols-outlined" onclick="replyTo('${packet.messages[m].id}', '${serveur}');">Reply</button>
                                 </div>`;
                             } else {
@@ -1327,6 +1329,8 @@ function clientLoad() {
                                 <div class="message3">
                                     ${lastMessagesAuthor === packet.messages[m].author && !(packet.messages[m].content.startsWith("#")) ? `<span class="timestomp" style="position:relative;top:5px;">@${user ? user.tag : "None"} at ${new Date(packet.messages[m].stamp).toLocaleString()}${packet.messages[m].edited ? ", last edited "+new Date(packet.messages[m].edited).toLocaleString() : ""}</span>` : ""}
                                     <button class="material-symbols-outlined" onclick="ping('${packet.messages[m].author}');">alternate_email</button>
+                                    ${globalPermissions.includes("moderation.delete") ? `<button class="material-symbols-outlined"
+                                    onclick="deleteMessage('${packet.message.id}', '${serveur}');">Delete</button>` : ""}
                                     <button class="material-symbols-outlined" onclick="replyTo('${packet.messages[m].id}', '${serveur}');">Reply</button>
                                 </div>`;
                             }
@@ -1572,6 +1576,7 @@ function clientLoad() {
                         }
                         break;
                     case "banned":
+                        lastMessageAuthor = null;
                         if (focusedServer !== serveur) break;
                         document.querySelector("#loadingScreen").className += " fadeOut";
                         if ("explanation" in packet)
@@ -1605,6 +1610,7 @@ function clientLoad() {
                         }
                         break;
                     case "permissionChange":
+                        lastMessageAuthor = null;
                         if (focusedServer !== serveur) break;
                         console.log(packet);
                         if (packet.user !== sers.userId) {
@@ -1613,7 +1619,7 @@ function clientLoad() {
                             else
                                 while (peers[packet.user].globalPermissions.includes(packet.permission))
                                     peers[packet.user].globalPermissions.splice(peers[packet.user].globalPermissions.indexOf(packet.permission), 1);
-                            //break;
+                            break;
                         } else {
                             if (packet.value) {
                                 peers[packet.user].globalPermissions.push(packet.permission);
@@ -1624,8 +1630,10 @@ function clientLoad() {
                                 while (globalPermissions.includes(packet.permission))
                                     globalPermissions.splice(globalPermissions.indexOf(packet.permission), 1);
                             }
+                            break;
                         }
                     default:
+                        lastMessageAuthor = null;
                         if (focusedServer !== serveur) break;
                         if ("code" in packet) {
                             if (["nothingModify"].includes(packet.code) && !premyum) break;
