@@ -1330,7 +1330,7 @@ function clientLoad() {
                                     ${lastMessagesAuthor === packet.messages[m].author && !(packet.messages[m].content.startsWith("#")) ? `<span class="timestomp" style="position:relative;top:5px;">@${user ? user.tag : "None"} at ${new Date(packet.messages[m].stamp).toLocaleString()}${packet.messages[m].edited ? ", last edited "+new Date(packet.messages[m].edited).toLocaleString() : ""}</span>` : ""}
                                     <button class="material-symbols-outlined" onclick="ping('${packet.messages[m].author}');">alternate_email</button>
                                     ${globalPermissions.includes("moderation.delete") ? `<button class="material-symbols-outlined"
-                                    onclick="deleteMessage('${packet.message.id}', '${serveur}');">Delete</button>` : ""}
+                                    onclick="deleteMessage('${packet.messages[m].id}', '${serveur}');">Delete</button>` : ""}
                                     <button class="material-symbols-outlined" onclick="replyTo('${packet.messages[m].id}', '${serveur}');">Reply</button>
                                 </div>`;
                             }
