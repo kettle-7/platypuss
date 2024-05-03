@@ -1161,7 +1161,7 @@ function clientLoad() {
                                 if (packet.message.author == sers.userId) {
                                     message3 = `
                                     <div class="message3">
-                                        ${lastMessageAuthor === packet.message.author && !(packet.message.content.startsWith("#")) ? `<span class="timestomp" style="position:relative;top:5px;">@${user ? user.tag : "None"} at ${new Date(packet.message.stamp).toLocaleString()}${packet.message.edited ? ", last edited "+new Date(packet.message.edited).toLocaleString() : ""}</span>` : ""}
+                                        ${lastMessageAuthor === packet.message.author && !(packet.message.content.startsWith("#")) ? `<span class="timestomp" style="position:relative;top:5px;">@${resp ? resp.tag : "None"} at ${new Date(packet.message.stamp).toLocaleString()}${packet.message.edited ? ", last edited "+new Date(packet.message.edited).toLocaleString() : ""}</span>` : ""}
                                         <button class="material-symbols-outlined" onclick="editMessage('${packet.message.id}', '${serveur}');">Edit</button>
                                         ${globalPermissions.includes("message.delete") ? `<button class="material-symbols-outlined" onclick="deleteMessage('${packet.message.id}', '${serveur}');">Delete</button>` : ""}
                                         <button class="material-symbols-outlined" onclick="replyTo('${packet.message.id}', '${serveur}');">Reply</button>
@@ -1169,7 +1169,7 @@ function clientLoad() {
                                 } else {
                                     message3 = `
                                     <div class="message3">
-                                        ${lastMessageAuthor === packet.message.author && !(packet.message.content.startsWith("#")) ? `<span class="timestomp" style="position:relative;top:5px;">@${user ? user.tag : "None"} at ${new Date(packet.message.stamp).toLocaleString()}${packet.message.edited ? ", last edited "+new Date(packet.message.edited).toLocaleString() : ""}</span>` : ""}
+                                        ${lastMessageAuthor === packet.message.author && !(packet.message.content.startsWith("#")) ? `<span class="timestomp" style="position:relative;top:5px;">@${resp ? resp.tag : "None"} at ${new Date(packet.message.stamp).toLocaleString()}${packet.message.edited ? ", last edited "+new Date(packet.message.edited).toLocaleString() : ""}</span>` : ""}
                                         <button class="material-symbols-outlined" onclick="ping('${packet.message.author}');">alternate_email</button>
                                         ${globalPermissions.includes("moderation.delete") ? `<button class="material-symbols-outlined"
                                         onclick="deleteMessage('${packet.message.id}', '${serveur}');">Delete</button>` : ""}
