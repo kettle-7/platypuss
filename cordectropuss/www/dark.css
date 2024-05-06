@@ -105,8 +105,7 @@ button:hover {
 }
 
 .popup {
-    width: min-content !important;
-    min-width: 33%;
+    width: fit-content !important;
     max-width: 90%;
     height: fit-content;
     display: flex;
