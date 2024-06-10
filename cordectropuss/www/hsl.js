@@ -7,6 +7,7 @@ function changeHue(rgb, degree) {
     else if (hsl.h < 0) {
         hsl.h += 360;
     }
+    console.log(hsl);
     return hslToRGB(hsl);
 }
 
