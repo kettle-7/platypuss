@@ -206,6 +206,13 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
             document.head.removeChild(document.querySelector("#ss2"));
             if (localStorage.getItem("theme") == "light")
                 document.querySelector("#ss0").href = "/lightn.css";
+            else {
+                let rgb = document.querySelector("#rgb");
+                rgb.hidden = false;
+                setInterval(() => {
+                    changeHue(rgb, 15);
+                }, 20)
+            }
         } else {
             document.head.removeChild(document.querySelector("#ss0"));
             if (localStorage.getItem("theme") == "light")
