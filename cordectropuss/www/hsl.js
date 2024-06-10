@@ -13,7 +13,7 @@ function changeHue(rgb, degree) {
 function rgbToHSL(rgb) {
     rgb = rgb.toString().replace(/^\s*#|\s*$/g, '').replace(/[rgb() ]/g, '');
     if (rgb.indexOf(",")>0) {
-        rgb = `#${parseInt(rgb.split(",")[0]).toString(16).padStart(2, "0")}${parseInt(rgb.split(",")[0]).toString(16).padStart(2, "0")}${parseInt(rgb.split(",")[0]).toString(16).padStart(2, "0")}`;
+        rgb = `#${parseInt(rgb.split(",")[0]).toString(16).padStart(2, "0")}${parseInt(rgb.split(",")[1]).toString(16).padStart(2, "0")}${parseInt(rgb.split(",")[2]).toString(16).padStart(2, "0")}`;
     }
 
     if(rgb.length == 3){
@@ -29,7 +29,6 @@ function rgbToHSL(rgb) {
         l = (cMax + cMin) / 2,
         h = 0,
         s = 0;
-    console.log(rgb);
 
     if (delta == 0) {
         h = 0;
