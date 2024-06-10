@@ -11,7 +11,10 @@ function changeHue(rgb, degree) {
 }
 
 function rgbToHSL(rgb) {
-    rgb = rgb.replace(/^\s*#|\s*$/g, '');
+    rgb = rgb.replace(/^\s*#|\s*$/g, '').replace(/[rgb() ]/g, '');
+    if (rgb.contains(",")) {
+        rgb = `#${parseInt(rgb.split(",")[0]).toString(16).padStart(2, "0")}${parseInt(rgb.split(",")[0]).toString(16).padStart(2, "0")}${parseInt(rgb.split(",")[0]).toString(16).padStart(2, "0")}`;
+    }
 
     if(rgb.length == 3){
         rgb = rgb.replace(/(.)/g, '$1$1');
