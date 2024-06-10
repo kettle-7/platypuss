@@ -18,7 +18,7 @@ function rgbToHSL(rgb) {
     }
     console.log(rgb);
 
-    var r = parseInt(rgb.substr(0, 2), 16) / 255,
+    let r = parseInt(rgb.substr(0, 2), 16) / 255,
         g = parseInt(rgb.substr(2, 2), 16) / 255,
         b = parseInt(rgb.substr(4, 2), 16) / 255,
         cMax = Math.max(r, g, b),
