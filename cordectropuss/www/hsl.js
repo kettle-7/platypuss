@@ -16,7 +16,6 @@ function rgbToHSL(rgb) {
     if(rgb.length == 3){
         rgb = rgb.replace(/(.)/g, '$1$1');
     }
-    console.log(rgb);
 
     let r = parseInt(rgb.substr(0, 2), 16) / 255,
         g = parseInt(rgb.substr(2, 2), 16) / 255,
@@ -27,6 +26,7 @@ function rgbToHSL(rgb) {
         l = (cMax + cMin) / 2,
         h = 0,
         s = 0;
+    console.log(r,g,b);
 
     if (delta == 0) {
         h = 0;
