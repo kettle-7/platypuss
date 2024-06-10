@@ -210,7 +210,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
             else {
                 document.querySelector("#almostbody").style.opacity = 0.75;
                 setInterval(() => {
-                    console.log("time");
+                    console.log(changeHue(document.body.style.backgroundColor, 15));
                     document.body.style.backgroundColor = changeHue(document.body.style.backgroundColor, 15);
                 }, 20);
             }
