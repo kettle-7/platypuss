@@ -26,7 +26,7 @@ function rgbToHSL(rgb) {
         l = (cMax + cMin) / 2,
         h = 0,
         s = 0;
-    console.log(r,g,b);
+    console.log(rgb);
 
     if (delta == 0) {
         h = 0;
