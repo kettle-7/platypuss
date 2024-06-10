@@ -61,6 +61,7 @@ var mRef = {};
 var edit = false;
 var shown = null;
 if (!authUrl) authUrl = "https://platypuss.net";
+var rgbcolourchangeinterval;
 
 function fetchUser(id) {
     return new Promise((resolve, reject) => {
@@ -210,7 +211,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 console.log("e");
                 let rgb = document.querySelector("#rgb");
                 rgb.hidden = false;
-                var rgbcolourchangeinterval = setInterval(() => {
+                rgbcolourchangeinterval = setInterval(() => {
                     rgb.style.backgroundColor = changeHue(rgb.style.backgroundColor, 15);
                 }, 20);
                 console.log(rgbcolourchangeinterval);
