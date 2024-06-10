@@ -36,6 +36,10 @@
             "type": "application/javascript",
             "path": "chat.js"
         },
+        "/hsl.js": {
+            "type": "application/javascript",
+            "path": "hsl.js"
+        },
         "/mdpage.js": {
             "type": "application/javascript",
             "path": "mdpage.js"
