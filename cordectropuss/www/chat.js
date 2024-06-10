@@ -207,11 +207,13 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
             if (localStorage.getItem("theme") == "light")
                 document.querySelector("#ss0").href = "/lightn.css";
             else {
+                console.log("e");
                 let rgb = document.querySelector("#rgb");
                 rgb.hidden = false;
-                var rgbcolorchangeinterval = setInterval(() => {
+                var rgbcolourchangeinterval = setInterval(() => {
                     rgb.style.backgroundColor = changeHue(rgb.style.backgroundColor, 15);
                 }, 20);
+                console.log(rgbcolourchangeinterval);
             }
         } else {
             document.head.removeChild(document.querySelector("#ss0"));
