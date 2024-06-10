@@ -208,13 +208,10 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
             if (localStorage.getItem("theme") == "light")
                 document.querySelector("#ss0").href = "/lightn.css";
             else {
-                console.log("e");
-                let rgb = document.querySelector("#rgb");
-                rgb.hidden = false;
-                rgbcolourchangeinterval = setInterval(() => {
-                    rgb.style.backgroundColor = changeHue(rgb.style.backgroundColor, 15);
+                document.querySelector("#almostbody").style.opacity = 0.75;
+                setInterval(() => {
+                    document.body.style.backgroundColor = changeHue(document.body.style.backgroundColor, 15);
                 }, 20);
-                console.log(rgbcolourchangeinterval);
             }
         } else {
             document.head.removeChild(document.querySelector("#ss0"));
