@@ -209,9 +209,9 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
             else {
                 let rgb = document.querySelector("#rgb");
                 rgb.hidden = false;
-                setInterval(() => {
+                var rgbcolorchangeinterval = setInterval(() => {
                     rgb.style.backgroundColor = changeHue(rgb.style.backgroundColor, 15);
-                }, 20)
+                }, 20);
             }
         } else {
             document.head.removeChild(document.querySelector("#ss0"));
