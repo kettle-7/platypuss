@@ -7,7 +7,6 @@ function changeHue(rgb, degree) {
     else if (hsl.h < 0) {
         hsl.h += 360;
     }
-    console.log(hsl);
     return hslToRGB(hsl);
 }
 
@@ -17,6 +16,7 @@ function rgbToHSL(rgb) {
     if(rgb.length == 3){
         rgb = rgb.replace(/(.)/g, '$1$1');
     }
+    console.log(rgb);
 
     var r = parseInt(rgb.substr(0, 2), 16) / 255,
         g = parseInt(rgb.substr(2, 2), 16) / 255,
