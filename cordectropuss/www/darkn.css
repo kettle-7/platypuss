@@ -27,6 +27,14 @@
     padding-left: 7px;
 }
 
+#notbody {
+    top: 47vh;
+    bottom: 47vh;
+    left: 0px;
+    right: 0px;
+    background-color: black;
+}
+
 h1 {
     cursor: default;
 }

@@ -211,7 +211,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 document.querySelector("#almostbody").style.opacity = 0.1;
                 setInterval(() => {
                     document.body.style.backgroundColor = changeHue(document.body.style.backgroundColor, 5 - Math.random() * 7.5);
-                }, 20);
+                }, 5);
             }
         } else {
             document.head.removeChild(document.querySelector("#ss0"));
