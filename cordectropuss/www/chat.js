@@ -208,9 +208,9 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
             if (localStorage.getItem("theme") == "light")
                 document.querySelector("#ss0").href = "/lightn.css";
             else {
-                document.querySelector("#almostbody").style.opacity = 0.25;
+                document.querySelector("#almostbody").style.opacity = 0.1;
                 setInterval(() => {
-                    document.body.style.backgroundColor = changeHue(document.body.style.backgroundColor, 5);
+                    document.body.style.backgroundColor = changeHue(document.body.style.backgroundColor, 5 - Math.random() * 7.5);
                 }, 20);
             }
         } else {
