@@ -19,7 +19,7 @@
 
 * {
     font-family: Chokokutai, serif;
-    color: #fffacc;
+    color: #ff0000;
     cursor: none !important;
 }
 
@@ -484,7 +484,7 @@ input {
 }
 
 #longMessageBoxContainer .material-symbols-outlined {
-    font-size: 32px !important;
+    font-size: 8px !important;
     text-align: center;
     height: 100%;
     width: 100%;
