@@ -149,7 +149,9 @@ all the information specified in the Platypuss API."
 				"rooms": {},
 				"messages": {},
 				"groups": {},
-				"meta": {}
+				"meta": {},
+				"multiple": true,
+				"properties": packet.servers.properties[ogip]
 			};
 			ws.send({
 				eventType: "message",
