@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ************************************************************************/
 
+const { randomInt } = require("crypto");
 const { v4 } = require("uuid");
 const { } = require("./platypussDefaults.js"); // import nothing :o)
 const fs = require("fs");
