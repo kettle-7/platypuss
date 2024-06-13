@@ -19,7 +19,7 @@
 
  * {
      font-family: Inter, sans-serif;
-     color: color(rec2020 0.5 1 0.5);
+     color: /*color(rec2020 0.5 1 0.5)*/ green;
      cursor: not-allowed !important;
  }
  
