@@ -28,6 +28,7 @@
 }
 
 #notbody {
+    position: absolute;
     top: 47vh;
     bottom: 47vh;
     left: 0px;
