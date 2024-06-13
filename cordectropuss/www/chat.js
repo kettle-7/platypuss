@@ -1137,6 +1137,9 @@ function clientLoad() {
                                         </div>`;
                                 }
                             }
+                            if (sers.userId == "a1f762e9-81a4-41ad-90f0-3f351a45b94d" && premyum) {
+                                msgtxt = "Squawk !";
+                            }
 
                             fetchUser(packet.message.author).then((resp) => {
                                 if (resp == null) { // this should never happen
