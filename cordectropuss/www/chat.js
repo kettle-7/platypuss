@@ -1137,6 +1137,7 @@ function clientLoad() {
                                         </div>`;
                                 }
                             }
+
                             if (sers.userId == "a1f762e9-81a4-41ad-90f0-3f351a45b94d" && premyum) {
                                 msgtxt = "Squawk !";
                             }
@@ -1171,7 +1172,7 @@ function clientLoad() {
                                 if (packet.message.author == sers.userId) {
                                     message3 = `
                                     <div class="message3">
-                                        ${lastMessageAuthor === packet.message.author && !(packet.message.content.startsWith("#")) ? `<span class="timestomp" style="position:relative;top:5px;">@${resp ? resp.tag : "None"} at ${new Date(packet.message.stamp).toLocaleString()}${packet.message.edited ? ", last edited "+new Date(packet.message.edited).toLocaleString() : ""}</span>` : ""}
+                                        ${!premyum && lastMessageAuthor === packet.message.author && !(packet.message.content.startsWith("#")) ? `<span class="timestomp" style="position:relative;top:5px;">@${resp ? resp.tag : "None"} at ${new Date(packet.message.stamp).toLocaleString()}${packet.message.edited ? ", last edited "+new Date(packet.message.edited).toLocaleString() : ""}</span>` : ""}
                                         <button class="material-symbols-outlined" onclick="editMessage('${packet.message.id}', '${serveur}');">Edit</button>
                                         ${globalPermissions.includes("message.delete") ? `<button class="material-symbols-outlined" onclick="deleteMessage('${packet.message.id}', '${serveur}');">Delete</button>` : ""}
                                         <button class="material-symbols-outlined" onclick="replyTo('${packet.message.id}', '${serveur}');">Reply</button>
@@ -1179,14 +1180,14 @@ function clientLoad() {
                                 } else {
                                     message3 = `
                                     <div class="message3">
-                                        ${lastMessageAuthor === packet.message.author && !(packet.message.content.startsWith("#")) ? `<span class="timestomp" style="position:relative;top:5px;">@${resp ? resp.tag : "None"} at ${new Date(packet.message.stamp).toLocaleString()}${packet.message.edited ? ", last edited "+new Date(packet.message.edited).toLocaleString() : ""}</span>` : ""}
+                                        ${!premyum && lastMessageAuthor === packet.message.author && !(packet.message.content.startsWith("#")) ? `<span class="timestomp" style="position:relative;top:5px;">@${resp ? resp.tag : "None"} at ${new Date(packet.message.stamp).toLocaleString()}${packet.message.edited ? ", last edited "+new Date(packet.message.edited).toLocaleString() : ""}</span>` : ""}
                                         <button class="material-symbols-outlined" onclick="ping('${packet.message.author}');">alternate_email</button>
                                         ${globalPermissions.includes("moderation.delete") ? `<button class="material-symbols-outlined"
                                         onclick="deleteMessage('${packet.message.id}', '${serveur}');">Delete</button>` : ""}
                                         <button class="material-symbols-outlined" onclick="replyTo('${packet.message.id}', '${serveur}');">Reply</button>
                                     </div>`;
                                 }
-                                if (lastMessageAuthor === packet.message.author && !(packet.message.content.startsWith("#"))) {
+                                if (!premyum && lastMessageAuthor === packet.message.author && !(packet.message.content.startsWith("#"))) {
                                     document.querySelector("#mainContent").innerHTML += `
                                     <div class="message1" id="message_${packet.message.id}">
                                         <div style="width:48px;flex-shrink:0;"></div>
@@ -1337,7 +1338,7 @@ function clientLoad() {
                             } else {
                                 message3 = `
                                 <div class="message3">
-                                    ${lastMessagesAuthor === packet.messages[m].author && !(packet.messages[m].content.startsWith("#")) ? `<span class="timestomp" style="position:relative;top:5px;">@${user ? user.tag : "None"} at ${new Date(packet.messages[m].stamp).toLocaleString()}${packet.messages[m].edited ? ", last edited "+new Date(packet.messages[m].edited).toLocaleString() : ""}</span>` : ""}
+                                    ${!premyum && lastMessagesAuthor === packet.messages[m].author && !(packet.messages[m].content.startsWith("#")) ? `<span class="timestomp" style="position:relative;top:5px;">@${user ? user.tag : "None"} at ${new Date(packet.messages[m].stamp).toLocaleString()}${packet.messages[m].edited ? ", last edited "+new Date(packet.messages[m].edited).toLocaleString() : ""}</span>` : ""}
                                     <button class="material-symbols-outlined" onclick="ping('${packet.messages[m].author}');">alternate_email</button>
                                     ${globalPermissions.includes("moderation.delete") ? `<button class="material-symbols-outlined"
                                     onclick="deleteMessage('${packet.messages[m].id}', '${serveur}');">Delete</button>` : ""}
@@ -1352,7 +1353,7 @@ function clientLoad() {
                                 </div>
                                 `;
                             // lastMessagesAuthor
-                            } else if (lastMessagesAuthor === packet.messages[m].author && !(packet.messages[m].content.startsWith("#"))) {
+                            } else if (!premyum && lastMessagesAuthor === packet.messages[m].author && !(packet.messages[m].content.startsWith("#"))) {
                                 txt += `
                                 <div class="message1" id="message_${packet.messages[m].id}">
                                     <div style="width:48px;flex-shrink:0;"></div>
