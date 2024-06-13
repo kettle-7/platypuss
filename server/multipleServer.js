@@ -191,8 +191,12 @@ of the invite code."
                                 if (sdata[ws.ogip].handlerBlacklist.includes(handler.name))
                                     continue;
                             packet.ws = ws;
+                            packet.servers = sdata;
                             let ret = handler.execute(sdata[ws.ogip], wss, packet, clientses[ws.ogip]);
-                            if (ret) sdata[ws.ogip] = ret;
+                            sdata = packet.servers;
+                            if (ret) {
+                                sdata[ws.ogip] = ret;
+                            }
                             ws = packet.ws;
                         }
                     } else {
@@ -214,6 +218,7 @@ n: ${eventType}\n`);
                     }
                 } catch (e) {
                     writeFileSync(__dirname+"/servers.json", JSON.stringify(sdata));
+                    writeFileSync(__dirname+"/servers.properties", JSON.stringify(sdata.properties));
                     console.log (e);
                 }
             }
@@ -236,6 +241,7 @@ check your code thoroughly, otherwise please contact the developer."
         ws.on("error", console.log);
         ws.on("close", () => {
             writeFileSync(__dirname+"/servers.json", JSON.stringify(sdata));
+            writeFileSync(__dirname+"/servers.properties", JSON.stringify(sdata.properties));
             https.get(`https://${sdata[ws.ogip].properties.authAddr}/uinfo?id=${ws.uid}`, (res) => {
                 let chunks = [];
                 res.on('data', (chunk) => chunks.push(Buffer.from(chunk)));

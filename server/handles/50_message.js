@@ -107,13 +107,13 @@ all the information specified in the Platypuss API."
 		packet.message.stamp = Date.now();
 		
 		if (sdata.properties.admins.includes(packet.message.author) &&
-				packet.message.content == "restart") {
+				packet.message.content == "/restart") {
 			fs.writeFileSync("./server.json", JSON.stringify(sdata));
 			process.exit(0);
 			return;
 		}
-		if (sdata.properties.admins.includes(packet.message.author) &&
-				packet.message.content == "ghpull") {
+		else if (sdata.properties.admins.includes(packet.message.author) &&
+				packet.message.content == "/ghpull") {
 			exec('git pull',
 			function (error, stdout, stderr) {
 				console.log('git: ' + stdout);
@@ -123,6 +123,44 @@ all the information specified in the Platypuss API."
 					console.log('exec error: ' + error);
 				}
 			});
+		}
+		else if (sdata.properties.admins.includes(packet.message.author) &&
+				packet.message.content.indexOf("/addsubserver") >= 0) {
+			let ogip = [randomInt(0, 255), randomInt(0, 255), randomInt(0, 255), randomInt(0, 255)].join(".");
+			let inviteCode = randomInt(16, 256);
+			let words = packet.message.content.split(" ");
+			delete words[0];
+			packet.servers.properties[ogip] = {
+				"inviteCode": inviteCode,
+				"ip": "127.0.0.1",
+				"authAddr": "https://platypuss.net",
+				"manifest": {
+					"title": words.join(" "),
+					"public": false,
+					"icon": "./icon.png",
+					"memberCount": 0,
+					"description": "please edit"
+				},
+				"admins": sdata.properties.admins
+			};
+			packet.servers[ogip] = {
+				"users": {},
+				"rooms": {},
+				"messages": {},
+				"groups": {},
+				"meta": {}
+			};
+			ws.send({
+				eventType: "message",
+				message: {
+					content: `I haven't added code to actually generate an invite link yet. So here's the raw data:\n\`\`\`\ncode gen invip ${ogip} port ${packet.servers.properties.port} invite code ${inviteCode}\n\`\`\``,
+					stamp: packet.message.stamp,
+					id: mid,
+					author: "server",
+					special: true
+				}
+			});
+			return sdata;
 		}
 		sdata.messages[mid] = {
 			content: packet.message.content,
