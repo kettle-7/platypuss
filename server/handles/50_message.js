@@ -153,7 +153,7 @@ all the information specified in the Platypuss API."
 				"multiple": true,
 				"properties": packet.servers.properties[ogip]
 			};
-			ws.send({
+			packet.ws.send({
 				eventType: "message",
 				message: {
 					content: `I haven't added code to actually generate an invite link yet. So here's the raw data:\n\`\`\`\ncode gen invip ${ogip} port ${packet.servers.properties.port} invite code ${inviteCode}\n\`\`\``,
