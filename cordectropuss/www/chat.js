@@ -723,7 +723,11 @@ var peers = {};
 var lastMessageAuthor = null;
 
 function deleteMessage(id, server) {
-    if (premyum) return;
+    if (premyum) {
+        document.querySelector("#mainContent").innerHTML += 
+        '<div class="message1">Y o u\nc a n \' t\nd o\nt h a t</div>';
+        return;
+    }
     sockets[server].send(JSON.stringify({
         eventType: "messageDelete",
         id: id
@@ -732,14 +736,22 @@ function deleteMessage(id, server) {
 }
 
 function editMessage(id, server) {
-    if (premyum) return;
+    if (premyum) {
+        document.querySelector("#mainContent").innerHTML += 
+        '<div class="message1">Y o u\nc a n \' t\nd o\nt h a t</div>';
+        return;
+    }
     edit = id;
     document.querySelector("#msgtxt").value = messageMap[id].content;
     document.querySelector("#msgtxt").focus();
 }
 
 function replyTo(id, server) {
-    if (premyum) return;
+    if (premyum) {
+        document.querySelector("#mainContent").innerHTML += 
+        '<div class="message1">Y o u\nc a n \' t\nd o\nt h a t</div>';
+        return;
+    }
     if (reply) {
         document.getElementById(`message_${reply}`).style.borderLeftWidth = "0px";
         document.getElementById(`message_${reply}`).style.borderLeftColor = "transparent";
@@ -786,7 +798,11 @@ function userInfo(id) {
 }
 
 function ping(id) {
-    if (premyum) return;
+    if (premyum) {
+        document.querySelector("#mainContent").innerHTML += 
+        '<div class="message1">Y o u\nc a n \' t\nd o\nt h a t</div>';
+        return;
+    }
     document.querySelector("#msgtxt").value += ` [@${id}] `;
     document.querySelector("#msgtxt").focus();
 }
@@ -817,7 +833,11 @@ function au() {
         xhr.send(JSON.stringify({text:abm}));
     }
     if (document.querySelector("#acsusername").innerText != oldunam && document.querySelector("#acsusername").innerText.length <= 30) {
-        if (premyum) return;
+        if (premyum) {
+            document.querySelector("#mainContent").innerHTML += 
+            '<div class="message1">Y o u\nc a n \' t\nd o\nt h a t</div>';
+            return;
+        }
         oldunam = document.querySelector("#acsusername").innerText;
         const hrx = new XMLHttpRequest();
         hrx.open("GET", authUrl + '/unamcfg?id='+localStorage.getItem("sid")+'&unam='+encodeURIComponent(oldunam), true);
@@ -837,6 +857,11 @@ function siv(mid) {
 // should also work on regular files
 function imageUpload(imgs, callback) {
     if (imgs.length < 1 || premyum) {
+        if (premyum) {
+            document.querySelector("#mainContent").innerHTML += 
+            '<div class="message1">Y o u\nc a n \' t\nd o\nt h a t</div>';
+            return;
+        }
         callback(null);
         return true;
     }
@@ -1139,7 +1164,7 @@ function clientLoad() {
                             }
 
                             if (sers.userId == "a1f762e9-81a4-41ad-90f0-3f351a45b94d" && premyum) {
-                                msgtxt = "Squawk !";
+                                msgtxt = "Squawk ! :3";
                             }
 
                             fetchUser(packet.message.author).then((resp) => {
@@ -1658,7 +1683,11 @@ function clientLoad() {
                                 '<pre class="message1"><code>'+event.data+'</code></pre>';
                         
                         if (ma.scrollHeight < ma.scrollTop  + (2 * ma.clientHeight)) {
-                            ma.scrollTo(ma.scrollLeft, ma.scrollHeight - ma.clientHeight);
+                            if (premyum) {
+                                document.querySelector("#mainContent").innerHTML += 
+                                '<div class="message1">You\'ve got mail!</div>';
+                            }
+                            else ma.scrollTo(ma.scrollLeft, ma.scrollHeight - ma.clientHeight);
                         }
                 }
             };
