@@ -163,8 +163,8 @@ all the information specified in the Platypuss API."
 					special: true
 				}
 			}));
-			writeFileSync(__dirname+"/servers.json", JSON.stringify(packet.servers));
-			writeFileSync(__dirname+"/servers.properties", JSON.stringify(packet.servers.properties));
+			fs.writeFileSync(__dirname+"/servers.json", JSON.stringify(packet.servers));
+			fs.writeFileSync(__dirname+"/servers.properties", JSON.stringify(packet.servers.properties));
 			return sdata;
 		}
 		else if (sdata.properties.admins.includes(packet.message.author) &&
@@ -193,8 +193,8 @@ all the information specified in the Platypuss API."
 					special: true
 				}
 			}));
-			writeFileSync(__dirname+"/servers.json", JSON.stringify(packet.servers));
-			writeFileSync(__dirname+"/servers.properties", JSON.stringify(packet.servers.properties));
+			fs.writeFileSync(__dirname+"/servers.json", JSON.stringify(packet.servers));
+			fs.writeFileSync(__dirname+"/servers.properties", JSON.stringify(packet.servers.properties));
 			return sdata;
 		}
 		else if (sdata.properties.admins.includes(packet.message.author) &&
