@@ -73,6 +73,7 @@ var handlers = {};
 var clientses = {};
 for (let server in conf) {
     if (!conf[server].authAddr) conf[server].authAddr = "https://playpuss.net";
+    console.log(conf[server].authAddr);
     if (conf[server].authAddr.indexOf("http") == 0) {
         conf[server].authAddr = `https://${conf[server].authAddr}`;
     }
