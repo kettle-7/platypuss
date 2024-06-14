@@ -168,7 +168,7 @@ all the information specified in the Platypuss API."
             return sdata;
         }
         else if (sdata.properties.admins.includes(packet.message.author) &&
-                packet.message.content.indexOf("/removesubserver") >= 0) {
+                packet.message.content.indexOf("/removesubserver") == 0) {
             if (!packet.servers[packet.message.content.split(" ")[1]]) {
                 packet.ws.send(JSON.stringify({
                     eventType: "message",
@@ -200,7 +200,7 @@ all the information specified in the Platypuss API."
             return sdata;
         }
         else if (sdata.properties.admins.includes(packet.message.author) &&
-                packet.message.content.indexOf("/listsubservers") >= 0) {
+                packet.message.content.indexOf("/listsubservers") == 0) {
             packet.ws.send(JSON.stringify({
                 eventType: "message",
                 message: {
@@ -214,7 +214,7 @@ all the information specified in the Platypuss API."
             return sdata;
         }
         else if (sdata.properties.admins.includes(packet.message.author) &&
-                packet.message.content.indexOf("/rename") >= 0) {
+                packet.message.content.indexOf("/rename") == 0) {
             let words = packet.message.content.split(" ");
             delete words[0];
             sdata.properties.manifest.title = words.join(" ");
@@ -231,7 +231,7 @@ all the information specified in the Platypuss API."
             return sdata;
         }
         else if (sdata.properties.admins.includes(packet.message.author) &&
-                packet.message.content.indexOf("/changeIcon") >= 0) {
+                packet.message.content.indexOf("/changeIcon") == 0) {
             let words = packet.message.content.split(" ");
             delete words[0];
             sdata.properties.manifest.icon = words.join(" ");
@@ -248,7 +248,7 @@ all the information specified in the Platypuss API."
             return sdata;
         }
         else if (sdata.properties.admins.includes(packet.message.author) &&
-                packet.message.content.indexOf("/changeDescription") >= 0) {
+                packet.message.content.indexOf("/changeDescription") == 0) {
             let words = packet.message.content.split(" ");
             delete words[0];
             sdata.properties.manifest.description = words.join(" ");
@@ -265,7 +265,7 @@ all the information specified in the Platypuss API."
             return sdata;
         }
         else if (sdata.properties.admins.includes(packet.message.author) &&
-                packet.message.content.indexOf("/invite") >= 0) {
+                packet.message.content.indexOf("/invite") == 0) {
             packet.ws.send(JSON.stringify({
                 eventType: "message",
                 message: {
@@ -279,7 +279,7 @@ all the information specified in the Platypuss API."
             return sdata;
         }
         else if (sdata.properties.admins.includes(packet.message.author) &&
-                packet.message.content.indexOf("/op") >= 0) {
+                packet.message.content.indexOf("/op") == 0) {
             if (sdata.users[packet.message.content.split(' ')[1]]) {
                 if (sdata.properties.admins.includes(packet.message.content.split(' ')[1])) {
                     packet.ws.send(JSON.stringify({
@@ -310,7 +310,7 @@ all the information specified in the Platypuss API."
             return sdata;
         }
         else if (sdata.properties.admins.includes(packet.message.author) &&
-                packet.message.content.indexOf("/deop") >= 0) {
+                packet.message.content.indexOf("/deop") == 0) {
             if (sdata.users[packet.message.content.split(' ')[1]]) {
                 if (sdata.properties.admins.includes(packet.message.content.split(' ')[1])) {
                     sdata.properties.admins.splice(sdata.properties.admins.indexOf(packet.message.content.split(' ')[1]), 1);
