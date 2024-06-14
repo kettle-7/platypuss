@@ -83,6 +83,19 @@ function fetchUser(id) {
     });
 }
 
+function inviteError (err) {
+    console.error(err);
+    document.querySelector("#serverName").innerHTML = `
+    You've been invited to join a server, but we couldn't connect.<br>
+    Either the invite link is invalid or the server is currently down.
+    Please contact the server owner if you think there's an issue.
+    `;
+    document.querySelector("#acceptinvitebtn").innerText = "Accept Anyway";
+    document.querySelector("#inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
+    document.querySelector("#loadingScreen").className += " fadeOut";
+    document.querySelector("#invdecline").focus();
+}
+
 function li() {
     ift = false;
     document.getElementById('P').style.display = 'flex';
@@ -305,30 +318,8 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                     document.querySelector("#inviteIcon").src = data.icon;
                     document.querySelector("#loadingScreen").className += " fadeOut";
                     document.querySelector("#acceptinvitebtn").focus();
-                }).catch(err => {
-                    console.error(err);
-                    document.querySelector("#serverName").innerHTML = `
-                    You've been invited to join a server, but we couldn't connect.<br>
-                    Either the invite link is invalid or the server is currently down.
-                    Please contact the server owner if you think there's an issue.
-                    `;
-                    document.querySelector("#acceptinvitebtn").innerText = "Accept Anyway";
-                    document.querySelector("#inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
-                    document.querySelector("#loadingScreen").className += " fadeOut";
-                    document.querySelector("#invdecline").focus();
-                });
-            }).catch(err => {
-                console.error(err);
-                document.querySelector("#serverName").innerHTML = `
-                You've been invited to join a server, but we couldn't connect.<br>
-                Either the invite link is invalid or the server is currently down.
-                Please contact the server owner if you think there's an issue.
-                `;
-                document.querySelector("#acceptinvitebtn").innerText = "Accept Anyway";
-                document.querySelector("#inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
-                document.querySelector("#loadingScreen").className += " fadeOut";
-                document.querySelector("#invdecline").focus();
-            });
+                }).catch(inviteError);
+            }).catch(inviteError);
             document.querySelector("#inviteparent").style.display = "flex";
             function clicky () {
                 document.querySelector("#invdecline").innerText = "Close";
@@ -380,30 +371,8 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                     document.querySelector("#inviteIcon").src = data.icon;
                     document.querySelector("#loadingScreen").className += " fadeOut";
                     document.querySelector("#acceptinvitebtn").focus();
-                }).catch(err => {
-                    console.error(err);
-                    document.querySelector("#serverName").innerHTML = `
-                    You've been invited to join a server, but we couldn't connect :~(<br>
-                    Either the invite link is invalid or the server is currently down.
-                    Please contact the server owner if you think there's an issue.
-                    `;
-                    document.querySelector("#acceptinvitebtn").innerText = "Accept Anyway";
-                    document.querySelector("#inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
-                    document.querySelector("#loadingScreen").className += " fadeOut";
-                    document.querySelector("#invdecline").focus();
-                });
-            }).catch(err => {
-                console.error(err);
-                document.querySelector("#serverName").innerHTML = `
-                You've been invited to join a server, but we couldn't connect :~(<br>
-                Either the invite link is invalid or the server is currently down.
-                Please contact the server owner if you think there's an issue.
-                `;
-                document.querySelector("#acceptinvitebtn").innerText = "Accept Anyway";
-                document.querySelector("#inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
-                document.querySelector("#loadingScreen").className += " fadeOut";
-                document.querySelector("#invdecline").focus();
-            });
+                }).catch(inviteError);
+            }).catch(inviteError);
             document.querySelector("#inviteparent").style.display = "flex";
             localStorage.removeItem("pendingInvite");
             localStorage.removeItem("pendingInvip");
@@ -555,34 +524,8 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                     document.querySelector("#inviteIcon").src = data.icon;
                     document.querySelector("#loadingScreen").className += " fadeOut";
                     document.querySelector("#acceptinvitebtn").focus();
-                }).catch(err => {
-                    console.error(err);
-                    document.querySelector("#serverName").innerHTML = `
-                    You've been invited to join a server, but we couldn't connect.<br>
-                    Either the invite link is invalid or the server is currently down.
-                    Please contact the server owner if you think there's an issue.
-                    `;
-                    document.querySelector("#acceptinvitebtn").hidden = true;
-                    document.querySelector("#inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
-                    document.querySelector("#loadingScreen").className += " fadeOut";
-                    document.querySelector("#invdecline").focus();
-                    document.querySelector("#invdecline").innerText = "Close";
-                    document.querySelector("#invdecline").onclick = () => { window.close() };
-                });
-            }).catch(err => {
-                console.error(err);
-                document.querySelector("#serverName").innerHTML = `
-                You've been invited to join a server, but we couldn't connect.<br>
-                Either the invite link is invalid or the server is currently down.
-                Please contact the server owner if you think there's an issue.
-                `;
-                document.querySelector("#acceptinvitebtn").hidden = true;
-                document.querySelector("#inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
-                document.querySelector("#loadingScreen").className += " fadeOut";
-                document.querySelector("#invdecline").focus();
-                document.querySelector("#invdecline").innerText = "Close";
-                document.querySelector("#invdecline").onclick = () => { window.close() };
-            });
+                }).catch(inviteError);
+            }).catch(inviteError);
             document.querySelector("#inviteparent").style.display = "flex";
             function clicky () {
                 document.querySelector("#invdecline").innerText = "Close";
@@ -624,34 +567,8 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                     document.querySelector("#inviteIcon").src = data.icon;
                     document.querySelector("#loadingScreen").className += " fadeOut";
                     document.querySelector("#acceptinvitebtn").focus();
-                }).catch(err => {
-                    console.error(err);
-                    document.querySelector("#serverName").innerHTML = `
-                    You've been invited to join a server, but we couldn't connect :~(<br>
-                    Either the invite link is invalid or the server is currently down.
-                    Please contact the server owner if you think there's an issue.
-                    `;
-                    document.querySelector("#acceptinvitebtn").hidden = true;
-                    document.querySelector("#inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
-                    document.querySelector("#loadingScreen").className += " fadeOut";
-                    document.querySelector("#invdecline").focus();
-                    document.querySelector("#invdecline").innerText = "Close";
-                    document.querySelector("#invdecline").onclick = () => { window.close() };
-                });
-            }).catch(err => {
-                console.error(err);
-                document.querySelector("#serverName").innerHTML = `
-                You've been invited to join a server, but we couldn't connect :~(<br>
-                Either the invite link is invalid or the server is currently down.
-                Please contact the server owner if you think there's an issue.
-                `;
-                document.querySelector("#acceptinvitebtn").hidden = true;
-                document.querySelector("#inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
-                document.querySelector("#loadingScreen").className += " fadeOut";
-                document.querySelector("#invdecline").focus();
-                document.querySelector("#invdecline").innerText = "Close";
-                document.querySelector("#invdecline").onclick = () => { window.close() };
-            });
+                }).catch(inviteError);
+            }).catch(inviteError);
             document.querySelector("#inviteparent").style.display = "flex";
             localStorage.removeItem("pendingInvite");
             localStorage.removeItem("pendingInvip");
@@ -860,7 +777,8 @@ function imageUpload(imgs, callback) {
         if (premyum) {
             document.querySelector("#mainContent").innerHTML += 
             '<div class="message1">Y o u<br>c a n \' t<br>d o<br>t h a t</div>';
-            return;
+            callback(null);
+            return true;
         }
         callback(null);
         return true;
