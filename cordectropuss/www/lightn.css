@@ -784,3 +784,9 @@
      }
    }
  
+#fuckyouparent * {
+    color: red;
+}
+#fuckyouparent button {
+    color: rgb(255, 0, 255);
+}
