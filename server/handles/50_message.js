@@ -194,7 +194,7 @@ all the information specified in the Platypuss API."
 			return sdata;
 		}
 		else if (sdata.properties.admins.includes(packet.message.author) &&
-				packet.message.content.indexOf("/removesubserver") >= 0) {
+				packet.message.content.indexOf("/listsubservers") >= 0) {
 			packet.ws.send(JSON.stringify({
 				eventType: "message",
 				message: {

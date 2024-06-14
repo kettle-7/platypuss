@@ -74,7 +74,6 @@ var clientses = {};
 for (let server in conf) {
     if (conf[server].authAddr == undefined) continue;
     conf[server].authAddr = `https://${conf[server].authAddr.replace(/http(s|)\:\/\//g, "")}`;
-    console.log(conf[server].authAddr);
     clientses[server] = [];
     if (sdata[server]) {
         sdata[server].properties = conf[server];
