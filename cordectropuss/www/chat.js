@@ -1094,8 +1094,7 @@ function clientLoad() {
                             if (packet.message.uploads) {
                                 for (let upload of packet.message.uploads) {
                                     if (upload.type.startsWith("image/") && !premyum) {
-                                        msgtext += `<a href="#"
-                                            onclick="imageviewer.src='${authUrl+upload.url}';imageviewerparent.style.display='flex';"><img src="${authUrl+upload.url}"></a>`;
+                                        msgtext += `<a onclick="imageviewer.src='${authUrl+upload.url}';imageviewerparent.style.display='flex';"><img src="${authUrl+upload.url}"></a>`;
                                         continue;
                                     } else if (upload.type.startsWith("video/") && !premyum) {
                                         msgtext += `<video controls height="250">
@@ -1269,8 +1268,7 @@ function clientLoad() {
                             if (packet.messages[m].uploads) {
                                 for (let upload of packet.messages[m].uploads) {
                                     if (upload.type.startsWith("image/") && !premyum) {
-                                        msgtext += `<a href="#"
-                                            onclick="imageviewer.src='${authUrl+upload.url}';imageviewerparent.style.display='flex';"><img src="${authUrl+upload.url}"></a>`;
+                                        msgtext += `<a onclick="imageviewer.src='${authUrl+upload.url}';imageviewerparent.style.display='flex';"><img src="${authUrl+upload.url}"></a>`;
                                         continue;
                                     } else if (upload.type.startsWith("video/") && !premyum) {
                                         msgtext += `<video controls height="250">
