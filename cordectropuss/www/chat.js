@@ -1033,10 +1033,10 @@ function clientLoad() {
                             messageMap[packet.message.id] = packet.message;
                             // looks like absolute gibberish, matches uuids
                             let uuidreg = /[0-9a-f]{7,8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/ig;
-                            let msgtxt = converty.makeHtml(packet.message.content.replace(/\</g, '&lt;')/*.replace(/\>/g, '&gt;')*/);
+                            let msgtext = converty.makeHtml(packet.message.content.replace(/\</g, '&lt;')/*.replace(/\>/g, '&gt;')*/);
                             let arr;
-                            while ((arr = uuidreg.exec(msgtxt)) !== null) {
-                                let strl = msgtxt.split("");
+                            while ((arr = uuidreg.exec(msgtext)) !== null) {
+                                let strl = msgtext.split("");
                                 if (strl[arr.index + 35] == "]") {
                                     strl.splice(arr.index, 0, "0");
                                 }
@@ -1054,7 +1054,7 @@ function clientLoad() {
                                             strl.splice(arr.index - 2, 39, `
 <a class="userMention" onclick="userInfo('${user.id}');">@${user.unam}</a>`);
                                         }
-                                        msgtxt = strl.join("");
+                                        msgtext = strl.join("");
                                         //uuidreg.exec(msgtxt);
                                         break;
                                     default:
@@ -1063,7 +1063,7 @@ function clientLoad() {
                             }
                             if (packet.message.reply) {
                                 if (!messageMap[packet.message.reply]) {
-                                    msgtxt = `<blockquote id="r_${packet.message.id}"><em>Message couldn't be loaded</em></blockquote>` + msgtxt;
+                                    msgtext = `<blockquote id="r_${packet.message.id}"><em>Message couldn't be loaded</em></blockquote>` + msgtext;
                                     if (mRef[packet.message.reply] == undefined) {
                                         mRef[packet.message.reply] = [`r_${packet.message.id}`];
                                     } else {
@@ -1072,15 +1072,15 @@ function clientLoad() {
                                 } else {
                                     let m = await fetchUser(messageMap[packet.message.reply].author);
                                     if (m == null) {
-                                        msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.message.reply
-                                            }')"><a class="invalidUser">@Deleted User</a> ${messageMap[packet.message.reply].content}</blockquote>` + msgtxt;
+                                        msgtext = `<blockquote style="cursor:pointer;" onclick="siv('${packet.message.reply
+                                            }')"><a class="invalidUser">@Deleted User</a> ${messageMap[packet.message.reply].content}</blockquote>` + msgtext;
                                     } else {
                                         // we don't support server nicknames as they don't exist yet
-                                        msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.message.reply
+                                        msgtext = `<blockquote style="cursor:pointer;" onclick="siv('${packet.message.reply
 }')"><a class="userMention" onclick="userInfo('${m.id}');">@${m.unam
                                             .replace(/\</g, "&lt;")
                                             .replace(/\>/g, "&gt;")
-                                        }</a> ${messageMap[packet.message.reply].content}</blockquote>` + msgtxt;
+                                        }</a> ${messageMap[packet.message.reply].content}</blockquote>` + msgtext;
                                     }
                                 }
                             }
@@ -1088,13 +1088,13 @@ function clientLoad() {
                             if (packet.message.uploads) {
                                 for (let upload of packet.message.uploads) {
                                     if (upload.type.startsWith("image/") && !premyum) {
-                                        msgtxt += `<a target="_blank" href="${authUrl+upload.url}"><img src="${authUrl+upload.url}"></a>`;
+                                        msgtext += `<a target="_blank" href="${authUrl+upload.url}"><img src="${authUrl+upload.url}"></a>`;
                                         continue;
                                     } else if (upload.type.startsWith("video/") && !premyum) {
-                                        msgtxt += `<video controls height="250">
+                                        msgtext += `<video controls height="250">
                                         <source src="${authUrl+upload.url}" type="${upload.type}" /></video>`;
                                     }
-                                    msgtxt += `
+                                    msgtext += `
                                         <div class="upload">
                                             <span class="material-symbols-outlined">draft</span><a class="uploadName" target="_blank" href="${authUrl+upload.url}">${upload.name}</a>
                                         </div>`;
@@ -1102,7 +1102,7 @@ function clientLoad() {
                             }
 
                             if (sers.userId == "a1f762e9-81a4-41ad-90f0-3f351a45b94d" && premyum) {
-                                msgtxt = "Squawk ! :3";
+                                msgtext = "Squawk ! :3";
                             }
 
                             fetchUser(packet.message.author).then((resp) => {
@@ -1155,7 +1155,7 @@ function clientLoad() {
                                     <div class="message1" id="message_${packet.message.id}">
                                         <div style="width:48px;flex-shrink:0;"></div>
                                         <div class="message2">
-                                            <p>${msgtxt}</p>
+                                            <p>${msgtext}</p>
                                         </div>${message3}
                                     </div>
                                     `;
@@ -1166,7 +1166,7 @@ function clientLoad() {
                                         <div class="message2">
                                         <span><strong class="chonk" onclick="userInfo('${packet.message.author}');">${unam
                                             }</strong><span class="timestomp">@${resp ? resp.tag : "None"} at ${new Date(packet.message.stamp).toLocaleString()}${packet.message.edited ? ", last edited "+new Date(packet.message.edited).toLocaleString() : ""}</span></span>
-                                            <p>${msgtxt}</p>
+                                            <p>${msgtext}</p>
                                         </div>${message3}
                                     </div>
                                     `;
@@ -1199,10 +1199,10 @@ function clientLoad() {
                                 continue;
                             }
                             let uuidreg = /[0-9a-f]{7,8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/ig;
-                            let msgtxt = converty.makeHtml(packet.messages[m].content.replace(/\</g, '&lt;')/*.replace(/\>/g, '&gt;')*/);
+                            let msgtext = converty.makeHtml(packet.messages[m].content.replace(/\</g, '&lt;')/*.replace(/\>/g, '&gt;')*/);
                             let arr;
-                            while ((arr = uuidreg.exec(msgtxt)) !== null) {
-                                let strl = msgtxt.split("");
+                            while ((arr = uuidreg.exec(msgtext)) !== null) {
+                                let strl = msgtext.split("");
                                 if (strl[arr.index + 35] == "]") {
                                     strl.splice(arr.index, 0, "0");
                                 }
@@ -1222,7 +1222,7 @@ function clientLoad() {
                                                 .replace(/\</g, "&lt;")
                                                 .replace(/\>/g, "&gt;")}</a>`);
                                         }
-                                        msgtxt = strl.join("");
+                                        msgtext = strl.join("");
                                         break;
                                     default:
                                         break;
@@ -1230,7 +1230,7 @@ function clientLoad() {
                             }
                             if (packet.messages[m].reply) {
                                 if (!messageMap[packet.messages[m].reply]) {
-                                    msgtxt = `<blockquote id="r_${packet.messages[m].id}"><em>Message couldn't be loaded</em></blockquote>` + msgtxt;
+                                    msgtext = `<blockquote id="r_${packet.messages[m].id}"><em>Message couldn't be loaded</em></blockquote>` + msgtext;
                                     if (mRef[packet.messages[m].reply] == undefined) {
                                         mRef[packet.messages[m].reply] = [`r_${packet.messages[m].id}`];
                                     } else {
@@ -1239,14 +1239,14 @@ function clientLoad() {
                                 } else {
                                     let ms = await fetchUser(messageMap[packet.messages[m].reply].author);
                                     if (ms == null) {
-                                        msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.messages[m].reply
-                                            }')"><a class="invalidUser">@Deleted User</a> ${messageMap[packet.messages[m].reply].content}</blockquote>` + msgtxt;
+                                        msgtext = `<blockquote style="cursor:pointer;" onclick="siv('${packet.messages[m].reply
+                                            }')"><a class="invalidUser">@Deleted User</a> ${messageMap[packet.messages[m].reply].content}</blockquote>` + msgtext;
                                     } else {
-                                        msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.messages[m].reply
+                                        msgtext = `<blockquote style="cursor:pointer;" onclick="siv('${packet.messages[m].reply
 }')"><a class="userMention" onclick="userInfo('${ms.id}');">@${ms.unam
                                             .replace(/\</g, "&lt;")
                                             .replace(/\>/g, "&gt;")
-                                        }</a> ${messageMap[packet.messages[m].reply].content}</blockquote>` + msgtxt;
+                                        }</a> ${messageMap[packet.messages[m].reply].content}</blockquote>` + msgtext;
                                     }
                                 }
                             }
@@ -1254,13 +1254,13 @@ function clientLoad() {
                             if (packet.messages[m].uploads) {
                                 for (let upload of packet.messages[m].uploads) {
                                     if (upload.type.startsWith("image/") && !premyum) {
-                                        msgtxt += `<a target="_blank" href="${authUrl+upload.url}"><img src="${authUrl+upload.url}"></a>`;
+                                        msgtext += `<a target="_blank" href="${authUrl+upload.url}"><img src="${authUrl+upload.url}"></a>`;
                                         continue;
                                     } else if (upload.type.startsWith("video/") && !premyum) {
-                                        msgtxt += `<video controls height="250">
+                                        msgtext += `<video controls height="250">
                                         <source src="${authUrl+upload.url}" type="${upload.type}" /></video>`;
                                     }
-                                    msgtxt += `
+                                    msgtext += `
                                         <div class="upload">
                                             <span class="material-symbols-outlined">draft</span><a class="uploadName" target="_blank" href="${authUrl+upload.url}">${upload.name}</a>
                                         </div>`;
@@ -1316,7 +1316,7 @@ function clientLoad() {
                                 message3 = ``;
                                 txt += `
                                 <div class="message1" id="message_${packet.messages[m].id}">
-                                    <span>${msgtxt}</span><span class="timestomp">${packet.messages[m].stamp == undefined ? "" : " at " + new Date(packet.messages[m].stamp).toLocaleString()}</span>
+                                    <span>${msgtext}</span><span class="timestomp">${packet.messages[m].stamp == undefined ? "" : " at " + new Date(packet.messages[m].stamp).toLocaleString()}</span>
                                 </div>
                                 `;
                             // lastMessagesAuthor
@@ -1325,7 +1325,7 @@ function clientLoad() {
                                 <div class="message1" id="message_${packet.messages[m].id}">
                                     <div style="width:48px;flex-shrink:0;"></div>
                                     <div class="message2">
-                                        <p>${msgtxt}</p>
+                                        <p>${msgtext}</p>
                                     </div>${message3}
                                 </div>
                                 `;
@@ -1336,7 +1336,7 @@ function clientLoad() {
                                     <div class="message2">
                                         <span><strong class="chonk" onclick="userInfo('${packet.messages[m].author}');">${unam
                                         }</strong><span class="timestomp">@${user ? user.tag : "None"} at ${new Date(packet.messages[m].stamp).toLocaleString()}${packet.messages[m].edited ? ", last edited "+new Date(packet.messages[m].edited).toLocaleString() : ""}</span></span>
-                                        <p>${msgtxt}</p>
+                                        <p>${msgtext}</p>
                                     </div>${message3}
                                 </div>
                                 `;
@@ -1371,10 +1371,10 @@ function clientLoad() {
                         messageMap[packet.message.id] = packet.message;
                         // looks like absolute gibberish, matches uuids
                         let uuidreg = /[0-9a-f]{7,8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/ig;
-                        let msgtxt = converty.makeHtml(packet.message.content.replace(/\</g, '&lt;')/*.replace(/\>/g, '&gt;')*/);
+                        let msgtext = converty.makeHtml(packet.message.content.replace(/\</g, '&lt;')/*.replace(/\>/g, '&gt;')*/);
                         let arr;
-                        while ((arr = uuidreg.exec(msgtxt)) !== null) {
-                            let strl = msgtxt.split("");
+                        while ((arr = uuidreg.exec(msgtext)) !== null) {
+                            let strl = msgtext.split("");
                             if (strl[arr.index + 35] == "]") {
                                 strl.splice(arr.index, 0, "0");
                             }
@@ -1392,8 +1392,8 @@ function clientLoad() {
                                         strl.splice(arr.index - 2, 39, `
 <a class="userMention" onclick="userInfo('${user.id}');">@${user.unam}</a>`);
                                     }
-                                    msgtxt = strl.join("");
-                                    //uuidreg.exec(msgtxt);
+                                    msgtext = strl.join("");
+                                    //uuidreg.exec(msgtext);
                                     break;
                                 default:
                                     break;
@@ -1401,7 +1401,7 @@ function clientLoad() {
                         }
                         if (packet.message.reply) {
                             if (!messageMap[packet.message.reply]) {
-                                msgtxt = `<blockquote id="r_${packet.message.id}"><em>Message couldn't be loaded</em></blockquote>` + msgtxt;
+                                msgtext = `<blockquote id="r_${packet.message.id}"><em>Message couldn't be loaded</em></blockquote>` + msgtext;
                                 if (mRef[packet.message.reply] == undefined) {
                                     mRef[packet.message.reply] = [`r_${packet.message.id}`];
                                 } else {
@@ -1410,15 +1410,15 @@ function clientLoad() {
                             } else {
                                 let m = await fetchUser(messageMap[packet.message.reply].author);
                                 if (m == null) {
-                                    msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.message.reply
-                                        }')"><a class="invalidUser">@Deleted User</a> ${messageMap[packet.message.reply].content}</blockquote>` + msgtxt;
+                                    msgtext = `<blockquote style="cursor:pointer;" onclick="siv('${packet.message.reply
+                                        }')"><a class="invalidUser">@Deleted User</a> ${messageMap[packet.message.reply].content}</blockquote>` + msgtext;
                                 } else {
                                     // we don't support server nicknames as they don't exist yet
-                                    msgtxt = `<blockquote style="cursor:pointer;" onclick="siv('${packet.message.reply
+                                    msgtext = `<blockquote style="cursor:pointer;" onclick="siv('${packet.message.reply
 }')"><a class="userMention" onclick="userInfo('${m.id}');">@${m.unam
                                         .replace(/\</g, "&lt;")
                                         .replace(/\>/g, "&gt;")
-                                    }</a> ${messageMap[packet.message.reply].content}</blockquote>` + msgtxt;
+                                    }</a> ${messageMap[packet.message.reply].content}</blockquote>` + msgtext;
                                 }
                             }
                         }
@@ -1426,10 +1426,10 @@ function clientLoad() {
                         if (packet.message.uploads) {
                             for (let upload of packet.message.uploads) {
                                 if (upload.type.startsWith("image/") && !premyum) {
-                                    msgtxt += `<a target="_blank" href="${authUrl+upload.url}"><img src="${authUrl+upload.url}"></a>`;
+                                    msgtext += `<a target="_blank" href="${authUrl+upload.url}"><img src="${authUrl+upload.url}"></a>`;
                                     continue;
                                 }
-                                msgtxt += `
+                                msgtext += `
                                     <div class="upload">
                                         <span class="material-symbols-outlined">draft</span><a class="uploadName" target="_blank" href="${authUrl+upload.url}">${upload.name}</a>
                                     </div>`;
@@ -1484,7 +1484,7 @@ function clientLoad() {
     <div class="message2">
     <span><strong class="chonk" onclick="userInfo('${packet.message.author}');">${unam
         }</strong><span class="timestomp">@${resp ? resp.tag : "None"} at ${new Date(packet.message.stamp).toLocaleString()}${packet.message.edited ? ", last edited "+new Date(packet.message.edited).toLocaleString() : ""}</span></span>
-        <p>${msgtxt}</p>
+        <p>${msgtext}</p>
     </div>${message3}
 `;
                             if (ma.scrollHeight < ma.scrollTop  + (2 * ma.clientHeight)) {
