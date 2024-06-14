@@ -949,7 +949,7 @@ onclick="delete uploadQueue['${file.id}'];
 msgtxt.addEventListener("keypress", ke);
 document.getElementById("send").addEventListener("click", ce);
 var elapsed;
-breaks = [];
+var breaks = [];
 var checkboxes = {};
 var globalPermissions = [];
 
