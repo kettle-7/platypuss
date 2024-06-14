@@ -63,6 +63,23 @@ var shown = null;
 if (!authUrl) authUrl = "https://platypuss.net";
 var rgbcolourchangeinterval;
 
+var mainContentContainer = document.getElementById("mainContentContainer"),
+    acceptinvitebtn = document.getElementById("acceptinvitebtn"),
+    loadingScreen = document.getElementById("loadingScreen"),
+    inviteparent = document.getElementById("inviteparent"),
+    loadingText = document.getElementById("loadingText"),
+    mainContent = document.getElementById("mainContent"),
+    invitepopup = document.getElementById("invitepopup"),
+    invdecline = document.getElementById("invdecline"),
+    almostbody = document.getElementById("almostbody"),
+    serverName = document.getElementById("serverName"),
+    progress2 = document.getElementById("progress2"),
+    progress = document.getElementById("progress"),
+    msgtxt = msgtxt,
+    lit1 = document.getElementById("lit1"),
+    lit2 = document.getElementById("lit2"),
+    lit3 = document.getElementById("lit3");
+
 function fetchUser(id) {
     return new Promise((resolve, reject) => {
         if (usercache[id] == undefined) {
@@ -85,67 +102,67 @@ function fetchUser(id) {
 
 function inviteError (err) {
     console.error(err);
-    document.querySelector("#serverName").innerHTML = `
+    serverName.innerHTML = `
     You've been invited to join a server, but we couldn't connect.<br>
     Either the invite link is invalid or the server is currently down.
     Please contact the server owner if you think there's an issue.
     `;
-    document.querySelector("#acceptinvitebtn").innerText = "Accept Anyway";
-    document.querySelector("#inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
-    document.querySelector("#loadingScreen").className += " fadeOut";
-    document.querySelector("#invdecline").focus();
+    acceptinvitebtn.innerText = "Accept Anyway";
+    document.getElementById("inviteIcon").src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
+    loadingScreen.className += " fadeOut";
+    invdecline.focus();
 }
 
 function li() {
     ift = false;
     document.getElementById('P').style.display = 'flex';
-    document.querySelector("#pwd2").hidden = true;
-    document.querySelector("#pr1").hidden = true;
-    document.querySelector("#pr2").hidden = true;
-    document.querySelector("#unam").hidden = true;
-    document.querySelector("#pwd1").addEventListener("keypress", (e) => {
+    document.getElementById("pwd2").hidden = true;
+    document.getElementById("pr1").hidden = true;
+    document.getElementById("pr2").hidden = true;
+    document.getElementById("unam").hidden = true;
+    document.getElementById("pwd1").addEventListener("keypress", (e) => {
         if (e.key == "Enter")
             doTheLoginThingy();
     });
-    document.querySelector("#lit1").innerHTML = document.querySelector("#lit1").innerHTML.replace(/Create Account/g, "Sign In");
-    document.querySelector("#lit2").innerHTML = 'Welcome back! If you don\'t already have an account <br> please <a href="#" onclick="su()">create an account</a> instead.';
-    document.querySelector("#lit3").innerText = document.querySelector("#lit3").innerText.replace(/Create Account/g, "Sign In");
+    lit1.innerHTML = lit1.innerHTML.replace(/Create Account/g, "Sign In");
+    lit2.innerHTML = 'Welcome back! If you don\'t already have an account <br> please <a href="#" onclick="su()">create an account</a> instead.';
+    lit3.innerText = lit3.innerText.replace(/Create Account/g, "Sign In");
     return;
 }
 
 function su() {
     ift = true;
     document.getElementById('P').style.display = 'flex';
-    document.querySelector("#pwd2").hidden = false;
-    document.querySelector("#pr1").hidden = false;
-    document.querySelector("#pr2").hidden = false;
-    document.querySelector("#unam").hidden = false;
-    document.querySelector("#pwd2").addEventListener("keypress", (e) => {
+    document.getElementById("pwd2").hidden = false;
+    document.getElementById("pr1").hidden = false;
+    document.getElementById("pr2").hidden = false;
+    document.getElementById("unam").hidden = false;
+    document.getElementById("pwd2").addEventListener("keypress", (e) => {
         if (e.key == "Enter")
             doTheLoginThingy();
     });
-    document.querySelector("#lit1").innerHTML = document.querySelector("#lit1").innerHTML.replace(/Sign In/g, "Create Account");
-    document.querySelector("#lit2").innerHTML = '<span id="lit2">Welcome to Platypuss! If this is not your first time with us <br> please <a href="#" onclick="li()"> \
+    lit1.innerHTML = lit1.innerHTML.replace(/Sign In/g, "Create Account");
+    lit2.innerHTML = '<span id="lit2">Welcome to Platypuss! If this is not your first time with us <br> please <a href="#" onclick="li()"> \
 sign in</a> instead. Please make sure to read the <br> <a href="/tos" target="_blank">terms of service</a> before creating an account.</span>';
-    document.querySelector("#lit3").innerText = document.querySelector("#lit3").innerText.replace(/Sign In/g, "Create Account");
+    lit3.innerText = lit3.innerText.replace(/Sign In/g, "Create Account");
 }
 
 function doTheLoginThingy() {
-    let unam = document.querySelector("#unam").value;
-    let email = document.querySelector("#email").value;
-    let pwd1 = document.querySelector("#pwd1").value;
+    let unam = document.getElementById("unam").value;
+    let email = document.getElementById("email").value;
+    let pwd1 = document.getElementById("pwd1").value;
     if (ift) { // if you're making a new account rather than logging into an existing one
-        let pwd2 = document.querySelector("#pwd2").value;
+        let pwd2 = document.getElementById("pwd2").value;
         if (pwd1 != pwd2) {
-            document.querySelector("#lit2").innerText = "Your passwords don't match.";
+            lit2.innerText = "Your passwords don't match.";
             return;
         }
         if (unam == "") {
-            document.querySelector("#lit2").innerText = "Please fill this out, you can't just make an account without an username...";
+            lit2.innerText = "Please fill this out, you can't just make an account without an username...";
             return;
         }
         if (pwd1 == "") {
-            document.querySelector("#lit2").innerText = "Please fill this out, you can't just make an account without a password...";
+            lit2.innerText = "Please fill this out, you can't just make an account without a password...";
             return;
         }
         let jsonobjectforloggingin = JSON.stringify({ // i want long variable name
@@ -162,10 +179,10 @@ function doTheLoginThingy() {
             if (xhr.readyState === XMLHttpRequest.DONE && xhr.status) {
                 let res = JSON.parse(xhr.responseText);
                 if (res.exists) {
-                    document.querySelector("#lit2").innerHTML = 'You\'ve already made an account with that email address, would you like to <a onclick="li()">log in</a> instead?';
+                    lit2.innerHTML = 'You\'ve already made an account with that email address, would you like to <a onclick="li()">log in</a> instead?';
                     return;
                 }
-                document.querySelector("#lit2").innerHTML = 'An email has now been sent to that address, \
+                lit2.innerHTML = 'An email has now been sent to that address, \
 please check your inbox for a link to verify your account. After you\'ve done that you\'ll need to reload \
 this page to join the server.';
             }
@@ -186,11 +203,11 @@ this page to join the server.';
         if (req.readyState === XMLHttpRequest.DONE && (req.status == 200 || req.status == 204)) {
             let res = JSON.parse(req.responseText);
             if (!res.exists) {
-                document.querySelector("#lit2").innerHTML = "There's no account with that email address, would you like to <a onclick=\"su()\">make a new account</a> instead?";
+                lit2.innerHTML = "There's no account with that email address, would you like to <a onclick=\"su()\">make a new account</a> instead?";
                 return;
             }
             if (!res.pwd) {
-                document.querySelector("#lit2").innerHTML = "That password isn't correct, did you misspell it?";
+                lit2.innerHTML = "That password isn't correct, did you misspell it?";
                 return;
             }
             localStorage.setItem('sid', res.sid);
@@ -202,46 +219,46 @@ this page to join the server.';
 
 fetchUser(localStorage.getItem('sid')).then((res) => {
     if (window.location.toString().includes("chausdhsa89h98q3hai")) {
-        document.querySelector("#ptitle").innerHTML = "chausdhsa89h98q3hai";
-        document.querySelector("#htitle").innerHTML = "chausdhsa89h98q3hai";
+        document.getElementById("ptitle").innerHTML = "chausdhsa89h98q3hai";
+        document.getElementById("htitle").innerHTML = "chausdhsa89h98q3hai";
     }
     if (res == null || localStorage.getItem('sid') == null) {
         loggedin = false;
-        document.head.removeChild(document.querySelector("#ss0"));
+        document.head.removeChild(document.getElementById("ss0"));
         if (localStorage.getItem("theme") == "light")
-            document.querySelector("#ss1").href = "/light.css";
+            document.getElementById("ss1").href = "/light.css";
     }
     else {
         oldunam = res.unam;
         abm = res.aboutMe.text;
         if (res.aboutMe.premyum) {
             premyum = true;
-            document.head.removeChild(document.querySelector("#ss1"));
-            document.head.removeChild(document.querySelector("#ss2"));
+            document.head.removeChild(document.getElementById("ss1"));
+            document.head.removeChild(document.getElementById("ss2"));
             if (localStorage.getItem("theme") == "light")
-                document.querySelector("#ss0").href = "/lightn.css";
+                document.getElementById("ss0").href = "/lightn.css";
             else {
-                document.querySelector("#almostbody").style.opacity = 0.1;
+                almostbody.style.opacity = 0.1;
                 setInterval(() => {
                     document.body.style.backgroundColor = changeHue(document.body.style.backgroundColor, 5 - Math.random() * 7.5);
                 }, 5);
             }
         } else {
-            document.head.removeChild(document.querySelector("#ss0"));
+            document.head.removeChild(document.getElementById("ss0"));
             if (localStorage.getItem("theme") == "light")
-                document.querySelector("#ss1").href = "/light.css";
+                document.getElementById("ss1").href = "/light.css";
         }
-        document.querySelector("#pfp").src = authUrl + res.pfp;
-        document.querySelector("#username").innerText = "Logged in as " + res.unam;
-        document.querySelector("#changePfp").src = authUrl + res.pfp;
-        document.querySelector("#acsusername").innerText = res.unam;
-        document.querySelector("#tag").innerText = "@" + res.tag;
+        document.getElementById("pfp").src = authUrl + res.pfp;
+        document.getElementById("username").innerText = "Logged in as " + res.unam;
+        document.getElementById("changePfp").src = authUrl + res.pfp;
+        document.getElementById("acsusername").innerText = res.unam;
+        document.getElementById("tag").innerText = "@" + res.tag;
         if (abm)
-            document.querySelector("#acsabm").value = abm;
+            document.getElementById("acsabm").value = abm;
         document.ppures = res;
     }
     if (loggedin) {
-        document.querySelector("#upload").addEventListener('click', e => {
+        document.getElementById("upload").addEventListener('click', e => {
             var input = document.createElement('input');
             input.type = 'file';
             input.multiple = true;
@@ -251,9 +268,9 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                     if (Object.keys(uploadQueue).every(f => uploadQueue[f].name !== file.name)) {
                         file.id = Math.random().toString().replace(/[.]/g, ""); // should be good
                         uploadQueue[file.id] = file;
-                        document.querySelector("#fileDeleteMessage").hidden = false;
+                        document.getElementById("fileDeleteMessage").hidden = false;
                         // TODO: display an icon for files that aren't images
-                        document.querySelector("#fileUploadSpace").innerHTML += 
+                        document.getElementById("fileUploadSpace").innerHTML += 
 `<img class="avatar" id="${file.id}" src="${URL.createObjectURL(file)}"
     onclick="delete uploadQueue['${file.id}'];
         if (Object.keys(uploadQueue).length == 0) {
@@ -262,20 +279,20 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
         this.parentElement.removeChild(this);"/>`;
                     }
                 }
-                document.querySelector("#acceptinvitebtn").focus();
+                acceptinvitebtn.focus();
             };
             input.click();
         });
-        document.querySelector("#mainContentContainer").addEventListener("drop", (e) => {
+        mainContentContainer.addEventListener("drop", (e) => {
             e.preventDefault();
             const files = e.dataTransfer.files;
             for (let file of files) {
                 if (Object.keys(uploadQueue).every(f => uploadQueue[f].name !== file.name)) {
                     file.id = Math.random().toString().replace(/[.]/g, ""); // should be good
                     uploadQueue[file.id] = file;
-                    document.querySelector("#fileDeleteMessage").hidden = false;
+                    document.getElementById("fileDeleteMessage").hidden = false;
                     // TODO: display an icon for files that aren't images
-                    document.querySelector("#fileUploadSpace").innerHTML += 
+                    document.getElementById("fileUploadSpace").innerHTML += 
 `<img class="avatar" id="${file.id}" src="${URL.createObjectURL(file)}"
     onclick="delete uploadQueue['${file.id}'];
         if (Object.keys(uploadQueue).length == 0) {
@@ -284,7 +301,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
         this.parentElement.removeChild(this);"/>`;
                 }
             }
-            document.querySelector("#msgtxt").focus();
+            msgtxt.focus();
         });
         
         if (url.searchParams.has("invite")) {
@@ -308,38 +325,38 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                     if (data.description == undefined) {
                         data.description = "This server has no description, it's too cool to be described.";
                     }
-                    document.querySelector("#serinvitetitle").innerText = data.title.toString();
-                    document.querySelector("#serverName").innerHTML = `
+                    document.getElementById("serinvitetitle").innerText = data.title.toString();
+                    serverName.innerHTML = `
                     You've been invited to join ${data.title}
                     <br>IP: ${ip}:${port}
                     <br>${data.memberCount} members
                     <p>${converty.makeHtml(data.description.toString().replace(/\</g, "&lt;").replace(/\>/g, "&gt;"))}</p>
                     `;
-                    document.querySelector("#inviteIcon").src = data.icon;
-                    document.querySelector("#loadingScreen").className += " fadeOut";
-                    document.querySelector("#acceptinvitebtn").focus();
+                    document.getElementById("inviteIcon").src = data.icon;
+                    loadingScreen.className += " fadeOut";
+                    acceptinvitebtn.focus();
                 }).catch(inviteError);
             }).catch(inviteError);
-            document.querySelector("#inviteparent").style.display = "flex";
+            inviteparent.style.display = "flex";
             function clicky () {
-                document.querySelector("#invdecline").innerText = "Close";
-                document.querySelector("#invitepopup").removeChild(document.querySelector("#acceptinvitebtn"));
+                invdecline.innerText = "Close";
+                invitepopup.removeChild(acceptinvitebtn);
                 const r = new XMLHttpRequest();
                 r.open("GET", authUrl+`/joinserver?id=${localStorage.getItem("sid")}&ip=${ip}:${port}+${code}+${ogip}`);
                 r.onload = () => {
                     if (r.status == 200) {
-                        document.body.removeChild(document.getElementById('inviteparent'));
+                        almostbody.removeChild(inviteparent);
                         window.history.pushState({}, '', '/chat');
                         clientLoad();
                     } else {
-                        document.querySelector("#serverName").innerHTML = "Couldn't join the server, try again later?";
+                        serverName.innerHTML = "Couldn't join the server, try again later?";
                     }
                 }
                 r.send(null);
             }
             localStorage.removeItem("pendingInvite");
             localStorage.removeItem("pendingInvip");
-            document.querySelector("#acceptinvitebtn").addEventListener("click", clicky);
+            acceptinvitebtn.addEventListener("click", clicky);
         } else if (localStorage.getItem("pendingInvite") != null) {
             let inviteCode = localStorage.getItem("pendingInvite");
             let ip = [ // the first 8 characters are the ip address in hex form
@@ -361,38 +378,38 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                     if (data.description == undefined) {
                         data.description = "This server has no description, it's too cool to be described.";
                     }
-                    document.querySelector("#serinvitetitle").innerText = data.title.toString();
-                    document.querySelector("#serverName").innerHTML = `
+                    document.getElementById("serinvitetitle").innerText = data.title.toString();
+                    serverName.innerHTML = `
                     You've been invited to join ${data.title}
                     <br>IP: ${ip}:${port}
                     <br>${data.memberCount} members
                     <p>${converty.makeHtml(data.description.toString().replace(/\</g, "&lt;").replace(/\>/g, "&gt;"))}</p>
                     `;
-                    document.querySelector("#inviteIcon").src = data.icon;
-                    document.querySelector("#loadingScreen").className += " fadeOut";
-                    document.querySelector("#acceptinvitebtn").focus();
+                    document.getElementById("inviteIcon").src = data.icon;
+                    loadingScreen.className += " fadeOut";
+                    acceptinvitebtn.focus();
                 }).catch(inviteError);
             }).catch(inviteError);
-            document.querySelector("#inviteparent").style.display = "flex";
+            inviteparent.style.display = "flex";
             localStorage.removeItem("pendingInvite");
             localStorage.removeItem("pendingInvip");
             function clicky () {
-                document.querySelector("#invdecline").innerText = "Close";
-                document.querySelector("#invitepopup").removeChild(document.querySelector("#acceptinvitebtn"));
+                invdecline.innerText = "Close";
+                invitepopup.removeChild(acceptinvitebtn);
                 const r = new XMLHttpRequest();
                 r.open("GET", authUrl+`/joinserver?id=${localStorage.getItem("sid")}&ip=${ip}:${port}+${code}+${ogip}`);
                 r.onload = () => {
                     if (r.status == 200) {
-                        document.body.removeChild(document.getElementById('inviteparent'));
+                        almostbody.removeChild(inviteparent);
                         window.history.pushState({}, '', '/chat');
                         clientLoad();
                     } else {
-                        document.querySelector("#serverName").innerHTML = "Couldn't join the server, try again later?";
+                        serverName.innerHTML = "Couldn't join the server, try again later?";
                     }
                 }
                 r.send(null);
             }
-            document.querySelector("#acceptinvitebtn").addEventListener("click", clicky);
+            acceptinvitebtn.addEventListener("click", clicky);
         } else {
             const h = new XMLHttpRequest();
             h.open('GET', authUrl+'/sload?id='+localStorage.getItem('sid'), true);
@@ -444,15 +461,15 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                             window.location.reload();
                         }
                         else if (xhr.readyState === XMLHttpRequest.DONE && xhr.status == 0) {
-                            document.querySelector("#avatarTooBig").hidden = false;
+                            document.getElementById("avatarTooBig").hidden = false;
                         }
                     }
                     xhr.send(file);
                 };
                 input.click();
             }
-            document.querySelector("#changePfp").addEventListener("click", pickNewAvatar);
-            document.querySelector("#dodel").addEventListener("click", () => {
+            document.getElementById("changePfp").addEventListener("click", pickNewAvatar);
+            document.getElementById("dodel").addEventListener("click", () => {
                 const xhr = new XMLHttpRequest();
                 xhr.open("GET", authUrl+'/delacc?id='+localStorage.getItem("sid"), true);
                 xhr.onreadystatechange = () => {
@@ -465,13 +482,13 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 };
                 xhr.send();
             });
-            document.querySelector("#cpwdsave").addEventListener("click", () => {
-                // let pwd1 = document.querySelector("#oldPwd").value;
-                let pwd2 = document.querySelector("#newPwd").value;
-                let pwd3 = document.querySelector("#newPwd2").value;
+            document.getElementById("cpwdsave").addEventListener("click", () => {
+                // let pwd1 = document.getElementById("oldPwd").value;
+                let pwd2 = document.getElementById("newPwd").value;
+                let pwd3 = document.getElementById("newPwd2").value;
 
                 if (pwd2 != pwd3) {
-                    document.querySelector("#nonmatch").hidden = false;
+                    document.getElementById("nonmatch").hidden = false;
                     return;
                 }
                 
@@ -483,8 +500,8 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                     }
                     else {
                         if (xhr.readyState === XMLHttpRequest.DONE) {
-                            document.querySelector("#nonmatch").hidden = false;
-                            document.querySelector("#nonmatch").innerText = xhr.responseText;
+                            document.getElementById("nonmatch").hidden = false;
+                            document.getElementById("nonmatch").innerText = xhr.responseText;
                         }
                     }
                 };
@@ -514,28 +531,28 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                     if (data.description == undefined) {
                         data.description = "This server has no description, it's too cool to be described.";
                     }
-                    document.querySelector("#serinvitetitle").innerText = data.title.toString();
-                    document.querySelector("#serverName").innerHTML = `
+                    document.getElementById("serinvitetitle").innerText = data.title.toString();
+                    serverName.innerHTML = `
                     You've been invited to join ${data.title}
                     <br>IP: ${ip}:${port}
                     <br>${data.memberCount} members
                     <p>${converty.makeHtml(data.description.toString().replace(/\</g, "&lt;").replace(/\>/g, "&gt;"))}</p>
                     `;
-                    document.querySelector("#inviteIcon").src = data.icon;
-                    document.querySelector("#loadingScreen").className += " fadeOut";
-                    document.querySelector("#acceptinvitebtn").focus();
+                    document.getElementById("inviteIcon").src = data.icon;
+                    loadingScreen.className += " fadeOut";
+                    acceptinvitebtn.focus();
                 }).catch(inviteError);
             }).catch(inviteError);
-            document.querySelector("#inviteparent").style.display = "flex";
+            inviteparent.style.display = "flex";
             function clicky () {
-                document.querySelector("#invdecline").innerText = "Close";
-                document.querySelector("#invitepopup").removeChild(document.querySelector("#acceptinvitebtn"));
-                document.querySelector("#invitepopup").style.display = "none";
+                invdecline.innerText = "Close";
+                invitepopup.removeChild(acceptinvitebtn);
+                invitepopup.style.display = "none";
                 su();
             }
             localStorage.removeItem("pendingInvite");
             localStorage.removeItem("pendingInvip");
-            document.querySelector("#acceptinvitebtn").addEventListener("click", clicky);
+            acceptinvitebtn.addEventListener("click", clicky);
         } else if (localStorage.getItem("pendingInvite") != null) {
             let inviteCode = localStorage.getItem("pendingInvite");
             let ip = [ // the first 8 characters are the ip address in hex form
@@ -557,55 +574,55 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                     if (data.description == undefined) {
                         data.description = "This server has no description, it's too cool to be described.";
                     }
-                    document.querySelector("#serinvitetitle").innerText = data.title.toString();
-                    document.querySelector("#serverName").innerHTML = `
+                    document.getElementById("serinvitetitle").innerText = data.title.toString();
+                    serverName.innerHTML = `
                     You've been invited to join ${data.title}
                     <br>IP: ${ip}:${port}
                     <br>${data.memberCount} members
                     <p>${converty.makeHtml(data.description.toString().replace(/\</g, "&lt;").replace(/\>/g, "&gt;"))}</p>
                     `;
-                    document.querySelector("#inviteIcon").src = data.icon;
-                    document.querySelector("#loadingScreen").className += " fadeOut";
-                    document.querySelector("#acceptinvitebtn").focus();
+                    document.getElementById("inviteIcon").src = data.icon;
+                    loadingScreen.className += " fadeOut";
+                    acceptinvitebtn.focus();
                 }).catch(inviteError);
             }).catch(inviteError);
-            document.querySelector("#inviteparent").style.display = "flex";
+            inviteparent.style.display = "flex";
             localStorage.removeItem("pendingInvite");
             localStorage.removeItem("pendingInvip");
             function clicky () {
-                document.querySelector("#invdecline").innerText = "Close";
-                document.querySelector("#invitepopup").removeChild(document.querySelector("#acceptinvitebtn"));
-                document.querySelector("#invitepopup").style.display = "none";
+                invdecline.innerText = "Close";
+                invitepopup.removeChild(acceptinvitebtn);
+                invitepopup.style.display = "none";
                 su();
             }
-            document.querySelector("#acceptinvitebtn").addEventListener("click", clicky);
+            acceptinvitebtn.addEventListener("click", clicky);
         } else {
             window.location = "/";
         }
     }
 }, () => {
-    document.querySelector("#loadingText").innerHTML = "Something went wrong, click <a href='/'>here</a> to return to our homepage."
+    loadingText.innerHTML = "Something went wrong, click <a href='/'>here</a> to return to our homepage."
 });
 
-document.querySelector("#accountInfo").addEventListener("mousedown", (e) => {
+document.getElementById("accountInfo").addEventListener("mousedown", (e) => {
     e.stopPropagation();
 });
-document.querySelector("#invitepopup").addEventListener("mousedown", (e) => {
+document.getElementById("invitepopup").addEventListener("mousedown", (e) => {
     e.stopPropagation();
 });
-document.querySelector("#acspopup").addEventListener("mousedown", (e) => {
+document.getElementById("acspopup").addEventListener("mousedown", (e) => {
     e.stopPropagation();
 });
-document.querySelector("#cpwdpopup").addEventListener("mousedown", (e) => {
+document.getElementById("cpwdpopup").addEventListener("mousedown", (e) => {
     e.stopPropagation();
 });
-document.querySelector("#dacpopup").addEventListener("mousedown", (e) => {
+document.getElementById("dacpopup").addEventListener("mousedown", (e) => {
     e.stopPropagation();
 });
-document.querySelector("#uifpopup").addEventListener("mousedown", (e) => {
+document.getElementById("uifpopup").addEventListener("mousedown", (e) => {
     e.stopPropagation();
 });
-document.querySelector("#fuckyoupopup").addEventListener("mousedown", (e) => {
+document.getElementById("fuckyoupopup").addEventListener("mousedown", (e) => {
     e.stopPropagation();
 });
 
@@ -644,7 +661,7 @@ var lastMessageAuthor = null;
 
 function deleteMessage(id, server) {
     if (premyum) {
-        document.querySelector("#mainContent").innerHTML += 
+        mainContent.innerHTML += 
         '<div class="message1">Y o u<br>c a n \' t<br>d o<br>t h a t</div>';
         return;
     }
@@ -652,23 +669,23 @@ function deleteMessage(id, server) {
         eventType: "messageDelete",
         id: id
     }));
-    document.querySelector("#msgtxt").focus();
+    msgtxt.focus();
 }
 
 function editMessage(id, server) {
     if (premyum) {
-        document.querySelector("#mainContent").innerHTML += 
+        mainContent.innerHTML += 
         '<div class="message1">Y o u<br>c a n \' t<br>d o<br>t h a t</div>';
         return;
     }
     edit = id;
-    document.querySelector("#msgtxt").value = messageMap[id].content;
-    document.querySelector("#msgtxt").focus();
+    msgtxt.value = messageMap[id].content;
+    msgtxt.focus();
 }
 
 function replyTo(id, server) {
     if (premyum) {
-        document.querySelector("#mainContent").innerHTML += 
+        mainContent.innerHTML += 
         '<div class="message1">Y o u<br>c a n \' t<br>d o<br>t h a t</div>';
         return;
     }
@@ -679,15 +696,15 @@ function replyTo(id, server) {
     reply = id;
     document.getElementById(`message_${reply}`).style.borderLeftWidth = "2px";
     document.getElementById(`message_${reply}`).style.borderLeftColor = "#0075DB";
-    document.querySelector("#msgtxt").focus();
+    msgtxt.focus();
 }
 
 function userInfo(id) {
     shown = id;
     fetchUser(id).then(res => {
-        document.querySelector("#uifpfp").src = authUrl + res.pfp;
-        document.querySelector("#uifusername").innerText = res.unam;
-        document.querySelector("#uiftag").innerText = "@" + res.tag;
+        document.getElementById("uifpfp").src = authUrl + res.pfp;
+        document.getElementById("uifusername").innerText = res.unam;
+        document.getElementById("uiftag").innerText = "@" + res.tag;
         document.getElementById('uifparent').style.display = 'flex';
         document.getElementById('uifabm').innerHTML = converty.makeHtml(res.aboutMe.text.replace(/\</g, "&lt;"));
         if (res.aboutMe.premyum) {
@@ -695,7 +712,7 @@ function userInfo(id) {
         } else {
             document.getElementById('neetro').hidden = true;
         }
-        if (!document.querySelector("#userInfoAdminActions").hidden) {
+        if (!document.getElementById("userInfoAdminActions").hidden) {
             for (let checkbox in checkboxes) {
                 checkboxes[checkbox].checked = peers[id].globalPermissions.includes(checkbox);
                 checkboxes[checkbox].onchange = () => {
@@ -719,12 +736,12 @@ function userInfo(id) {
 
 function ping(id) {
     if (premyum) {
-        document.querySelector("#mainContent").innerHTML += 
+        mainContent.innerHTML += 
         '<div class="message1">Y o u<br>c a n \' t<br>d o<br>t h a t</div>';
         return;
     }
-    document.querySelector("#msgtxt").value += ` [@${id}] `;
-    document.querySelector("#msgtxt").focus();
+    msgtxt.value += ` [@${id}] `;
+    msgtxt.focus();
 }
 
 function moreMessages() {
@@ -744,21 +761,21 @@ function sban(unban) {
 }
 
 function au() {
-    if (document.querySelector("#acsabm").value != abm && document.querySelector("#acsabm").value.length <= 2000) {
-        abm = document.querySelector("#acsabm").value;
+    if (document.getElementById("acsabm").value != abm && document.getElementById("acsabm").value.length <= 2000) {
+        abm = document.getElementById("acsabm").value;
 
         const xhr = new XMLHttpRequest();
         xhr.open("POST", authUrl + '/abmcfg?id='+localStorage.getItem("sid"), true);
         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         xhr.send(JSON.stringify({text:abm}));
     }
-    if (document.querySelector("#acsusername").innerText != oldunam && document.querySelector("#acsusername").innerText.length <= 30) {
+    if (document.getElementById("acsusername").innerText != oldunam && document.getElementById("acsusername").innerText.length <= 30) {
         if (premyum) {
-            document.querySelector("#mainContent").innerHTML += 
+            mainContent.innerHTML += 
             '<div class="message1">Y o u<br>c a n \' t<br>d o<br>t h a t</div>';
             return;
         }
-        oldunam = document.querySelector("#acsusername").innerText;
+        oldunam = document.getElementById("acsusername").innerText;
         const hrx = new XMLHttpRequest();
         hrx.open("GET", authUrl + '/unamcfg?id='+localStorage.getItem("sid")+'&unam='+encodeURIComponent(oldunam), true);
         hrx.send();
@@ -769,7 +786,7 @@ function siv(mid) {
     let m = document.getElementById(`message_${mid}`);
     m.scrollIntoView();
     m.className += " pulsating";
-    let ma = document.querySelector("#messageArea");
+    let ma = document.getElementById("messageArea");
     if (ma.scrollTop + ma.clientHeight < ma.scrollHeight)
     ma.scrollTo(ma.scrollLeft, ma.scrollTop - ma.clientHeight / 2);
 }
@@ -780,7 +797,7 @@ function imageUpload(imgs, callback) {
         callback(null);
         return true;
     } else if (premyum) {
-        document.querySelector("#mainContent").innerHTML += 
+        mainContent.innerHTML += 
         '<div class="message1">Y o u<br>c a n \' t<br>d o<br>t h a t</div>';
         callback(null);
         return true;
@@ -792,15 +809,15 @@ function imageUpload(imgs, callback) {
     const xhr = new XMLHttpRequest();
     xhr.open("POST", authUrl+`/upload?id=${localStorage.getItem("sid")}`);
     xhr.onreadystatechange = () => {
-        document.querySelector("#progress").hidden = true;
+        progress.hidden = true;
         if (xhr.readyState === XMLHttpRequest.DONE && xhr.status) {
             callback(xhr.responseText);
-            document.querySelector("#acceptinvitebtn").focus();
+            acceptinvitebtn.focus();
         }
     };
-    document.querySelector("#progress").hidden = false;
+    progress.hidden = false;
     xhr.upload.onprogress = (e) => {
-        document.querySelector("#progress2").style.marginRight = `${100-(e.loaded/e.total*100)}%`
+        progress2.style.marginRight = `${100-(e.loaded/e.total*100)}%`
     };
     xhr.send(formData);
 }
@@ -809,18 +826,18 @@ function ke(e) {
     let ws = sockets[focusedServer];
     if (e.key == "Enter") {
         if (e.shiftKey) {
-            if (document.querySelector("#msgtxt").rows < 10)
-                document.querySelector("#msgtxt").rows += 1;
+            if (msgtxt.rows < 10)
+                msgtxt.rows += 1;
             return;
         }
-        document.querySelector("#progress").innerHTML = '<div id="progress2"></div>';
+        progress.innerHTML = '<div id="progress2"></div>';
         imageUpload(Object.values(uploadQueue), res => {
             let uploads = [];
             if (res) {
                 if (res[0] == "E") {
-                    document.querySelector("#progress").innerText = res;
-                    document.querySelector("#progress").hidden = false;
-                    document.querySelector("#progress").style.marginRight = "100%";
+                    progress.innerText = res;
+                    progress.hidden = false;
+                    progress.style.marginRight = "100%";
                     return;
                 }
                 try {
@@ -835,26 +852,26 @@ function ke(e) {
             if (edit == false) {
                 ws.send(JSON.stringify({
                     eventType: "message",
-                    message: { content: document.querySelector("#msgtxt").value, reply: reply ? reply : undefined, uploads: uploads ? uploads : undefined }
+                    message: { content: msgtxt.value, reply: reply ? reply : undefined, uploads: uploads ? uploads : undefined }
                 }));
             } else {
                 ws.send(JSON.stringify({
                     eventType: "messageEdit",
                     id: edit,
-                    message: { content: document.querySelector("#msgtxt").value }
+                    message: { content: msgtxt.value }
                 }));
                 edit = false;
             }
-            document.querySelector("#msgtxt").value = "";
-            document.querySelector("#msgtxt").rows = 2;
+            msgtxt.value = "";
+            msgtxt.rows = 2;
             if (reply) {
                 document.getElementById(`message_${reply}`).style.borderLeftWidth = "0px";
                 document.getElementById(`message_${reply}`).style.borderLeftColor = "transparent";
             }
             reply = false;
             uploadQueue = {};
-            document.querySelector("#fileUploadSpace").innerHTML = "";
-            document.querySelector("#fileDeleteMessage").hidden = true;
+            document.getElementById("fileUploadSpace").innerHTML = "";
+            document.getElementById("fileDeleteMessage").hidden = true;
         });
         e.preventDefault();
     }
@@ -866,9 +883,9 @@ function ce(e) {
         let uploads = [];
         if (res) {
             if (res[0] == "E") {
-                document.querySelector("#progress").innerText = res;
-                document.querySelector("#progress").hidden = false;
-                document.querySelector("#progress").style.marginRight = "100%";
+                progress.innerText = res;
+                progress.hidden = false;
+                progress.style.marginRight = "100%";
                 return;
             }
             responseText = JSON.parse(res);
@@ -879,34 +896,34 @@ function ce(e) {
         if (!edit)
             ws.send(JSON.stringify({
                 eventType: "message",
-                message: { content: document.querySelector("#msgtxt").value, reply: reply ? reply : undefined, uploads: uploads ? uploads : undefined }
+                message: { content: msgtxt.value, reply: reply ? reply : undefined, uploads: uploads ? uploads : undefined }
             }));
         else {
             ws.send(JSON.stringify({
                 eventType: "messageEdit",
                 id: edit,
-                message: { content: document.querySelector("#msgtxt").value }
+                message: { content: msgtxt.value }
             }));
             edit = false;
         }
-        document.querySelector("#msgtxt").value = "";
-        document.querySelector("#msgtxt").rows = 2;
+        msgtxt.value = "";
+        msgtxt.rows = 2;
         if (reply) {
             document.getElementById(`message_${reply}`).style.borderLeftWidth = "0px";
             document.getElementById(`message_${reply}`).style.borderLeftColor = "transparent";
         }
         reply = false;
         uploadQueue = {};
-        document.querySelector("#fileUploadSpace").innerHTML = "";
-        document.querySelector("#fileDeleteMessage").hidden = true;
-        document.querySelector("#msgtxt").focus();
+        document.getElementById("fileUploadSpace").innerHTML = "";
+        document.getElementById("fileDeleteMessage").hidden = true;
+        msgtxt.focus();
     });
 }
 
-document.querySelector("#msgtxt").addEventListener("paste", function (e) {
+msgtxt.addEventListener("paste", function (e) {
     console.log(e.clipboardData.getData("url"), e.clipboardData.files);
     
-    document.querySelector("#mainContentContainer").addEventListener("drop", (e) => {
+    mainContentContainer.addEventListener("drop", (e) => {
         e.preventDefault();
         const files = e.clipboardData.files;
         for (let file of files) {
@@ -914,9 +931,9 @@ document.querySelector("#msgtxt").addEventListener("paste", function (e) {
             if (Object.keys(uploadQueue).every(f => uploadQueue[f].name !== file.name)) {
                 file.id = Math.random().toString().replace(/[.]/g, ""); // should be good
                 uploadQueue[file.id] = file;
-                document.querySelector("#fileDeleteMessage").hidden = false;
+                document.getElementById("fileDeleteMessage").hidden = false;
                 // TODO: display an icon for files that aren't images
-                document.querySelector("#fileUploadSpace").innerHTML += 
+                document.getElementById("fileUploadSpace").innerHTML += 
 `<img class="avatar" id="${file.id}" src="${URL.createObjectURL(file)}"
 onclick="delete uploadQueue['${file.id}'];
     if (Object.keys(uploadQueue).length == 0) {
@@ -925,12 +942,12 @@ onclick="delete uploadQueue['${file.id}'];
     this.parentElement.removeChild(this);"/>`;
             }
         }
-        document.querySelector("#msgtxt").focus();
+        msgtxt.focus();
     });
 });
 
-document.querySelector("#msgtxt").addEventListener("keypress", ke);
-document.querySelector("#send").addEventListener("click", ce);
+msgtxt.addEventListener("keypress", ke);
+document.getElementById("send").addEventListener("click", ce);
 var elapsed;
 breaks = [];
 var checkboxes = {};
@@ -950,11 +967,11 @@ function clientLoad() {
     let opensocks = 0;
     let ips = [];
     lastMessageAuthor = null;
-    document.querySelector("#loadMoreMessages").hidden = false;
-    document.querySelector("#mainContent").innerHTML = "";
-    document.querySelector("#left").innerHTML = "";
-    document.querySelector("#right").innerHTML = "peers";
-    let ma = document.querySelector("#messageArea");
+    document.getElementById("loadMoreMessages").hidden = false;
+    mainContent.innerHTML = "";
+    document.getElementById("left").innerHTML = "";
+    document.getElementById("right").innerHTML = "peers";
+    let ma = document.getElementById("messageArea");
     const h = new XMLHttpRequest();
     h.open('GET', authUrl+'/sload?id='+localStorage.getItem('sid'), true);
     h.onload = () => {
@@ -965,7 +982,7 @@ function clientLoad() {
 
         setTimeout(() => {
             if (opensocks < 1) {
-                document.querySelector("#loadingScreen").className += " fadeOut";
+                loadingScreen.className += " fadeOut";
             }
         }, 3000);
 
@@ -979,8 +996,8 @@ function clientLoad() {
             let ogip = serveur.split(' ')[2];
             let surl = ((url.protocol == "https:" ? "wss" : "ws") + "://"+ip.toString());
             let ws = new WebSocket(surl);
-            document.querySelector("#left").innerHTML = "";
-            document.querySelector("#right").innerHTML = "peers";
+            document.getElementById("left").innerHTML = "";
+            document.getElementById("right").innerHTML = "peers";
             breaks.push(setTimeout(() => {
                 if (ws.readyState == 0) {
                     ws.close();
@@ -1134,7 +1151,7 @@ function clientLoad() {
                                     </div>`;
                                 }
                                 if (!premyum && lastMessageAuthor === packet.message.author && !(packet.message.content.startsWith("#"))) {
-                                    document.querySelector("#mainContent").innerHTML += `
+                                    mainContent.innerHTML += `
                                     <div class="message1" id="message_${packet.message.id}">
                                         <div style="width:48px;flex-shrink:0;"></div>
                                         <div class="message2">
@@ -1143,7 +1160,7 @@ function clientLoad() {
                                     </div>
                                     `;
                                 } else {
-                                    document.querySelector("#mainContent").innerHTML += `
+                                    mainContent.innerHTML += `
                                     <div class="message1" id="message_${packet.message.id}">
                                         <img src="${pfp}" class="avatar" onclick="userInfo('${packet.message.author}');"/>
                                         <div class="message2">
@@ -1157,7 +1174,7 @@ function clientLoad() {
                                 }
                                 if (ma.scrollHeight < ma.scrollTop  + (2 * ma.clientHeight)) {
                                     if (premyum) {
-                                        document.querySelector("#mainContent").innerHTML += 
+                                        mainContent.innerHTML += 
                                         '<div class="message1">You\'ve got mail!</div>';
                                     }
                                     else ma.scrollTo(ma.scrollLeft, ma.scrollHeight - ma.clientHeight);
@@ -1326,18 +1343,18 @@ function clientLoad() {
                                 lastMessagesAuthor = packet.messages[m].author;
                             }
                             if (m + 1 == packet.messages.length) { // is this the last message
-                                document.querySelector("#mainContent").innerHTML = txt + document.querySelector("#mainContent").innerHTML;
+                                mainContent.innerHTML = txt + mainContent.innerHTML;
                                 ma.scrollTo(ma.scrollLeft, ma.scrollHeight - scrollBottom);
                             }
                         }
 
                         if (packet.isTop) {
-                            document.querySelector("#mainContent").innerHTML = `
+                            mainContent.innerHTML = `
 <span class="message1" style="text-align: center; align-self: stretch;">
     You've reached the top! Well done.
 </span>
-` + document.querySelector("#mainContent").innerHTML;
-                            document.querySelector("#loadMoreMessages").hidden = true;
+` + mainContent.innerHTML;
+                            document.getElementById("loadMoreMessages").hidden = true;
                         }
                         break;
                     case "rateLimit":
@@ -1472,7 +1489,7 @@ function clientLoad() {
 `;
                             if (ma.scrollHeight < ma.scrollTop  + (2 * ma.clientHeight)) {
                                 if (premyum) {
-                                    document.querySelector("#mainContent").innerHTML += 
+                                    mainContent.innerHTML += 
                                     '<div class="message1">You\'ve got mail!</div>';
                                 }
                                 else ma.scrollTo(ma.scrollLeft, ma.scrollHeight - ma.clientHeight);
@@ -1482,10 +1499,10 @@ function clientLoad() {
                         });
                         break;
                     case "connected":
-                        document.querySelector("#loadingScreen").className += " fadeOut";
+                        loadingScreen.className += " fadeOut";
                         if (!focusedServer) {
                             focusedServer = serveur;
-                            document.querySelector("#msgtxt").focus();
+                            msgtxt.focus();
                         }
                         if (!packet.manifest)
                             packet.manifest = {};
@@ -1499,10 +1516,10 @@ function clientLoad() {
                         icomg.className = "serverIcon avatar";
                         icomg.src = packet.manifest.icon;
                         icomg.addEventListener("click", () => {focusedServer=serveur;clientLoad();});
-                        document.querySelector("#left").appendChild(icomg);
+                        document.getElementById("left").appendChild(icomg);
                         if (focusedServer == serveur) {
-                            document.querySelector("#htitle").innerText = packet.manifest.title.toString();
-                            document.querySelector("#hicon").src = packet.manifest.icon;
+                            document.getElementById("htitle").innerText = packet.manifest.title.toString();
+                            document.getElementById("hicon").src = packet.manifest.icon;
                             peers = packet.peers;
                             globalPermissions = packet.permissions;
                             for (let peer of Object.values(peers)) {
@@ -1515,12 +1532,12 @@ function clientLoad() {
                                     peerimg.style.opacity = 0.5;
                                     peerimg.style.filter = "grayscale";
                                 }
-                                document.querySelector("#right").appendChild(peerimg);
+                                document.getElementById("right").appendChild(peerimg);
                             }
                             if (packet.isAdmin) {
                                 checkboxes = {};
-                                document.querySelector("#userInfoAdminActions").hidden = false;
-                                document.querySelector("#userInfoPermissionChanges").innerHTML = "";
+                                document.getElementById("userInfoAdminActions").hidden = false;
+                                document.getElementById("userInfoPermissionChanges").innerHTML = "";
                                 for (let permission in packet.availablePermissions) {
                                     let li = document.createElement("li");
                                     let checkbox = document.createElement("input");
@@ -1533,31 +1550,31 @@ function clientLoad() {
                                     li.appendChild(checkboxlabel);
                                     checkboxlabel.innerText = label.charAt(0).toUpperCase() + label.slice(1);
                                     checkboxes[permission] = checkbox;
-                                    document.querySelector("#userInfoPermissionChanges").appendChild(li);
+                                    document.getElementById("userInfoPermissionChanges").appendChild(li);
                                 }
                             } else {
-                                document.querySelector("#userInfoAdminActions").hidden = true;
+                                document.getElementById("userInfoAdminActions").hidden = true;
                             }
                         }
                         break;
                     case "banned":
                         lastMessageAuthor = null;
                         if (focusedServer !== serveur) break;
-                        document.querySelector("#loadingScreen").className += " fadeOut";
+                        loadingScreen.className += " fadeOut";
                         if ("explanation" in packet)
-                            document.querySelector("#mainContent").innerHTML += 
+                            mainContent.innerHTML += 
                                 '<div class="message1">'+packet.explanation+'</div>';
                         else
-                            document.querySelector("#mainContent").innerHTML +=
+                            mainContent.innerHTML +=
                                 '<pre class="message1"><code>'+event.data+'</code></pre>';
                         break;
                     case "welcome":
                         if (focusedServer !== serveur) break;
                         if ("explanation" in packet)
-                            document.querySelector("#mainContent").innerHTML += 
+                            mainContent.innerHTML += 
                                 '<div class="message1">'+packet.explanation+'</div>';
                         else
-                            document.querySelector("#mainContent").innerHTML +=
+                            mainContent.innerHTML +=
                                 '<pre class="message1"><code>'+event.data+'</code></pre>';
                     case "join":
                         if (focusedServer !== serveur) break;
@@ -1570,7 +1587,7 @@ function clientLoad() {
                     case "connecting":
                         if (focusedServer !== serveur) break;
                         if (packet.explanation && premyum) {
-                            document.querySelector("#mainContent").innerHTML += 
+                            mainContent.innerHTML += 
                                 '<div class="message1">'+packet.explanation+'</div>';
                         }
                         break;
@@ -1605,15 +1622,15 @@ function clientLoad() {
                             if (["invisibleMsg"].includes(packet.code) && !premyum) break;
                         }
                         if ("explanation" in packet)
-                            document.querySelector("#mainContent").innerHTML += 
+                            mainContent.innerHTML += 
                                 '<div class="message1">'+packet.explanation+'</div>';
                         else
-                            document.querySelector("#mainContent").innerHTML +=
+                            mainContent.innerHTML +=
                                 '<pre class="message1"><code>'+event.data+'</code></pre>';
                         
                         if (ma.scrollHeight < ma.scrollTop  + (2 * ma.clientHeight)) {
                             if (premyum) {
-                                document.querySelector("#mainContent").innerHTML += 
+                                mainContent.innerHTML += 
                                 '<div class="message1">You\'ve got mail!</div>';
                             }
                             else ma.scrollTo(ma.scrollLeft, ma.scrollHeight - ma.clientHeight);
