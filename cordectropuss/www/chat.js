@@ -64,12 +64,14 @@ if (!authUrl) authUrl = "https://platypuss.net";
 var rgbcolourchangeinterval;
 
 var mainContentContainer = document.getElementById("mainContentContainer"),
+    imageviewerparent = document.getElementById("imageviewerparent"),
     acceptinvitebtn = document.getElementById("acceptinvitebtn"),
     loadingScreen = document.getElementById("loadingScreen"),
     inviteparent = document.getElementById("inviteparent"),
     loadingText = document.getElementById("loadingText"),
     mainContent = document.getElementById("mainContent"),
     invitepopup = document.getElementById("invitepopup"),
+    imageviewer = document.getElementById("imageviewer"),
     invdecline = document.getElementById("invdecline"),
     almostbody = document.getElementById("almostbody"),
     serverName = document.getElementById("serverName"),
@@ -1092,7 +1094,8 @@ function clientLoad() {
                             if (packet.message.uploads) {
                                 for (let upload of packet.message.uploads) {
                                     if (upload.type.startsWith("image/") && !premyum) {
-                                        msgtext += `<a target="_blank" href="${authUrl+upload.url}"><img src="${authUrl+upload.url}"></a>`;
+                                        msgtext += `<a target="_blank" href="#"
+                                            onclick="imageviewer.src='${authUrl+upload.url}';imageviewerparent.style.display='flex';"><img src="${authUrl+upload.url}"></a>`;
                                         continue;
                                     } else if (upload.type.startsWith("video/") && !premyum) {
                                         msgtext += `<video controls height="250">
@@ -1266,7 +1269,8 @@ function clientLoad() {
                             if (packet.messages[m].uploads) {
                                 for (let upload of packet.messages[m].uploads) {
                                     if (upload.type.startsWith("image/") && !premyum) {
-                                        msgtext += `<a target="_blank" href="${authUrl+upload.url}"><img src="${authUrl+upload.url}"></a>`;
+                                        msgtext += `<a target="_blank" href="#"
+                                            onclick="imageviewer.src='${authUrl+upload.url}';imageviewerparent.style.display='flex';"><img src="${authUrl+upload.url}"></a>`;
                                         continue;
                                     } else if (upload.type.startsWith("video/") && !premyum) {
                                         msgtext += `<video controls height="250">
