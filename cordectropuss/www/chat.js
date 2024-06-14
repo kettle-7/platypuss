@@ -605,6 +605,9 @@ document.querySelector("#dacpopup").addEventListener("mousedown", (e) => {
 document.querySelector("#uifpopup").addEventListener("mousedown", (e) => {
     e.stopPropagation();
 });
+document.querySelector("#fuckyoupopup").addEventListener("mousedown", (e) => {
+    e.stopPropagation();
+});
 
 document.addEventListener("keydown", (e) => {
     if (e.key == "Escape") {
