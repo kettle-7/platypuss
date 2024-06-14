@@ -182,7 +182,9 @@ all the information specified in the Platypuss API."
 				}));
 				return;
 			}
+			console.log(packet.servers.properties[packet.message.content.split(" ")[1]]);
 			delete packet.servers[packet.message.content.split(" ")[1]];
+			delete packet.servers.properties[packet.message.content.split(" ")[1]];
 			packet.ws.send(JSON.stringify({
 				eventType: "message",
 				message: {
