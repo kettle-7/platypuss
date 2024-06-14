@@ -52,10 +52,6 @@
             "type": "text/html",
             "path": "vc.html"
         },
-        "/vc.html": {
-            "type": "text/html",
-            "path": "vc.html"
-        },
         "/chat.html": {
             "type": "text/html",
             "path": "chat.html"

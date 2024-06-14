@@ -220,6 +220,8 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
         document.ppures = res;
     }
     if (loggedin) {
+        const filedirectoryaddingrequest = new XMLHttpRequest();
+        filedirectoryaddingrequest.open("GET", authUrl+"/dir?id="+localStorage.getItem("sid"));
         document.getElementById("header").removeChild(document.getElementById("login"));
         document.getElementById("header").removeChild(document.getElementById("signup"));
         // document.getElementById("header").removeChild(document.getElementById("spacement"));
