@@ -181,6 +181,9 @@ of the invite code."
                             }))
                             return;
                         }
+                        if (!clientses[ws.ogip]) {
+                            clientses[ws.ogip] = [];
+                        }
                         ws.ogip = packet.ogip;
                         clientses[ws.ogip].push(ws);
                     }
