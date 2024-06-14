@@ -165,6 +165,48 @@ all the information specified in the Platypuss API."
 			}));
 			return sdata;
 		}
+		else if (sdata.properties.admins.includes(packet.message.author) &&
+				packet.message.content.indexOf("/removesubserver") >= 0) {
+			if (!packet.servers[packet.message.content.split(" ")[1]]) {
+				packet.ws.send(JSON.stringify({
+					eventType: "message",
+					message: {
+						content: `that subserver doesn't exist, use /listsubservers to list subservers`,
+						stamp: packet.message.stamp,
+						id: mid,
+						author: "server",
+						special: true
+					}
+				}));
+				return;
+			}
+			delete packet.servers[packet.message.content.split(" ")[1]];
+			packet.ws.send(JSON.stringify({
+				eventType: "message",
+				message: {
+					content: `removed that subserver`,
+					stamp: packet.message.stamp,
+					id: mid,
+					author: "server",
+					special: true
+				}
+			}));
+			return sdata;
+		}
+		else if (sdata.properties.admins.includes(packet.message.author) &&
+				packet.message.content.indexOf("/removesubserver") >= 0) {
+			packet.ws.send(JSON.stringify({
+				eventType: "message",
+				message: {
+					content: `${JSON.stringify(Object.keys(packet.servers))}`,
+					stamp: packet.message.stamp,
+					id: mid,
+					author: "server",
+					special: true
+				}
+			}));
+			return sdata;
+		}
 		sdata.messages[mid] = {
 			content: packet.message.content,
 			stamp: packet.message.stamp,
