@@ -17,7 +17,7 @@
 
 const { randomInt } = require("crypto");
 const { v4 } = require("uuid");
-const { } = require("./platypussDefaults.js"); // import nothing :o)
+const { generateInviteCode } = require("./platypussDefaults.js"); // import nothing :o)
 const fs = require("fs");
 const exec = require('child_process').exec;
 
@@ -156,7 +156,7 @@ all the information specified in the Platypuss API."
             packet.ws.send(JSON.stringify({
                 eventType: "message",
                 message: {
-                    content: `I haven't added code to actually generate an invite link yet. So here's the raw data:\n\`\`\`\ncode gen invip ${ogip} port ${packet.servers.properties.port} invite code ${inviteCode}\n\`\`\``,
+                    content: `New subserver named ${words.join(" ")}, join [here](${generateInviteCode(ogip, packet.servers.properties.port, inviteCode)}).`,
                     stamp: packet.message.stamp,
                     id: mid,
                     author: "server",
@@ -256,6 +256,20 @@ all the information specified in the Platypuss API."
                 eventType: "message",
                 message: {
                     content: `changed the description of this subserver to ${words.join(" ")}`,
+                    stamp: packet.message.stamp,
+                    id: mid,
+                    author: "server",
+                    special: true
+                }
+            }));
+            return sdata;
+        }
+        else if (sdata.properties.admins.includes(packet.message.author) &&
+                packet.message.content.indexOf("/invite") >= 0) {
+            packet.ws.send(JSON.stringify({
+                eventType: "message",
+                message: {
+                    content: `${generateInviteCode(sdata.properties.ogip, packet.servers.properties.port, sdata.properties.inviteCode)}`,
                     stamp: packet.message.stamp,
                     id: mid,
                     author: "server",

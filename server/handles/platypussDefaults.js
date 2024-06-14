@@ -73,5 +73,19 @@ module.exports = {
             this.id = v4();
             this.permissions = {};
         }
+    },
+
+    generateInviteCode: function(ogip, port, inviteCode) {
+        let code = "";
+        for (let part of ogip.split(".")) {
+            cp = parseInt(part, 10).toString(16);
+            while (cp.length < 2) {
+                cp = "0" + cp;
+            }
+            code += cp;
+        }
+        // the invite code must be at least 16
+        code += parseInt(port, 10).toString(16) + parseInt(inviteCode, 10).toString(16);
+        return `https://platypuss.net/chat?invite=${code}&invip=www.platypuss.net`;
     }
 };
