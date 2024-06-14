@@ -109,7 +109,8 @@ all the information specified in the Platypuss API."
         
         if (sdata.properties.admins.includes(packet.message.author) &&
                 packet.message.content == "/restart") {
-            fs.writeFileSync("./server.json", JSON.stringify(sdata));
+            fs.writeFileSync("./servers.json", JSON.stringify(packet.servers));
+            fs.writeFileSync("./servers.properties", JSON.stringify(packet.servers.properties));
             process.exit(0);
             return;
         }
@@ -117,13 +118,21 @@ all the information specified in the Platypuss API."
                 packet.message.content == "/ghpull") {
             exec('git pull',
             function (error, stdout, stderr) {
-                console.log('git: ' + stdout);
-                if (stderr)
-                console.log('angry git: ' + stderr);
                 if (error !== null) {
                     console.log('exec error: ' + error);
                 }
+                packet.ws.send(JSON.stringify({
+                    eventType: "message",
+                    message: {
+                        content: `\`\`\`\nPulled from git\nstdout:\n${stdout}\n\nstderr:\n${stderr}\n\`\`\``,
+                        stamp: packet.message.stamp,
+                        id: mid,
+                        author: "server",
+                        special: true
+                    }
+                }));
             });
+            return;
         }
         else if (sdata.properties.admins.includes(packet.message.author) &&
                 packet.message.content.indexOf("/addsubserver") >= 0) {
