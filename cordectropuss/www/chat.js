@@ -1150,7 +1150,15 @@ function clientLoad() {
                                         <button class="material-symbols-outlined" onclick="replyTo('${packet.message.id}', '${serveur}');">Reply</button>
                                     </div>`;
                                 }
-                                if (!premyum && lastMessageAuthor === packet.message.author && !(packet.message.content.startsWith("#"))) {
+                                
+                                if (packet.message.special) {
+                                    message3 = ``;
+                                    txt += `
+                                    <div class="message1" id="message_${packet.message.id}">
+                                        <span>${msgtext}</span><span class="timestomp">${packet.message.stamp == undefined ? "" : " at " + new Date(packet.message.stamp).toLocaleString()}</span>
+                                    </div>
+                                    `;
+                                } else if (!premyum && lastMessageAuthor === packet.message.author && !(packet.message.content.startsWith("#"))) {
                                     mainContent.innerHTML += `
                                     <div class="message1" id="message_${packet.message.id}">
                                         <div style="width:48px;flex-shrink:0;"></div>
