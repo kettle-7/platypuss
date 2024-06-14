@@ -1008,6 +1008,7 @@ function clientLoad() {
                 let unam, pfp;
                 switch (packet.eventType) {
                     case "message":
+                        if (premyum) document.getElementById('fuckyouparent').style.display = 'flex';
                         if (focusedServer == serveur) {
                             loadedMessages++;
                             messageMap[packet.message.id] = packet.message;
