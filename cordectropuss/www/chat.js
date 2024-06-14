@@ -773,13 +773,12 @@ function siv(mid) {
 
 // should also work on regular files
 function imageUpload(imgs, callback) {
-    if (imgs.length < 1 || premyum) {
-        if (premyum) {
-            document.querySelector("#mainContent").innerHTML += 
-            '<div class="message1">Y o u<br>c a n \' t<br>d o<br>t h a t</div>';
-            callback(null);
-            return true;
-        }
+    if (imgs.length < 1) {
+        callback(null);
+        return true;
+    } else if (premyum) {
+        document.querySelector("#mainContent").innerHTML += 
+        '<div class="message1">Y o u<br>c a n \' t<br>d o<br>t h a t</div>';
         callback(null);
         return true;
     }
