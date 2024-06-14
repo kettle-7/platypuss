@@ -625,6 +625,9 @@ document.getElementById("uifpopup").addEventListener("mousedown", (e) => {
 document.getElementById("fuckyoupopup").addEventListener("mousedown", (e) => {
     e.stopPropagation();
 });
+document.getElementById("imageviewerpopup").addEventListener("mousedown", (e) => {
+    e.stopPropagation();
+});
 
 document.addEventListener("keydown", (e) => {
     if (e.key == "Escape") {
@@ -635,7 +638,8 @@ document.addEventListener("keydown", (e) => {
             "acsparent",
             "uifparent",
             "dacparent",
-            "cpwdparent"
+            "cpwdparent",
+            "imageviewerparent"
         ]) {
             document.getElementById(e).style.display = "none";
         }
