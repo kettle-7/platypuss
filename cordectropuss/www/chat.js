@@ -1528,7 +1528,10 @@ function clientLoad() {
                                 peerimg.className = "serverIcon avatar";
                                 peerimg.src = (await fetchUser(peer.id)).pfp;
                                 peerimg.addEventListener("click", () => {userInfo(peer.id)});
-                                if (!peer.online) {
+                                if (premyum) {
+                                    peerimg.style.opacity = 0.5 + Math.random() * 0.5;
+                                    peerimg.style.filter = "grayscale(" + Math.random() * 100 + "%)";
+                                } else if (!peer.online) {
                                     peerimg.style.opacity = 0.5;
                                     peerimg.style.filter = "grayscale";
                                 }
