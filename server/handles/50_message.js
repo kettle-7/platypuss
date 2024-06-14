@@ -278,6 +278,68 @@ all the information specified in the Platypuss API."
             }));
             return sdata;
         }
+        else if (sdata.properties.admins.includes(packet.message.author) &&
+                packet.message.content.indexOf("/op") >= 0) {
+            if (sdata.users[packet.message.content.split(' ')[1]]) {
+                if (sdata.properties.admins.includes(packet.message.content.split(' ')[1])) {
+                    packet.ws.send(JSON.stringify({
+                        eventType: "message",
+                        message: {
+                            content: `they're already an admin`,
+                            stamp: packet.message.stamp,
+                            id: mid,
+                            author: "server",
+                            special: true
+                        }
+                    }));
+                } else {
+                    sdata.properties.admins.push(packet.message.content.split(' ')[1]);
+                }
+            } else {
+                packet.ws.send(JSON.stringify({
+                    eventType: "message",
+                    message: {
+                        content: `they don't exist`,
+                        stamp: packet.message.stamp,
+                        id: mid,
+                        author: "server",
+                        special: true
+                    }
+                }));
+            }
+            return sdata;
+        }
+        else if (sdata.properties.admins.includes(packet.message.author) &&
+                packet.message.content.indexOf("/deop") >= 0) {
+            if (sdata.users[packet.message.content.split(' ')[1]]) {
+                if (sdata.properties.admins.includes(packet.message.content.split(' ')[1])) {
+                    sdata.properties.admins.splice(sdata.properties.admins.indexOf(packet.message.content.split(' ')[1]), 1);
+                } else {
+                    packet.ws.send(JSON.stringify({
+                        eventType: "message",
+                        message: {
+                            content: `they're not an admin`,
+                            stamp: packet.message.stamp,
+                            id: mid,
+                            author: "server",
+                            special: true
+                        }
+                    }));
+                }
+            } else {
+                packet.ws.send(JSON.stringify({
+                    eventType: "message",
+                    message: {
+                        content: `they don't exist`,
+                        stamp: packet.message.stamp,
+                        id: mid,
+                        author: "server",
+                        special: true
+                    }
+                }));
+            }
+            return sdata;
+        }
         sdata.messages[mid] = {
             content: packet.message.content,
             stamp: packet.message.stamp,
