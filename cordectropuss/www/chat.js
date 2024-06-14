@@ -777,6 +777,7 @@ function imageUpload(imgs, callback) {
         if (premyum) {
             document.querySelector("#mainContent").innerHTML += 
             '<div class="message1">Y o u<br>c a n \' t<br>d o<br>t h a t</div>';
+            callback(null);
             return true;
         }
         callback(null);
