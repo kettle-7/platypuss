@@ -73,9 +73,7 @@ var handlers = {};
 var clientses = {};
 for (let server in conf) {
     if (conf[server].authAddr == undefined) continue;
-    if (conf[server].authAddr.indexOf("http") == 0) {
-        conf[server].authAddr = `https://${conf[server].authAddr}`;
-    }
+    conf[server].authAddr = `https://${conf[server].authAddr.replace(/http(s|)\:\/\//g, "")}`;
     clientses[server] = [];
     if (sdata[server]) {
         sdata[server].properties = conf[server];
