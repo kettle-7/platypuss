@@ -1160,7 +1160,7 @@ function clientLoad() {
                                 
                                 if (packet.message.special) {
                                     message3 = ``;
-                                    txt += `
+                                    msgtext += `
                                     <div class="message1" id="message_${packet.message.id}">
                                         <span>${msgtext}</span><span class="timestomp">${packet.message.stamp == undefined ? "" : " at " + new Date(packet.message.stamp).toLocaleString()}</span>
                                     </div>
