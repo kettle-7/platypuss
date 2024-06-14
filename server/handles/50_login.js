@@ -20,8 +20,8 @@ const { v4 } = require("uuid");
 const { User, availablePerms } = require("./platypussDefaults.js");
 
 module.exports = {
-	eventType: "login",
-	execute: function (sdata, wss, packet, clients) {
+    eventType: "login",
+    execute: function (sdata, wss, packet, clients) {
         if (packet.code != sdata.properties.inviteCode) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
@@ -139,5 +139,5 @@ try logging out then back in again to see if the issue is fixed."
                 }
             });
         });
-	}
+    }
 };
