@@ -171,7 +171,7 @@ check your code thoroughly, otherwise please contact the developer."
                     return; // don't tell others they disconnected if they have another client still connected
                 }
             }
-            https.get(`https://${sdata.properties.authAddr}/uinfo?id=${ws.uid}`, (res) => {
+            https.get(`${sdata.properties.authAddr}/uinfo?id=${ws.uid}`, (res) => {
                 let chunks = [];
                 res.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
                 res.on('error', (err) => reject(err));

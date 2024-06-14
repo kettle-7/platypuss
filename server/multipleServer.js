@@ -72,6 +72,9 @@ sdata.properties = conf;
 var handlers = {};
 var clientses = {};
 for (let server in conf) {
+    if (conf[server].authAddr.indexOf("http") == 0) {
+        conf[server].authAddr = `https://${conf[server].authAddr}`;
+    }
     clientses[server] = [];
     if (sdata[server]) {
         sdata[server].properties = conf[server];
@@ -245,7 +248,7 @@ check your code thoroughly, otherwise please contact the developer."
         ws.on("close", () => {
             writeFileSync(__dirname+"/servers.json", JSON.stringify(sdata));
             writeFileSync(__dirname+"/servers.properties", JSON.stringify(sdata.properties));
-            https.get(`https://${sdata[ws.ogip].properties.authAddr}/uinfo?id=${ws.uid}`, (res) => {
+            https.get(`${sdata[ws.ogip].properties.authAddr}/uinfo?id=${ws.uid}`, (res) => {
                 let chunks = [];
                 res.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
                 res.on('error', (err) => reject(err));
