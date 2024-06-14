@@ -180,9 +180,9 @@ else
             </div>
         </div>
         <div class="popupParent" id="imageviewerparent" onmousedown="document.getElementById('imageviewerparent').style.display = 'none'" hidden>
-            <div class="centred popup" id="imageviewerpopup">
+            <div class="centred popup" id="imageviewerpopup" style="background:transparent;padding-left:0px;padding-top:0px;padding-bottom:0px;padding-right:0px;">
                 <img id="imageviewer" style="max-height:70vh;max-width:70vw;border-radius:1vw;height:fit-content;width:fit-content;object-fit:contain;">
-                <button class="bleu chonk" id="openimage" onclick="document.getElementById('imageviewerparent').style.display = 'none';">No</button>
+                <a target="_blank" href="" id="imagelink" style="text-decoration:underline;color:#eeeeee;">Open in a new tab</a>
             </div>
         </div>
         <div class="popupParent" id="cpwdparent" onmousedown="document.getElementById('cpwdparent').style.display = 'none'" hidden>
