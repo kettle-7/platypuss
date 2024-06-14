@@ -725,7 +725,7 @@ var lastMessageAuthor = null;
 function deleteMessage(id, server) {
     if (premyum) {
         document.querySelector("#mainContent").innerHTML += 
-        '<div class="message1">Y o u\nc a n \' t\nd o\nt h a t</div>';
+        '<div class="message1">Y o u<br>c a n \' t<br>d o<br>t h a t</div>';
         return;
     }
     sockets[server].send(JSON.stringify({
@@ -738,7 +738,7 @@ function deleteMessage(id, server) {
 function editMessage(id, server) {
     if (premyum) {
         document.querySelector("#mainContent").innerHTML += 
-        '<div class="message1">Y o u\nc a n \' t\nd o\nt h a t</div>';
+        '<div class="message1">Y o u<br>c a n \' t<br>d o<br>t h a t</div>';
         return;
     }
     edit = id;
@@ -749,7 +749,7 @@ function editMessage(id, server) {
 function replyTo(id, server) {
     if (premyum) {
         document.querySelector("#mainContent").innerHTML += 
-        '<div class="message1">Y o u\nc a n \' t\nd o\nt h a t</div>';
+        '<div class="message1">Y o u<br>c a n \' t<br>d o<br>t h a t</div>';
         return;
     }
     if (reply) {
@@ -800,7 +800,7 @@ function userInfo(id) {
 function ping(id) {
     if (premyum) {
         document.querySelector("#mainContent").innerHTML += 
-        '<div class="message1">Y o u\nc a n \' t\nd o\nt h a t</div>';
+        '<div class="message1">Y o u<br>c a n \' t<br>d o<br>t h a t</div>';
         return;
     }
     document.querySelector("#msgtxt").value += ` [@${id}] `;
@@ -835,7 +835,7 @@ function au() {
     if (document.querySelector("#acsusername").innerText != oldunam && document.querySelector("#acsusername").innerText.length <= 30) {
         if (premyum) {
             document.querySelector("#mainContent").innerHTML += 
-            '<div class="message1">Y o u\nc a n \' t\nd o\nt h a t</div>';
+            '<div class="message1">Y o u<br>c a n \' t<br>d o<br>t h a t</div>';
             return;
         }
         oldunam = document.querySelector("#acsusername").innerText;
@@ -859,7 +859,7 @@ function imageUpload(imgs, callback) {
     if (imgs.length < 1 || premyum) {
         if (premyum) {
             document.querySelector("#mainContent").innerHTML += 
-            '<div class="message1">Y o u\nc a n \' t\nd o\nt h a t</div>';
+            '<div class="message1">Y o u<br>c a n \' t<br>d o<br>t h a t</div>';
             return;
         }
         callback(null);
