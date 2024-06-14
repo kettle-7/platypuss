@@ -805,3 +805,10 @@ hr {
       transform: rotate(360deg);
     }
   }
+
+#fuckyouparent * {
+    color: red;
+}
+#fuckyouparent button {
+    color: rgb(255, 0, 255);
+}
