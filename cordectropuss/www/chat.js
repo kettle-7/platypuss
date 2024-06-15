@@ -1084,7 +1084,7 @@ function clientLoad() {
                 crashed for some reason or maybe something's up with your internet connection. Try contact
                 the owner of the server to sort the issue out if you can.</p><button class="dangerous chonk"
                 onclick="let r=new XMLHttpRequest();r.open('GET', '${authUrl}/leaveServer?id=${localStorage.
-                getItem("sid")}&ip=${URL.encodeURIComponent(serveur)}')">Leave this server</button></div>
+                getItem("sid")}&ip=${encodeURIComponent(serveur)}')">Leave this server</button></div>
                 `};
             serverIcons[serveur].src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
             console.log(document.getElementById("left").appendChild(serverIcons[serveur]));
