@@ -289,6 +289,12 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 document.getElementById("nonmatch").hidden = false;
                 return;
             }
+
+            if (pwd2.length < 1) {
+                document.getElementById("nonmatch").hidden = false;
+                document.getElementById("nonmatch").innerText = "You need to have a password!";
+                return;
+            }
             
             const xhr = new XMLHttpRequest();
             xhr.open("GET", authUrl+'/passwdcfg?id='+localStorage.getItem("sid")+"&pwd="+cyrb53(pwd3), true);
@@ -398,6 +404,12 @@ function au() {
     if (document.getElementById("acsusername").innerText != oldunam && document.getElementById("acsusername").innerText.length <= 30) {
         if (premyum) return;
         oldunam = document.getElementById("acsusername").innerText;
+        if (oldunam.length < 1) {
+            fetchUser(localStorage.getItem('sid')).then((res) => {
+                oldunam = res.unam;
+            });
+            return;
+        }
         const hrx = new XMLHttpRequest();
         hrx.open("GET", authUrl + '/unamcfg?id='+localStorage.getItem("sid")+'&unam='+encodeURIComponent(oldunam), true);
         hrx.send();

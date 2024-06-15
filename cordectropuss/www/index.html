@@ -119,7 +119,7 @@ else
                     </label>
                 </div>
                 <button class="chonk" id="acscpwd"
-                    onclick="document.getElementById('cpwdparent').style.display = 'flex'; document.getElementById('acsparent').style.display = 'none'"
+                    onclick="au();document.getElementById('cpwdparent').style.display = 'flex'; document.getElementById('acsparent').style.display = 'none'"
                     >Change Password</button>
                 <button class="dangerous chonk" id="acsdelacc"
                     onclick="document.getElementById('dacparent').style.display = 'flex';document.getElementById('acsparent').style.display = 'none';"
@@ -154,8 +154,8 @@ else
                 <div style="flex-grow:1;"></div>
                 <span id="nonmatch" hidden>Sorry, that's not your current password.</span>
                 <input name="DummyUsername" type="text" style="display:none;"> <!-- firefox to stop thinking that the message box is username -->
-                <input type="password" id="newPwd" class="chonk textBox" placeholder="New Password" />
-                <input type="password" id="newPwd2" class="chonk textBox" placeholder="Confirm Password" />
+                <input type="password" maxlength="30" id="newPwd" class="chonk textBox" placeholder="New Password" />
+                <input type="password" maxlength="30" id="newPwd2" class="chonk textBox" placeholder="Confirm Password" />
                 <button class="chonk" id="cpwdsave">Save</button>
                 <button class="chonk" id="cpwdcncl" onclick="document.getElementById('cpwdparent').style.display = 'none';">Cancel</button>
             </div>
