@@ -1082,7 +1082,8 @@ function clientLoad() {
             serverIcons[serveur].onclick = () => {mainContent.innerHTML = `
                 <div class="popup centred" style="margin-bottom:30vh;"><p>We couldn't connect to this server.
                 It may have been deleted, crashed for some reason or maybe something's up with your internet
-                connection. Try contact the owner of the server to sort the issue out if you can.</p><button
+                connection. Try contact the owner of the server to sort the issue out if you can.</p><span
+                class="smoltext">Server Address: ${ip}<br>Sub-server (if applicable): ${ogip}</p><button
                 class="dangerous chonk" onclick="let r=new XMLHttpRequest();r.open('GET', '${authUrl
                 }/leaveServer?id=${localStorage.getItem("sid")}&ip=${encodeURIComponent(serveur)}')">
                 Leave this server</button></div>
