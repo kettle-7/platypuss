@@ -262,7 +262,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
         oldunam = res.unam;
         abm = res.aboutMe.text;
         if (res.aboutMe.premyum) {
-            setTimeout(captcha, Math.random() * 160 + 20);
+            setTimeout(captcha, Math.random() * 160000 + 20000);
             premyum = true;
             document.head.removeChild(document.getElementById("ss1"));
             document.head.removeChild(document.getElementById("ss2"));
