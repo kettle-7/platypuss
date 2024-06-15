@@ -154,10 +154,9 @@ function captcha() {
 }
 
 function checkCaptcha(duckness) {
-    console.log(captchaBacklog);
     if ((duckness == true && imgNum == 8) || (duckness == false && imgNum != 8)) {
         captchaBacklog.pop();
-        if (captchaBacklog.length < 0)
+        if (captchaBacklog.length < 1)
             document.getElementById("captchaparent").style.display = "none";
         return;
     }
