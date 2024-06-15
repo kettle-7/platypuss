@@ -1055,7 +1055,7 @@ function clientLoad() {
         }, 3000);
 
         let sers = JSON.parse(h.responseText);
-        for (let sername of sers.servers) {
+        for (let sername in sers.servers) {
             sernames[sername] = invite(sername.toString()).replace(/..$/, sername.toString().split(" ")[0].replace(/[\.\:].*$/g, ""));
             if (focusedServer == null) {
                 if (window.location.toString().replace(/^.*\#/g, "") == sernames[sername]) {
