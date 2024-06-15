@@ -153,7 +153,6 @@ function captcha() {
 }
 
 function checkCaptcha(duckness) {
-    console.log(captchaBacklog);
     if ((duckness == true && captchaBacklog[captchaBacklog.length - 1] == 8) || (duckness == false && captchaBacklog[captchaBacklog.length - 1] != 8)) {
         captchaBacklog.pop();
         document.getElementById("captchaimg").src = duckimages[captchaBacklog[captchaBacklog.length - 1]];
