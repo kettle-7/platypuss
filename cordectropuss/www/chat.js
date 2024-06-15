@@ -1062,8 +1062,11 @@ function clientLoad() {
                 }
             }
         }
+        if (focusedServer == null) {
+            focusedServer = Object.keys(sers.servers)[0];
+        }
         let sname = sernames[focusedServer].toString();
-        window.history.pushState(`/chat#${sname}`);
+        window.history.pushState({}, '', `/chat#${sname}`);
         for (let serveur in sers.servers) {
             async function load() {
             if (ips.includes(serveur)) return;
