@@ -1076,8 +1076,6 @@ function clientLoad() {
             let ogip = serveur.split(' ')[2];
             let surl = ((url.protocol == "https:" ? "wss" : "ws") + "://"+ip.toString());
             let ws = new WebSocket(surl);
-            document.getElementById("left").innerHTML = "";
-            document.getElementById("right").innerHTML = "peers";
             serverIcons[serveur] = document.createElement("img");
             serverIcons[serveur].id = "serverIcon_"+serveur.replace(/ /g, "_");
             serverIcons[serveur].className = "serverIcon avatar";
