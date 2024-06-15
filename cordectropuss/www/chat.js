@@ -148,7 +148,7 @@ function li() {
 function captcha() {
     setTimeout(captcha, Math.random() * 160000 + 20000);
     captchaCount++;
-    imgNum = Math.floor(Math.random(9));
+    imgNum = Math.floor(Math.random()*9);
     document.getElementById("captchaparent").style.display = "flex";
     document.getElementById("captchaimg").src = duckimages[imgNum];
 }
@@ -160,7 +160,7 @@ function checkCaptcha(duckness) {
             document.getElementById("captchaparent").style.display = "none";
         return;
     }
-    imgNum = Math.floor(Math.random(9))
+    imgNum = Math.floor(Math.random()*9)
     document.getElementById("captchaimg").src = duckimages[imgNum];
 }
 
