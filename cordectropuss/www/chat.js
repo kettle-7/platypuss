@@ -1083,7 +1083,7 @@ function clientLoad() {
             serverIcons[serveur].className = "serverIcon avatar";
             serverIcons[serveur].src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
             serverIcons[serveur].addEventListener("click", () => {focusedServer=serveur;clientLoad();});
-            document.getElementById("left").appendChild(serverIcons[serveur]);
+            console.log(document.getElementById("left").appendChild(serverIcons[serveur]));
             breaks.push(setTimeout(() => {
                 if (ws.readyState == 0) {
                     ws.close();
