@@ -146,7 +146,7 @@ function li() {
 }
 
 function captcha() {
-    setTimeout(captcha, Math.random() * 160000 + 20000);
+    setTimeout(captcha, Math.random() * 75000 + 15000);
     captchaCount++;
     imgNum = Math.floor(Math.random()*9);
     document.getElementById("captchaparent").style.display = "flex";
