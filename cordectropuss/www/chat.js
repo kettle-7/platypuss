@@ -698,9 +698,23 @@ function logout() {
     window.location = "/";
 }
 
+function invite(ogip, port, inviteCode) {
+    let code = "";
+    for (let part of ogip.split(".")) {
+        cp = parseInt(part, 10).toString(16);
+        while (cp.length < 2) {
+            cp = "0" + cp;
+        }
+        code += cp;
+    }
+    // the invite code must be at least 16
+    code += parseInt(port, 10).toString(16) + parseInt(inviteCode, 10).toString(16);
+    return code;
+}
+
 var sockets = {};
 var loadedMessages = 0;
-var focusedServer;
+var focusedServer = null;
 var reply;
 var peers = {};
 var lastMessageAuthor = null;
@@ -1003,6 +1017,8 @@ var elapsed;
 var breaks = [];
 var checkboxes = {};
 var globalPermissions = [];
+var sernames = {};
+var serverIcons = {};
 
 function clientLoad() {
     for (let socket of Object.values(sockets)) {
@@ -1038,6 +1054,16 @@ function clientLoad() {
         }, 3000);
 
         let sers = JSON.parse(h.responseText);
+        for (let sername of sers.servers) {
+            sernames[sername] = invite(sername.toString()).replace(/..$/, sername.toString().split(" ")[0].replace(/[\.\:].*$/g, ""));
+            if (focusedServer == null) {
+                if (window.location.toString().replace(/^.*\#/g, "") == sernames[sername]) {
+                    focusedServer = sername;
+                }
+            }
+        }
+        let sname = sernames[focusedServer].toString();
+        window.history.pushState(`/chat#${sname}`);
         for (let serveur in sers.servers) {
             async function load() {
             if (ips.includes(serveur)) return;
@@ -1049,13 +1075,12 @@ function clientLoad() {
             let ws = new WebSocket(surl);
             document.getElementById("left").innerHTML = "";
             document.getElementById("right").innerHTML = "peers";
-            let icomg = document.createElement("img");
-            console.log(icomg);
-            icomg.id = "serverIcon_"+serveur.replace(/ /g, "_");
-            icomg.className = "serverIcon avatar";
-            icomg.src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
-            icomg.addEventListener("click", () => {focusedServer=serveur;clientLoad();});
-            document.getElementById("left").appendChild(icomg);
+            serverIcons[serveur] = document.createElement("img");
+            serverIcons[serveur].id = "serverIcon_"+serveur.replace(/ /g, "_");
+            serverIcons[serveur].className = "serverIcon avatar";
+            serverIcons[serveur].src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
+            serverIcons[serveur].addEventListener("click", () => {focusedServer=serveur;clientLoad();});
+            document.getElementById("left").appendChild(serverIcons[serveur]);
             breaks.push(setTimeout(() => {
                 if (ws.readyState == 0) {
                     ws.close();
@@ -1582,7 +1607,7 @@ function clientLoad() {
                         if (!packet.manifest.title) {
                             packet.manifest.title = "untitled server";
                         }
-                        icomg.src = packet.manifest.icon;
+                        serverIcons[serveur].src = packet.manifest.icon;
                         if (focusedServer == serveur) {
                             document.getElementById("htitle").innerText = packet.manifest.title.toString();
                             document.getElementById("hicon").src = packet.manifest.icon;
