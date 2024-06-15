@@ -1044,6 +1044,12 @@ function clientLoad() {
             let ws = new WebSocket(surl);
             document.getElementById("left").innerHTML = "";
             document.getElementById("right").innerHTML = "peers";
+            let icomg = document.createElement("img");
+            icomg.id = "serverIcon_"+serveur.replace(/ /g, "_");
+            icomg.className = "serverIcon avatar";
+            icomg.src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
+            icomg.addEventListener("click", () => {focusedServer=serveur;clientLoad();});
+            document.getElementById("left").appendChild(icomg);
             breaks.push(setTimeout(() => {
                 if (ws.readyState == 0) {
                     ws.close();
@@ -1570,11 +1576,7 @@ function clientLoad() {
                         if (!packet.manifest.title) {
                             packet.manifest.title = "untitled server";
                         }
-                        let icomg = document.createElement("img");
-                        icomg.className = "serverIcon avatar";
                         icomg.src = packet.manifest.icon;
-                        icomg.addEventListener("click", () => {focusedServer=serveur;clientLoad();});
-                        document.getElementById("left").appendChild(icomg);
                         if (focusedServer == serveur) {
                             document.getElementById("htitle").innerText = packet.manifest.title.toString();
                             document.getElementById("hicon").src = packet.manifest.icon;
