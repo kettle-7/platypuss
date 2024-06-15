@@ -155,7 +155,8 @@ function captcha() {
 
 function checkCaptcha(duckness) {
     if ((duckness == true && imgNum == 8) || (duckness == false && imgNum != 8)) {
-        document.getElementById("captchaimg").src = duckimages[captchaBacklog.pop()];
+        captchaBacklog.pop();
+        document.getElementById("captchaimg").src = duckimages[captchaBacklog[captchaBacklog.length - 1]];
         if (captchaBacklog.length < 1)
             document.getElementById("captchaparent").style.display = "none";
         return;
