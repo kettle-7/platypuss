@@ -60,7 +60,6 @@ var abm, oldunam;
 var mRef = {};
 var edit = false;
 var shown = null;
-var imgNum = null;
 var duckimages = [
     "https://platypuss.net/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/d55b6cae662d8424bd18e905c0b04e63334269d94de04624cfa93abc2668a001d8fb11cee2b9ea09b0309dc5b6e4e7c8fd2f898a079d6374a686c2aad248b7f6/imareeges.jpg",
     "https://platypuss.net/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/bab556828d8d4c3f0eb053c0295d37c051665ff70b43437dcfd43caebe81709ce6919d1e86bb0c785f23943dba6fbb1a852cbfc1d6942a63165c60493c7685a0/Untitled.jpg",
@@ -72,7 +71,7 @@ var duckimages = [
     "https://platypuss.net/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/7978aa0e64cab7a5b7d61c0596daf4ef7a475e7cb6e2fd1908b144bfcd3b74a74db20f8a0274fc2cfcc457d62f2be95ee639cb8959a60c85a9d8e49d4d2c670f/Unt6464itled.jpg",
     "https://platypuss.net/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/ce6bee0e6938aea3236ac97fada203f697c1fead54f960e4392e0fcfb1eee7fd3017fe575a2b30eedc2059a3b5732d9561229d6c8602b8f879bc69c2665ba6bc/image535s.jpg"
 ];
-var captchaCount = 0;
+var captchaBacklog = [];
 if (!authUrl) authUrl = "https://platypuss.net";
 var rgbcolourchangeinterval;
 
@@ -147,20 +146,23 @@ function li() {
 
 function captcha() {
     setTimeout(captcha, Math.random() * 75000 + 15000);
-    captchaCount++;
     imgNum = Math.floor(Math.random()*9);
+    captchaBacklog.push(imgNum);
     document.getElementById("captchaparent").style.display = "flex";
     document.getElementById("captchaimg").src = duckimages[imgNum];
 }
 
 function checkCaptcha(duckness) {
-    if ((duckness == true && imgNum == 8) || (duckness == false && imgNum != 8)) {
-        captchaCount--;
-        if (captchaCount < 0)
+    console.log(captchaBacklog);
+    if ((duckness == true && captchaBacklog[captchaBacklog.length - 1] == 8) || (duckness == false && captchaBacklog[captchaBacklog.length - 1] != 8)) {
+        captchaBacklog.pop();
+        document.getElementById("captchaimg").src = duckimages[captchaBacklog[captchaBacklog.length - 1]];
+        if (captchaBacklog.length < 1)
             document.getElementById("captchaparent").style.display = "none";
         return;
     }
-    imgNum = Math.floor(Math.random()*9)
+    imgNum = Math.floor(Math.random()*9);
+    captchaBacklog.push(imgNum);
     document.getElementById("captchaimg").src = duckimages[imgNum];
 }
 
