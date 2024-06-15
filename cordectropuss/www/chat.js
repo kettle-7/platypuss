@@ -154,6 +154,7 @@ function captcha() {
 }
 
 function checkCaptcha(duckness) {
+    console.log(captchaBacklog);
     if ((duckness == true && imgNum == 8) || (duckness == false && imgNum != 8)) {
         captchaBacklog.pop();
         document.getElementById("captchaimg").src = duckimages[captchaBacklog[captchaBacklog.length - 1]];
