@@ -1086,7 +1086,7 @@ function clientLoad() {
                 you can.</p><span class="smoltext">Server Address: ${ip}<br>Sub-server (if applicable):
                 ${ogip}</p><button class="dangerous chonk" onclick="let r=new XMLHttpRequest();r.open('GET',
                 '${authUrl}/leaveServer?id=${localStorage.getItem("sid")}&ip=${encodeURIComponent(serveur)}');
-                r.onload=()=>{window.location.reload();};r.send();"> Leave this server</button></div>
+                r.onload=()=>{/*window.location.reload();*/mainContent.innerText=r.responseText;};r.send();"> Leave this server</button></div>
                 `};
             serverIcons[serveur].src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
             console.log(document.getElementById("left").appendChild(serverIcons[serveur]));
