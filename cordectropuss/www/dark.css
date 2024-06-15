@@ -509,6 +509,10 @@ hr {
     min-width: 0px;
 }
 
+.smoltext {
+    font-size: small;
+}
+
 .message2 */*p,b,i,strong,em*/ {
     min-width: 0px;
     overflow-wrap: break-word;

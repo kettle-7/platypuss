@@ -65,6 +65,10 @@ button:focus {
     background-color: #f6f6f6;
 }
 
+.smoltext {
+    font-size: small;
+}
+
 .chonk {
     padding: 5px;
     font-size: 14pt;
