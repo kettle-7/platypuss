@@ -60,7 +60,6 @@ var abm, oldunam;
 var mRef = {};
 var edit = false;
 var shown = null;
-var imgNum = null;
 var duckimages = [
     "https://platypuss.net/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/d55b6cae662d8424bd18e905c0b04e63334269d94de04624cfa93abc2668a001d8fb11cee2b9ea09b0309dc5b6e4e7c8fd2f898a079d6374a686c2aad248b7f6/imareeges.jpg",
     "https://platypuss.net/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/bab556828d8d4c3f0eb053c0295d37c051665ff70b43437dcfd43caebe81709ce6919d1e86bb0c785f23943dba6fbb1a852cbfc1d6942a63165c60493c7685a0/Untitled.jpg",
@@ -155,7 +154,7 @@ function captcha() {
 
 function checkCaptcha(duckness) {
     console.log(captchaBacklog);
-    if ((duckness == true && imgNum == 8) || (duckness == false && imgNum != 8)) {
+    if ((duckness == true && captchaBacklog[captchaBacklog.length - 1] == 8) || (duckness == false && captchaBacklog[captchaBacklog.length - 1] != 8)) {
         captchaBacklog.pop();
         document.getElementById("captchaimg").src = duckimages[captchaBacklog[captchaBacklog.length - 1]];
         if (captchaBacklog.length < 1)
