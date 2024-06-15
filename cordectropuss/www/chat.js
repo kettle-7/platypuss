@@ -60,6 +60,7 @@ var abm, oldunam;
 var mRef = {};
 var edit = false;
 var shown = null;
+var imgNum = null;
 if (!authUrl) authUrl = "https://platypuss.net";
 var rgbcolourchangeinterval;
 
@@ -130,6 +131,33 @@ function li() {
     lit2.innerHTML = 'Welcome back! If you don\'t already have an account <br> please <a href="#" onclick="su()">create an account</a> instead.';
     lit3.innerText = lit3.innerText.replace(/Create Account/g, "Sign In");
     return;
+}
+
+function captcha() {
+    setTimeout(captcha, Math.random() * 160 + 20);
+    images = [
+        "https://platypuss.net/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/d55b6cae662d8424bd18e905c0b04e63334269d94de04624cfa93abc2668a001d8fb11cee2b9ea09b0309dc5b6e4e7c8fd2f898a079d6374a686c2aad248b7f6/imareeges.jpg",
+        "https://platypuss.net/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/bab556828d8d4c3f0eb053c0295d37c051665ff70b43437dcfd43caebe81709ce6919d1e86bb0c785f23943dba6fbb1a852cbfc1d6942a63165c60493c7685a0/Untitled.jpg",
+        "https://platypuss.net/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/fceac55f7b22aa28e6a6ee4b79c6eca06c096a7079e6065faea31f701c68924aa288f3d3a3ba90f79f5e9b110f202061cd62e335b6731b5bf0426ca4c5095939/notduck.jpg",
+        "https://platypuss.net/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/23b36fdec449cb0fa4286c65233a240169d6250d3232585f53dc643e7bcbe0326c6aedb3e3800d647043dcfc4e0a6842c2c5b0f9635b727b8137ac624541616d/notduck1.jpg",
+        "https://platypuss.net/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/877c74276020e9cd0ac3ee0036b3151264323fa2c431b9819f10183fee8cf611cb1f55e99e9a54e75f3359f6fd46d60828c1984bc202e27f9878b899d940c14f/Unti323tled.jpg",
+        "https://platypuss.net/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/fc9122d3aeaec4db7fd7dc19069b9875932b35c73aec6dd354afddbacdc4f112e26df98095c87807fe04c3dfe8d725a4e8cfebc5a114a4278976def0a71422be/Un32523titled.jpg",
+        "https://platypuss.net/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/3d03cd080c879b4b5d57376c69e74170132764212dc5f3f038a9a9496ec0dfd42151286164f1b15c9951bf8b39399325c78c852c3411af0209b592300b6e5233/Unti5353tled.jpg",
+        "https://platypuss.net/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/7978aa0e64cab7a5b7d61c0596daf4ef7a475e7cb6e2fd1908b144bfcd3b74a74db20f8a0274fc2cfcc457d62f2be95ee639cb8959a60c85a9d8e49d4d2c670f/Unt6464itled.jpg",
+        "https://platypuss.net/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/ce6bee0e6938aea3236ac97fada203f697c1fead54f960e4392e0fcfb1eee7fd3017fe575a2b30eedc2059a3b5732d9561229d6c8602b8f879bc69c2665ba6bc/image535s.jpg"
+    ];
+    imgNum = Math.floor(Math.random(9));
+    document.getElementById("captchaparent").style.display = "flex";
+    document.getElementById("captchaimg").src = images[imgNum];
+}
+
+function checkCaptcha(duckness) {
+    if ((duckness == true && imgNum == 8) || (duckness == false && imgNum != 8))
+        document.getElementById("captchaparent").style.display = "none";
+    else {
+        imgNum = Math.floor(Math.random(9))
+        document.getElementById("captchaimg").src = images[imgNum];
+    }
 }
 
 function su() {
@@ -234,6 +262,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
         oldunam = res.unam;
         abm = res.aboutMe.text;
         if (res.aboutMe.premyum) {
+            setTimeout(captcha, Math.random() * 160 + 20);
             premyum = true;
             document.head.removeChild(document.getElementById("ss1"));
             document.head.removeChild(document.getElementById("ss2"));

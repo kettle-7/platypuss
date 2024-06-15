@@ -173,12 +173,6 @@ else
                 <button class="chonk" id="nodel" onclick="document.getElementById('acsparent').style.display = 'flex'; document.getElementById('dacparent').style.display = 'none';">No</button>
             </div>
         </div>
-        <div class="popupParent" id="fuckyouparent" onmousedown="document.getElementById('fuckyouparent').style.display = 'none'" hidden>
-            <div class="centred popup" id="fuckyoupopup">
-                <h1 style="text-align:center;">YOU'VE GOT MAIL!!!</h1>
-                <button class="chonk" id="nodel" onclick="document.getElementById('fuckyouparent').style.display = 'none';">No</button>
-            </div>
-        </div>
         <div class="popupParent" id="imageviewerparent" onmousedown="document.getElementById('imageviewerparent').style.display = 'none'" hidden>
             <div class="centred popup" id="imageviewerpopup" style="background:transparent;box-shadow:none;padding-left:0px;padding-top:0px;padding-bottom:0px;padding-right:0px;">
                 <img id="imageviewer" style="max-height:70vh;max-width:70vw;border-radius:1vw;height:fit-content;width:fit-content;object-fit:contain;box-shadow:0px 0px 10px black;">
@@ -197,6 +191,20 @@ else
                 <input type="password" id="newPwd2" class="chonk textBox" placeholder="Confirm Password" />
                 <button class="chonk" id="cpwdsave">Save</button>
                 <button class="chonk" id="cpwdcncl" onclick="document.getElementById('acsparent').style.display = 'flex'; document.getElementById('cpwdparent').style.display = 'none';">Cancel</button>
+            </div>
+        </div>
+        <div class="popupParent" id="fuckyouparent" onmousedown="document.getElementById('fuckyouparent').style.display = 'none'" hidden>
+            <div class="centred popup" id="fuckyoupopup">
+                <h1 style="text-align:center;">YOU'VE GOT MAIL!!!</h1>
+                <button class="chonk" id="nomail" onclick="document.getElementById('fuckyouparent').style.display = 'none';">No</button>
+            </div>
+        </div>
+        <div class="popupParent" id="captchaparent" hidden>
+            <div class="centred popup" id="captchapopup">
+                <h1 style="text-align:center;">You are a robot.</h1>
+                <img id="captchaimg" alt="Duck"/>
+                <button class="dangerous chonk" id="yduck" onclick="checkCaptcha(true)">Duck</button>
+                <button class="dangerous chonk" id="nduck" onclick="checkCaptcha(false)">Not a duck</button>
             </div>
         </div>
         <div id="loadingScreen">
