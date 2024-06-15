@@ -72,7 +72,7 @@ var duckimages = [
     "https://platypuss.net/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/7978aa0e64cab7a5b7d61c0596daf4ef7a475e7cb6e2fd1908b144bfcd3b74a74db20f8a0274fc2cfcc457d62f2be95ee639cb8959a60c85a9d8e49d4d2c670f/Unt6464itled.jpg",
     "https://platypuss.net/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/ce6bee0e6938aea3236ac97fada203f697c1fead54f960e4392e0fcfb1eee7fd3017fe575a2b30eedc2059a3b5732d9561229d6c8602b8f879bc69c2665ba6bc/image535s.jpg"
 ];
-var captchaCount = 0;
+var captchaBacklog = [];
 if (!authUrl) authUrl = "https://platypuss.net";
 var rgbcolourchangeinterval;
 
@@ -147,20 +147,21 @@ function li() {
 
 function captcha() {
     setTimeout(captcha, Math.random() * 75000 + 15000);
-    captchaCount++;
     imgNum = Math.floor(Math.random()*9);
+    captchaBacklog.push(imgNum)
     document.getElementById("captchaparent").style.display = "flex";
     document.getElementById("captchaimg").src = duckimages[imgNum];
 }
 
 function checkCaptcha(duckness) {
     if ((duckness == true && imgNum == 8) || (duckness == false && imgNum != 8)) {
-        captchaCount--;
-        if (captchaCount < 0)
+        captchaBacklog.pop()
+        if (captchaBacklog.length < 0)
             document.getElementById("captchaparent").style.display = "none";
         return;
     }
     imgNum = Math.floor(Math.random()*9)
+    captchaBacklog.push(imgNum)
     document.getElementById("captchaimg").src = duckimages[imgNum];
 }
 
