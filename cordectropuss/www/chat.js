@@ -1015,9 +1015,7 @@ function clientLoad() {
             let ws = new WebSocket(surl);
             document.getElementById("left").innerHTML = "";
             document.getElementById("right").innerHTML = "peers";
-            console.log(icomg);
             let icomg = document.createElement("img");
-            console.log(icomg);
             icomg.id = "serverIcon_"+serveur.replace(/ /g, "_");
             icomg.className = "serverIcon avatar";
             icomg.src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
