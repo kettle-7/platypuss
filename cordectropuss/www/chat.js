@@ -148,20 +148,21 @@ function li() {
 function captcha() {
     setTimeout(captcha, Math.random() * 75000 + 15000);
     imgNum = Math.floor(Math.random()*9);
-    captchaBacklog.push(imgNum)
+    captchaBacklog.push(imgNum);
     document.getElementById("captchaparent").style.display = "flex";
     document.getElementById("captchaimg").src = duckimages[imgNum];
 }
 
 function checkCaptcha(duckness) {
+    console.log(captchaBacklog);
     if ((duckness == true && imgNum == 8) || (duckness == false && imgNum != 8)) {
-        captchaBacklog.pop()
+        captchaBacklog.pop();
         if (captchaBacklog.length < 0)
             document.getElementById("captchaparent").style.display = "none";
         return;
     }
-    imgNum = Math.floor(Math.random()*9)
-    captchaBacklog.push(imgNum)
+    imgNum = Math.floor(Math.random()*9);
+    captchaBacklog.push(imgNum);
     document.getElementById("captchaimg").src = duckimages[imgNum];
 }
 
