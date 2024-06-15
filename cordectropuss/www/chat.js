@@ -134,7 +134,7 @@ function li() {
 }
 
 function captcha() {
-    setTimeout(captcha, Math.random() * 160 + 20);
+    setTimeout(captcha, Math.random() * 160000 + 20000);
     images = [
         "https://platypuss.net/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/d55b6cae662d8424bd18e905c0b04e63334269d94de04624cfa93abc2668a001d8fb11cee2b9ea09b0309dc5b6e4e7c8fd2f898a079d6374a686c2aad248b7f6/imareeges.jpg",
         "https://platypuss.net/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/bab556828d8d4c3f0eb053c0295d37c051665ff70b43437dcfd43caebe81709ce6919d1e86bb0c785f23943dba6fbb1a852cbfc1d6942a63165c60493c7685a0/Untitled.jpg",
