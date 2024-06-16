@@ -1036,8 +1036,14 @@ function clientLoad() {
     lastMessageAuthor = null;
     document.getElementById("loadMoreMessages").hidden = false;
     mainContent.innerHTML = "";
-    document.getElementById("left").innerHTML = "";
-    document.getElementById("right").innerHTML = "peers";
+    if (premyum) {
+        document.getElementById("right").innerHTML = "";
+        document.getElementById("left").innerHTML = "peers";
+    }
+    else {
+        document.getElementById("left").innerHTML = "";
+        document.getElementById("right").innerHTML = "peers";
+    }
     let ma = document.getElementById("messageArea");
     const h = new XMLHttpRequest();
     h.open('GET', authUrl+'/sload?id='+localStorage.getItem('sid'), true);
@@ -1093,7 +1099,8 @@ function clientLoad() {
                 document.getElementById("loadMoreMessages").style.opacity = 0.5;
             };
             serverIcons[serveur].src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
-            console.log(document.getElementById("left").appendChild(serverIcons[serveur]));
+            if (premyum) console.log(document.getElementById("right").appendChild(serverIcons[serveur]));
+            else console.log(document.getElementById("left").appendChild(serverIcons[serveur]));
             breaks.push(setTimeout(() => {
                 if (ws.readyState == 0) {
                     ws.close();
@@ -1647,7 +1654,8 @@ function clientLoad() {
                                     peerimg.style.opacity = 0.5;
                                     peerimg.style.filter = "grayscale";
                                 }
-                                document.getElementById("right").appendChild(peerimg);
+                                if (premyum) document.getElementById("left").appendChild(peerimg);
+                                else document.getElementById("right").appendChild(peerimg);
                             }
                             if (packet.isAdmin) {
                                 checkboxes = {};
