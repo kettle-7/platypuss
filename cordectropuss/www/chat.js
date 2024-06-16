@@ -214,7 +214,7 @@ function doTheLoginThingy() {
             if (xhr.readyState === XMLHttpRequest.DONE && xhr.status) {
                 let res = JSON.parse(xhr.responseText);
                 if (res.exists) {
-                    lit2.innerHTML = 'You\'ve already made an account with that email address, would you like to <a onclick="li()">log in</a> instead?';
+                    lit2.innerHTML = 'There\'s already an account with that email address, would you like to <a onclick="li()">log in</a> instead?';
                     return;
                 }
                 lit2.innerHTML = 'An email has now been sent to that address, \
