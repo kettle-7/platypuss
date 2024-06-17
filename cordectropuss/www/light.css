@@ -773,7 +773,7 @@ hr {
     display: flex;
     flex-direction: row;
     gap: 5px;
-    align-content: center;
+    align-items: center;
 }
 
 /*******************************************************************
