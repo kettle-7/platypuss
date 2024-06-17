@@ -778,7 +778,7 @@ hr {
     padding-left: 10px;
     padding-right: 10px;
     border-top: 1px solid #888888;
-    background: linear-gradient(to bottom, 0% #ffffff, 10% #e5e5e5, 90% #dedede, 100% #d0d0d0);
+    background: linear-gradient(to bottom, #ffffff, #e5e5e5, #e0e0e0, #dedede, #d0d0d0);
 }
 
 /*******************************************************************
