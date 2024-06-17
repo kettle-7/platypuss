@@ -769,6 +769,13 @@ hr {
     opacity: 25%;
 }
 
+#reply {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    align-content: center;
+}
+
 /*******************************************************************
 *                                                                  *
 *              Code for the light mode toggle switch,              *
