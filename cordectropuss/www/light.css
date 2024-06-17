@@ -781,6 +781,10 @@ hr {
     background: linear-gradient(to bottom, #ffffff, #e5e5e5, #e0e0e0, #dedede, #d0d0d0);
 }
 
+#reply h3 {
+    padding: 0px;
+}
+
 /*******************************************************************
 *                                                                  *
 *              Code for the light mode toggle switch,              *
