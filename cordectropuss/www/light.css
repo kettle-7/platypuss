@@ -777,8 +777,7 @@ hr {
     padding: 5px;
     padding-left: 10px;
     padding-right: 10px;
-    border-top: 1px solid #888888;
-    background: linear-gradient(to bottom, #ffffff, #e5e5e5, #e0e0e0, #dedede, #d0d0d0);
+    border-top: 1px solid white;
 }
 
 #reply h3 {
