@@ -61,15 +61,15 @@ var mRef = {};
 var edit = false;
 var shown = null;
 var duckimages = [
-    "https://platypuss.net/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/d55b6cae662d8424bd18e905c0b04e63334269d94de04624cfa93abc2668a001d8fb11cee2b9ea09b0309dc5b6e4e7c8fd2f898a079d6374a686c2aad248b7f6/imareeges.jpg",
-    "https://platypuss.net/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/bab556828d8d4c3f0eb053c0295d37c051665ff70b43437dcfd43caebe81709ce6919d1e86bb0c785f23943dba6fbb1a852cbfc1d6942a63165c60493c7685a0/Untitled.jpg",
-    "https://platypuss.net/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/fceac55f7b22aa28e6a6ee4b79c6eca06c096a7079e6065faea31f701c68924aa288f3d3a3ba90f79f5e9b110f202061cd62e335b6731b5bf0426ca4c5095939/notduck.jpg",
-    "https://platypuss.net/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/23b36fdec449cb0fa4286c65233a240169d6250d3232585f53dc643e7bcbe0326c6aedb3e3800d647043dcfc4e0a6842c2c5b0f9635b727b8137ac624541616d/notduck1.jpg",
-    "https://platypuss.net/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/877c74276020e9cd0ac3ee0036b3151264323fa2c431b9819f10183fee8cf611cb1f55e99e9a54e75f3359f6fd46d60828c1984bc202e27f9878b899d940c14f/Unti323tled.jpg",
-    "https://platypuss.net/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/fc9122d3aeaec4db7fd7dc19069b9875932b35c73aec6dd354afddbacdc4f112e26df98095c87807fe04c3dfe8d725a4e8cfebc5a114a4278976def0a71422be/Un32523titled.jpg",
-    "https://platypuss.net/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/3d03cd080c879b4b5d57376c69e74170132764212dc5f3f038a9a9496ec0dfd42151286164f1b15c9951bf8b39399325c78c852c3411af0209b592300b6e5233/Unti5353tled.jpg",
-    "https://platypuss.net/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/7978aa0e64cab7a5b7d61c0596daf4ef7a475e7cb6e2fd1908b144bfcd3b74a74db20f8a0274fc2cfcc457d62f2be95ee639cb8959a60c85a9d8e49d4d2c670f/Unt6464itled.jpg",
-    "https://platypuss.net/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/ce6bee0e6938aea3236ac97fada203f697c1fead54f960e4392e0fcfb1eee7fd3017fe575a2b30eedc2059a3b5732d9561229d6c8602b8f879bc69c2665ba6bc/image535s.jpg"
+    `${authUrl}/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/d55b6cae662d8424bd18e905c0b04e63334269d94de04624cfa93abc2668a001d8fb11cee2b9ea09b0309dc5b6e4e7c8fd2f898a079d6374a686c2aad248b7f6/imareeges.jpg`,
+    `${authUrl}/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/bab556828d8d4c3f0eb053c0295d37c051665ff70b43437dcfd43caebe81709ce6919d1e86bb0c785f23943dba6fbb1a852cbfc1d6942a63165c60493c7685a0/Untitled.jpg`,
+    `${authUrl}/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/fceac55f7b22aa28e6a6ee4b79c6eca06c096a7079e6065faea31f701c68924aa288f3d3a3ba90f79f5e9b110f202061cd62e335b6731b5bf0426ca4c5095939/notduck.jpg`,
+    `${authUrl}/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/23b36fdec449cb0fa4286c65233a240169d6250d3232585f53dc643e7bcbe0326c6aedb3e3800d647043dcfc4e0a6842c2c5b0f9635b727b8137ac624541616d/notduck1.jpg`,
+    `${authUrl}/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/877c74276020e9cd0ac3ee0036b3151264323fa2c431b9819f10183fee8cf611cb1f55e99e9a54e75f3359f6fd46d60828c1984bc202e27f9878b899d940c14f/Unti323tled.jpg`,
+    `${authUrl}/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/fc9122d3aeaec4db7fd7dc19069b9875932b35c73aec6dd354afddbacdc4f112e26df98095c87807fe04c3dfe8d725a4e8cfebc5a114a4278976def0a71422be/Un32523titled.jpg`,
+    `${authUrl}/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/3d03cd080c879b4b5d57376c69e74170132764212dc5f3f038a9a9496ec0dfd42151286164f1b15c9951bf8b39399325c78c852c3411af0209b592300b6e5233/Unti5353tled.jpg`,
+    `${authUrl}/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/7978aa0e64cab7a5b7d61c0596daf4ef7a475e7cb6e2fd1908b144bfcd3b74a74db20f8a0274fc2cfcc457d62f2be95ee639cb8959a60c85a9d8e49d4d2c670f/Unt6464itled.jpg`,
+    `${authUrl}/uploads/d3b61a6d-dcea-4c38-9391-515c4c66af1c/ce6bee0e6938aea3236ac97fada203f697c1fead54f960e4392e0fcfb1eee7fd3017fe575a2b30eedc2059a3b5732d9561229d6c8602b8f879bc69c2665ba6bc/image535s.jpg`
 ];
 var captchaBacklog = [];
 if (!authUrl) authUrl = "https://platypuss.net";
@@ -77,6 +77,7 @@ var rgbcolourchangeinterval;
 
 var mainContentContainer = document.getElementById("mainContentContainer"),
     imageviewerparent = document.getElementById("imageviewerparent"),
+    loadMoreMessages = document.getElementById("loadMoreMessages"),
     acceptinvitebtn = document.getElementById("acceptinvitebtn"),
     loadingScreen = document.getElementById("loadingScreen"),
     inviteparent = document.getElementById("inviteparent"),
@@ -315,7 +316,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
         this.parentElement.removeChild(this);"/>`;
                     }
                 }
-                acceptinvitebtn.focus();
+                msgtxt.focus();
             };
             input.click();
         });
@@ -1034,7 +1035,7 @@ function clientLoad() {
     let opensocks = 0;
     let ips = [];
     lastMessageAuthor = null;
-    document.getElementById("loadMoreMessages").hidden = false;
+    loadMoreMessages.hidden = false;
     mainContent.innerHTML = "";
     if (premyum) {
         document.getElementById("right").innerHTML = "";
@@ -1095,8 +1096,8 @@ function clientLoad() {
                 r.onload=()=>{window.location.reload();};r.send();"> Leave this server</button></div>`;
                 msgtxt.inert = true;
                 msgtxt.style.opacity = 0.5;
-                document.getElementById("loadMoreMessages").inert = true;
-                document.getElementById("loadMoreMessages").style.opacity = 0.5;
+                loadMoreMessages.inert = true;
+                loadMoreMessages.style.opacity = 0.5;
             };
             serverIcons[serveur].src = "https://store-images.s-microsoft.com/image/apps.53582.9007199266279243.93b9b40f-530e-4568-ac8a-9a18e33aa7ca.59f73306-bcc2-49fc-9e6c-59eed2f384f8";
             if (premyum) console.log(document.getElementById("right").appendChild(serverIcons[serveur]));
@@ -1290,7 +1291,7 @@ function clientLoad() {
                                     }
                                     else ma.scrollTo(ma.scrollLeft, ma.scrollHeight - ma.clientHeight);
                                 }
-                                if (document.visibilityState == "hidden" && sers.userId != packet.message.author)
+                                if ((serveur != focusedServer || document.visibilityState == "hidden") && sers.userId != packet.message.author)
                                     new Audio(authUrl+'/randomsand.wav').play();
                             });
                         }
@@ -1469,7 +1470,7 @@ function clientLoad() {
     You've reached the top! Well done.
 </span>
 ` + mainContent.innerHTML;
-                            document.getElementById("loadMoreMessages").hidden = true;
+                            loadMoreMessages.hidden = true;
                         }
                         break;
                     case "rateLimit":
@@ -1628,11 +1629,14 @@ function clientLoad() {
                             packet.manifest.title = "untitled server";
                         }
                         serverIcons[serveur].src = packet.manifest.icon;
-                        serverIcons[serveur].onclick = () => {
+                        serverIcons[serveur].onclick = (e) => {
+                            if (e.button == 2) {
+                                return;
+                            }
                             msgtxt.inert = false;
                             msgtxt.style.opacity = 1;
-                            document.getElementById("loadMoreMessages").inert = false;
-                            document.getElementById("loadMoreMessages").style.opacity = 1;
+                            loadMoreMessages.inert = false;
+                            loadMoreMessages.style.opacity = 1;
                             focusedServer=serveur;
                             clientLoad();
                         };
