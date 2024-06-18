@@ -752,7 +752,7 @@ function replyTo(id, server) {
         return;
     }
     document.getElementById("reply").style.display = "none";
-    if (reply) {
+    if (reply && document.getElementById(`message_${reply}`)) {
         document.getElementById(`message_${reply}`).style.borderLeftWidth = "0px";
         document.getElementById(`message_${reply}`).style.borderLeftColor = "transparent";
     }
