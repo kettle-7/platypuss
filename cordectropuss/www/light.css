@@ -373,6 +373,18 @@ input {
     min-width: 0;
 }
 
+#divElementThatExistsPurelyToMakeTheGradientsOnLightModeLookNice {
+    padding: 0px;
+    margin: 0px;
+    background: linear-gradient(to bottom, #ffffff, #e7e7e7, #e6e6e6, #e5e5e5, #e0e0e0);
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex-grow: 1;
+    max-width: 100%;
+    min-width: 0;
+}
+
 .sericon {
     width: 48px;
     height: 48px;
