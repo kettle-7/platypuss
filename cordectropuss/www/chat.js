@@ -750,6 +750,7 @@ function replyTo(id, server) {
         '<div class="message1">Y o u<br>c a n \' t<br>d o<br>t h a t</div>';
         return;
     }
+    document.getElementById("reply").style.display = "none";
     if (reply) {
         document.getElementById(`message_${reply}`).style.borderLeftWidth = "0px";
         document.getElementById(`message_${reply}`).style.borderLeftColor = "transparent";
@@ -757,6 +758,9 @@ function replyTo(id, server) {
     reply = id;
     document.getElementById(`message_${reply}`).style.borderLeftWidth = "2px";
     document.getElementById(`message_${reply}`).style.borderLeftColor = "#0075DB";
+    document.getElementById("reply").style.display = "flex";
+    document.getElementById("replyUsername").innerText = `Replying to ${messageMap[id] ? messageMap[id].author : "someone"}`;
+    document.getElementById("replyMessageText").innerText = `${messageMap[id] ? messageMap[id].content : "undefined"}`;
     msgtxt.focus();
 }
 

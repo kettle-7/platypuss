@@ -369,6 +369,17 @@ input {
     min-width: 0;
 }
 
+#divElementThatExistsPurelyToMakeTheGradientsOnLightModeLookNice {
+    padding: 0px;
+    margin: 0px;
+    background: #373737;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    max-width: 100%;
+    min-width: 0;
+}
+
 .sericon {
     width: 48px;
     height: 48px;
