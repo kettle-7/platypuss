@@ -58,7 +58,7 @@
                         <div id="mainContent"></div>
                     </div>
                     <div id="divElementThatExistsPurelyToMakeTheGradientsOnLightModeLookNice">
-                    <div id="reply"><span class="material-symbols-outlined">reply</span><h3>Replying to (username)</h2><span class="widest" style="text-overflow:ellipsis;overflow:hidden;">spacement</span><button id="stopReplying">x</button></div>
+                    <div id="reply" style="display:none;"><span class="material-symbols-outlined">reply</span><h3 id="replyUsername">Replying to (username)</h2><span class="widest" style="text-overflow:ellipsis;overflow:hidden;" id="replyMessageText">spacement</span><button id="stopReplying" onclick="replyTo(null, focusedServer);">x</button></div>
                     <span id="fileDeleteMessage" hidden>Click a file to delete it</span>
                     <div id="progress" hidden><div id="progress2"></div></div>
                     <div id="fileUploadSpace"></div>

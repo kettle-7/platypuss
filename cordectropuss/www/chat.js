@@ -91,6 +91,7 @@ var mainContentContainer = document.getElementById("mainContentContainer"),
     progress2 = document.getElementById("progress2"),
     progress = document.getElementById("progress"),
     msgtxt = document.getElementById("msgtxt"),
+    reply = document.getElementById("reply"),
     lit1 = document.getElementById("lit1"),
     lit2 = document.getElementById("lit2"),
     lit3 = document.getElementById("lit3");
@@ -753,10 +754,14 @@ function replyTo(id, server) {
     if (reply) {
         document.getElementById(`message_${reply}`).style.borderLeftWidth = "0px";
         document.getElementById(`message_${reply}`).style.borderLeftColor = "transparent";
+        document.getElementById("reply").style.display = "none";
     }
     reply = id;
     document.getElementById(`message_${reply}`).style.borderLeftWidth = "2px";
     document.getElementById(`message_${reply}`).style.borderLeftColor = "#0075DB";
+    document.getElementById("reply").style.display = "flex";
+    document.getElementById("replyUsername").innerText = `Replying to ${messageMap[id] ? messageMap[id].author : "someone"}`;
+    document.getElementById("replyMessageText").innerText = `${messageMap[id] ? messageMap[id].content : "undefined"}`;
     msgtxt.focus();
 }
 
