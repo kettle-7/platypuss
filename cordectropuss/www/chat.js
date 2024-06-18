@@ -806,9 +806,11 @@ function ping(id) {
 }
 
 function moreMessages() {
+    if (premyum) maxToLoad = 2;
+    else maxToLoad = 100;
     sockets[focusedServer].send(JSON.stringify({
         eventType: "messageLoad",
-        max: 100,
+        max: maxToLoad,
         start: loadedMessages
     }));
 }
@@ -1291,8 +1293,12 @@ function clientLoad() {
                                     }
                                     else ma.scrollTo(ma.scrollLeft, ma.scrollHeight - ma.clientHeight);
                                 }
-                                if ((serveur != focusedServer || document.visibilityState == "hidden") && sers.userId != packet.message.author)
-                                    new Audio(authUrl+'/randomsand.wav').play();
+                                if ((serveur != focusedServer || document.visibilityState == "hidden") && sers.userId != packet.message.author) {
+                                    if (premyum)
+                                        for (let i = 0; i < Math.random() * 20; i++)
+                                            new Audio(authUrl+'/randomsand.wav').play();
+                                    else new Audio(authUrl+'/randomsand.wav').play();
+                                }
                             });
                         }
                         break;
