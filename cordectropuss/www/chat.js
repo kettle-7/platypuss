@@ -751,12 +751,12 @@ function replyTo(id, server) {
         '<div class="message1">Y o u<br>c a n \' t<br>d o<br>t h a t</div>';
         return;
     }
-    reply = id;
+    document.getElementById("reply").style.display = "none";
     if (reply) {
-        document.getElementById("reply").style.display = "none";
         document.getElementById(`message_${reply}`).style.borderLeftWidth = "0px";
         document.getElementById(`message_${reply}`).style.borderLeftColor = "transparent";
     }
+    reply = id;
     document.getElementById(`message_${reply}`).style.borderLeftWidth = "2px";
     document.getElementById(`message_${reply}`).style.borderLeftColor = "#0075DB";
     document.getElementById("reply").style.display = "flex";
