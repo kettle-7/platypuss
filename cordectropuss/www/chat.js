@@ -91,7 +91,6 @@ var mainContentContainer = document.getElementById("mainContentContainer"),
     progress2 = document.getElementById("progress2"),
     progress = document.getElementById("progress"),
     msgtxt = document.getElementById("msgtxt"),
-    reply = document.getElementById("reply"),
     lit1 = document.getElementById("lit1"),
     lit2 = document.getElementById("lit2"),
     lit3 = document.getElementById("lit3");
@@ -752,7 +751,7 @@ function replyTo(id, server) {
         return;
     }
     document.getElementById("reply").style.display = "none";
-    if (reply && document.getElementById(`message_${reply}`)) {
+    if (reply) {
         document.getElementById(`message_${reply}`).style.borderLeftWidth = "0px";
         document.getElementById(`message_${reply}`).style.borderLeftColor = "transparent";
     }
