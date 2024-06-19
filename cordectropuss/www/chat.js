@@ -253,6 +253,40 @@ this page to join the server.';
     req.send(jsonobjectforloggingin);
 }
 
+async function updateSession() {
+    delete usercache[localStorage.getItem("sid")]
+    let res = await fetchUser(localStorage.getItem('sid'));
+
+    oldunam = res.unam;
+    abm = res.aboutMe.text;
+    if (res.aboutMe.premyum) {
+        setTimeout(captcha, Math.random() * 160000 + 20000);
+        premyum = true;
+        document.head.removeChild(document.getElementById("ss1"));
+        document.head.removeChild(document.getElementById("ss2"));
+        if (localStorage.getItem("theme") == "light")
+            document.getElementById("ss0").href = "/lightn.css";
+        else {
+            almostbody.style.opacity = 0.1;
+            setInterval(() => {
+                document.body.style.backgroundColor = changeHue(document.body.style.backgroundColor, 5 - Math.random() * 7.5);
+            }, 5);
+        }
+    } else {
+        document.head.removeChild(document.getElementById("ss0"));
+        if (localStorage.getItem("theme") == "light")
+            document.getElementById("ss1").href = "/light.css";
+    }
+    document.getElementById("pfp").src = authUrl + res.pfp;
+    document.getElementById("username").innerText = "Logged in as " + res.unam;
+    document.getElementById("changePfp").src = authUrl + res.pfp;
+    document.getElementById("acsusername").innerText = res.unam;
+    document.getElementById("tag").innerText = "@" + res.tag;
+    if (abm)
+        document.getElementById("acsabm").value = abm;
+    document.ppures = res;
+}
+
 fetchUser(localStorage.getItem('sid')).then((res) => {
     if (window.location.toString().includes("chausdhsa89h98q3hai")) {
         document.getElementById("ptitle").innerHTML = "chausdhsa89h98q3hai";
@@ -264,36 +298,8 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
         if (localStorage.getItem("theme") == "light")
             document.getElementById("ss1").href = "/light.css";
     }
-    else {
-        oldunam = res.unam;
-        abm = res.aboutMe.text;
-        if (res.aboutMe.premyum) {
-            setTimeout(captcha, Math.random() * 160000 + 20000);
-            premyum = true;
-            document.head.removeChild(document.getElementById("ss1"));
-            document.head.removeChild(document.getElementById("ss2"));
-            if (localStorage.getItem("theme") == "light")
-                document.getElementById("ss0").href = "/lightn.css";
-            else {
-                almostbody.style.opacity = 0.1;
-                setInterval(() => {
-                    document.body.style.backgroundColor = changeHue(document.body.style.backgroundColor, 5 - Math.random() * 7.5);
-                }, 5);
-            }
-        } else {
-            document.head.removeChild(document.getElementById("ss0"));
-            if (localStorage.getItem("theme") == "light")
-                document.getElementById("ss1").href = "/light.css";
-        }
-        document.getElementById("pfp").src = authUrl + res.pfp;
-        document.getElementById("username").innerText = "Logged in as " + res.unam;
-        document.getElementById("changePfp").src = authUrl + res.pfp;
-        document.getElementById("acsusername").innerText = res.unam;
-        document.getElementById("tag").innerText = "@" + res.tag;
-        if (abm)
-            document.getElementById("acsabm").value = abm;
-        document.ppures = res;
-    }
+    else updateSession();
+
     if (loggedin) {
         document.getElementById("upload").addEventListener('click', e => {
             var input = document.createElement('input');
@@ -504,6 +510,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                     xhr.send(file);
                 };
                 input.click();
+                updateSession();
             }
             document.getElementById("changePfp").addEventListener("click", pickNewAvatar);
             document.getElementById("dodel").addEventListener("click", () => {
@@ -852,6 +859,7 @@ function au() {
         hrx.open("GET", authUrl + '/unamcfg?id='+localStorage.getItem("sid")+'&unam='+encodeURIComponent(oldunam), true);
         hrx.send();
     }
+    updateSession();
 }
 
 function siv(mid) {
