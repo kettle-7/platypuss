@@ -18,4 +18,4 @@ There are a few Platypuss alternatives floating around out there. There are a fe
 How to get started
 ------------------
 
-Platypuss is in an alpha stage at the moment. I will not neccessarily provide support for any issues you have, although do [let me know](https://github.com/kettle-7/platypuss/issues) about any you come across so that I can work towards fixing them. It's in a rather volatile state where lots is prone to change so I will not yet publicise the instructions for how to host your own server, although you can expect this to come soon.
+Platypuss is in an alpha stage at the moment. I will not neccessarily provide support for any issues you have, although do <a target="_blank" href="https://github.com/kettle-7/platypuss/issues">let me know</a> about any you come across so that I can work towards fixing them. It's in a rather volatile state where lots is prone to change so I will not yet publicise the instructions for how to host your own server, although you can expect this to come soon.
