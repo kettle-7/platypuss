@@ -1,1 +1,8 @@
-{"files":{}}
+{
+    "files":{
+        "/chat.html": {
+            "type": "text/html",
+            "path": "chat.html"
+        }
+    }
+}
