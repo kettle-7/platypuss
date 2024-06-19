@@ -19,7 +19,7 @@
   "dependencies": {
     "readline-sync": "^1.4.10",
     "uuid": "^9.0.0",
-    "ws": "^8.16.0"
+    "ws": "^8.17.1"
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.7",
