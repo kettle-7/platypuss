@@ -51,7 +51,7 @@ can make it actually work the way it should, this includes:
   myself though.
 - Your "about me" section (if you set one): Same goes as for the profile
   picture. I suggest not putting sensitive information here.
-- Same again with images you upload to the website.
+- Same again with files you upload to the website.
 
 ## Data server owners can collect
 
