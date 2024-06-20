@@ -29,7 +29,7 @@ var converty = new showdown.Converter({
     underline: true
 });
 
-fetch(`${window.location.toString().replace(/.html/g, "").replace(/\#.*(.*|)$/g, "") + ".md"}`).then(res => {
+fetch(`${window.location.toString().replace(/.html/g, "").replace(/[#?].*(.*|)$/g, "") + ".md"}`).then(res => {
     res.text().then(txt => {
         let lines = txt.split('\n');
         let out = '';
