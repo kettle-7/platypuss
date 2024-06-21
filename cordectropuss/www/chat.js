@@ -1000,9 +1000,12 @@ function ce(e) {
     });
 }
 
+var lastPasteEvent;
+
 msgtxt.addEventListener("paste", function (e) {
-    console.log(e.clipboardData.getData("url"), e.clipboardData.files);
-    
+    console.log(e.clipboardData.getData("url"), e.clipboardData.files, e);
+    lastPasteEvent = e;
+
     mainContentContainer.addEventListener("drop", (e) => {
         e.preventDefault();
         const files = e.clipboardData.files;
