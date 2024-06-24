@@ -535,7 +535,7 @@ hr {
     box-shadow: 2px 2px 10px black;
     height: 20vh;
     width: 35vh;
-    object-fit: fill;
+    object-fit: cover;
     padding: 1px;
     background-color: #505050;
 }
