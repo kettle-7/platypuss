@@ -952,6 +952,7 @@ function ke(e) {
             uploadQueue = {};
             document.getElementById("fileUploadSpace").innerHTML = "";
             document.getElementById("fileDeleteMessage").hidden = true;
+            document.getElementById("reply").style.display = "none";
         });
         e.preventDefault();
     }
@@ -996,6 +997,7 @@ function ce(e) {
         uploadQueue = {};
         document.getElementById("fileUploadSpace").innerHTML = "";
         document.getElementById("fileDeleteMessage").hidden = true;
+        document.getElementById("reply").style.display = "none";
         msgtxt.focus();
     });
 }
