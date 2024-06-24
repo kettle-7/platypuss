@@ -534,6 +534,8 @@ hr {
     border-radius: 8px;
     box-shadow: 2px 2px 10px black;
     height: 20vh;
+    width: 35vh;
+    object-fit: fill;
     padding: 1px;
     background-color: #505050;
 }
@@ -596,7 +598,6 @@ hr {
     box-shadow: 1px 1px 5px black;
     align-content: center;
     border-radius: 5px;
-    width: fit-content;
 }
 
 @keyframes pulse {
