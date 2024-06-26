@@ -1052,6 +1052,7 @@ function clientLoad() {
     peers = {};
     globalPermissions = [];
     let opensocks = 0;
+    loadedMessages = 0;
     let ips = [];
     lastMessageAuthor = null;
     loadMoreMessages.hidden = false;
