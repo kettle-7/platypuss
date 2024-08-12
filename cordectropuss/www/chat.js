@@ -1566,7 +1566,11 @@ function clientLoad() {
                         if (packet.message.uploads) {
                             for (let upload of packet.message.uploads) {
                                 if (upload.type.startsWith("image/") && !premyum) {
-                                    msgtext += `<a target="_blank" href="${authUrl+upload.url}"><img src="${authUrl+upload.url}"></a>`;
+                                    msgtext += `<a onclick="
+                                            imageviewer.src='${authUrl+upload.url}';
+                                            imageviewerparent.style.display='flex';
+                                            document.getElementById('imagelink').href='${authUrl+upload.url}';
+                                        "><img src="${authUrl+upload.url}"></a>`;
                                     continue;
                                 }
                                 msgtext += `
