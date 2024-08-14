@@ -1,0 +1,180 @@
+ /************************************************************************
+ * Copyright 2021-2024 Ben Keppel                                        *
+ *                                                                       *
+ * This program is free software: you can redistribute it and/or modify  *
+ * it under the terms of the GNU General Public License as published by  *
+ * the Free Software Foundation, either version 3 of the License, or     *
+ * (at your option) any later version.                                   *
+ *                                                                       *
+ * This program is distributed in the hope that it will be useful,       *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ * GNU General Public License for more details.                          *
+ *                                                                       *
+ * You should have received a copy of the GNU General Public License     *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
+ ************************************************************************/
+
+@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
+}
+
+$outgradient: #373737;
+$ingradient: #373737;
+$outgradientsmooth: linear-gradient(#373737, #2a2a2a);
+$ingradientsmooth: linear-gradient(#2a2a2a, #373737);
+$background-level1: black;
+$background-level2: #0e0e0e;
+$background-level3: #1b1b1b;
+$background-level4: #262626;
+$background-level5: #2e2e2e;
+$foreground-level1: white;
+$foreground-level2: #e0e0e0;
+$accent: #349efa;
+$grey: #888888;
+
+#___gatsby, #gatsby-focus-wrapper, body {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+    overflow: hidden;
+}
+
+#gatsby-focus-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: stretch;
+}
+
+* {
+    font-family: Inter, sans-serif;
+    color: $foreground-level1;
+}
+
+body {
+    padding: 0px;
+    margin: 0px;
+    background-color: $background-level4;
+}
+
+button {
+    color: $foreground-level1;
+    background: $outgradient;
+    border: 1px solid $grey;
+    border-radius: 5px;
+    padding: 2px;
+    padding-left: 10px;
+    padding-right: 10px;
+    cursor: pointer;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    &:active {
+        box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5) inset !important;
+        background: $ingradient;
+    }
+    &:focus {
+        border: 1px solid $accent;
+    }
+    &:hover {
+        opacity: 0.8;
+    }
+}
+
+code {
+    font-family: "Ubuntu Mono", "Lucida Sans Console", monospace, mono;
+    background-color: $background-level5;
+    border: 1px solid $grey;
+    border-radius: 5px;
+    padding: 2px;
+}
+
+pre > code {
+    border: 0px solid transparent;
+    background-color: transparent;
+    padding: 0px;
+}
+
+pre {
+    background-color: $background-level5;
+    border: 2px solid $grey;
+    border-radius: 5px;
+    padding: 3px;
+}
+
+a {
+    color: $accent;
+}
+
+blockquote {
+    border-left: 3px solid $grey;
+    margin-left: 0;
+    padding: 5px;
+}
+
+table, th, td {
+    width: min-content;
+    /*border: 1px solid;*/
+}
+
+table {
+    background: $background-level3;
+    border-radius: 5px;
+}
+
+th, td {
+    padding: 5px;
+    border-radius: 4px;
+    background: $outgradient;
+    /*linear-gradient($background-level4, $background-level3);*/
+}
+
+blockquote p {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+footer {
+    flex-shrink: 0;
+    padding: 20px;
+    background: $outgradientsmooth;
+    border-top: 1px solid $background-level2;
+}
+
+header {
+    color: $foreground-level2;
+    background: $outgradientsmooth;
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+    gap: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    align-items: center;
+    height: fit-content;
+    border-bottom: 1px solid $grey;
+    flex-shrink: 0;
+}
+
+#mainPage {
+    padding: 48px;
+}
+
+main {
+    overflow: auto;
+    flex-shrink: 1;
+    flex-grow: 1;
+}
+
+a {
+    color: $accent;
+}
