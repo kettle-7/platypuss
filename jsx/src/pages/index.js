@@ -1,3 +1,20 @@
+/************************************************************************
+* Copyright 2021-2024 Ben Keppel                                        *
+*                                                                       *
+* This program is free software: you can redistribute it and/or modify  *
+* it under the terms of the GNU General Public License as published by  *
+* the Free Software Foundation, either version 3 of the License, or     *
+* (at your option) any later version.                                   *
+*                                                                       *
+* This program is distributed in the hope that it will be useful,       *
+* but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+* GNU General Public License for more details.                          *
+*                                                                       *
+* You should have received a copy of the GNU General Public License     *
+* along with this program.  If not, see <http://www.gnu.org/licenses/>. *
+************************************************************************/
+
 import * as React from "react";
 import "./light.scss";
 
@@ -116,6 +133,19 @@ const IndexPage = () => {
         Edit <code>src/pages/index.js</code> to see this page
         update in real-time. 😎
       </p>
+      <div id="P" class="popupParent" style={{display: "none"}} onmousedown="document.getElementById('P').style.display = 'none'"><div id="p" class="popup">
+            <h2 id="lit1">Sign In</h2>
+            <span id="lit2">Welcome back! If you don't already have an account <br/> please <a href="#" onclick="su()">create an account</a> instead.</span>
+            <div id="loginform">
+                <div style="display:grid;grid-template-columns:auto auto;">
+                <label style="font-size: large;">Email address </label><input type="email" id="email" class="textBox"/>
+                <label style="font-size: large;" id="pr2">Username </label><input type="text" id="unam" class="textBox"/>
+                <label style="font-size: large;">Password </label><input type="password" id="pwd1" class="textBox"/>
+                <label style="font-size: large;" id="pr1">Confirm Password </label><input type="password" id="pwd2" class="textBox"/>
+                </div><br/>
+                <button style="cursor: pointer; font-size: large;" onclick="doTheLoginThingy()" id="lit3">Sign In</button>
+            </div>
+        </div></div>
       <ul style={listStyles}>
         <li>
           <a
