@@ -131,7 +131,7 @@ const IndexPage = () => {
       <h1 style={headingStyles}>
         Congratulations
         <br/>
-        <span>— you just made a Skill iSsue site! 🎉🎉🎉</span>
+        <span>— you just made a Skill iSsue site! 🎉🎉🎉 :3</span>
       </h1>
       <p style={paragraphStyles}>
         Edit <code>src/pages/index.js</code> to see this page
