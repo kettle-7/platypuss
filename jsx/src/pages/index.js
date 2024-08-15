@@ -15,8 +15,30 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
 ************************************************************************/
 
+import * as Common from "../components/common";
 import * as React from "react";
 import "./light.scss";
+
+const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
+
+// thanks bryc on stack overflow ^w^
+function hashPassword (str, seed = 20) { // hashes passwords somehow
+    let h1 = 0xdeadbeef ^ seed, // had to be something
+    h2 = 0x41c6ce57 ^ seed;
+    for (let i = 0, ch; i < str.length; i++) {
+        ch = str.charCodeAt(i);
+        // Math.imul multiplies without loss of precision
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+
+    return (h2>>>0).toString(16).padStart(8,0)+(h1>>>0).toString(16).padStart(8,0);
+};
+
+var createNewAccount = false; // whether we're signing in or making a new account, signing in being false and default
 
 const headingStyles = {
   marginTop: 0,
@@ -26,106 +48,26 @@ const headingStyles = {
 const paragraphStyles = {
   marginBottom: 48,
 };
-const listStyles = {
-  paddingLeft: 0,
-};
-const listItemStyles = {
-  fontWeight: 300,
-  fontSize: 24,
-  maxWidth: 560,
-  marginBottom: 30,
-};
-
-const descriptionStyle = {
-  color: "#232129",
-  fontSize: 14,
-  marginTop: 10,
-  marginBottom: 0,
-  lineHeight: 1.25,
-};
-
-const docLink = {
-  text: "Documentation",
-  url: "https://www.gatsbyjs.com/docs/",
-  color: "#8954A8",
-};
-
-const badgeStyle = {
-  color: "#fff",
-  backgroundColor: "#088413",
-  border: "1px solid #088413",
-  fontSize: 11,
-  fontWeight: "bold",
-  letterSpacing: 1,
-  borderRadius: 4,
-  padding: "4px 6px",
-  display: "inline-block",
-  position: "relative",
-  top: -2,
-  marginLeft: 10,
-  lineHeight: 1,
-};
-
-const links = [
-  {
-    text: "Skill issue remedy",
-    url: "https://www.gatsbyjs.com/docs/tutorial/getting-started/",
-    description:
-      "Ever thought your skill issue was just too fat ? Well, we've got the game for that ! Now you can make it nice and flat. Now you can put your skill issue in a cat.",
-    color: "#E95800",
-  },
-  {
-    text: "How to guide",
-    url: "https://www.gatsbyjs.com/docs/how-to/",
-    description:
-      "You are a terrible person.",
-    color: "#1099A8",
-  },
-  {
-    text: "Reference Guides",
-    url: "https://www.gatsbyjs.com/docs/reference/",
-    description:
-      "Nitty-gritty technical descriptions of how Skill iSsue works. Most useful when you need detailed information about Skill iSsue's APIs.",
-    color: "#BC027F",
-  },
-  {
-    text: "Conceptual Guides",
-    url: "https://www.gatsbyjs.com/docs/conceptual/",
-    description:
-      "Big-picture explanations of higher-level Skill iSsue concepts. Most useful for building understanding of a particular topic.",
-    color: "#0D96F2",
-  },
-  {
-    text: "Plugin Library",
-    url: "https://www.gatsbyjs.com/plugins",
-    description:
-      "Add functionality and customize your Skill iSsue site or app with thousands of plugins built by our amazing developer community.",
-    color: "#8EB814",
-  },
-  {
-    text: "Build and Host",
-    url: "https://www.gatsbyjs.com/cloud",
-    description:
-      "Now you're ready to show the world! Give your Skill iSsue site superpowers: Build and host on Skill iSsue Cloud. Get started for free!",
-    color: "#663399",
-  },
-  {
-    text: "skill issue",
-    url: "https://platypuss.net/carp",
-    badge: true,
-    description:
-      "CARP CARP CARP CARP CARP CARP CARP CARP CARP CARP CARP",
-    color: "#e69420",
-  },
-];
 
 function doTheLoginThingy() {
-  console.log("e");
+  let loginInformation = JSON.stringify({ // the information we send to the authentication server
+    "ift": createNewAccount,
+    "ser": "example.com", // can be anything so long as no platypuss server will actually be hosted there
+    "email": email,
+    "pwd": hashPassword(password)
+  });
+  console.log(loginInformation);
 }
+
+// These let us refer to the text boxes later on
+var emailRef = React.useRef(null);
+var usernameRef = React.useRef(null);
+var passwordRef = React.useRef(null);
+var secondPasswordRef = React.useRef(null);
 
 const IndexPage = () => {
   return (<>
-    <header><h2>(Beta!) Platypuss</h2></header>
+    <Common.PageHeader/>
     <main id="mainPage">
       <a href="/chat">cat</a>
       <h1 style={headingStyles}>
@@ -137,45 +79,20 @@ const IndexPage = () => {
         Edit <code>src/pages/index.js</code> to see this page
         update in real-time. 😎
       </p>
-      <div id="P" className="popupParent" style={{display: "flex"}} onmousedown={()=>document.getElementById('P').style.display = 'none'}><div id="p" class="popup">
+      <div id="P" className="popupParent" style={{display: "flex"}} onMouseDown={()=>{return;document.getElementById('P').style.display = 'none'}}><div id="p" class="popup">
         <h2 id="lit1">Sign In</h2>
         <span id="lit2">Welcome back! If you don't already have an account <br/> please <a href="#" onclick="su()">create an account</a> instead.</span>
         <div id="loginform">
           <div style={{display:"grid",gridTemplateColumns:"auto auto"}}>
-          <label>Email address </label><input type="email" id="email" class="textBox"/>
-          <label id="pr2">Username </label><input type="text" id="unam" class="textBox"/>
-          <label>Password </label><input type="password" id="pwd1" class="textBox"/>
-          <label id="pr1">Confirm Password </label><input type="password" id="pwd2" class="textBox"/>
+          {/* The four lines below contain a weird thing with anonymous functions, this is the only way I know of to assign the element to a variable and position it at the same time */}
+          <label>Email address </label><input type="email" id="email" className="textBox" ref={emailRef}/>
+          <label id="pr2">Username </label><input type="text" id="unam" className="textBox" ref={usernameRef}/>
+          <label>Password </label><input type="password" id="pwd1" className="textBox" ref={passwordRef}/>
+          <label id="pr1">Confirm Password </label><input type="password" id="pwd2" className="textBox" ref={secondPasswordRef}/>
           </div><br/>
-          <button onclick={doTheLoginThingy} id="lit3">Sign In</button>
+          <button onClick={doTheLoginThingy} id="lit3">Sign In</button>
         </div>
       </div></div>
-      <ul style={listStyles}>
-        <li>
-          <a
-            href={`${docLink.url}?utm_source=starter&utm_medium=start-page&utm_campaign=minimal-starter`}
-          >
-            {docLink.text}
-          </a>
-        </li>
-        {links.map(link => (
-          <li key={link.url} style={{ ...listItemStyles, color: link.color }}>
-            <span>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-              <a
-                href={`${link.url}?utm_source=starter&utm_medium=start-page&utm_campaign=minimal-starter`}
-              >
-                {link.text}
-              </a>
-              {link.badge && (
-                <span style={badgeStyle} aria-label="New Badge">
-                  NEW!
-                </span>
-              )}
-              <p style={descriptionStyle}>{link.description}</p>
-            </span>
-          </li>
-        ))}
-      </ul>
     </main>
     <footer>links to stuff maybe</footer>
   </>);
