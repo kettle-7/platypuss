@@ -51,10 +51,10 @@ const paragraphStyles = {
 
 function doTheLoginThingy() {
   let loginInformation = JSON.stringify({ // the information we send to the authentication server
-    "ift": createNewAccount,
-    "ser": "example.com", // can be anything so long as no platypuss server will actually be hosted there
+    "createNew": createNewAccount,
+    "server": "example.com", // can be anything so long as no platypuss server will actually be hosted there
     "email": email,
-    "pwd": hashPassword(password)
+    "password": hashPassword(password)
   });
   console.log(loginInformation);
 }
