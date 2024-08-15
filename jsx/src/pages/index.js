@@ -119,6 +119,10 @@ const links = [
   },
 ];
 
+function doTheLoginThingy() {
+  console.log("e");
+}
+
 const IndexPage = () => {
   return (<>
     <header><h2>(Beta!) Platypuss</h2></header>
@@ -126,26 +130,26 @@ const IndexPage = () => {
       <a href="/chat">cat</a>
       <h1 style={headingStyles}>
         Congratulations
-        <br />
+        <br/>
         <span>— you just made a Skill iSsue site! 🎉🎉🎉</span>
       </h1>
       <p style={paragraphStyles}>
         Edit <code>src/pages/index.js</code> to see this page
         update in real-time. 😎
       </p>
-      <div id="P" class="popupParent" style={{display: "none"}} onmousedown="document.getElementById('P').style.display = 'none'"><div id="p" class="popup">
-            <h2 id="lit1">Sign In</h2>
-            <span id="lit2">Welcome back! If you don't already have an account <br/> please <a href="#" onclick="su()">create an account</a> instead.</span>
-            <div id="loginform">
-                <div style="display:grid;grid-template-columns:auto auto;">
-                <label style="font-size: large;">Email address </label><input type="email" id="email" class="textBox"/>
-                <label style="font-size: large;" id="pr2">Username </label><input type="text" id="unam" class="textBox"/>
-                <label style="font-size: large;">Password </label><input type="password" id="pwd1" class="textBox"/>
-                <label style="font-size: large;" id="pr1">Confirm Password </label><input type="password" id="pwd2" class="textBox"/>
-                </div><br/>
-                <button style="cursor: pointer; font-size: large;" onclick="doTheLoginThingy()" id="lit3">Sign In</button>
-            </div>
-        </div></div>
+      <div id="P" className="popupParent" style={{display: "flex"}} onmousedown={()=>document.getElementById('P').style.display = 'none'}><div id="p" class="popup">
+        <h2 id="lit1">Sign In</h2>
+        <span id="lit2">Welcome back! If you don't already have an account <br/> please <a href="#" onclick="su()">create an account</a> instead.</span>
+        <div id="loginform">
+          <div style={{display:"grid",gridTemplateColumns:"auto auto"}}>
+          <label>Email address </label><input type="email" id="email" class="textBox"/>
+          <label id="pr2">Username </label><input type="text" id="unam" class="textBox"/>
+          <label>Password </label><input type="password" id="pwd1" class="textBox"/>
+          <label id="pr1">Confirm Password </label><input type="password" id="pwd2" class="textBox"/>
+          </div><br/>
+          <button onclick={doTheLoginThingy} id="lit3">Sign In</button>
+        </div>
+      </div></div>
       <ul style={listStyles}>
         <li>
           <a
