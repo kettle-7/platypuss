@@ -20,7 +20,7 @@ import * as React from "react";
 import "./light.scss";
 
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
-const authUrl = "https://platypuss.net"; // this shouldn't need to change but just in case
+const authUrl = "https://192.168.1.66"; // this shouldn't need to change but just in case
 var emailRef, usernameRef, passwordRef, secondPasswordRef;
 
 // thanks bryc on stack overflow ^w^
@@ -52,23 +52,20 @@ const paragraphStyles = {
 };
 
 function doTheLoginThingy() {
-  let loginInformation = JSON.stringify({ // the information we send to the authentication server
-    createNew: createNewAccount,
-    ift: createNewAccount,
-    server: "example.com", // can be anything so long as no platypuss server will actually be hosted there,
-    ser: "example.com",
-    email: emailRef.current.value,
-    pwd: hashPassword(passwordRef.current.value),
-    password: hashPassword(passwordRef.current.value)
-  });
-  console.log(loginInformation);
   fetch(`${authUrl}/login`, { // send this data to the authentication server, accepting a json response
     method: "POST",
     headers: {
-      'Accept': 'application/json, text/plain, */*',
-      'Content-Type': 'application/json'
+      'Content-Type': 'text/plain'
     },
-    body: JSON.stringify(loginInformation)
+    body: JSON.stringify({ // the information we send to the authentication server
+      createNew: createNewAccount,
+      ift: createNewAccount, // deprecated
+      server: "example.com", // can be anything so long as no platypuss server will actually be hosted there,
+      ser: "example.com", // also deprecated
+      email: emailRef.current.value,
+      pwd: hashPassword(passwordRef.current.value), // guess what ? also deprecated >:3
+      password: hashPassword(passwordRef.current.value)
+    })
     // we take the response and save the session token to the browser
   }).then(response => response.json()).then(response => {
     localStorage.setItem("sessionID", response.sessionID);
