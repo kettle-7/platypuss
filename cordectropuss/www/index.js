@@ -116,10 +116,14 @@ function doTheLoginThingy() {
         }
         let jsonobjectforloggingin = JSON.stringify({ // i want long variable name
             "ift": ift,
+            createNew: ift,
             "ser": "example.com", // reserved domain and therefore won't be used by anyone
             "unam": unam,
+            username: unam,
+            server: "example.com",
             "email": email,
-            "pwd": cyrb53(pwd1)
+            "pwd": cyrb53(pwd1),
+            password: cyrb53(pwd1)
         });
         const xhr = new XMLHttpRequest();
         xhr.open("POST", authUrl + '/li', true);
@@ -139,8 +143,10 @@ function doTheLoginThingy() {
     }
     let jsonobjectforloggingin = JSON.stringify({ // i want long variable name
         "ift": ift,
+        createNew: ift,
         "ser": "example.com",
         "email": email,
+        password: cyrb53(pwd1),
         "pwd": cyrb53(pwd1)
     });
     const req = new XMLHttpRequest();
