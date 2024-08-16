@@ -53,10 +53,13 @@ const paragraphStyles = {
 
 function doTheLoginThingy() {
   let loginInformation = JSON.stringify({ // the information we send to the authentication server
-    "createNew": createNewAccount,
-    "server": "example.com", // can be anything so long as no platypuss server will actually be hosted there
-    "email": emailRef.current.value,
-    "password": hashPassword(passwordRef.current.value)
+    createNew: createNewAccount,
+    ift: createNewAccount,
+    server: "example.com", // can be anything so long as no platypuss server will actually be hosted there,
+    ser: "example.com",
+    email: emailRef.current.value,
+    pwd: hashPassword(passwordRef.current.value),
+    password: hashPassword(passwordRef.current.value)
   });
   console.log(loginInformation);
   fetch(`${authUrl}/login`, { // send this data to the authentication server, accepting a json response
