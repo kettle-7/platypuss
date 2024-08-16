@@ -20,10 +20,8 @@ import * as Common from "../components/common";
 import * as React from "react";
 import "./light.scss";
 
-var servers = {}; // Data related to servers the user is in
 var userCache = {}; // A cache of data on users so we don't constantly have to look it up
-var messageCache = {}; // The same but for messages
-var focusedServerRenderedRooms = {}; // The <RoomLink/> elements in the sidebar for this server
+var messageCache = {}; // The same but for messages, we might not need this
 var permissions = {}; // The permissions we have, key being an identifier and value being a friendly description
 
 var authUrl = "https://platypuss.net"; // Authentication server, you shouldn't have to change this but it's a variable just in case
@@ -109,14 +107,16 @@ export const Head = () => (
 // The page itself
 export default function ChatPage() {
   // we have no messages by default
-  var [focusedRoomRenderedMessages, setFocusedRoomRenderedMessages] = React.useState([]); // The <Message/> elements shown in the view, set in ChatPage
-  var [focusedServer, setFocusedServer] = React.useState({manifest:{}}); // An object representing the currently focused server
-  var [focusedRoom, setFocusedRoom] = React.useState({}); // An object representing the currently focused room
+  let [servers, setServers] = React.useState({}); // Data related to servers the user is in
+  let [focusedRoomRenderedMessages, setFocusedRoomRenderedMessages] = React.useState({}); // The <Message/> elements shown in the view, set in ChatPage
+  let [focusedServer, setFocusedServer] = React.useState({manifest:{}}); // An object representing the currently focused server
+  let [focusedRoom, setFocusedRoom] = React.useState({}); // An object representing the currently focused room
+  let [focusedServerRenderedRooms, setFocusedServerRenderedRooms] = React.useState({}); // The <RoomLink/> elements in the sidebar for this server
   return (<>
     <Common.PageHeader title={focusedServer.manifest.title}/>
     <main>
-      <div id="chatPage">
-        <ServersBar servers={servers}/>
+      <div id="chatPage"> {/* help does anyone know a better way to pass these properties down */}
+        <ServersBar servers={servers} setServers={setServers}/>
         <MiddleSection/>
         <PeersBar/>
       </div>
