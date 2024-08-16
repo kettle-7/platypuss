@@ -116,10 +116,14 @@ function doTheLoginThingy() {
         }
         let jsonobjectforloggingin = JSON.stringify({ // i want long variable name
             "ift": ift,
+            createNew: ift,
             "ser": "example.com", // reserved domain and therefore won't be used by anyone
             "unam": unam,
+            username: unam,
+            server: "example.com",
             "email": email,
-            "pwd": cyrb53(pwd1)
+            "pwd": cyrb53(pwd1),
+            password: cyrb53(pwd1)
         });
         const xhr = new XMLHttpRequest();
         xhr.open("POST", authUrl + '/li', true);
@@ -139,8 +143,10 @@ function doTheLoginThingy() {
     }
     let jsonobjectforloggingin = JSON.stringify({ // i want long variable name
         "ift": ift,
+        createNew: ift,
         "ser": "example.com",
         "email": email,
+        password: cyrb53(pwd1),
         "pwd": cyrb53(pwd1)
     });
     const req = new XMLHttpRequest();
@@ -197,7 +203,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
             document.getElementById("ss1").href = "/light.css";
     }
     else {
-        oldunam = res.unam;
+        oldunam = res.username;
         abm = res.aboutMe.text;
         if (res.aboutMe.premyum) {
             premyum = true;
@@ -210,10 +216,10 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
             if (localStorage.getItem("theme") == "light")
                 document.getElementById("ss1").href = "/light.css";
         }
-        document.getElementById("pfp").src = authUrl + res.pfp;
-        document.getElementById("username").innerText = "Logged in as " + res.unam;
-        document.getElementById("changePfp").src = authUrl + res.pfp;
-        document.getElementById("acsusername").innerText = res.unam;
+        document.getElementById("pfp").src = authUrl + res.avatar;
+        document.getElementById("username").innerText = "Logged in as " + res.username;
+        document.getElementById("changePfp").src = authUrl + res.avatar;
+        document.getElementById("acsusername").innerText = res.username;
         document.getElementById("tag").innerText = "@" + res.tag;
         if (abm)
             document.getElementById("acsabm").value = abm;
@@ -379,8 +385,8 @@ var reply;
 
 function userInfo(id) {
     fetchUser(id).then(res => {
-        document.getElementById("uifpfp").src = authUrl + res.pfp;
-        document.getElementById("uifusername").innerText = res.unam;
+        document.getElementById("uifpfp").src = authUrl + res.avatar;
+        document.getElementById("uifusername").innerText = res.username;
         document.getElementById("uiftag").innerText = "@" + res.tag;
         document.getElementById('uifparent').style.display = 'flex';
         document.getElementById('uifabm').innerHTML = converty.makeHtml(res.aboutMe.text);
@@ -406,7 +412,7 @@ function au() {
         oldunam = document.getElementById("acsusername").innerText;
         if (oldunam.length < 1) {
             fetchUser(localStorage.getItem('sid')).then((res) => {
-                oldunam = res.unam;
+                oldunam = res.username;
             });
             return;
         }

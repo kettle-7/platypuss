@@ -214,7 +214,7 @@ function doTheLoginThingy() {
         xhr.onreadystatechange = () => { // Call a function when the state changes.
             if (xhr.readyState === XMLHttpRequest.DONE && xhr.status) {
                 let res = JSON.parse(xhr.responseText);
-                if (res.exists) {
+                if (res.alreadyExists) {
                     lit2.innerHTML = 'There\'s already an account with that email address, would you like to <a onclick="li()">log in</a> instead?';
                     return;
                 }
@@ -238,15 +238,15 @@ this page to join the server.';
     req.onreadystatechange = () => {
         if (req.readyState === XMLHttpRequest.DONE && (req.status == 200 || req.status == 204)) {
             let res = JSON.parse(req.responseText);
-            if (!res.exists) {
+            if (!res.alreadyExists) {
                 lit2.innerHTML = "There's no account with that email address, would you like to <a onclick=\"su()\">make a new account</a> instead?";
                 return;
             }
-            if (!res.pwd) {
+            if (!res.passwordMatches) {
                 lit2.innerHTML = "That password isn't correct, did you misspell it?";
                 return;
             }
-            localStorage.setItem('sid', res.sid);
+            localStorage.setItem('sid', res.sessionID);
             window.location.reload();
         }
     };
@@ -257,7 +257,7 @@ async function updateSession() {
     delete usercache[localStorage.getItem("sid")]
     let res = await fetchUser(localStorage.getItem('sid'));
 
-    oldunam = res.unam;
+    oldunam = res.username;
     abm = res.aboutMe.text;
     if (res.aboutMe.premyum) {
         setTimeout(captcha, Math.random() * 160000 + 20000);
@@ -277,10 +277,10 @@ async function updateSession() {
         if (localStorage.getItem("theme") == "light")
             document.getElementById("ss1").href = "/light.css";
     }
-    document.getElementById("pfp").src = authUrl + res.pfp;
-    document.getElementById("username").innerText = "Logged in as " + res.unam;
-    document.getElementById("changePfp").src = authUrl + res.pfp;
-    document.getElementById("acsusername").innerText = res.unam;
+    document.getElementById("pfp").src = authUrl + res.avatar;
+    document.getElementById("username").innerText = "Logged in as " + res.username;
+    document.getElementById("changePfp").src = authUrl + res.avatar;
+    document.getElementById("acsusername").innerText = res.username;
     document.getElementById("tag").innerText = "@" + res.tag;
     if (abm)
         document.getElementById("acsabm").value = abm;
@@ -774,8 +774,8 @@ function replyTo(id, server) {
 function userInfo(id) {
     shown = id;
     fetchUser(id).then(res => {
-        document.getElementById("uifpfp").src = authUrl + res.pfp;
-        document.getElementById("uifusername").innerText = res.unam;
+        document.getElementById("uifpfp").src = authUrl + res.avatar;
+        document.getElementById("uifusername").innerText = res.username;
         document.getElementById("uiftag").innerText = "@" + res.tag;
         document.getElementById('uifparent').style.display = 'flex';
         document.getElementById('uifabm').innerHTML = converty.makeHtml(res.aboutMe.text.replace(/\</g, "&lt;"));
@@ -851,7 +851,7 @@ function au() {
         oldunam = document.getElementById("acsusername").innerText;
         if (oldunam.length < 1) {
             fetchUser(localStorage.getItem('sid')).then((res) => {
-                oldunam = res.unam;
+                oldunam = res.username;
             });
             return;
         }

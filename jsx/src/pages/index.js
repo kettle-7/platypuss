@@ -20,6 +20,8 @@ import * as React from "react";
 import "./light.scss";
 
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
+const authUrl = "https://192.168.1.66"; // this shouldn't need to change but just in case
+var emailRef, usernameRef, passwordRef, secondPasswordRef;
 
 // thanks bryc on stack overflow ^w^
 function hashPassword (str, seed = 20) { // hashes passwords somehow
@@ -50,22 +52,33 @@ const paragraphStyles = {
 };
 
 function doTheLoginThingy() {
-  let loginInformation = JSON.stringify({ // the information we send to the authentication server
-    "ift": createNewAccount,
-    "ser": "example.com", // can be anything so long as no platypuss server will actually be hosted there
-    "email": email,
-    "pwd": hashPassword(password)
+  fetch(`${authUrl}/login`, { // send this data to the authentication server, accepting a json response
+    method: "POST",
+    headers: {
+      'Content-Type': 'text/plain'
+    },
+    body: JSON.stringify({ // the information we send to the authentication server
+      createNew: createNewAccount,
+      ift: createNewAccount, // deprecated
+      server: "example.com", // can be anything so long as no platypuss server will actually be hosted there,
+      ser: "example.com", // also deprecated
+      email: emailRef.current.value,
+      pwd: hashPassword(passwordRef.current.value), // guess what ? also deprecated >:3
+      password: hashPassword(passwordRef.current.value)
+    })
+    // we take the response and save the session token to the browser
+  }).then(response => response.json()).then(response => {
+    localStorage.setItem("sessionID", response.sessionID);
+    window.location = "/chat";
   });
-  console.log(loginInformation);
 }
 
-// These let us refer to the text boxes later on
-var emailRef = React.useRef(null);
-var usernameRef = React.useRef(null);
-var passwordRef = React.useRef(null);
-var secondPasswordRef = React.useRef(null);
-
 const IndexPage = () => {
+  // These let us refer to the text boxes later on
+  emailRef = React.useRef(null);
+  usernameRef = React.useRef(null);
+  passwordRef = React.useRef(null);
+  secondPasswordRef = React.useRef(null);
   return (<>
     <Common.PageHeader/>
     <main id="mainPage">
@@ -79,9 +92,9 @@ const IndexPage = () => {
         Edit <code>src/pages/index.js</code> to see this page
         update in real-time. 😎
       </p>
-      <div id="P" className="popupParent" style={{display: "flex"}} onMouseDown={()=>{return;document.getElementById('P').style.display = 'none'}}><div id="p" class="popup">
+      <div id="P" className="popupParent" style={{display: "flex"}} onMouseDown={()=>{return;document.getElementById('P').style.display = 'none'}}><div id="p" className="popup">
         <h2 id="lit1">Sign In</h2>
-        <span id="lit2">Welcome back! If you don't already have an account <br/> please <a href="#" onclick="su()">create an account</a> instead.</span>
+        <span id="lit2">Welcome back! If you don't already have an account <br/> please <a href="#" onClick="su()">create an account</a> instead.</span>
         <div id="loginform">
           <div style={{display:"grid",gridTemplateColumns:"auto auto"}}>
           {/* The four lines below contain a weird thing with anonymous functions, this is the only way I know of to assign the element to a variable and position it at the same time */}

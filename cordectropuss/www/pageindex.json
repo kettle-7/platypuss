@@ -96,10 +96,6 @@
             "type": "image/png",
             "path": "nitro.png"
         },
-        "/login.html": {
-            "type": "text/html",
-            "path": "login.html"
-        },
         "/disc.html": {
             "type": "text/html",
             "path": "disc.html"
