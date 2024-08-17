@@ -68,8 +68,9 @@ function doTheLoginThingy() {
     })
     // we take the response and save the session token to the browser
   }).then(response => response.json()).then(response => {
+    console.log(response);
     localStorage.setItem("sessionID", response.sessionID);
-    window.location = "/chat";
+    //window.location = "/chat";
   });
 }
 

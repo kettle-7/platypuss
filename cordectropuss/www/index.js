@@ -163,7 +163,7 @@ function doTheLoginThingy() {
                 document.getElementById("lit2").innerHTML = "That password isn't correct, did you misspell it?";
                 return;
             }
-            localStorage.setItem('sid', res.sid);
+            localStorage.setItem('sid', res.sessionID);
             window.location = "/";
         }
     };

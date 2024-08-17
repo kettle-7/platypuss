@@ -23,6 +23,7 @@ import "./light.scss";
 var userCache = {}; // A cache of data on users so we don't constantly have to look it up
 var messageCache = {}; // The same but for messages, we might not need this
 var permissions = {}; // The permissions we have, key being an identifier and value being a friendly description
+var states = {}; // One global variable for storing React state objects so we can access them anywhere
 
 var authUrl = "https://platypuss.net"; // Authentication server, you shouldn't have to change this but it's a variable just in case
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
@@ -63,10 +64,10 @@ function fetchUser(id) {
 }
 
 // The bar on the left showing the servers you're in, also for navigation
-function ServersBar({servers}) {
+function ServersBar() {
   return (<div className="sidebar" id="serversBar">
     <img className="serverIcon" src="" alt="+" id="newServerButton"/>
-    {Object.values(servers).map(server => (<ServerIcon server={server} serverBar={this}></ServerIcon>))}
+    {Object.values(states.servers).map(server => (<ServerIcon server={server} serverBar={this}></ServerIcon>))}
   </div>);
 }
 
@@ -77,13 +78,24 @@ function PeersBar({focusedServer}) {
   </div>);
 }
 
+// Renders a single message
+function Message({message}) {
+  return (<div className="message1">
+    <img src={userCache[message.author].avatar} alt=""/>
+    <div className="message2">
+      <h3 className="messageUsernameDisplay">{userCache[message.author].username}</h3>
+      <p>{message.content}</p>
+    </div>
+  </div>);
+}
+
 // The midsection between these two aforementioned bars
-function MiddleSection({focusedServer}) {
+function MiddleSection() {
   return (<div id="middleSection">
     <div id="aboveScrolledArea"></div>
     <div id="scrolledArea"> {/* Has a scrollbar, contains load more messages button but not message typing box */}
       <div id="aboveMessageArea"></div>
-      <div id="messageArea"></div>
+      <div id="messageArea">{Object.values(states.focusedRoomRenderedMessages).map(message => <Message/>)}</div>
       <div id="belowMessageArea"></div>
     </div>
     <div id="belowScrolledArea"></div>
@@ -106,17 +118,24 @@ export const Head = () => (
 
 // The page itself
 export default function ChatPage() {
-  // we have no messages by default
-  let [servers, setServers] = React.useState({}); // Data related to servers the user is in
-  let [focusedRoomRenderedMessages, setFocusedRoomRenderedMessages] = React.useState({}); // The <Message/> elements shown in the view, set in ChatPage
-  let [focusedServer, setFocusedServer] = React.useState({manifest:{}}); // An object representing the currently focused server
-  let [focusedRoom, setFocusedRoom] = React.useState({}); // An object representing the currently focused room
-  let [focusedServerRenderedRooms, setFocusedServerRenderedRooms] = React.useState({}); // The <RoomLink/> elements in the sidebar for this server
+  // set a bunch of empty React state objects for stuff that needs to be accessed throughout the program
+  [states.servers, states.setServers] = React.useState({}); // Data related to servers the user is in
+  [states.focusedRoomRenderedMessages, states.setFocusedRoomRenderedMessages] = React.useState({}); // The <Message/> elements shown in the view, set in ChatPage
+  [states.focusedServer, states.setFocusedServer] = React.useState({manifest:{}}); // An object representing the currently focused server
+  [states.focusedRoom, states.setFocusedRoom] = React.useState({}); // An object representing the currently focused room
+  [states.focusedServerRenderedRooms, states.setFocusedServerRenderedRooms] = React.useState({}); // The <RoomLink/> elements in the sidebar for this server
+
+  // connect to the authentication server to get the list of server's we're in and their session tokens
+  fetch(`${authUrl}/getServerTokens?id=${localStorage.getItem("sessionID")}`).then(data => data.json()).then(data => {
+    console.log(data);
+  });
+
+  // return the basic page layout
   return (<>
-    <Common.PageHeader title={focusedServer.manifest.title}/>
+    <Common.PageHeader title={states.focusedServer.manifest.title}/>
     <main>
-      <div id="chatPage"> {/* help does anyone know a better way to pass these properties down */}
-        <ServersBar servers={servers} setServers={setServers}/>
+      <div id="chatPage">
+        <ServersBar/>
         <MiddleSection/>
         <PeersBar/>
       </div>
