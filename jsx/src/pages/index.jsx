@@ -70,7 +70,7 @@ function doTheLoginThingy() {
   }).then(response => response.json()).then(response => {
     console.log(response);
     localStorage.setItem("sessionID", response.sessionID);
-    //window.location = "/chat";
+    window.location = "/chat";
   });
 }
 

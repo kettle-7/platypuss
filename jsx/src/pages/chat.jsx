@@ -24,12 +24,16 @@ var userCache = {}; // A cache of data on users so we don't constantly have to l
 var messageCache = {}; // The same but for messages, we might not need this
 var permissions = {}; // The permissions we have, key being an identifier and value being a friendly description
 var states = {}; // One global variable for storing React state objects so we can access them anywhere
+var openSockets = {}; // Keeps track of open websockets
+var peers = {}; // Keeps track of other people on the server (platonically of course :3)
+var loadedMessages = 0; // The number of messages loaded in the current view, used when loading older messages
+var serverHashes = {}; // We can use these to get links to specific servers / maybe rooms in the future
 
 var authUrl = "https://platypuss.net"; // Authentication server, you shouldn't have to change this but it's a variable just in case
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
 
 // thanks bryc on stack overflow ^w^
-function hashPassword (str, seed = 20) { // hashes passwords somehow
+function hashPassword (str, seed = 20) { // hashes things somehow
     let h1 = 0xdeadbeef ^ seed, // had to be something
     h2 = 0x41c6ce57 ^ seed;
     for (let i = 0, ch; i < str.length; i++) {
@@ -116,6 +120,32 @@ export const Head = () => (
   <title>(Beta!) Platypuss</title>
 );
 
+async function loadView() {
+  // connect to the authentication server to get the list of server's we're in and their session tokens
+  for (let message of Object.keys(states.focusedRoomRenderedMessages)) {
+    delete states.focusedRoomRenderedMessages[message];
+  }
+  fetch(`${authUrl}/getServerTokens?id=${localStorage.getItem("sessionID")}`).then(data => data.json()).then(data => {
+    for (let socket of Object.values(openSockets)) {
+      socket.close();
+    }
+    for (let serverName in data.servers) { // this for loop lets us keep the same server focused between reloads
+      serverHashes[serverName] = hashPassword(serverName); // it's not a password but who cares
+      if (states.focusedServer == {manifest:{}}) {
+        if (window.location.toString().replace(/^.*\#/g, "") == serverHashes[serverName]) {
+          states.focusedServer = serverName;
+        }
+      }
+    }
+    for (let serverCode of Object.keys(data.servers)) {
+      // thing
+    }
+    if (states.focusedServer == {manifest:{}}) {
+      states.setFocusedServer(states.servers[Object.keys(data.servers)[0]]);
+    }
+  });
+}
+
 // The page itself
 export default function ChatPage() {
   // set a bunch of empty React state objects for stuff that needs to be accessed throughout the program
@@ -125,10 +155,7 @@ export default function ChatPage() {
   [states.focusedRoom, states.setFocusedRoom] = React.useState({}); // An object representing the currently focused room
   [states.focusedServerRenderedRooms, states.setFocusedServerRenderedRooms] = React.useState({}); // The <RoomLink/> elements in the sidebar for this server
 
-  // connect to the authentication server to get the list of server's we're in and their session tokens
-  fetch(`${authUrl}/getServerTokens?id=${localStorage.getItem("sessionID")}`).then(data => data.json()).then(data => {
-    console.log(data);
-  });
+  loadView();
 
   // return the basic page layout
   return (<>
