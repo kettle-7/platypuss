@@ -165,7 +165,7 @@ function doTheLoginThingy() {
             }
             localStorage.setItem('sid', res.sid);
             console.log(res);
-            //window.location = "/";
+            window.location = "/";
         }
     };
     req.send(jsonobjectforloggingin);
