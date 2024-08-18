@@ -543,7 +543,7 @@ fetchUser(localStorage.getItem('sid')).then((res) => {
                 }
                 
                 const xhr = new XMLHttpRequest();
-                xhr.open("GET", authUrl+'/passwdcfg?id='+localStorage.getItem("sid")+"&pwd="+cyrb53(pwd3), true);
+                xhr.open("GET", authUrl+'/changePassword?id='+localStorage.getItem("sid")+"&newPassword="+cyrb53(pwd3), true);
                 xhr.onreadystatechange = () => {
                     if (xhr.readyState === XMLHttpRequest.DONE && xhr.status) {
                         window.location.reload();
