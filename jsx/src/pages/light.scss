@@ -189,6 +189,7 @@ a {
     flex-shrink: 0;
     background: $background-level5;
     overflow-y: scroll;
+    scrollbar-width: none;
 }
 
 #chatPage {
@@ -223,4 +224,9 @@ a {
     object-fit: cover;
     border-radius: 20%;
     background: $background-level4;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    font-size: xx-large;
 }

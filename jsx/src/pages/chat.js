@@ -23,14 +23,17 @@ import "./light.scss";
 var userCache = {}; // A cache of data on users so we don't constantly have to look it up
 var messageCache = {}; // The same but for messages, we might not need this
 var permissions = {}; // The permissions we have, key being an identifier and value being a friendly description
-var states = {}; // One global variable for storing React state objects so we can access them anywhere
+var states = {populated:false}; // One global variable for storing React state objects so we can access them anywhere
 var openSockets = {}; // Keeps track of open websockets
 var peers = {}; // Keeps track of other people on the server (platonically of course :3)
 var loadedMessages = 0; // The number of messages loaded in the current view, used when loading older messages
 var serverHashes = {}; // We can use these to get links to specific servers / maybe rooms in the future
 
+console.log(window, window.location);
+var pageUrl = window.location ? new URL(window.location) : new URL("http://localhost:8000"); // window is not defined in the testing environment so just assume localhost
 var authUrl = "https://platypuss.net"; // Authentication server, you shouldn't have to change this but it's a variable just in case
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
+pageUrl.protocol = "https"; // remove this in production
 
 // thanks bryc on stack overflow ^w^
 function hashPassword (str, seed = 20) { // hashes things somehow
@@ -112,7 +115,7 @@ function ServerIcon({server, serverBar}) {
     iconURL: "",
     serverTitle: "connecting to the server???"
   });
-  return (<img className="serverIcon" src="{server.manifest.iconURL}" alt="🐙"/>);
+  return (<img className="serverIcon" src={server.manifest.iconURL} alt="🐙"/>);
 }
 
 // The document head contains metadata, most of it is defined in use-site-metadata.jsx
@@ -125,7 +128,8 @@ async function loadView() {
   for (let message of Object.keys(states.focusedRoomRenderedMessages)) {
     delete states.focusedRoomRenderedMessages[message];
   }
-  fetch(`${authUrl}/getServerTokens?id=${localStorage.getItem("sessionID")}`).then(data => data.json()).then(data => {
+  states.setFocusedRoomRenderedMessages({});
+  fetch(`${authUrl}/getServerTokens?id=${localStorage.getItem("sessionID")}`).then(data => data.json()).then(async function(data) {
     for (let socket of Object.values(openSockets)) {
       socket.close();
     }
@@ -137,9 +141,30 @@ async function loadView() {
         }
       }
     }
+    let servers = {};
     for (let serverCode of Object.keys(data.servers)) {
-      // thing
+      let splitServerCode = serverCode.split(' ');
+      let ip = splitServerCode[0];
+      let inviteCode = splitServerCode[1];
+      let subserver = splitServerCode[2];
+      console.log(pageUrl.protocol + "//"+ip.toString());
+      servers[serverCode] = {
+        ip: ip,
+        inviteCode: inviteCode,
+        subserver: subserver,
+        manifest: {
+          title: "Loading",
+          icon: "/icon.png",
+          memberCount: 0,
+          public: false,
+          description: "Waiting for a response from the server"
+        }
+      };
+      fetch(pageUrl.protocol + "//"+ip.toString()).then(response => response.json).then(serverManifest => {
+        console.log(serverManifest);
+      }).catch(error => {console.log(error)});
     }
+    states.setServers(servers);
     if (states.focusedServer == {manifest:{}}) {
       states.setFocusedServer(states.servers[Object.keys(data.servers)[0]]);
     }
@@ -154,9 +179,10 @@ export default function ChatPage() {
   [states.focusedServer, states.setFocusedServer] = React.useState({manifest:{}}); // An object representing the currently focused server
   [states.focusedRoom, states.setFocusedRoom] = React.useState({}); // An object representing the currently focused room
   [states.focusedServerRenderedRooms, states.setFocusedServerRenderedRooms] = React.useState({}); // The <RoomLink/> elements in the sidebar for this server
-
-  loadView();
-
+  
+  console.log(states.populated);
+  if (!states.populated) loadView();
+  states.populated = true;
   // return the basic page layout
   return (<>
     <Common.PageHeader title={states.focusedServer.manifest.title}/>
