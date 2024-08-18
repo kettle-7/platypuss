@@ -20,7 +20,7 @@ import * as React from "react";
 import "./light.scss";
 
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
-const authUrl = "https://192.168.1.66"; // this shouldn't need to change but just in case
+const authUrl = "https://platypuss.net"; // this shouldn't need to change but just in case
 var emailRef, usernameRef, passwordRef, secondPasswordRef;
 
 // thanks bryc on stack overflow ^w^
