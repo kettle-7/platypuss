@@ -192,6 +192,15 @@ a {
     scrollbar-width: none;
 }
 
+#roomsBar {
+    display: flex;
+    padding: 5px;
+    gap: 5px;
+    @media screen and (min-width: 20cm) {
+        max-width: 25%;
+    }
+}
+
 #chatPage {
     display: flex;
     height: 100%;

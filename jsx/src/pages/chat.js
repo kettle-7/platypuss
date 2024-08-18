@@ -73,7 +73,7 @@ function fetchUser(id) {
 function ServersBar() {
   return (<div className="sidebar" id="serversBar">
     <img className="serverIcon" src="" alt="+" id="newServerButton"/>
-    {Object.values(states.servers).map(server => (<ServerIcon server={server} serverBar={this}></ServerIcon>))}
+    {Object.values(states.servers).map(server => (<ServerIcon server={server}></ServerIcon>))}
   </div>);
 }
 
@@ -109,12 +109,26 @@ function MiddleSection() {
 }
 
 // a server icon button thing
-function ServerIcon({server, serverBar}) {
+function ServerIcon({server}) {
   [server.manifest, server.setManifest] = React.useState({
     iconURL: "",
     serverTitle: "connecting to the server???"
   });
-  return (<img className="serverIcon" src={server.manifest.iconURL} alt="🐙"/>);
+  return (<img className="serverIcon" src={server.manifest.icon} alt="🐙"/>);
+}
+
+function RoomLink({room}) {
+  return (<div className="roomLink">
+    <a>{room.name}</a>
+  </div>);
+}
+
+function RoomsBar() {
+  return (<div className="sidebar" id="roomsBar">
+    <div id="serverTitle"><h3 style={{margin: 5}}>server name goes here ???</h3></div>
+    {Object.values(states.focusedServerRenderedRooms).map(room => (<ServerIcon server={room}></ServerIcon>))}
+    {Object.values(states.focusedServerRenderedRooms).length == 0 ? <p>This server doesn't have any rooms in it.</p> : <></>}
+  </div>);
 }
 
 // The document head contains metadata, most of it is defined in use-site-metadata.jsx
@@ -123,7 +137,7 @@ export const Head = () => (
 );
 
 async function loadView() {
-  // don't try load the client as part of the build process
+  // don't try load the client as part of the page compiling
   if (typeof window === "undefined") return;
   // connect to the authentication server to get the list of server's we're in and their session tokens
   for (let message of Object.keys(states.focusedRoomRenderedMessages)) {
@@ -138,21 +152,21 @@ async function loadView() {
       serverHashes[serverName] = hashPassword(serverName); // it's not a password but who cares
       if (states.focusedServer == {manifest:{}}) {
         if (window.location.toString().replace(/^.*\#/g, "") == serverHashes[serverName]) {
-          states.focusedServer = serverName;
+          states.setFocusedServer(serverName);
         }
       }
     }
     let servers = {};
     for (let serverCode of Object.keys(data.servers)) {
-      let splitServerCode = serverCode.split(' ');
+      let splitServerCode = serverCode.split(' '); // take the data the authentication server gives us about the server and use it to connect
       let ip = splitServerCode[0];
       let inviteCode = splitServerCode[1];
       let subserver = splitServerCode[2];
-      servers[serverCode] = {
+      servers[serverCode] = { // add this server to our list of servers, making an icon
         ip: ip,
         inviteCode: inviteCode,
         subserver: subserver,
-        manifest: {
+        manifest: { // we haven't actually heard from the server itself what its icon, name etc are
           title: "Loading",
           icon: "/icon.png",
           memberCount: 0,
@@ -160,10 +174,15 @@ async function loadView() {
           description: "Waiting for a response from the server"
         }
       };
+      // get this information from the server
       fetch(pageUrl.protocol + "//"+ip.toString()+"/"+subserver).then(response => response.json()).then(serverManifest => {
+        servers = states.servers;
+        servers[serverCode].setManifest(serverManifest);
+        states.setServers(servers);
         console.log(serverManifest);
       }).catch(error => {console.log(error)});
     }
+    // update our list of servers and if no server is currently focused pick the first one
     states.setServers(servers);
     if (states.focusedServer == {manifest:{}}) {
       states.setFocusedServer(states.servers[Object.keys(data.servers)[0]]);
@@ -189,6 +208,7 @@ export default function ChatPage() {
     <main>
       <div id="chatPage">
         <ServersBar/>
+        <RoomsBar/>
         <MiddleSection/>
         <PeersBar/>
       </div>

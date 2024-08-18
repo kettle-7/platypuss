@@ -7,6 +7,10 @@
         "/chat.html": {
             "type": "text/html",
             "path": "chat/index.html"
+        },
+        "/chat/.html": {
+            "type": "text/html",
+            "path": "chat/index.html"
         }
     }
 }
