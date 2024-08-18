@@ -1,0 +1,12 @@
+{
+    "files":{
+        "/.html": {
+            "type": "text/html",
+            "path": "index.html"
+        },
+        "/chat.html": {
+            "type": "text/html",
+            "path": "chat/index.html"
+        }
+    }
+}

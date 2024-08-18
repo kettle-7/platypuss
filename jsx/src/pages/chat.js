@@ -29,8 +29,7 @@ var peers = {}; // Keeps track of other people on the server (platonically of co
 var loadedMessages = 0; // The number of messages loaded in the current view, used when loading older messages
 var serverHashes = {}; // We can use these to get links to specific servers / maybe rooms in the future
 
-console.log(window, window.location);
-var pageUrl = window.location ? new URL(window.location) : new URL("http://localhost:8000"); // window is not defined in the testing environment so just assume localhost
+var pageUrl = typeof window !== "undefined" ? new URL(window.location) : new URL("http://localhost:8000"); // window is not defined in the testing environment so just assume localhost
 var authUrl = "https://platypuss.net"; // Authentication server, you shouldn't have to change this but it's a variable just in case
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
 pageUrl.protocol = "https"; // remove this in production
@@ -124,6 +123,8 @@ export const Head = () => (
 );
 
 async function loadView() {
+  // don't try load the client as part of the build process
+  if (typeof window === "undefined") return;
   // connect to the authentication server to get the list of server's we're in and their session tokens
   for (let message of Object.keys(states.focusedRoomRenderedMessages)) {
     delete states.focusedRoomRenderedMessages[message];
@@ -147,7 +148,6 @@ async function loadView() {
       let ip = splitServerCode[0];
       let inviteCode = splitServerCode[1];
       let subserver = splitServerCode[2];
-      console.log(pageUrl.protocol + "//"+ip.toString());
       servers[serverCode] = {
         ip: ip,
         inviteCode: inviteCode,
@@ -160,7 +160,7 @@ async function loadView() {
           description: "Waiting for a response from the server"
         }
       };
-      fetch(pageUrl.protocol + "//"+ip.toString()).then(response => response.json).then(serverManifest => {
+      fetch(pageUrl.protocol + "//"+ip.toString()+"/"+subserver).then(response => response.json()).then(serverManifest => {
         console.log(serverManifest);
       }).catch(error => {console.log(error)});
     }
@@ -168,7 +168,7 @@ async function loadView() {
     if (states.focusedServer == {manifest:{}}) {
       states.setFocusedServer(states.servers[Object.keys(data.servers)[0]]);
     }
-  });
+  }).catch(error => console.log(error));
 }
 
 // The page itself

@@ -1176,7 +1176,7 @@ function clientLoad() {
                                         } else {
                                             // we don't support server nicknames as they don't exist yet
                                             strl.splice(arr.index - 2, 39, `
-<a class="userMention" onclick="userInfo('${user.id}');">@${user.unam}</a>`);
+<a class="userMention" onclick="userInfo('${user.id}');">@${user.username}</a>`);
                                         }
                                         msgtext = strl.join("");
                                         //uuidreg.exec(msgtxt);
@@ -1201,7 +1201,7 @@ function clientLoad() {
                                     } else {
                                         // we don't support server nicknames as they don't exist yet
                                         msgtext = `<blockquote style="cursor:pointer;" onclick="siv('${packet.message.reply
-}')"><a class="userMention" onclick="userInfo('${m.id}');">@${m.unam
+}')"><a class="userMention" onclick="userInfo('${m.id}');">@${m.username
                                             .replace(/\</g, "&lt;")
                                             .replace(/\>/g, "&gt;")
                                         }</a> ${messageMap[packet.message.reply].content}</blockquote>` + msgtext;
@@ -1243,7 +1243,7 @@ function clientLoad() {
                                     }
                                 }
                                 else {
-                                    unam = resp.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
+                                    unam = resp.username.replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
                                     pfp = authUrl + resp.pfp;
                                     if (mRef[packet.message.id] !== undefined) {
                                         for (let meg of mRef[packet.message.id]) {
@@ -1354,7 +1354,7 @@ function clientLoad() {
                                         } else {
                                             // we don't support server nicknames as they don't exist yet
                                             strl.splice(arr.index - 2, 39, `
-<a class="userMention" onclick="userInfo('${user.id}');">@${user.unam
+<a class="userMention" onclick="userInfo('${user.id}');">@${user.username
                                                 .replace(/\</g, "&lt;")
                                                 .replace(/\>/g, "&gt;")}</a>`);
                                         }
@@ -1379,7 +1379,7 @@ function clientLoad() {
                                             }')"><a class="invalidUser">@Deleted User</a> ${messageMap[packet.messages[m].reply].content}</blockquote>` + msgtext;
                                     } else {
                                         msgtext = `<blockquote style="cursor:pointer;" onclick="siv('${packet.messages[m].reply
-}')"><a class="userMention" onclick="userInfo('${ms.id}');">@${ms.unam
+}')"><a class="userMention" onclick="userInfo('${ms.id}');">@${ms.username
                                             .replace(/\</g, "&lt;")
                                             .replace(/\>/g, "&gt;")
                                         }</a> ${messageMap[packet.messages[m].reply].content}</blockquote>` + msgtext;
@@ -1421,7 +1421,7 @@ function clientLoad() {
                                 }
                             }
                             else {
-                                unam = user.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
+                                unam = user.username.replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
                                 pfp = authUrl + user.pfp;
                                 if (mRef[packet.messages[m].id] !== undefined) {
                                     for (let meg of mRef[packet.messages[m].id]) {
@@ -1530,7 +1530,7 @@ function clientLoad() {
                                     } else {
                                         // we don't support server nicknames as they don't exist yet
                                         strl.splice(arr.index - 2, 39, `
-<a class="userMention" onclick="userInfo('${user.id}');">@${user.unam}</a>`);
+<a class="userMention" onclick="userInfo('${user.id}');">@${user.username}</a>`);
                                     }
                                     msgtext = strl.join("");
                                     //uuidreg.exec(msgtext);
@@ -1555,7 +1555,7 @@ function clientLoad() {
                                 } else {
                                     // we don't support server nicknames as they don't exist yet
                                     msgtext = `<blockquote style="cursor:pointer;" onclick="siv('${packet.message.reply
-}')"><a class="userMention" onclick="userInfo('${m.id}');">@${m.unam
+}')"><a class="userMention" onclick="userInfo('${m.id}');">@${m.username
                                         .replace(/\</g, "&lt;")
                                         .replace(/\>/g, "&gt;")
                                     }</a> ${messageMap[packet.message.reply].content}</blockquote>` + msgtext;
@@ -1594,7 +1594,7 @@ function clientLoad() {
                                 }
                             }
                             else {
-                                unam = resp.unam.replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
+                                unam = resp.username.replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
                                 pfp = authUrl + resp.pfp;
                                 if (mRef[packet.message.id] !== undefined) {
                                     for (let meg of mRef[packet.message.id]) {
