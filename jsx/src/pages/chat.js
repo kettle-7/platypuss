@@ -28,8 +28,9 @@ var openSockets = {}; // Keeps track of open websockets
 var peers = {}; // Keeps track of other people on the server (platonically of course :3)
 var loadedMessages = 0; // The number of messages loaded in the current view, used when loading older messages
 var serverHashes = {}; // We can use these to get links to specific servers / maybe rooms in the future
+var browser = typeof window !== "undefined"; // check if we're running in a browser rather than the build environment
 
-var pageUrl = typeof window !== "undefined" ? new URL(window.location) : new URL("http://localhost:8000"); // window is not defined in the testing environment so just assume localhost
+var pageUrl = browser ? new URL(window.location) : new URL("http://localhost:8000"); // window is not defined in the testing environment so just assume localhost
 var authUrl = "https://platypuss.net"; // Authentication server, you shouldn't have to change this but it's a variable just in case
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
 pageUrl.protocol = "https"; // remove this in production
@@ -70,16 +71,16 @@ function fetchUser(id) {
 }
 
 // The bar on the left showing the servers you're in, also for navigation
-function ServersBar() {
-  return (<div className="sidebar" id="serversBar">
+function ServersBar({shown}) {
+  return (<div className="sidebar" id="serversBar" style={{display: shown ? "flex" : "none"}}>
     <img className="serverIcon" src="" alt="+" id="newServerButton"/>
     {Object.values(states.servers).map(server => (<ServerIcon server={server}></ServerIcon>))}
   </div>);
 }
 
 // The bar on the right showing other server members
-function PeersBar({focusedServer}) {
-  return (<div className="sidebar" id="serversBar">
+function PeersBar({focusedServer, shown}) {
+  return (<div className="sidebar" id="serversBar" style={{display: shown ? "flex" : "none"}}>
     <img className="serverIcon material-symbols-outlined" src="" alt="+" id="newServerButton"/>
   </div>);
 }
@@ -96,8 +97,8 @@ function Message({message}) {
 }
 
 // The midsection between these two aforementioned bars
-function MiddleSection() {
-  return (<div id="middleSection">
+function MiddleSection({shown}) {
+  return (<div id="middleSection" style={{display: shown ? "flex" : "none"}}>
     <div id="aboveScrolledArea"></div>
     <div id="scrolledArea"> {/* Has a scrollbar, contains load more messages button but not message typing box */}
       <div id="aboveMessageArea"></div>
@@ -114,7 +115,12 @@ function ServerIcon({server}) {
     iconURL: "",
     serverTitle: "connecting to the server???"
   });
-  return (<img className="serverIcon" src={server.manifest.icon} alt="🐙"/>);
+  let [thisIconPopoverShown, setThisIconPopoverShown] = React.useState(false);
+  return (<div className="popoverContainer">
+    <img className="serverIcon" src={server.manifest.icon} alt="🐙"
+    onMouseEnter={()=>{setThisIconPopoverShown(true)}} onMouseLeave={()=>{setThisIconPopoverShown(false)}}/>
+    <div className="serverIconPopover" popover hidden={!thisIconPopoverShown}>{server.manifest.title}</div>
+  </div>);
 }
 
 function RoomLink({room}) {
@@ -123,8 +129,8 @@ function RoomLink({room}) {
   </div>);
 }
 
-function RoomsBar() {
-  return (<div className="sidebar" id="roomsBar">
+function RoomsBar({shown}) {
+  return (<div className="sidebar" id="roomsBar" style={{display: shown ? "flex" : "none"}}>
     <div id="serverTitle"><h3 style={{margin: 5}}>server name goes here ???</h3></div>
     {Object.values(states.focusedServerRenderedRooms).map(room => (<ServerIcon server={room}></ServerIcon>))}
     {Object.values(states.focusedServerRenderedRooms).length == 0 ? <p>This server doesn't have any rooms in it.</p> : <></>}
@@ -198,19 +204,33 @@ export default function ChatPage() {
   [states.focusedServer, states.setFocusedServer] = React.useState({manifest:{}}); // An object representing the currently focused server
   [states.focusedRoom, states.setFocusedRoom] = React.useState({}); // An object representing the currently focused room
   [states.focusedServerRenderedRooms, states.setFocusedServerRenderedRooms] = React.useState({}); // The <RoomLink/> elements in the sidebar for this server
-  
+  [states.mobileSidebarShown, states.setMobileSidebarShown] = React.useState(true); // whether to show the sidebar on mobile devices, is open by default when you load the page
+  [states.useMobileUI, states.setUseMobileUI] = React.useState(browser ? (window.innerWidth * 2.54 / 96 / window.devicePixelRatio) < 20 : false); // Use mobile UI if the screen is less than 20cm wide
+
+  // respond to changes in screen width
+  if (browser)
+  window.addEventListener("resize", () => {
+    states.setUseMobileUI(browser ? (window.innerWidth * 2.54 / 96 / window.devicePixelRatio) < 20 : false);
+  });
+
   console.log(states.populated);
   if (!states.populated) loadView();
   states.populated = true;
   // return the basic page layout
   return (<>
-    <Common.PageHeader title={states.focusedServer.manifest.title}/>
+    <Common.PageHeader title={states.focusedServer.manifest.title} iconClickEvent={() => {
+      if (states.useMobileUI) {
+        states.setMobileSidebarShown(!states.mobileSidebarShown);
+      } else {
+        window.location = "/";
+      }
+    }}/>
     <main>
       <div id="chatPage">
-        <ServersBar/>
-        <RoomsBar/>
-        <MiddleSection/>
-        <PeersBar/>
+        <ServersBar shown={states.mobileSidebarShown || !states.useMobileUI}/>
+        <RoomsBar shown={states.mobileSidebarShown || !states.useMobileUI}/>
+        <MiddleSection shown={!states.mobileSidebarShown || !states.useMobileUI}/>
+        <PeersBar shown={states.mobileSidebarShown || !states.useMobileUI}/>
       </div>
     </main>
   </>);
