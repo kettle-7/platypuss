@@ -112,14 +112,12 @@ function MiddleSection({shown}) {
 // a server icon button thing
 function ServerIcon({server}) {
   [server.manifest, server.setManifest] = React.useState({
-    iconURL: "",
-    serverTitle: "connecting to the server???"
+    icon: "",
+    title: "Couldn't connect to this server 🐙"
   });
-  let [thisIconPopoverShown, setThisIconPopoverShown] = React.useState(false);
   return (<div className="popoverContainer">
-    <img className="serverIcon" src={server.manifest.icon} alt="🐙"
-    onMouseEnter={()=>{setThisIconPopoverShown(true)}} onMouseLeave={()=>{setThisIconPopoverShown(false)}}/>
-    <div className="serverIconPopover" popover hidden={!thisIconPopoverShown}>{server.manifest.title}</div>
+    <img className="serverIcon" src={server.manifest.icon} alt="🐙"/>
+    <div className="serverIconPopover">{server.manifest.title}</div>
   </div>);
 }
 
@@ -185,10 +183,10 @@ async function loadView() {
         servers = states.servers;
         servers[serverCode].setManifest(serverManifest);
         states.setServers(servers);
-        console.log(serverManifest);
       }).catch(error => {console.log(error)});
     }
     // update our list of servers and if no server is currently focused pick the first one
+    console.log(servers);
     states.setServers(servers);
     if (states.focusedServer == {manifest:{}}) {
       states.setFocusedServer(states.servers[Object.keys(data.servers)[0]]);

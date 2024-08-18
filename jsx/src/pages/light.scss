@@ -241,3 +241,17 @@ a {
     align-items: center;
     font-size: xx-large;
 }
+
+.popoverContainer .serverIconPopover {
+    display: none;
+    position: absolute;
+    transform: translate(52px, -38px);
+    background: $background-level3;
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.popoverContainer:hover .serverIconPopover {
+    display: inline-block;
+}
