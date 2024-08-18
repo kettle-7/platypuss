@@ -105,7 +105,12 @@ function MiddleSection({shown}) {
       <div id="messageArea">{Object.values(states.focusedRoomRenderedMessages).map(message => <Message/>)}</div>
       <div id="belowMessageArea"></div>
     </div>
-    <div id="belowScrolledArea"></div>
+    <div style={{height:5,background:"linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3))"}}></div>
+    <div id="belowScrolledArea">
+      <div contentEditable id="messageBox"></div>
+      <button>upload</button>
+      <button>send</button>
+    </div>
   </div>);
 }
 
@@ -122,15 +127,16 @@ function ServerIcon({server}) {
 }
 
 function RoomLink({room}) {
-  return (<div className="roomLink">
+  return (<div className="roomLink" style={{cursor:"pointer"}}>
     <a>{room.name}</a>
   </div>);
 }
 
 function RoomsBar({shown}) {
   return (<div className="sidebar" id="roomsBar" style={{display: shown ? "flex" : "none"}}>
-    <div id="serverTitle"><h3 style={{margin: 5}}>server name goes here ???</h3></div>
-    {Object.values(states.focusedServerRenderedRooms).map(room => (<ServerIcon server={room}></ServerIcon>))}
+    <div id="serverTitle"><h3 style={{margin: 5, cursor: "pointer"}}>server name goes here ???</h3>
+    <span class="material-symbols-outlined">stat_minus_1</span></div>
+    {Object.values(states.focusedServerRenderedRooms).map(room => (<RoomLink server={room}></RoomLink>))}
     {Object.values(states.focusedServerRenderedRooms).length == 0 ? <p>This server doesn't have any rooms in it.</p> : <></>}
   </div>);
 }
@@ -179,11 +185,12 @@ async function loadView() {
         }
       };
       // get this information from the server
-      fetch(pageUrl.protocol + "//"+ip.toString()+"/"+subserver).then(response => response.json()).then(serverManifest => {
+      fetch(pageUrl.protocol + "//"+ip+"/"+subserver).then(response => response.json()).then(serverManifest => {
         servers = states.servers;
         servers[serverCode].setManifest(serverManifest);
         states.setServers(servers);
       }).catch(error => {console.log(error)});
+      let socket = new WebSocket((pageUrl.protocol == "https:" ? "wss:" : "ws") + "//" + ip);
     }
     // update our list of servers and if no server is currently focused pick the first one
     console.log(servers);

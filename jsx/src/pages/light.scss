@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ************************************************************************/
 
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
 @import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
 
 .material-symbols-outlined {
@@ -199,7 +200,7 @@ a {
     flex-grow: 1;
     @media screen and (min-width: 20cm) {
         flex-grow: 1;
-        max-width: 25%;
+        max-width: 20%;
     }
 }
 
@@ -207,6 +208,7 @@ a {
     display: flex;
     height: 100%;
     width: 100%;
+    overflow: hidden;
 }
 
 #scrolledArea {
@@ -235,12 +237,13 @@ a {
     height: 48px;
     object-fit: cover;
     border-radius: 20%;
-    background: $background-level4;
+    background: $background-level3;
     flex-shrink: 0;
     display: flex;
     justify-content: space-evenly;
     align-items: center;
     font-size: xx-large;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .popoverContainer .serverIconPopover {
@@ -255,4 +258,50 @@ a {
 
 .popoverContainer:hover .serverIconPopover {
     display: inline-block;
+}
+
+#belowScrolledArea {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    flex-shrink: 0;
+    flex-grow: 0;
+    background: $background-level4;
+    padding: 5px;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+#belowScrolledArea button {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+}
+
+#messageBox {
+    flex-grow: 1;
+    font-weight: normal;
+    background: $background-level2;
+    border-color: #888888;
+    box-shadow: 2px 2px 2px #1b1b1b88 inset;
+    border-radius: 10px;
+    min-height: 48px;
+    max-height: 33vh;
+    overflow: scroll;
+    overflow-wrap: anywhere;
+    padding: 5px;
+}
+
+#serverTitle {
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+    align-items: center;
+}
+
+#serverTitle h3 {
+    flex-shrink: 1;
+    text-overflow: ellipsis;
+    text-wrap: nowrap;
+    overflow: hidden;
 }

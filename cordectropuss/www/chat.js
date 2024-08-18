@@ -1137,9 +1137,9 @@ function clientLoad() {
                 sockets[serveur] = ws;
                 ws.send(JSON.stringify({
                     eventType: "login",
-                    ogip: ogip,
-                    code: code,
-                    sid: sers.servers[serveur]
+                    subserver: ogip,
+                    inviteCode: code,
+                    sessionID: sers.servers[serveur]
                 }));
             };
             ws.onclose = () => {

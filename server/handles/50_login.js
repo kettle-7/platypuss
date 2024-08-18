@@ -22,7 +22,7 @@ const { User, availablePerms } = require("./platypussDefaults.js");
 module.exports = {
     eventType: "login",
     execute: function (sdata, wss, packet, clients) {
-        if (packet.code != sdata.properties.inviteCode) {
+        if (packet.inviteCode != sdata.properties.inviteCode) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
                 code: "invalidInvite",
@@ -30,7 +30,7 @@ module.exports = {
             }));
             return;
         }
-        https.get(`${sdata.properties.authAddr}/uinfo?id=${packet.sid}`, (res) => {
+        https.get(`${sdata.properties.authAddr}/uinfo?id=${packet.sessionID}`, (res) => {
             let chunks = [];
             res.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
             res.on('error', (err) => reject(err));

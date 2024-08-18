@@ -164,7 +164,7 @@ functionality."
                         return;
                     }
                     if (eventType === "login" && eventType in handlers) {
-                        if (!packet.ogip) {
+                        if (!packet.subserver) {
                             packet.ws.send(JSON.stringify({
                                 eventType: "error",
                                 code: "missingSubserverID",
@@ -176,7 +176,7 @@ of the invite code."
                             return;
                         }
                         
-                        if (!(packet.ogip in conf)) {
+                        if (!(packet.subserver in conf)) {
                             ws.send(JSON.stringify({
                                 eventType: "error",
                                 code: "nonExistent",
@@ -187,7 +187,7 @@ of the invite code."
                         if (!clientses[ws.ogip]) {
                             clientses[ws.ogip] = [];
                         }
-                        ws.ogip = packet.ogip;
+                        ws.ogip = packet.subserver;
                         clientses[ws.ogip].push(ws);
                     }
                     if (eventType in handlers) {
