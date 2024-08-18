@@ -86,11 +86,11 @@ function PeersBar({focusedServer, shown}) {
 }
 
 // Renders a single message
-function Message({message}) {
+async function Message({message}) {
   return (<div className="message1">
-    <img src={userCache[message.author].avatar} alt=""/>
+    <img src={await(fetchUser(message.author)).avatar} alt=""/>
     <div className="message2">
-      <h3 className="messageUsernameDisplay">{userCache[message.author].username}</h3>
+      <h3 className="messageUsernameDisplay">{await(fetchUser(message.author)).username}</h3>
       <p>{message.content}</p>
     </div>
   </div>);
@@ -102,7 +102,7 @@ function MiddleSection({shown}) {
     <div id="aboveScrolledArea"></div>
     <div id="scrolledArea"> {/* Has a scrollbar, contains load more messages button but not message typing box */}
       <div id="aboveMessageArea"></div>
-      <div id="messageArea">{Object.values(states.focusedRoomRenderedMessages).map(message => <Message/>)}</div>
+      <div id="messageArea">{Object.values(states.focusedRoomRenderedMessages).map(message => <Message message={message}/>)}</div>
       <div id="belowMessageArea"></div>
     </div>
     <div style={{height:5,background:"linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3))"}}></div>
@@ -148,7 +148,7 @@ export const Head = () => (
 
 async function loadView() {
   // don't try load the client as part of the page compiling
-  if (typeof window === "undefined") return;
+  if (!browser) return;
   // connect to the authentication server to get the list of server's we're in and their session tokens
   for (let message of Object.keys(states.focusedRoomRenderedMessages)) {
     delete states.focusedRoomRenderedMessages[message];
@@ -174,6 +174,7 @@ async function loadView() {
       let subserver = splitServerCode[2];
       servers[serverCode] = { // add this server to our list of servers, making an icon
         ip: ip,
+        serverCode: serverCode,
         inviteCode: inviteCode,
         subserver: subserver,
         manifest: { // we haven't actually heard from the server itself what its icon, name etc are
@@ -190,7 +191,39 @@ async function loadView() {
         servers[serverCode].setManifest(serverManifest);
         states.setServers(servers);
       }).catch(error => {console.log(error)});
+      // Open a socket connection with the server
       let socket = new WebSocket((pageUrl.protocol == "https:" ? "wss:" : "ws") + "//" + ip);
+      socket.onerror = () => {
+        // The server's disconnected, in which case if we're focusing on it we should focus on a different server
+        console.error(`Warning: couldn't connect to ${ip}, try check your internet connection or inform the owner(s) of the server.`);
+        if (states.focusedServer.serverCode == serverCode) {
+          // window.location.reload();
+        }
+      };
+      socket.onopen = () => { // Send a login packet to the server once the connection is made
+        openSockets[serverCode] = socket;
+        socket.send(JSON.stringify({
+          eventType: "login",
+          subserver: subserver,
+          inviteCode: inviteCode,
+          sessionID: data.servers[serverCode]
+        }));
+      };
+      socket.onclose = () => {
+        // same as onerror above
+        console.error(`Warning, the server at ${ip} closed.`);
+        if (states.focusedServer.serverCode == serverCode) {
+          // window.location.reload();
+        }
+      };
+      socket.onmessage = async event => {
+        let packet = JSON.parse(event.data);
+        switch (packet.eventType) {
+          case "message":
+            if (states.focusedServer.serverCode !== serverCode) break;
+            states.focusedRoomRenderedMessages[packet.message.id] = packet.message;
+        }
+      };
     }
     // update our list of servers and if no server is currently focused pick the first one
     console.log(servers);
