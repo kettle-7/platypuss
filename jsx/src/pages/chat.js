@@ -79,9 +79,9 @@ function ServersBar({shown}) {
 }
 
 // The bar on the right showing other server members
-function PeersBar({focusedServer, shown}) {
+function PeersBar({shown}) {
   return (<div className="sidebar" id="serversBar" style={{display: shown ? "flex" : "none"}}>
-    <img className="serverIcon material-symbols-outlined" src="" alt="+" id="newServerButton"/>
+    peers<img className="serverIcon material-symbols-outlined" src="" alt="+" id="newServerButton"/>
   </div>);
 }
 
@@ -134,7 +134,9 @@ function RoomLink({room}) {
 
 function RoomsBar({shown}) {
   return (<div className="sidebar" id="roomsBar" style={{display: shown ? "flex" : "none"}}>
-    <div id="serverTitle"><h3 style={{margin: 5, cursor: "pointer"}}>server name goes here ???</h3>
+    <div id="serverTitle" style={{cursor: "pointer"}}><h3 style={{margin: 5}}>
+      {states.focusedServer.manifest.title || "Loading servers..."}
+    </h3>
     <span class="material-symbols-outlined">stat_minus_1</span></div>
     {Object.values(states.focusedServerRenderedRooms).map(room => (<RoomLink server={room}></RoomLink>))}
     {Object.values(states.focusedServerRenderedRooms).length == 0 ? <p>This server doesn't have any rooms in it.</p> : <></>}
@@ -167,7 +169,7 @@ async function loadView() {
       }
     }
     let servers = {};
-    for (let serverCode of Object.keys(data.servers)) {
+    for (let serverCode in data.servers) {
       let splitServerCode = serverCode.split(' '); // take the data the authentication server gives us about the server and use it to connect
       let ip = splitServerCode[0];
       let inviteCode = splitServerCode[1];
@@ -208,6 +210,9 @@ async function loadView() {
           inviteCode: inviteCode,
           sessionID: data.servers[serverCode]
         }));
+        if (states.focusedServer == {manifest:{}}) {
+          states.setFocusedServer(states.servers[serverCode]);
+        }
       };
       socket.onclose = () => {
         // same as onerror above
@@ -228,9 +233,6 @@ async function loadView() {
     // update our list of servers and if no server is currently focused pick the first one
     console.log(servers);
     states.setServers(servers);
-    if (states.focusedServer == {manifest:{}}) {
-      states.setFocusedServer(states.servers[Object.keys(data.servers)[0]]);
-    }
   }).catch(error => console.log(error));
 }
 
@@ -243,12 +245,12 @@ export default function ChatPage() {
   [states.focusedRoom, states.setFocusedRoom] = React.useState({}); // An object representing the currently focused room
   [states.focusedServerRenderedRooms, states.setFocusedServerRenderedRooms] = React.useState({}); // The <RoomLink/> elements in the sidebar for this server
   [states.mobileSidebarShown, states.setMobileSidebarShown] = React.useState(true); // whether to show the sidebar on mobile devices, is open by default when you load the page
-  [states.useMobileUI, states.setUseMobileUI] = React.useState(browser ? (window.innerWidth * 2.54 / 96 / window.devicePixelRatio) < 20 : false); // Use mobile UI if the screen is less than 20cm wide
+  [states.useMobileUI, states.setUseMobileUI] = React.useState(browser ? (window.innerWidth * 2.54 / 96) < 20 : false); // Use mobile UI if the screen is less than 20cm wide
 
   // respond to changes in screen width
   if (browser)
   window.addEventListener("resize", () => {
-    states.setUseMobileUI(browser ? (window.innerWidth * 2.54 / 96 / window.devicePixelRatio) < 20 : false);
+    states.setUseMobileUI(browser ? (window.innerWidth * 2.54 / 96) < 20 : false);
   });
 
   console.log(states.populated);
