@@ -86,12 +86,18 @@ function PeersBar({shown}) {
 }
 
 // Renders a single message
-async function Message({message}) {
+function Message({message}) {
+  // We might have the author cached already, if not we'll just get them later
+  let [author, setAuthor] = React.useState(userCache[message.author] || {
+    avatar: "https://img.freepik.com/premium-vector/hand-drawn-cartoon-doodle-skull-funny-cartoon-skull-isolated-white-background_217204-944.jpg",
+    username: "Deleted User"
+  });
+  fetchUser(message.author).then(newAuthor=>{setAuthor(newAuthor)});
   return (<div className="message1">
-    <img src={await(fetchUser(message.author)).avatar} alt=""/>
+    <img src={author.avatar} alt="" className="avatar"/>
     <div className="message2">
-      <h3 className="messageUsernameDisplay">{await(fetchUser(message.author)).username}</h3>
-      <p>{message.content}</p>
+      <h3 className="messageUsernameDisplay">{author.username}</h3>
+      <p>{message.content.toString()}</p>
     </div>
   </div>);
 }
@@ -120,24 +126,32 @@ function ServerIcon({server}) {
     icon: "",
     title: "Couldn't connect to this server 🐙"
   });
+  console.log(server);
   return (<div className="popoverContainer">
-    <img className="serverIcon" src={server.manifest.icon} alt="🐙"/>
+    <img className="serverIcon" src={server.manifest.icon} alt="🐙" onClick={()=>{
+      states.setFocusedServer(server.serverCode);
+      loadView(server.serverCode);
+    }}/>
     <div className="serverIconPopover">{server.manifest.title}</div>
   </div>);
 }
 
+// a comment
 function RoomLink({room}) {
   return (<div className="roomLink" style={{cursor:"pointer"}}>
     <a>{room.name}</a>
   </div>);
 }
 
+// A SLIGHTLY DIFFERENT COMMENT
 function RoomsBar({shown}) {
   return (<div className="sidebar" id="roomsBar" style={{display: shown ? "flex" : "none"}}>
-    <div id="serverTitle" style={{cursor: "pointer"}}><h3 style={{margin: 5}}>
-      {states.focusedServer.manifest.title || "Loading servers..."}
+    <div id="serverTitle" style={{cursor: "pointer", backgroundImage: states.focusedServer ? states.servers[states.focusedServer].manifest.icon : ""}}>
+    <h3 style={{margin: 5}}>
+      {states.focusedServer ? states.servers[states.focusedServer].manifest.title : "Loading servers..."}
     </h3>
-    <span class="material-symbols-outlined">stat_minus_1</span></div>
+    <div style={{flexGrow: 1}}></div>
+    <span className="material-symbols-outlined">stat_minus_1</span></div>
     {Object.values(states.focusedServerRenderedRooms).map(room => (<RoomLink server={room}></RoomLink>))}
     {Object.values(states.focusedServerRenderedRooms).length == 0 ? <p>This server doesn't have any rooms in it.</p> : <></>}
   </div>);
@@ -148,24 +162,21 @@ export const Head = () => (
   <title>(Beta!) Platypuss</title>
 );
 
-async function loadView() {
+async function loadView(switchToServer) {
   // don't try load the client as part of the page compiling
   if (!browser) return;
-  // connect to the authentication server to get the list of server's we're in and their session tokens
-  for (let message of Object.keys(states.focusedRoomRenderedMessages)) {
-    delete states.focusedRoomRenderedMessages[message];
-  }
+  // delete all messages
   states.setFocusedRoomRenderedMessages({});
+  // connect to the authentication server to get the list of server's we're in and their session tokens
   fetch(`${authUrl}/getServerTokens?id=${localStorage.getItem("sessionID")}`).then(data => data.json()).then(async function(data) {
     for (let socket of Object.values(openSockets)) {
       socket.close();
     }
     for (let serverName in data.servers) { // this for loop lets us keep the same server focused between reloads
       serverHashes[serverName] = hashPassword(serverName); // it's not a password but who cares
-      if (states.focusedServer == {manifest:{}}) {
-        if (window.location.toString().replace(/^.*\#/g, "") == serverHashes[serverName]) {
-          states.setFocusedServer(serverName);
-        }
+      if (window.location.toString().replace(/^.*\#/g, "") == serverHashes[serverName] && !switchToServer) {
+        console.log("focusing a server");
+        states.setFocusedServer(serverName);
       }
     }
     let servers = {};
@@ -189,19 +200,19 @@ async function loadView() {
       };
       // get this information from the server
       fetch(pageUrl.protocol + "//"+ip+"/"+subserver).then(response => response.json()).then(serverManifest => {
-        servers = states.servers;
         servers[serverCode].setManifest(serverManifest);
-        states.setServers(servers);
       }).catch(error => {console.log(error)});
       // Open a socket connection with the server
       let socket = new WebSocket((pageUrl.protocol == "https:" ? "wss:" : "ws") + "//" + ip);
+
       socket.onerror = () => {
         // The server's disconnected, in which case if we're focusing on it we should focus on a different server
         console.error(`Warning: couldn't connect to ${ip}, try check your internet connection or inform the owner(s) of the server.`);
-        if (states.focusedServer.serverCode == serverCode) {
+        if (states.focusedServer == serverCode) {
           // window.location.reload();
         }
       };
+
       socket.onopen = () => { // Send a login packet to the server once the connection is made
         openSockets[serverCode] = socket;
         socket.send(JSON.stringify({
@@ -210,28 +221,47 @@ async function loadView() {
           inviteCode: inviteCode,
           sessionID: data.servers[serverCode]
         }));
-        if (states.focusedServer == {manifest:{}}) {
-          states.setFocusedServer(states.servers[serverCode]);
+        if (!states.servers[states.focusedServer]) {
+          console.log(switchToServer, states.servers);
+          if (states.servers[switchToServer]) {
+            states.setFocusedServer(switchToServer);
+          } else {
+            console.log("focusing a server");
+            states.setFocusedServer(serverCode);
+          }
         }
       };
+
       socket.onclose = () => {
         // same as onerror above
         console.error(`Warning, the server at ${ip} closed.`);
-        if (states.focusedServer.serverCode == serverCode) {
+        if (states.focusedServer == serverCode) {
           // window.location.reload();
         }
       };
+
       socket.onmessage = async event => {
         let packet = JSON.parse(event.data);
+        let renderedMessages;
         switch (packet.eventType) {
           case "message":
-            if (states.focusedServer.serverCode !== serverCode) break;
-            states.focusedRoomRenderedMessages[packet.message.id] = packet.message;
+            if (states.focusedServer !== serverCode) break;
+            renderedMessages = {...states.focusedRoomRenderedMessages};
+            renderedMessages[packet.message.id] = packet.message;
+            states.setFocusedRoomRenderedMessages(renderedMessages);
+            break;
+          case "messages":
+            if (states.focusedServer !== serverCode) break;
+            renderedMessages = {...states.focusedRoomRenderedMessages};
+            for (let message of packet.messages) {
+              renderedMessages[message.id] = message;
+            }
+            states.setFocusedRoomRenderedMessages(renderedMessages);
+            break;
         }
       };
     }
     // update our list of servers and if no server is currently focused pick the first one
-    console.log(servers);
     states.setServers(servers);
   }).catch(error => console.log(error));
 }
@@ -241,7 +271,7 @@ export default function ChatPage() {
   // set a bunch of empty React state objects for stuff that needs to be accessed throughout the program
   [states.servers, states.setServers] = React.useState({}); // Data related to servers the user is in
   [states.focusedRoomRenderedMessages, states.setFocusedRoomRenderedMessages] = React.useState({}); // The <Message/> elements shown in the view, set in ChatPage
-  [states.focusedServer, states.setFocusedServer] = React.useState({manifest:{}}); // An object representing the currently focused server
+  [states.focusedServer, states.setFocusedServer] = React.useState(null); // An object representing the currently focused server
   [states.focusedRoom, states.setFocusedRoom] = React.useState({}); // An object representing the currently focused room
   [states.focusedServerRenderedRooms, states.setFocusedServerRenderedRooms] = React.useState({}); // The <RoomLink/> elements in the sidebar for this server
   [states.mobileSidebarShown, states.setMobileSidebarShown] = React.useState(true); // whether to show the sidebar on mobile devices, is open by default when you load the page
@@ -253,12 +283,11 @@ export default function ChatPage() {
     states.setUseMobileUI(browser ? (window.innerWidth * 2.54 / 96) < 20 : false);
   });
 
-  console.log(states.populated);
   if (!states.populated) loadView();
   states.populated = true;
   // return the basic page layout
   return (<>
-    <Common.PageHeader title={states.focusedServer.manifest.title} iconClickEvent={() => {
+    <Common.PageHeader iconClickEvent={() => {
       if (states.useMobileUI) {
         states.setMobileSidebarShown(!states.mobileSidebarShown);
       } else {
