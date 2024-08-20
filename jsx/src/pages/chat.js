@@ -18,7 +18,6 @@
 
 import * as Common from "../components/common";
 import Markdown from 'markdown-to-jsx';
-import 'highlight.js/styles/github.css';
 import hljs from 'highlight.js';
 import * as React from "react";
 import "./light.scss";
@@ -39,7 +38,10 @@ const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-
 pageUrl.protocol = "https"; // remove this in production
 
 const markdownOptions = {
-  disableParsingRawHTML: true
+  disableParsingRawHTML: true, // poses a security thread we don't need
+  overrides: {
+    code: SyntaxHighlightedCode
+  }
 };
 
 // thanks bryc on stack overflow ^w^
@@ -58,6 +60,21 @@ function hashPassword (str, seed = 20) { // hashes things somehow
 
     return (h2>>>0).toString(16).padStart(8,0)+(h1>>>0).toString(16).padStart(8,0);
 };
+
+function SyntaxHighlightedCode(props) {
+  const ref = React.useRef(null);
+
+  React.useEffect(() => {
+    if (ref.current && props.className?.includes('lang-') && hljs) {
+      hljs.highlightElement(ref.current)
+
+      // hljs won't reprocess the element unless this attribute is removed
+      ref.current.removeAttribute('data-highlighted')
+    }
+  }, [props.className, props.children])
+
+  return <code {...props} ref={ref} />
+}
 
 // Fetch data on one user, from cache if possible but from the authentication server otherwise
 function fetchUser(id) {
