@@ -17,6 +17,9 @@
 // °^° i am pingu
 
 import * as Common from "../components/common";
+import Markdown from 'markdown-to-jsx';
+import 'highlight.js/styles/github.css';
+import hljs from 'highlight.js';
 import * as React from "react";
 import "./light.scss";
 
@@ -34,6 +37,10 @@ var pageUrl = browser ? new URL(window.location) : new URL("http://localhost:800
 var authUrl = "https://platypuss.net"; // Authentication server, you shouldn't have to change this but it's a variable just in case
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
 pageUrl.protocol = "https"; // remove this in production
+
+const markdownOptions = {
+  disableParsingRawHTML: true
+};
 
 // thanks bryc on stack overflow ^w^
 function hashPassword (str, seed = 20) { // hashes things somehow
@@ -91,7 +98,7 @@ async function Message({message}) {
     <img src={await(fetchUser(message.author)).avatar} alt=""/>
     <div className="message2">
       <h3 className="messageUsernameDisplay">{await(fetchUser(message.author)).username}</h3>
-      <p>{message.content}</p>
+      <Markdown options={markdownOptions}>{message.content}</Markdown>
     </div>
   </div>);
 }
