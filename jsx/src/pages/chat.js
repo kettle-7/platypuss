@@ -86,18 +86,24 @@ function ServersBar({shown}) {
 }
 
 // The bar on the right showing other server members
-function PeersBar({focusedServer, shown}) {
+function PeersBar({shown}) {
   return (<div className="sidebar" id="serversBar" style={{display: shown ? "flex" : "none"}}>
     <img className="serverIcon material-symbols-outlined" src="" alt="+" id="newServerButton"/>
   </div>);
 }
 
 // Renders a single message
-async function Message({message}) {
+function Message({message}) {
+  // We might have the author cached already, if not we'll just get them later
+  let [author, setAuthor] = React.useState(userCache[message.author] || {
+    avatar: "https://img.freepik.com/premium-vector/hand-drawn-cartoon-doodle-skull-funny-cartoon-skull-isolated-white-background_217204-944.jpg",
+    username: "Deleted User"
+  });
+  fetchUser(message.author).then(newAuthor=>{setAuthor(newAuthor)});
   return (<div className="message1">
-    <img src={await(fetchUser(message.author)).avatar} alt=""/>
+    <img src={author.avatar} alt="" className="avatar"/>
     <div className="message2">
-      <h3 className="messageUsernameDisplay">{await(fetchUser(message.author)).username}</h3>
+      <h3 className="messageUsernameDisplay">{author.username}</h3>
       <Markdown options={markdownOptions}>{message.content}</Markdown>
     </div>
   </div>);
@@ -114,11 +120,28 @@ function MiddleSection({shown}) {
     </div>
     <div style={{height:5,background:"linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3))"}}></div>
     <div id="belowScrolledArea">
-      <div contentEditable id="messageBox"></div>
-      <button>upload</button>
-      <button>send</button>
+      <div contentEditable id="messageBox" onKeyDown={event=>{
+        if (event.key == "Enter" && !states.useMobileUI && !event.shiftKey) {
+          triggerMessageSend();
+          event.preventDefault();
+        }
+      }}></div>
+      <button className="material-symbols-outlined">publish</button>
+      <button className="material-symbols-outlined" onClick={triggerMessageSend}>send</button>
     </div>
   </div>);
+}
+
+function triggerMessageSend() {
+  let socket = openSockets[states.focusedServer];
+  let messageTextBox = document.getElementById("messageBox");
+  socket.send(JSON.stringify({
+    "eventType": "message",
+    "message": {
+      "content": messageTextBox.innerText
+    }
+  }));
+  messageTextBox.innerHTML = "";
 }
 
 // a server icon button thing
@@ -128,21 +151,30 @@ function ServerIcon({server}) {
     title: "Couldn't connect to this server 🐙"
   });
   return (<div className="popoverContainer">
-    <img className="serverIcon" src={server.manifest.icon} alt="🐙"/>
+    <img className="serverIcon" src={server.manifest.icon} alt="🐙" onClick={()=>{
+      states.setFocusedServer(server.serverCode);
+      loadView(server.serverCode);
+    }}/>
     <div className="serverIconPopover">{server.manifest.title}</div>
   </div>);
 }
 
+// a comment
 function RoomLink({room}) {
   return (<div className="roomLink" style={{cursor:"pointer"}}>
     <a>{room.name}</a>
   </div>);
 }
 
+// A SLIGHTLY DIFFERENT COMMENT
 function RoomsBar({shown}) {
   return (<div className="sidebar" id="roomsBar" style={{display: shown ? "flex" : "none"}}>
-    <div id="serverTitle"><h3 style={{margin: 5, cursor: "pointer"}}>server name goes here ???</h3>
-    <span class="material-symbols-outlined">stat_minus_1</span></div>
+    <div id="serverTitle" style={{cursor: "pointer", backgroundImage: states.focusedServer ? states.servers[states.focusedServer].manifest.icon : ""}}>
+    <h3 style={{margin: 5}}>
+      {states.focusedServer ? states.servers[states.focusedServer].manifest.title : "Loading servers..."}
+    </h3>
+    <div style={{flexGrow: 1}}></div>
+    <span className="material-symbols-outlined">stat_minus_1</span></div>
     {Object.values(states.focusedServerRenderedRooms).map(room => (<RoomLink server={room}></RoomLink>))}
     {Object.values(states.focusedServerRenderedRooms).length == 0 ? <p>This server doesn't have any rooms in it.</p> : <></>}
   </div>);
@@ -153,28 +185,24 @@ export const Head = () => (
   <title>(Beta!) Platypuss</title>
 );
 
-async function loadView() {
+async function loadView(switchToServer) {
   // don't try load the client as part of the page compiling
   if (!browser) return;
-  // connect to the authentication server to get the list of server's we're in and their session tokens
-  for (let message of Object.keys(states.focusedRoomRenderedMessages)) {
-    delete states.focusedRoomRenderedMessages[message];
-  }
+  // delete all messages
   states.setFocusedRoomRenderedMessages({});
+  // connect to the authentication server to get the list of server's we're in and their session tokens
   fetch(`${authUrl}/getServerTokens?id=${localStorage.getItem("sessionID")}`).then(data => data.json()).then(async function(data) {
     for (let socket of Object.values(openSockets)) {
       socket.close();
     }
     for (let serverName in data.servers) { // this for loop lets us keep the same server focused between reloads
       serverHashes[serverName] = hashPassword(serverName); // it's not a password but who cares
-      if (states.focusedServer == {manifest:{}}) {
-        if (window.location.toString().replace(/^.*\#/g, "") == serverHashes[serverName]) {
-          states.setFocusedServer(serverName);
-        }
+      if (window.location.toString().replace(/^.*\#/g, "") == serverHashes[serverName] && !switchToServer) {
+        states.setFocusedServer(serverName);
       }
     }
     let servers = {};
-    for (let serverCode of Object.keys(data.servers)) {
+    for (let serverCode in data.servers) {
       let splitServerCode = serverCode.split(' '); // take the data the authentication server gives us about the server and use it to connect
       let ip = splitServerCode[0];
       let inviteCode = splitServerCode[1];
@@ -194,19 +222,19 @@ async function loadView() {
       };
       // get this information from the server
       fetch(pageUrl.protocol + "//"+ip+"/"+subserver).then(response => response.json()).then(serverManifest => {
-        servers = states.servers;
         servers[serverCode].setManifest(serverManifest);
-        states.setServers(servers);
       }).catch(error => {console.log(error)});
       // Open a socket connection with the server
       let socket = new WebSocket((pageUrl.protocol == "https:" ? "wss:" : "ws") + "//" + ip);
+
       socket.onerror = () => {
         // The server's disconnected, in which case if we're focusing on it we should focus on a different server
         console.error(`Warning: couldn't connect to ${ip}, try check your internet connection or inform the owner(s) of the server.`);
-        if (states.focusedServer.serverCode == serverCode) {
+        if (states.focusedServer == serverCode) {
           // window.location.reload();
         }
       };
+
       socket.onopen = () => { // Send a login packet to the server once the connection is made
         openSockets[serverCode] = socket;
         socket.send(JSON.stringify({
@@ -215,29 +243,64 @@ async function loadView() {
           inviteCode: inviteCode,
           sessionID: data.servers[serverCode]
         }));
+        if (!states.servers[states.focusedServer]) {
+          if (states.servers[switchToServer]) {
+            states.setFocusedServer(switchToServer);
+          } else {
+            states.setFocusedServer(serverCode);
+          }
+        }
       };
+
       socket.onclose = () => {
         // same as onerror above
         console.error(`Warning, the server at ${ip} closed.`);
-        if (states.focusedServer.serverCode == serverCode) {
+        if (states.focusedServer == serverCode) {
           // window.location.reload();
         }
       };
+
       socket.onmessage = async event => {
         let packet = JSON.parse(event.data);
+        let renderedMessages;
         switch (packet.eventType) {
           case "message":
-            if (states.focusedServer.serverCode !== serverCode) break;
-            states.focusedRoomRenderedMessages[packet.message.id] = packet.message;
+            if (document.visibilityState == "hidden" && data.userId != packet.message.author)
+              new Audio(authUrl+'/randomsand.wav').play();
+            if (states.focusedServer !== serverCode) break;
+            renderedMessages = {...states.focusedRoomRenderedMessages};
+            renderedMessages[packet.message.id] = packet.message;
+            states.setFocusedRoomRenderedMessages(renderedMessages);
+            break;
+          case "messages":
+            if (states.focusedServer !== serverCode) break;
+            renderedMessages = {...states.focusedRoomRenderedMessages};
+            for (let message of packet.messages) {
+              renderedMessages[message.id] = message;
+            }
+            states.setFocusedRoomRenderedMessages(renderedMessages);
+            break;
+          case "connecting":
+            break;
+          default:
+            if ("explanation" in packet && states.focusedServer === serverCode) {
+              renderedMessages = {...states.focusedRoomRenderedMessages};
+              let randomString = Math.random().toString();
+              renderedMessages[randomString] = {
+                special: true,
+                author: null,
+                content: packet.explanation.toString(),
+                id: randomString
+              };
+              states.setFocusedRoomRenderedMessages(renderedMessages);
+            }
+            console.log(packet.explanation);
+            break;
         }
       };
     }
     // update our list of servers and if no server is currently focused pick the first one
-    console.log(servers);
     states.setServers(servers);
-    if (states.focusedServer == {manifest:{}}) {
-      states.setFocusedServer(states.servers[Object.keys(data.servers)[0]]);
-    }
   }).catch(error => console.log(error));
 }
 
@@ -246,24 +309,23 @@ export default function ChatPage() {
   // set a bunch of empty React state objects for stuff that needs to be accessed throughout the program
   [states.servers, states.setServers] = React.useState({}); // Data related to servers the user is in
   [states.focusedRoomRenderedMessages, states.setFocusedRoomRenderedMessages] = React.useState({}); // The <Message/> elements shown in the view, set in ChatPage
-  [states.focusedServer, states.setFocusedServer] = React.useState({manifest:{}}); // An object representing the currently focused server
+  [states.focusedServer, states.setFocusedServer] = React.useState(null); // An object representing the currently focused server
   [states.focusedRoom, states.setFocusedRoom] = React.useState({}); // An object representing the currently focused room
   [states.focusedServerRenderedRooms, states.setFocusedServerRenderedRooms] = React.useState({}); // The <RoomLink/> elements in the sidebar for this server
   [states.mobileSidebarShown, states.setMobileSidebarShown] = React.useState(true); // whether to show the sidebar on mobile devices, is open by default when you load the page
-  [states.useMobileUI, states.setUseMobileUI] = React.useState(browser ? (window.innerWidth * 2.54 / 96 / window.devicePixelRatio) < 20 : false); // Use mobile UI if the screen is less than 20cm wide
+  [states.useMobileUI, states.setUseMobileUI] = React.useState(browser ? (window.innerWidth * 2.54 / 96) < 20 : false); // Use mobile UI if the screen is less than 20cm wide
 
-  // respond to changes in screen width
+  // respond to changes in screen width, TODO: seems to cause performance issues on wayland, need to look into it
   if (browser)
   window.addEventListener("resize", () => {
-    states.setUseMobileUI(browser ? (window.innerWidth * 2.54 / 96 / window.devicePixelRatio) < 20 : false);
+    states.setUseMobileUI(browser ? (window.innerWidth * 2.54 / 96) < 20 : false);
   });
 
-  console.log(states.populated);
   if (!states.populated) loadView();
   states.populated = true;
   // return the basic page layout
   return (<>
-    <Common.PageHeader title={states.focusedServer.manifest.title} iconClickEvent={() => {
+    <Common.PageHeader iconClickEvent={() => {
       if (states.useMobileUI) {
         states.setMobileSidebarShown(!states.mobileSidebarShown);
       } else {
