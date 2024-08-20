@@ -115,7 +115,16 @@ function MiddleSection({shown}) {
     <div id="belowScrolledArea">
       <div contentEditable id="messageBox"></div>
       <button>upload</button>
-      <button>send</button>
+      <button onClick={()=>{
+        let socket = openSockets[states.focusedServer];
+        let messageText = document.getElementById("messageBox").innerText;
+        socket.send(JSON.stringify({
+          "eventType": "message",
+          "message": {
+            "content": messageText
+          }
+        }));
+      }}>send</button>
     </div>
   </div>);
 }
