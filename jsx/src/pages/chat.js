@@ -81,7 +81,7 @@ function ServersBar({shown}) {
 // The bar on the right showing other server members
 function PeersBar({shown}) {
   return (<div className="sidebar" id="serversBar" style={{display: shown ? "flex" : "none"}}>
-    peers<img className="serverIcon material-symbols-outlined" src="" alt="+" id="newServerButton"/>
+    <img className="serverIcon material-symbols-outlined" src="" alt="+" id="newServerButton"/>
   </div>);
 }
 
@@ -113,20 +113,28 @@ function MiddleSection({shown}) {
     </div>
     <div style={{height:5,background:"linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3))"}}></div>
     <div id="belowScrolledArea">
-      <div contentEditable id="messageBox"></div>
+      <div contentEditable id="messageBox" onKeyDown={event=>{
+        if (event.key == "Enter" && !states.useMobileUI && !event.shiftKey) {
+          triggerMessageSend();
+          event.preventDefault();
+        }
+      }}></div>
       <button>upload</button>
-      <button onClick={()=>{
-        let socket = openSockets[states.focusedServer];
-        let messageText = document.getElementById("messageBox").innerText;
-        socket.send(JSON.stringify({
-          "eventType": "message",
-          "message": {
-            "content": messageText
-          }
-        }));
-      }}>send</button>
+      <button onClick={triggerMessageSend}>send</button>
     </div>
   </div>);
+}
+
+function triggerMessageSend() {
+  let socket = openSockets[states.focusedServer];
+  let messageTextBox = document.getElementById("messageBox");
+  socket.send(JSON.stringify({
+    "eventType": "message",
+    "message": {
+      "content": messageTextBox.innerText
+    }
+  }));
+  messageTextBox.innerHTML = "";
 }
 
 // a server icon button thing
@@ -135,7 +143,6 @@ function ServerIcon({server}) {
     icon: "",
     title: "Couldn't connect to this server 🐙"
   });
-  console.log(server);
   return (<div className="popoverContainer">
     <img className="serverIcon" src={server.manifest.icon} alt="🐙" onClick={()=>{
       states.setFocusedServer(server.serverCode);
@@ -184,7 +191,6 @@ async function loadView(switchToServer) {
     for (let serverName in data.servers) { // this for loop lets us keep the same server focused between reloads
       serverHashes[serverName] = hashPassword(serverName); // it's not a password but who cares
       if (window.location.toString().replace(/^.*\#/g, "") == serverHashes[serverName] && !switchToServer) {
-        console.log("focusing a server");
         states.setFocusedServer(serverName);
       }
     }
@@ -231,11 +237,9 @@ async function loadView(switchToServer) {
           sessionID: data.servers[serverCode]
         }));
         if (!states.servers[states.focusedServer]) {
-          console.log(switchToServer, states.servers);
           if (states.servers[switchToServer]) {
             states.setFocusedServer(switchToServer);
           } else {
-            console.log("focusing a server");
             states.setFocusedServer(serverCode);
           }
         }
@@ -267,6 +271,22 @@ async function loadView(switchToServer) {
             }
             states.setFocusedRoomRenderedMessages(renderedMessages);
             break;
+          case "connecting":
+            break;
+          default:
+            if ("explanation" in packet && states.focusedServer === serverCode) {
+              renderedMessages = {...states.focusedRoomRenderedMessages};
+              let randomString = Math.random().toString();
+              renderedMessages[randomString] = {
+                special: true,
+                author: null,
+                content: packet.explanation.toString(),
+                id: randomString
+              };
+              states.setFocusedRoomRenderedMessages(renderedMessages);
+            }
+            console.log(packet.explanation);
+            break;
         }
       };
     }
@@ -286,7 +306,7 @@ export default function ChatPage() {
   [states.mobileSidebarShown, states.setMobileSidebarShown] = React.useState(true); // whether to show the sidebar on mobile devices, is open by default when you load the page
   [states.useMobileUI, states.setUseMobileUI] = React.useState(browser ? (window.innerWidth * 2.54 / 96) < 20 : false); // Use mobile UI if the screen is less than 20cm wide
 
-  // respond to changes in screen width
+  // respond to changes in screen width, TODO: seems to cause performance issues on wayland, need to look into it
   if (browser)
   window.addEventListener("resize", () => {
     states.setUseMobileUI(browser ? (window.innerWidth * 2.54 / 96) < 20 : false);
