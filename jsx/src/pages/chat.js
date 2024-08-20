@@ -298,6 +298,10 @@ async function loadView(switchToServer) {
             states.setFocusedRoomRenderedMessages(renderedMessages);
             break;
           case "connecting":
+          case "connected":
+          case "disconnect":
+          case "join":
+          case "welcome":
             break;
           default:
             if ("explanation" in packet && states.focusedServer === serverCode) {

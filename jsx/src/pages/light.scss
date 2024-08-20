@@ -92,9 +92,9 @@ button {
 code {
     font-family: "Ubuntu Mono", "Lucida Sans Console", monospace, mono;
     background-color: $background-level4;
-    border: 1px solid $grey;
     border-radius: 5px;
-    padding: 5px !important;
+    padding: 3px !important;
+    overflow-wrap: anywhere;
 }
 
 code * {
@@ -112,7 +112,7 @@ pre {
     border: 2px solid $grey;
     border-radius: 5px;
     padding: 3px !important;
-    overflow-y: auto;
+    overflow-x: auto;
 }
 
 a {
@@ -236,6 +236,7 @@ a {
     flex-grow: 1;
     flex-shrink: 1;
     background: $background-level3;
+    overflow: hidden;
 }
 
 .serverIcon {
@@ -329,6 +330,7 @@ a {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    overflow: hidden;
 }
 
 .avatar {
