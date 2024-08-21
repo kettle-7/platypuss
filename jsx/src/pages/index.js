@@ -17,7 +17,7 @@
 
 import * as Common from "../components/common";
 import * as React from "react";
-import "./light.scss";
+import "./themery.scss";
 
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
 const authUrl = "https://platypuss.net"; // this shouldn't need to change but just in case
@@ -41,15 +41,6 @@ function hashPassword (str, seed = 20) { // hashes passwords somehow
 };
 
 var createNewAccount = false; // whether we're signing in or making a new account, signing in being false and default
-
-const headingStyles = {
-  marginTop: 0,
-  marginBottom: 64,
-  maxWidth: 320,
-};
-const paragraphStyles = {
-  marginBottom: 48,
-};
 
 function doTheLoginThingy() {
   fetch(`${authUrl}/login`, { // send this data to the authentication server, accepting a json response
@@ -81,21 +72,22 @@ const IndexPage = () => {
   passwordRef = React.useRef(null);
   secondPasswordRef = React.useRef(null);
   return (<>
-    <Common.PageHeader/>
-    <main id="mainPage">
+    <Common.PageHeader className="darkThemed"/>
+    <main id="mainPage" className="lightThemed">
       <a href="/chat">cat</a>
-      <h1 style={headingStyles}>
-        Congratulations
-        <br/>
-        <span>— you just made a Skill iSsue site! 🎉🎉🎉 :3</span>
+      <h1>
+        You found the Platypuss public beta!
       </h1>
-      <p style={paragraphStyles}>
-        Edit <code>src/pages/index.js</code> to see this page
-        update in real-time. 😎
+      <p>
+        This website sees new changes to the Platypuss client before they're published.
+        This means you get to try out new features and improvements before they make their way
+        to the main site. Beware though, many of the changes you see here aren't tested and may
+        break certain functionality. Should anything not work properly you're better off at
+        the <a href="https://platypuss.net">stable version</a> of the site.
       </p>
-      <div id="P" className="popupParent" style={{display: "flex"}} onMouseDown={()=>{return;document.getElementById('P').style.display = 'none'}}><div id="p" className="popup">
+      <div id="P" className="popupParent" style={{display: "flex"}}><div id="p" className="popup">
         <h2 id="lit1">Sign In</h2>
-        <span id="lit2">Welcome back! If you don't already have an account <br/> please <a href="#" onClick="su()">create an account</a> instead.</span>
+        <span id="lit2">Welcome back! If you don't already have an account <br/> please <a href="https://platypuss.net">create an account</a> instead.</span>
         <div id="loginform">
           <div style={{display:"grid",gridTemplateColumns:"auto auto"}}>
           {/* The four lines below contain a weird thing with anonymous functions, this is the only way I know of to assign the element to a variable and position it at the same time */}
@@ -108,7 +100,7 @@ const IndexPage = () => {
         </div>
       </div></div>
     </main>
-    <footer>links to stuff maybe</footer>
+    <footer className="lightThemed">links to stuff maybe</footer>
   </>);
 };
 

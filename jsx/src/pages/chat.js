@@ -20,7 +20,7 @@ import * as Common from "../components/common";
 import Markdown from 'markdown-to-jsx';
 import hljs from 'highlight.js';
 import * as React from "react";
-import "./light.scss";
+import "./themery.scss";
 
 var userCache = {}; // A cache of data on users so we don't constantly have to look it up
 var messageCache = {}; // The same but for messages, we might not need this
@@ -31,6 +31,7 @@ var peers = {}; // Keeps track of other people on the server (platonically of co
 var loadedMessages = 0; // The number of messages loaded in the current view, used when loading older messages
 var serverHashes = {}; // We can use these to get links to specific servers / maybe rooms in the future
 var browser = typeof window !== "undefined"; // check if we're running in a browser rather than the build environment
+var roomCache = {};
 
 var pageUrl = browser ? new URL(window.location) : new URL("http://localhost:8000"); // window is not defined in the testing environment so just assume localhost
 var authUrl = "https://platypuss.net"; // Authentication server, you shouldn't have to change this but it's a variable just in case
@@ -95,16 +96,16 @@ function fetchUser(id) {
 }
 
 // The bar on the left showing the servers you're in, also for navigation
-function ServersBar({shown}) {
-  return (<div className="sidebar" id="serversBar" style={{display: shown ? "flex" : "none"}}>
+function ServersBar({shown, className, ...props}) {
+  return (<div className={className + " sidebar"} id="serversBar" style={{display: shown ? "flex" : "none"}} {...props}>
     <img className="serverIcon" src="" alt="+" id="newServerButton"/>
     {Object.values(states.servers).map(server => (<ServerIcon server={server}></ServerIcon>))}
   </div>);
 }
 
 // The bar on the right showing other server members
-function PeersBar({shown}) {
-  return (<div className="sidebar" id="serversBar" style={{display: shown ? "flex" : "none"}}>
+function PeersBar({shown, className, ...props}) {
+  return (<div className={className + " sidebar"} id="serversBar" style={{display: shown ? "flex" : "none"}} {...props}>
     <img className="serverIcon material-symbols-outlined" src="" alt="+" id="newServerButton"/>
   </div>);
 }
@@ -127,12 +128,14 @@ function Message({message}) {
 }
 
 // The midsection between these two aforementioned bars
-function MiddleSection({shown}) {
-  return (<div id="middleSection" style={{display: shown ? "flex" : "none"}}>
+function MiddleSection({shown, className, ...props}) {
+  states.scrolledAreaRef = React.useRef(null);
+  console.log(states.focusedRoomRenderedMessages);
+  return (<div id="middleSection" className={className} style={{display: shown ? "flex" : "none"}} {...props}>
     <div id="aboveScrolledArea"></div>
-    <div id="scrolledArea"> {/* Has a scrollbar, contains load more messages button but not message typing box */}
+    <div id="scrolledArea" ref={states.scrolledAreaRef}> {/* Has a scrollbar, contains load more messages button but not message typing box */}
       <div id="aboveMessageArea"></div>
-      <div id="messageArea">{Object.values(states.focusedRoomRenderedMessages).map(message => <Message message={message}/>)}</div>
+      <div id="messageArea">{states.focusedRoomRenderedMessages.map(message => <Message message={message}/>)}</div>
       <div id="belowMessageArea"></div>
     </div>
     <div style={{height:5,background:"linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3))"}}></div>
@@ -184,8 +187,8 @@ function RoomLink({room}) {
 }
 
 // A SLIGHTLY DIFFERENT COMMENT
-function RoomsBar({shown}) {
-  return (<div className="sidebar" id="roomsBar" style={{display: shown ? "flex" : "none"}}>
+function RoomsBar({shown, className, ...props}) {
+  return (<div className={className + " sidebar"} id="roomsBar" style={{display: shown ? "flex" : "none"}} {...props}>
     <div id="serverTitle" style={{cursor: "pointer", backgroundImage: states.focusedServer ? states.servers[states.focusedServer].manifest.icon : ""}}>
     <h3 style={{margin: 5}}>
       {states.focusedServer ? states.servers[states.focusedServer].manifest.title : "Loading servers..."}
@@ -206,7 +209,7 @@ async function loadView(switchToServer) {
   // don't try load the client as part of the page compiling
   if (!browser) return;
   // delete all messages
-  states.setFocusedRoomRenderedMessages({});
+  states.setFocusedRoomRenderedMessages([]);
   // connect to the authentication server to get the list of server's we're in and their session tokens
   fetch(`${authUrl}/getServerTokens?id=${localStorage.getItem("sessionID")}`).then(data => data.json()).then(async function(data) {
     for (let socket of Object.values(openSockets)) {
@@ -282,20 +285,33 @@ async function loadView(switchToServer) {
         let renderedMessages;
         switch (packet.eventType) {
           case "message":
+            let scrolledArea = states.scrolledAreaRef.current;
             if (document.visibilityState == "hidden" && data.userId != packet.message.author)
               new Audio(authUrl+'/randomsand.wav').play();
             if (states.focusedServer !== serverCode) break;
-            renderedMessages = {...states.focusedRoomRenderedMessages};
-            renderedMessages[packet.message.id] = packet.message;
-            states.setFocusedRoomRenderedMessages(renderedMessages);
+            // cache the message and add it to the list to render
+            messageCache[packet.message.id] = packet.message;
+            states.setFocusedRoomRenderedMessages([
+              ...states.focusedRoomRenderedMessages,
+              messageCache[packet.message.id]
+            ]);
+            // scroll down to the message if we're near it
+            console.log(scrolledArea.scrollHeight, scrolledArea.scrollTop  + (2 * scrolledArea.clientHeight), scrolledArea.clientHeight);
+            if (scrolledArea.scrollHeight < scrolledArea.scrollTop  + (2 * scrolledArea.clientHeight)) {
+              scrolledArea.scrollTo(scrolledArea.scrollLeft, scrolledArea.scrollHeight - scrolledArea.clientHeight);
+            }
             break;
           case "messages":
+            //let messages = [];
             if (states.focusedServer !== serverCode) break;
-            renderedMessages = {...states.focusedRoomRenderedMessages};
             for (let message of packet.messages) {
-              renderedMessages[message.id] = message;
+              messageCache[message.id] = {...message};
+              //messages.push(message);
             }
-            states.setFocusedRoomRenderedMessages(renderedMessages);
+            states.setFocusedRoomRenderedMessages([
+              ...packet.messages,
+              ...states.focusedRoomRenderedMessages
+            ]);
             break;
           case "connecting":
           case "connected":
@@ -305,15 +321,17 @@ async function loadView(switchToServer) {
             break;
           default:
             if ("explanation" in packet && states.focusedServer === serverCode) {
-              renderedMessages = {...states.focusedRoomRenderedMessages};
               let randomString = Math.random().toString();
-              renderedMessages[randomString] = {
+              messageCache[randomString] = {
                 special: true,
                 author: null,
                 content: packet.explanation.toString(),
                 id: randomString
               };
-              states.setFocusedRoomRenderedMessages(renderedMessages);
+              states.setFocusedRoomRenderedMessages([
+                ...states.focusedRoomRenderedMessages,
+                messageCache[randomString]
+              ]);
             }
             console.log(packet.explanation);
             break;
@@ -329,10 +347,10 @@ async function loadView(switchToServer) {
 export default function ChatPage() {
   // set a bunch of empty React state objects for stuff that needs to be accessed throughout the program
   [states.servers, states.setServers] = React.useState({}); // Data related to servers the user is in
-  [states.focusedRoomRenderedMessages, states.setFocusedRoomRenderedMessages] = React.useState({}); // The <Message/> elements shown in the view, set in ChatPage
+  [states.focusedRoomRenderedMessages, states.setFocusedRoomRenderedMessages] = React.useState([]); // The <Message/> elements shown in the view, set in ChatPage
   [states.focusedServer, states.setFocusedServer] = React.useState(null); // An object representing the currently focused server
   [states.focusedRoom, states.setFocusedRoom] = React.useState({}); // An object representing the currently focused room
-  [states.focusedServerRenderedRooms, states.setFocusedServerRenderedRooms] = React.useState({}); // The <RoomLink/> elements in the sidebar for this server
+  [states.focusedServerRenderedRooms, states.setFocusedServerRenderedRooms] = React.useState([]); // The <RoomLink/> elements in the sidebar for this server
   [states.mobileSidebarShown, states.setMobileSidebarShown] = React.useState(true); // whether to show the sidebar on mobile devices, is open by default when you load the page
   [states.useMobileUI, states.setUseMobileUI] = React.useState(browser ? (window.innerWidth * 2.54 / 96) < 20 : false); // Use mobile UI if the screen is less than 20cm wide
 
@@ -346,7 +364,7 @@ export default function ChatPage() {
   states.populated = true;
   // return the basic page layout
   return (<>
-    <Common.PageHeader iconClickEvent={() => {
+    <Common.PageHeader className="darkThemed" iconClickEvent={() => {
       if (states.useMobileUI) {
         states.setMobileSidebarShown(!states.mobileSidebarShown);
       } else {
@@ -355,10 +373,10 @@ export default function ChatPage() {
     }}/>
     <main>
       <div id="chatPage">
-        <ServersBar shown={states.mobileSidebarShown || !states.useMobileUI}/>
-        <RoomsBar shown={states.mobileSidebarShown || !states.useMobileUI}/>
-        <MiddleSection shown={!states.mobileSidebarShown || !states.useMobileUI}/>
-        <PeersBar shown={states.mobileSidebarShown || !states.useMobileUI}/>
+        <ServersBar className="darkThemed" shown={states.mobileSidebarShown || !states.useMobileUI}/>
+        <RoomsBar className="darkThemed" shown={states.mobileSidebarShown || !states.useMobileUI}/>
+        <MiddleSection className="lightThemed" shown={!states.mobileSidebarShown || !states.useMobileUI}/>
+        <PeersBar className="darkThemed" shown={states.mobileSidebarShown || !states.useMobileUI}/>
       </div>
     </main>
   </>);

@@ -26,19 +26,39 @@
   'opsz' 24
 }
 
-$outgradient: linear-gradient(#e0e0e0, #c4c4c4, #c4c4c4, #a8a8a8);
-$ingradient: linear-gradient(#a8a8a8, #c4c4c4, #c4c4c4, #e0e0e0);
-$outgradientsmooth: linear-gradient(#eeeeee, #aaaaaa);
-$ingradientsmooth: linear-gradient(#aaaaaa, #eeeeee);
-$background-level1: white;
-$background-level2: #f6f6f6;
-$background-level3: #eeeeee;
-$background-level4: #dedede;
-$background-level5: #d3d3d3;
-$foreground-level1: black;
-$foreground-level2: #222222;
-$accent: #0075db;
-$grey: #888888;
+* {
+    --outgradient: linear-gradient(#e0e0e0, #c4c4c4, #c4c4c4, #a8a8a8);
+    --ingradient: linear-gradient(#a8a8a8, #c4c4c4, #c4c4c4, #e0e0e0);
+    --outgradientsmooth: linear-gradient(#eeeeee, #aaaaaa);
+    --ingradientsmooth: linear-gradient(#aaaaaa, #eeeeee);
+    --background-level1: white;
+    --background-level2: #f6f6f6;
+    --background-level3: #eeeeee;
+    --background-level4: #dedede;
+    --background-level5: #d3d3d3;
+    --background-level6: #c9c9c9;
+    --foreground-level1: black;
+    --foreground-level2: #222222;
+    --accent: #0075db;
+    --grey: #888888;
+}
+
+.darkThemed, .darkThemed * {
+    --outgradient: #373737;
+    --ingradient: #373737;
+    --outgradientsmooth: linear-gradient(#373737, #2a2a2a);
+    --ingradientsmooth: linear-gradient(#2a2a2a, #373737);
+    --background-level1: black;
+    --background-level2: #0e0e0e;
+    --background-level3: #1b1b1b;
+    --background-level4: #262626;
+    --background-level5: #2e2e2e;
+    --background-level5: #373737;
+    --foreground-level1: white;
+    --foreground-level2: #e0e0e0;
+    --accent: #349efa;
+    --grey: #888888;
+}
 
 #___gatsby, #gatsby-focus-wrapper, body {
     position: absolute;
@@ -58,19 +78,19 @@ $grey: #888888;
 
 * {
     font-family: Inter, sans-serif;
-    color: $foreground-level1;
+    color: var(--foreground-level1);
 }
 
 body {
     padding: 0px;
     margin: 0px;
-    background-color: $background-level4;
+    background-color: var(--background-level4);
 }
 
 button {
-    color: $foreground-level1;
-    background: $outgradient;
-    border: 1px solid $grey;
+    color: var(--foreground-level1);
+    background: var(--outgradient);
+    border: 1px solid var(--grey);
     border-radius: 5px;
     padding: 2px;
     padding-left: 10px;
@@ -79,10 +99,10 @@ button {
     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
     &:active {
         box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5) inset !important;
-        background: $ingradient;
+        background: var(--ingradient);
     }
     &:focus {
-        border: 1px solid $accent;
+        border: 1px solid var(--accent);
     }
     &:hover {
         opacity: 0.8;
@@ -91,7 +111,7 @@ button {
 
 code {
     font-family: "Ubuntu Mono", "Lucida Sans Console", monospace, mono;
-    background-color: $background-level4;
+    background-color: var(--background-level4);
     border-radius: 5px;
     padding: 3px !important;
     overflow-wrap: anywhere;
@@ -108,19 +128,19 @@ pre > code {
 }
 
 pre {
-    background-color: $background-level1;
-    border: 2px solid $grey;
+    background-color: var(--background-level1);
+    border: 2px solid var(--grey);
     border-radius: 5px;
     padding: 3px !important;
     overflow-x: auto;
 }
 
 a {
-    color: $accent;
+    color: var(--accent);
 }
 
 blockquote {
-    border-left: 3px solid $grey;
+    border-left: 3px solid var(--grey);
     margin-left: 0;
     padding: 5px;
 }
@@ -131,15 +151,15 @@ table, th, td {
 }
 
 table {
-    background: $background-level3;
+    background: var(--background-level3);
     border-radius: 5px;
 }
 
 th, td {
     padding: 5px;
     border-radius: 4px;
-    background: $outgradient;
-    /*linear-gradient($background-level4, $background-level3);*/
+    background: var(--outgradient);
+    /*linear-gradient(var(--background-level4, var(--background-level3);*/
 }
 
 blockquote p {
@@ -150,13 +170,13 @@ blockquote p {
 footer {
     flex-shrink: 0;
     padding: 20px;
-    background: $outgradientsmooth;
-    border-top: 1px solid $background-level2;
+    background: var(--outgradientsmooth);
+    border-top: 1px solid var(--background-level2);
 }
 
 header {
-    color: $foreground-level2;
-    background: $outgradientsmooth;
+    color: var(--foreground-level2);
+    background: var(--outgradientsmooth);
     display: flex;
     flex-direction: row;
     justify-content: stretch;
@@ -167,7 +187,7 @@ header {
     padding-bottom: 0px;
     align-items: center;
     height: fit-content;
-    border-bottom: 1px solid $grey;
+    border-bottom: 1px solid var(--background-level5);
     flex-shrink: 0;
 }
 
@@ -182,7 +202,7 @@ main {
 }
 
 a {
-    color: $accent;
+    color: var(--accent);
 }
 
 .sidebar {
@@ -193,7 +213,7 @@ a {
     padding: 3px;
     flex-grow: 0;
     flex-shrink: 0;
-    background: $background-level5;
+    background: var(--background-level5);
     overflow-y: scroll;
     scrollbar-width: none;
 }
@@ -235,8 +255,9 @@ a {
     flex-direction: column;
     flex-grow: 1;
     flex-shrink: 1;
-    background: $background-level3;
+    background: var(--background-level3);
     overflow: hidden;
+    border: 1px solid var(--background-level6);
 }
 
 .serverIcon {
@@ -244,7 +265,7 @@ a {
     height: 48px;
     object-fit: cover;
     border-radius: 20%;
-    background: $background-level3;
+    background: var(--background-level3);
     flex-shrink: 0;
     display: flex;
     justify-content: space-evenly;
@@ -257,7 +278,7 @@ a {
     display: none;
     position: absolute;
     transform: translate(52px, -39px);
-    background: $background-level3;
+    background: var(--background-level3);
     padding: 5px;
     border-radius: 5px;
     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
@@ -273,7 +294,7 @@ a {
     gap: 5px;
     flex-shrink: 0;
     flex-grow: 0;
-    background: $background-level4;
+    background: var(--background-level4);
     padding: 5px;
     flex-wrap: nowrap;
     align-items: center;
@@ -288,7 +309,7 @@ a {
 #messageBox {
     flex-grow: 1;
     font-weight: normal;
-    background: $background-level2;
+    background: var(--background-level2);
     border-color: #888888;
     box-shadow: 2px 2px 2px #1b1b1b88 inset;
     border-radius: 10px;
@@ -365,7 +386,7 @@ hue-6-2: #c18401
 */
 
 .hljs {
-    color: $foreground-level2;
+    color: var(--foreground-level2);
 }
 .hljs-comment,
 .hljs-quote {
