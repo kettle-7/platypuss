@@ -21,7 +21,7 @@ import "./themery.scss";
 
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
 const authUrl = "https://platypuss.net"; // this shouldn't need to change but just in case
-var emailRef, usernameRef, passwordRef, secondPasswordRef;
+var emailRef, passwordRef;
 
 // thanks bryc on stack overflow ^w^
 function hashPassword (str, seed = 20) { // hashes passwords somehow
@@ -68,9 +68,7 @@ function doTheLoginThingy() {
 const IndexPage = () => {
   // These let us refer to the text boxes later on
   emailRef = React.useRef(null);
-  usernameRef = React.useRef(null);
   passwordRef = React.useRef(null);
-  secondPasswordRef = React.useRef(null);
   return (<>
     <Common.PageHeader className="darkThemed"/>
     <main id="mainPage" className="lightThemed">
@@ -82,7 +80,7 @@ const IndexPage = () => {
         This website sees new changes to the Platypuss client before they're published.
         This means you get to try out new features and improvements before they make their way
         to the main site. Beware though, many of the changes you see here aren't tested and may
-        break certain functionality. Should anything not work properly you're better off at
+        break certain functionality. Should anything not work properly you're better off using
         the <a href="https://platypuss.net">stable version</a> of the site.
       </p>
       <div id="P" className="popupParent" style={{display: "flex"}}><div id="p" className="popup">
@@ -92,9 +90,9 @@ const IndexPage = () => {
           <div style={{display:"grid",gridTemplateColumns:"auto auto"}}>
           {/* The four lines below contain a weird thing with anonymous functions, this is the only way I know of to assign the element to a variable and position it at the same time */}
           <label>Email address </label><input type="email" id="email" className="textBox" ref={emailRef}/>
-          <label id="pr2">Username </label><input type="text" id="unam" className="textBox" ref={usernameRef}/>
+          {/*<label id="pr2">Username </label><input type="text" id="unam" className="textBox" ref={usernameRef}/>*/}
           <label>Password </label><input type="password" id="pwd1" className="textBox" ref={passwordRef}/>
-          <label id="pr1">Confirm Password </label><input type="password" id="pwd2" className="textBox" ref={secondPasswordRef}/>
+          {/*<label id="pr1">Confirm Password </label><input type="password" id="pwd2" className="textBox" ref={secondPasswordRef}/>*/}
           </div><br/>
           <button onClick={doTheLoginThingy} id="lit3">Sign In</button>
         </div>

@@ -26,7 +26,7 @@
   'opsz' 24
 }
 
-* {
+*, .lightThemed, .lightThemed * {
     --outgradient: linear-gradient(#e0e0e0, #c4c4c4, #c4c4c4, #a8a8a8);
     --ingradient: linear-gradient(#a8a8a8, #c4c4c4, #c4c4c4, #e0e0e0);
     --outgradientsmooth: linear-gradient(#eeeeee, #aaaaaa);
@@ -167,6 +167,11 @@ blockquote p {
     margin-bottom: 0px;
 }
 
+.message2 > p {
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
 footer {
     flex-shrink: 0;
     padding: 20px;
@@ -196,6 +201,7 @@ header {
 }
 
 main {
+    background-color: var(--background-level4);
     overflow: auto;
     flex-shrink: 1;
     flex-grow: 1;
@@ -310,7 +316,7 @@ a {
     flex-grow: 1;
     font-weight: normal;
     background: var(--background-level2);
-    border-color: #888888;
+    border: 1px solid --grey;
     box-shadow: 2px 2px 2px #1b1b1b88 inset;
     border-radius: 10px;
     min-height: 48px;
@@ -318,6 +324,10 @@ a {
     overflow: scroll;
     overflow-wrap: anywhere;
     padding: 5px;
+}
+
+#messageBox :active {
+    border: 1px solid --accent;
 }
 
 #serverTitle {

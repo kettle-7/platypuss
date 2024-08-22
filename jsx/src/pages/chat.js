@@ -281,11 +281,11 @@ async function loadView(switchToServer) {
       };
 
       socket.onmessage = async event => {
+        let scrolledArea = states.scrolledAreaRef.current;
         let packet = JSON.parse(event.data);
         let renderedMessages;
         switch (packet.eventType) {
           case "message":
-            let scrolledArea = states.scrolledAreaRef.current;
             if (document.visibilityState == "hidden" && data.userId != packet.message.author)
               new Audio(authUrl+'/randomsand.wav').play();
             if (states.focusedServer !== serverCode) break;
@@ -296,10 +296,12 @@ async function loadView(switchToServer) {
               messageCache[packet.message.id]
             ]);
             // scroll down to the message if we're near it
-            console.log(scrolledArea.scrollHeight, scrolledArea.scrollTop  + (2 * scrolledArea.clientHeight), scrolledArea.clientHeight);
-            if (scrolledArea.scrollHeight < scrolledArea.scrollTop  + (2 * scrolledArea.clientHeight)) {
-              scrolledArea.scrollTo(scrolledArea.scrollLeft, scrolledArea.scrollHeight - scrolledArea.clientHeight);
-            }
+            setTimeout(()=>{
+              console.log(scrolledArea.scrollHeight, scrolledArea.scrollTop  + (2 * scrolledArea.clientHeight), scrolledArea.clientHeight);
+              if (scrolledArea.scrollHeight < scrolledArea.scrollTop  + (2 * scrolledArea.clientHeight)) {
+                scrolledArea.scrollTo(scrolledArea.scrollLeft, scrolledArea.scrollHeight - scrolledArea.clientHeight);
+              }
+            }, 50); // 50 ms is probably fine
             break;
           case "messages":
             //let messages = [];
@@ -318,7 +320,7 @@ async function loadView(switchToServer) {
           case "disconnect":
           case "join":
           case "welcome":
-            break;
+            break; // we don't care about these
           default:
             if ("explanation" in packet && states.focusedServer === serverCode) {
               let randomString = Math.random().toString();
@@ -332,6 +334,13 @@ async function loadView(switchToServer) {
                 ...states.focusedRoomRenderedMessages,
                 messageCache[randomString]
               ]);
+              // scroll down to the message if we're near it
+              setTimeout(()=>{
+                console.log(scrolledArea.scrollHeight, scrolledArea.scrollTop  + (2 * scrolledArea.clientHeight), scrolledArea.clientHeight);
+                if (scrolledArea.scrollHeight < scrolledArea.scrollTop  + (2 * scrolledArea.clientHeight)) {
+                  scrolledArea.scrollTo(scrolledArea.scrollLeft, scrolledArea.scrollHeight - scrolledArea.clientHeight);
+                }
+              }, 50); // 50 ms is probably fine
             }
             console.log(packet.explanation);
             break;
