@@ -110,6 +110,12 @@ function PeersBar({shown, className, ...props}) {
   </div>);
 }
 
+function Popover({children, ...props}) {
+  return <div id="popover" style={{margin:"auto"}} onClick={event => {
+    event.stopPropagation();
+  }}>{children}</div>
+}
+
 // Renders a single message
 function Message({message}) {
   // We might have the author cached already, if not we'll just get them later
@@ -117,12 +123,18 @@ function Message({message}) {
     avatar: "https://img.freepik.com/premium-vector/hand-drawn-cartoon-doodle-skull-funny-cartoon-skull-isolated-white-background_217204-944.jpg",
     username: "Deleted User"
   });
+  let uploads = message.uploads ? message.uploads : [];
   fetchUser(message.author).then(newAuthor=>{setAuthor(newAuthor)});
   return (<div className="message1">
     <img src={author.avatar} alt="" className="avatar"/>
     <div className="message2">
       <h3 className="messageUsernameDisplay">{author.username}</h3>
       <Markdown options={markdownOptions}>{message.content}</Markdown>
+      {uploads.map(upload => <img className="upload" src={authUrl+upload.url} onClick={() => {
+        states.setActivePopover(<Popover>
+          <img src={authUrl+upload.url}/>
+        </Popover>);
+      }}/>)}
     </div>
   </div>);
 }
@@ -200,6 +212,15 @@ function RoomsBar({shown, className, ...props}) {
   </div>);
 }
 
+function PopoverParent({...props}) {
+  [states.activePopover, states.setActivePopover] = React.useState(null);
+  return (
+    <div id="popoverParent" style={{display: states.activePopover == null ? "none" : "flex"}} onClick={() => {
+      states.setActivePopover(null);
+    }} {...props}>{states.activePopover}</div>
+  );
+}
+
 // The document head contains metadata, most of it is defined in use-site-metadata.jsx
 export const Head = () => (
   <title>(Beta!) Platypuss</title>
@@ -208,6 +229,11 @@ export const Head = () => (
 async function loadView(switchToServer) {
   // don't try load the client as part of the page compiling
   if (!browser) return;
+  window.onkeydown = event => {
+    if (event.key == "Escape") {
+      states.setActivePopover(null);
+    }
+  };
   // delete all messages
   states.setFocusedRoomRenderedMessages([]);
   // connect to the authentication server to get the list of server's we're in and their session tokens
@@ -362,7 +388,7 @@ export default function ChatPage() {
   [states.focusedServerRenderedRooms, states.setFocusedServerRenderedRooms] = React.useState([]); // The <RoomLink/> elements in the sidebar for this server
   [states.mobileSidebarShown, states.setMobileSidebarShown] = React.useState(true); // whether to show the sidebar on mobile devices, is open by default when you load the page
   [states.useMobileUI, states.setUseMobileUI] = React.useState(browser ? (window.innerWidth * 2.54 / 96) < 20 : false); // Use mobile UI if the screen is less than 20cm wide
-
+  
   // respond to changes in screen width, TODO: seems to cause performance issues on wayland, need to look into it
   if (browser)
   window.addEventListener("resize", () => {
@@ -382,10 +408,11 @@ export default function ChatPage() {
     }}/>
     <main>
       <div id="chatPage">
-        <ServersBar className="darkThemed" shown={states.mobileSidebarShown || !states.useMobileUI}/>
-        <RoomsBar className="darkThemed" shown={states.mobileSidebarShown || !states.useMobileUI}/>
-        <MiddleSection className="lightThemed" shown={!states.mobileSidebarShown || !states.useMobileUI}/>
-        <PeersBar className="darkThemed" shown={states.mobileSidebarShown || !states.useMobileUI}/>
+        <ServersBar className="darkThemed" shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
+        <RoomsBar className="darkThemed" shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
+        <MiddleSection className="lightThemed" shown={(!states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
+        <PeersBar className="darkThemed" shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
+        <PopoverParent className="darkThemed"/>
       </div>
     </main>
   </>);

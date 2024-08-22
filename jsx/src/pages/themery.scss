@@ -264,6 +264,7 @@ a {
     background: var(--background-level3);
     overflow: hidden;
     border: 1px solid var(--background-level6);
+    gap: 3px;
 }
 
 .serverIcon {
@@ -316,7 +317,7 @@ a {
     flex-grow: 1;
     font-weight: normal;
     background: var(--background-level2);
-    border: 1px solid --grey;
+    border: 1px solid var(--grey);
     box-shadow: 2px 2px 2px #1b1b1b88 inset;
     border-radius: 10px;
     min-height: 48px;
@@ -327,7 +328,7 @@ a {
 }
 
 #messageBox :active {
-    border: 1px solid --accent;
+    border: 1px solid var(--accent);
 }
 
 #serverTitle {
@@ -369,6 +370,67 @@ a {
     height: 48px;
     border-radius: 50%;
     flex-shrink: 0;
+}
+
+input[type="text"], input[type="password"], input[type="email"] {
+    background-color: var(--background-level3);
+    box-shadow: 2px 2px 2px #1b1b1b88 inset;
+    background-color: var(--background-level5);
+    border: 1px solid var(--accent);
+    color: var(--foreground-level1);
+    border-color: var(--grey);
+    border-radius: 5px;
+    margin-top: 3px;
+}
+
+input[type="text"]:active, input[type="password"]:active, input[type="email"]:active {
+    background-color: var(--background-level4);
+    border-color: var(--grey);
+    box-shadow: 2px 2px 2px #1b1b1b88 inset;
+}
+
+.message2 img {
+    padding: 1px;
+    display: flex;
+    flex-direction: row;
+    gap: 3px;
+    border: none;
+    align-content: center;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+    height: 20vh;
+    width: 35vh;
+    object-fit: cover;
+    background-color: var(--background-level6);
+    margin: 3px;
+}
+
+#popoverParent {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.5);
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+}
+
+#popover {
+    width: fit-content;
+    max-width: 90%;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    border: 0px solid var(--grey);
+    border-radius: 5px;
+    background: var(--outgradient);
+    box-shadow: 0px 0px 10px black;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    gap: 5px;
+    margin: auto;
+    align-content: stretch;
+    max-height: 90%;
 }
 
 /**************************************
