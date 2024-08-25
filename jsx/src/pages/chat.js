@@ -17,8 +17,10 @@
 // °^° i am pingu
 
 import * as Common from "../components/common";
+import Markdown from 'markdown-to-jsx';
+import hljs from 'highlight.js';
 import * as React from "react";
-import "./light.scss";
+import "./themery.scss";
 
 var userCache = {}; // A cache of data on users so we don't constantly have to look it up
 var messageCache = {}; // The same but for messages, we might not need this
@@ -29,11 +31,19 @@ var peers = {}; // Keeps track of other people on the server (platonically of co
 var loadedMessages = 0; // The number of messages loaded in the current view, used when loading older messages
 var serverHashes = {}; // We can use these to get links to specific servers / maybe rooms in the future
 var browser = typeof window !== "undefined"; // check if we're running in a browser rather than the build environment
+var roomCache = {};
 
 var pageUrl = browser ? new URL(window.location) : new URL("http://localhost:8000"); // window is not defined in the testing environment so just assume localhost
 var authUrl = "https://platypuss.net"; // Authentication server, you shouldn't have to change this but it's a variable just in case
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
 pageUrl.protocol = "https"; // remove this in production
+
+const markdownOptions = {
+  disableParsingRawHTML: true, // poses a security thread we don't need
+  overrides: {
+    code: SyntaxHighlightedCode
+  }
+};
 
 // thanks bryc on stack overflow ^w^
 function hashPassword (str, seed = 20) { // hashes things somehow
@@ -51,6 +61,21 @@ function hashPassword (str, seed = 20) { // hashes things somehow
 
     return (h2>>>0).toString(16).padStart(8,0)+(h1>>>0).toString(16).padStart(8,0);
 };
+
+function SyntaxHighlightedCode(props) {
+  const ref = React.useRef(null);
+
+  React.useEffect(() => {
+    if (ref.current && props.className?.includes('lang-') && hljs) {
+      hljs.highlightElement(ref.current)
+
+      // hljs won't reprocess the element unless this attribute is removed
+      ref.current.removeAttribute('data-highlighted')
+    }
+  }, [props.className, props.children])
+
+  return <code {...props} ref={ref} />
+}
 
 // Fetch data on one user, from cache if possible but from the authentication server otherwise
 function fetchUser(id) {
@@ -71,18 +96,24 @@ function fetchUser(id) {
 }
 
 // The bar on the left showing the servers you're in, also for navigation
-function ServersBar({shown}) {
-  return (<div className="sidebar" id="serversBar" style={{display: shown ? "flex" : "none"}}>
+function ServersBar({shown, className, ...props}) {
+  return (<div className={className + " sidebar"} id="serversBar" style={{display: shown ? "flex" : "none"}} {...props}>
     <img className="serverIcon" src="" alt="+" id="newServerButton"/>
     {Object.values(states.servers).map(server => (<ServerIcon server={server}></ServerIcon>))}
   </div>);
 }
 
 // The bar on the right showing other server members
-function PeersBar({shown}) {
-  return (<div className="sidebar" id="serversBar" style={{display: shown ? "flex" : "none"}}>
+function PeersBar({shown, className, ...props}) {
+  return (<div className={className + " sidebar"} id="serversBar" style={{display: shown ? "flex" : "none"}} {...props}>
     <img className="serverIcon material-symbols-outlined" src="" alt="+" id="newServerButton"/>
   </div>);
+}
+
+function Popover({children, ...props}) {
+  return <div id="popover" style={{margin:"auto"}} onClick={event => {
+    event.stopPropagation();
+  }}>{children}</div>
 }
 
 // Renders a single message
@@ -92,24 +123,41 @@ function Message({message}) {
     avatar: "https://img.freepik.com/premium-vector/hand-drawn-cartoon-doodle-skull-funny-cartoon-skull-isolated-white-background_217204-944.jpg",
     username: "Deleted User"
   });
+  let uploads = message.uploads ? message.uploads : [];
   fetchUser(message.author).then(newAuthor=>{setAuthor(newAuthor)});
   return (<div className="message1">
     <img src={author.avatar} alt="" className="avatar"/>
     <div className="message2">
       <h3 className="messageUsernameDisplay">{author.username}</h3>
-      <p>{message.content.toString()}</p>
+      <Markdown options={markdownOptions}>{message.content}</Markdown>
+      {uploads.map(upload => <img className="upload" src={authUrl+upload.url} onClick={() => {
+        states.setActivePopover(<Popover>
+          <img src={authUrl+upload.url}/>
+        </Popover>);
+      }}/>)}
     </div>
   </div>);
 }
 
 // The midsection between these two aforementioned bars
-function MiddleSection({shown}) {
-  return (<div id="middleSection" style={{display: shown ? "flex" : "none"}}>
+function MiddleSection({shown, className, ...props}) {
+  const belowMessagesRef = React.useRef(null);
+  const scrolledAreaRef = React.useRef(null);
+  React.useEffect(() => {
+    let scrolledArea = scrolledAreaRef.current;
+    if ( // only scroll down if we're near the bottom or the page has just loaded
+        (scrolledArea.scrollHeight < scrolledArea.scrollTop  + (2 * scrolledArea.clientHeight)) ||
+        states.focusedRoomRenderedMessages[states.focusedRoomRenderedMessages.length - 1].isHistoric
+    ) {
+      belowMessagesRef.current?.scrollIntoView({ behaviour: "smooth" });
+    }
+  }, [states.focusedRoomRenderedMessages]);
+  return (<div id="middleSection" className={className} style={{display: shown ? "flex" : "none"}} {...props}>
     <div id="aboveScrolledArea"></div>
-    <div id="scrolledArea"> {/* Has a scrollbar, contains load more messages button but not message typing box */}
+    <div id="scrolledArea" ref={scrolledAreaRef}> {/* Has a scrollbar, contains load more messages button but not message typing box */}
       <div id="aboveMessageArea"></div>
-      <div id="messageArea">{Object.values(states.focusedRoomRenderedMessages).map(message => <Message message={message}/>)}</div>
-      <div id="belowMessageArea"></div>
+      <div id="messageArea">{states.focusedRoomRenderedMessages.map(message => <Message message={message}/>)}</div>
+      <div id="belowMessageArea" ref={belowMessagesRef}></div>
     </div>
     <div style={{height:5,background:"linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3))"}}></div>
     <div id="belowScrolledArea">
@@ -143,12 +191,12 @@ function ServerIcon({server}) {
     icon: "",
     title: "Couldn't connect to this server 🐙"
   });
-  return (<div className="popoverContainer">
+  return (<div className="tooltipContainer">
     <img className="serverIcon" src={server.manifest.icon} alt="🐙" onClick={()=>{
       states.setFocusedServer(server.serverCode);
       loadView(server.serverCode);
     }}/>
-    <div className="serverIconPopover">{server.manifest.title}</div>
+    <div className="serverIconTooltip">{server.manifest.title}</div>
   </div>);
 }
 
@@ -160,8 +208,8 @@ function RoomLink({room}) {
 }
 
 // A SLIGHTLY DIFFERENT COMMENT
-function RoomsBar({shown}) {
-  return (<div className="sidebar" id="roomsBar" style={{display: shown ? "flex" : "none"}}>
+function RoomsBar({shown, className, ...props}) {
+  return (<div className={className + " sidebar"} id="roomsBar" style={{display: shown ? "flex" : "none"}} {...props}>
     <div id="serverTitle" style={{cursor: "pointer", backgroundImage: states.focusedServer ? states.servers[states.focusedServer].manifest.icon : ""}}>
     <h3 style={{margin: 5}}>
       {states.focusedServer ? states.servers[states.focusedServer].manifest.title : "Loading servers..."}
@@ -173,6 +221,15 @@ function RoomsBar({shown}) {
   </div>);
 }
 
+function PopoverParent({...props}) {
+  [states.activePopover, states.setActivePopover] = React.useState(null);
+  return (
+    <div id="popoverParent" style={{display: states.activePopover == null ? "none" : "flex"}} onClick={() => {
+      states.setActivePopover(null);
+    }} {...props}>{states.activePopover}</div>
+  );
+}
+
 // The document head contains metadata, most of it is defined in use-site-metadata.jsx
 export const Head = () => (
   <title>(Beta!) Platypuss</title>
@@ -181,8 +238,13 @@ export const Head = () => (
 async function loadView(switchToServer) {
   // don't try load the client as part of the page compiling
   if (!browser) return;
+  window.onkeydown = event => {
+    if (event.key == "Escape") {
+      states.setActivePopover(null);
+    }
+  };
   // delete all messages
-  states.setFocusedRoomRenderedMessages({});
+  states.setFocusedRoomRenderedMessages([]);
   // connect to the authentication server to get the list of server's we're in and their session tokens
   fetch(`${authUrl}/getServerTokens?id=${localStorage.getItem("sessionID")}`).then(data => data.json()).then(async function(data) {
     for (let socket of Object.values(openSockets)) {
@@ -255,37 +317,48 @@ async function loadView(switchToServer) {
 
       socket.onmessage = async event => {
         let packet = JSON.parse(event.data);
-        let renderedMessages;
         switch (packet.eventType) {
           case "message":
             if (document.visibilityState == "hidden" && data.userId != packet.message.author)
               new Audio(authUrl+'/randomsand.wav').play();
             if (states.focusedServer !== serverCode) break;
-            renderedMessages = {...states.focusedRoomRenderedMessages};
-            renderedMessages[packet.message.id] = packet.message;
-            states.setFocusedRoomRenderedMessages(renderedMessages);
+            // cache the message and add it to the list to render
+            messageCache[packet.message.id] = packet.message;
+            states.setFocusedRoomRenderedMessages([
+              ...states.focusedRoomRenderedMessages,
+              messageCache[packet.message.id]
+            ]);
             break;
           case "messages":
             if (states.focusedServer !== serverCode) break;
-            renderedMessages = {...states.focusedRoomRenderedMessages};
-            for (let message of packet.messages) {
-              renderedMessages[message.id] = message;
+            for (let messageID in packet.messages) {
+              packet.messages[messageID].isHistoric = true; // whether it was sent before we loaded the page
+              messageCache[packet.messages[messageID].id] = {...packet.messages[messageID]};
             }
-            states.setFocusedRoomRenderedMessages(renderedMessages);
+            states.setFocusedRoomRenderedMessages([
+              ...packet.messages,
+              ...states.focusedRoomRenderedMessages
+            ]);
             break;
           case "connecting":
-            break;
+          case "connected":
+          case "disconnect":
+          case "join":
+          case "welcome":
+            break; // we don't care about these
           default:
             if ("explanation" in packet && states.focusedServer === serverCode) {
-              renderedMessages = {...states.focusedRoomRenderedMessages};
               let randomString = Math.random().toString();
-              renderedMessages[randomString] = {
+              messageCache[randomString] = {
                 special: true,
                 author: null,
                 content: packet.explanation.toString(),
                 id: randomString
               };
-              states.setFocusedRoomRenderedMessages(renderedMessages);
+              states.setFocusedRoomRenderedMessages([
+                ...states.focusedRoomRenderedMessages,
+                messageCache[randomString]
+              ]);
             }
             console.log(packet.explanation);
             break;
@@ -301,24 +374,18 @@ async function loadView(switchToServer) {
 export default function ChatPage() {
   // set a bunch of empty React state objects for stuff that needs to be accessed throughout the program
   [states.servers, states.setServers] = React.useState({}); // Data related to servers the user is in
-  [states.focusedRoomRenderedMessages, states.setFocusedRoomRenderedMessages] = React.useState({}); // The <Message/> elements shown in the view, set in ChatPage
+  [states.focusedRoomRenderedMessages, states.setFocusedRoomRenderedMessages] = React.useState([]); // The <Message/> elements shown in the view, set in ChatPage
   [states.focusedServer, states.setFocusedServer] = React.useState(null); // An object representing the currently focused server
   [states.focusedRoom, states.setFocusedRoom] = React.useState({}); // An object representing the currently focused room
-  [states.focusedServerRenderedRooms, states.setFocusedServerRenderedRooms] = React.useState({}); // The <RoomLink/> elements in the sidebar for this server
+  [states.focusedServerRenderedRooms, states.setFocusedServerRenderedRooms] = React.useState([]); // The <RoomLink/> elements in the sidebar for this server
   [states.mobileSidebarShown, states.setMobileSidebarShown] = React.useState(true); // whether to show the sidebar on mobile devices, is open by default when you load the page
   [states.useMobileUI, states.setUseMobileUI] = React.useState(browser ? (window.innerWidth * 2.54 / 96) < 20 : false); // Use mobile UI if the screen is less than 20cm wide
-
-  // respond to changes in screen width, TODO: seems to cause performance issues on wayland, need to look into it
-  if (browser)
-  window.addEventListener("resize", () => {
-    states.setUseMobileUI(browser ? (window.innerWidth * 2.54 / 96) < 20 : false);
-  });
-
-  if (!states.populated) loadView();
-  states.populated = true;
+  
+  React.useEffect(loadView, []);
+  
   // return the basic page layout
   return (<>
-    <Common.PageHeader iconClickEvent={() => {
+    <Common.PageHeader className="darkThemed" iconClickEvent={() => {
       if (states.useMobileUI) {
         states.setMobileSidebarShown(!states.mobileSidebarShown);
       } else {
@@ -327,10 +394,15 @@ export default function ChatPage() {
     }}/>
     <main>
       <div id="chatPage">
-        <ServersBar shown={states.mobileSidebarShown || !states.useMobileUI}/>
-        <RoomsBar shown={states.mobileSidebarShown || !states.useMobileUI}/>
-        <MiddleSection shown={!states.mobileSidebarShown || !states.useMobileUI}/>
-        <PeersBar shown={states.mobileSidebarShown || !states.useMobileUI}/>
+        <ServersBar className="darkThemed" shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
+        <RoomsBar className="darkThemed" shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
+        <MiddleSection
+          className="lightThemed"
+          shown={(!states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}
+          focusedRoomRenderedMessages={states.focusedRoomRenderedMessages}
+        />
+        <PeersBar className="darkThemed" shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
+        <PopoverParent className="darkThemed"/>
       </div>
     </main>
   </>);
