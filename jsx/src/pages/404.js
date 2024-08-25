@@ -17,14 +17,12 @@
 
 import * as React from "react";
 import { Link } from "gatsby";
+import * as Common from "../components/common";
 import "./light.scss";
 
 const NotFoundPage = () => {
   return (<>
-    <header>
-        <img onclick="window.location = '/'" alt="Ornithorynchus Anatinus" class="avatar" src="/icon.png"/>
-        <h1 onclick="window.location = '/'" style={{cursor: 'pointer'}}>Platypuss</h1>
-    </header>
+    <Common.PageHeader/>
     <main id="mainPage">
         <h2>Error 404</h2>
         <p>
