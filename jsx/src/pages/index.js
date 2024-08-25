@@ -20,7 +20,9 @@ import * as React from "react";
 import "./themery.scss";
 
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
+var browser = typeof window !== "undefined"; // check if we're running in a browser rather than the build environment
 const authUrl = "https://platypuss.net"; // this shouldn't need to change but just in case
+var states = {}; // serves the same purpose as in chat.js
 var emailRef, passwordRef;
 
 // thanks bryc on stack overflow ^w^
@@ -69,9 +71,16 @@ const IndexPage = () => {
   // These let us refer to the text boxes later on
   emailRef = React.useRef(null);
   passwordRef = React.useRef(null);
+  let theme = "medium";
+  if (browser)
+    if (localStorage.getItem("theme"))
+      theme = localStorage.getItem("theme");
+
+  [states.theme, states.setTheme] = React.useState(theme);
+
   return (<>
-    <Common.PageHeader className="darkThemed"/>
-    <main id="mainPage" className="lightThemed">
+    <Common.PageHeader className={states.theme == "light" ? "lightThemed" : "darkThemed"} states={states}/>
+    <main id="mainPage" className={states.theme == "dark" ? "darkThemed" : "lightThemed"}>
       <a href="/chat">cat</a>
       <h1>
         You found the Platypuss public beta!
@@ -98,7 +107,7 @@ const IndexPage = () => {
         </div>
       </div></div>
     </main>
-    <footer className="lightThemed">links to stuff maybe</footer>
+    <footer className={states.theme == "dark" ? "darkThemed" : "lightThemed"}>links to stuff maybe</footer>
   </>);
 };
 

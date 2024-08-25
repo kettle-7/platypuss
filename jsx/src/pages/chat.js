@@ -147,7 +147,7 @@ function MiddleSection({shown, className, ...props}) {
     let scrolledArea = scrolledAreaRef.current;
     if ( // only scroll down if we're near the bottom or the page has just loaded
         (scrolledArea.scrollHeight < scrolledArea.scrollTop  + (2 * scrolledArea.clientHeight)) ||
-        states.focusedRoomRenderedMessages[states.focusedRoomRenderedMessages.length - 1].isHistoric
+        states.focusedRoomRenderedMessages[states.focusedRoomRenderedMessages.length - 1]?.isHistoric
     ) {
       belowMessagesRef.current?.scrollIntoView({ behaviour: "smooth" });
     }
@@ -156,7 +156,7 @@ function MiddleSection({shown, className, ...props}) {
     <div id="aboveScrolledArea"></div>
     <div id="scrolledArea" ref={scrolledAreaRef}> {/* Has a scrollbar, contains load more messages button but not message typing box */}
       <div id="aboveMessageArea"></div>
-      <div id="messageArea">{states.focusedRoomRenderedMessages.map(message => <Message message={message}/>)}</div>
+      <div id="messageArea">{states.focusedRoomRenderedMessages.map(message => <Message message={message} key={message.id}/>)}</div>
       <div id="belowMessageArea" ref={belowMessagesRef}></div>
     </div>
     <div style={{height:5,background:"linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3))"}}></div>
@@ -277,7 +277,10 @@ async function loadView(switchToServer) {
       };
       // get this information from the server
       fetch(pageUrl.protocol + "//"+ip+"/"+subserver).then(response => response.json()).then(serverManifest => {
-        servers[serverCode].setManifest(serverManifest);
+        if (servers[serverCode].setManifest)
+          servers[serverCode].setManifest(serverManifest);
+        else 
+          servers[serverCode].manifest = serverManifest;
       }).catch(error => {console.log(error)});
       // Open a socket connection with the server
       let socket = new WebSocket((pageUrl.protocol == "https:" ? "wss:" : "ws") + "//" + ip);
@@ -372,16 +375,30 @@ async function loadView(switchToServer) {
 
 // The page itself
 export default function ChatPage() {
+  let theme = "medium";
+  if (browser)
+  switch (localStorage.getItem("theme")) {
+    case "dark":
+    case "light":
+    case "medium":
+      theme = localStorage.getItem("theme");
+      break;
+    default:
+      break;
+  }
+
   // set a bunch of empty React state objects for stuff that needs to be accessed throughout the program
   [states.servers, states.setServers] = React.useState({}); // Data related to servers the user is in
   [states.focusedRoomRenderedMessages, states.setFocusedRoomRenderedMessages] = React.useState([]); // The <Message/> elements shown in the view, set in ChatPage
+  console.log(states.setFocusedRoomRenderedMessages);
   [states.focusedServer, states.setFocusedServer] = React.useState(null); // An object representing the currently focused server
   [states.focusedRoom, states.setFocusedRoom] = React.useState({}); // An object representing the currently focused room
   [states.focusedServerRenderedRooms, states.setFocusedServerRenderedRooms] = React.useState([]); // The <RoomLink/> elements in the sidebar for this server
   [states.mobileSidebarShown, states.setMobileSidebarShown] = React.useState(true); // whether to show the sidebar on mobile devices, is open by default when you load the page
   [states.useMobileUI, states.setUseMobileUI] = React.useState(browser ? (window.innerWidth * 2.54 / 96) < 20 : false); // Use mobile UI if the screen is less than 20cm wide
-  
-  React.useEffect(loadView, []);
+  [states.theme, states.setTheme] = React.useState(theme);
+
+  //React.useEffect(() => { loadView() }, []);
   
   // return the basic page layout
   return (<>
@@ -391,19 +408,21 @@ export default function ChatPage() {
       } else {
         window.location = "/";
       }
-    }}/>
+    }} states={states}/>
     <main>
       <div id="chatPage">
-        <ServersBar className="darkThemed" shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
-        <RoomsBar className="darkThemed" shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
+        <ServersBar className={states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
+        <RoomsBar className={states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
         <MiddleSection
-          className="lightThemed"
+          className={states.theme == "dark" ? "darkThemed" : "lightThemed"}
           shown={(!states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}
-          focusedRoomRenderedMessages={states.focusedRoomRenderedMessages}
         />
-        <PeersBar className="darkThemed" shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
+        <PeersBar className={states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
         <PopoverParent className="darkThemed"/>
       </div>
     </main>
   </>);
 }
+
+setTimeout(() => {
+  loadView();}, 30000);

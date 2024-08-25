@@ -22,7 +22,7 @@ import "./themery.scss";
 
 const NotFoundPage = () => {
   return (<>
-    <Common.PageHeader title="(Beta!) Platypuss" className="darkThemed"/>
+    <Common.PageHeader title="(Beta!) Platypuss" className="darkThemed" states={{}}/>
     <main id="mainPage" className="lightThemed">
         <h2>Error 404</h2>
         <p>
