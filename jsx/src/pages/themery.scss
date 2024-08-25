@@ -283,7 +283,7 @@ a {
     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
-.popoverContainer .serverIconPopover {
+.tooltipContainer .serverIconTooltip {
     display: none;
     position: absolute;
     transform: translate(52px, -39px);
@@ -293,8 +293,10 @@ a {
     box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
-.popoverContainer:hover .serverIconPopover {
-    display: inline-block;
+.tooltipContainer:hover .serverIconTooltip {
+    @media screen and (min-width: 20cm) {
+        display: inline-block;
+    }
 }
 
 #belowScrolledArea {

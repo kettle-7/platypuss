@@ -141,14 +141,23 @@ function Message({message}) {
 
 // The midsection between these two aforementioned bars
 function MiddleSection({shown, className, ...props}) {
-  states.scrolledAreaRef = React.useRef(null);
-  console.log(states.focusedRoomRenderedMessages);
+  const belowMessagesRef = React.useRef(null);
+  const scrolledAreaRef = React.useRef(null);
+  React.useEffect(() => {
+    let scrolledArea = scrolledAreaRef.current;
+    if ( // only scroll down if we're near the bottom or the page has just loaded
+        (scrolledArea.scrollHeight < scrolledArea.scrollTop  + (2 * scrolledArea.clientHeight)) ||
+        states.focusedRoomRenderedMessages[states.focusedRoomRenderedMessages.length - 1].isHistoric
+    ) {
+      belowMessagesRef.current?.scrollIntoView({ behaviour: "smooth" });
+    }
+  }, [states.focusedRoomRenderedMessages]);
   return (<div id="middleSection" className={className} style={{display: shown ? "flex" : "none"}} {...props}>
     <div id="aboveScrolledArea"></div>
-    <div id="scrolledArea" ref={states.scrolledAreaRef}> {/* Has a scrollbar, contains load more messages button but not message typing box */}
+    <div id="scrolledArea" ref={scrolledAreaRef}> {/* Has a scrollbar, contains load more messages button but not message typing box */}
       <div id="aboveMessageArea"></div>
       <div id="messageArea">{states.focusedRoomRenderedMessages.map(message => <Message message={message}/>)}</div>
-      <div id="belowMessageArea"></div>
+      <div id="belowMessageArea" ref={belowMessagesRef}></div>
     </div>
     <div style={{height:5,background:"linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3))"}}></div>
     <div id="belowScrolledArea">
@@ -182,12 +191,12 @@ function ServerIcon({server}) {
     icon: "",
     title: "Couldn't connect to this server 🐙"
   });
-  return (<div className="popoverContainer">
+  return (<div className="tooltipContainer">
     <img className="serverIcon" src={server.manifest.icon} alt="🐙" onClick={()=>{
       states.setFocusedServer(server.serverCode);
       loadView(server.serverCode);
     }}/>
-    <div className="serverIconPopover">{server.manifest.title}</div>
+    <div className="serverIconTooltip">{server.manifest.title}</div>
   </div>);
 }
 
@@ -307,9 +316,7 @@ async function loadView(switchToServer) {
       };
 
       socket.onmessage = async event => {
-        let scrolledArea = states.scrolledAreaRef.current;
         let packet = JSON.parse(event.data);
-        let renderedMessages;
         switch (packet.eventType) {
           case "message":
             if (document.visibilityState == "hidden" && data.userId != packet.message.author)
@@ -321,20 +328,12 @@ async function loadView(switchToServer) {
               ...states.focusedRoomRenderedMessages,
               messageCache[packet.message.id]
             ]);
-            // scroll down to the message if we're near it
-            setTimeout(()=>{
-              console.log(scrolledArea.scrollHeight, scrolledArea.scrollTop  + (2 * scrolledArea.clientHeight), scrolledArea.clientHeight);
-              if (scrolledArea.scrollHeight < scrolledArea.scrollTop  + (2 * scrolledArea.clientHeight)) {
-                scrolledArea.scrollTo(scrolledArea.scrollLeft, scrolledArea.scrollHeight - scrolledArea.clientHeight);
-              }
-            }, 50); // 50 ms is probably fine
             break;
           case "messages":
-            //let messages = [];
             if (states.focusedServer !== serverCode) break;
-            for (let message of packet.messages) {
-              messageCache[message.id] = {...message};
-              //messages.push(message);
+            for (let messageID in packet.messages) {
+              packet.messages[messageID].isHistoric = true; // whether it was sent before we loaded the page
+              messageCache[packet.messages[messageID].id] = {...packet.messages[messageID]};
             }
             states.setFocusedRoomRenderedMessages([
               ...packet.messages,
@@ -360,13 +359,6 @@ async function loadView(switchToServer) {
                 ...states.focusedRoomRenderedMessages,
                 messageCache[randomString]
               ]);
-              // scroll down to the message if we're near it
-              setTimeout(()=>{
-                console.log(scrolledArea.scrollHeight, scrolledArea.scrollTop  + (2 * scrolledArea.clientHeight), scrolledArea.clientHeight);
-                if (scrolledArea.scrollHeight < scrolledArea.scrollTop  + (2 * scrolledArea.clientHeight)) {
-                  scrolledArea.scrollTo(scrolledArea.scrollLeft, scrolledArea.scrollHeight - scrolledArea.clientHeight);
-                }
-              }, 50); // 50 ms is probably fine
             }
             console.log(packet.explanation);
             break;
@@ -389,14 +381,8 @@ export default function ChatPage() {
   [states.mobileSidebarShown, states.setMobileSidebarShown] = React.useState(true); // whether to show the sidebar on mobile devices, is open by default when you load the page
   [states.useMobileUI, states.setUseMobileUI] = React.useState(browser ? (window.innerWidth * 2.54 / 96) < 20 : false); // Use mobile UI if the screen is less than 20cm wide
   
-  // respond to changes in screen width, TODO: seems to cause performance issues on wayland, need to look into it
-  if (browser)
-  window.addEventListener("resize", () => {
-    states.setUseMobileUI(browser ? (window.innerWidth * 2.54 / 96) < 20 : false);
-  });
-
-  if (!states.populated) loadView();
-  states.populated = true;
+  React.useEffect(loadView, []);
+  
   // return the basic page layout
   return (<>
     <Common.PageHeader className="darkThemed" iconClickEvent={() => {
@@ -410,7 +396,11 @@ export default function ChatPage() {
       <div id="chatPage">
         <ServersBar className="darkThemed" shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
         <RoomsBar className="darkThemed" shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
-        <MiddleSection className="lightThemed" shown={(!states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
+        <MiddleSection
+          className="lightThemed"
+          shown={(!states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}
+          focusedRoomRenderedMessages={states.focusedRoomRenderedMessages}
+        />
         <PeersBar className="darkThemed" shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
         <PopoverParent className="darkThemed"/>
       </div>
