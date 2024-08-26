@@ -110,10 +110,18 @@ function PeersBar({shown, className, ...props}) {
   </div>);
 }
 
-function Popover({children, ...props}) {
-  return <div id="popover" style={{margin:"auto"}} onClick={event => {
+// for popups / popovers in desktop, render as separate screens on mobile
+function Popover({children, title, style={}, ...props}) {
+  return <div id="popover" style={{margin: style.margin ? style.margin : "auto", ...style}} onClick={event => {
     event.stopPropagation();
-  }}>{children}</div>
+  }} {...props}>
+    <div id="popoverHeaderBar">
+      <h3>{title}</h3>
+      <div style={{flexGrow: 1}}></div>
+      <button onClick={() => {states.setActivePopover(null);}} className="material-symbols-outlined">close</button>
+    </div>
+    {children}
+  </div>
 }
 
 // Renders a single message
@@ -131,8 +139,9 @@ function Message({message}) {
       <h3 className="messageUsernameDisplay">{author.username}</h3>
       <Markdown options={markdownOptions}>{message.content}</Markdown>
       {uploads.map(upload => <img className="upload" src={authUrl+upload.url} onClick={() => {
-        states.setActivePopover(<Popover>
-          <img src={authUrl+upload.url}/>
+        states.setActivePopover(<Popover style={{background: "transparent", boxShadow: "none"}} title={upload.name}>
+          <img src={authUrl+upload.url} style={{borderRadius: 10, boxShadow: "0px 0px 10px black"}}/>
+          <a href={authUrl+upload.url} style={{color: "white"}}>Download this image</a>
         </Popover>);
       }}/>)}
     </div>
@@ -275,13 +284,6 @@ async function loadView(switchToServer) {
           description: "Waiting for a response from the server"
         }
       };
-      // get this information from the server
-      fetch(pageUrl.protocol + "//"+ip+"/"+subserver).then(response => response.json()).then(serverManifest => {
-        if (servers[serverCode].setManifest)
-          servers[serverCode].setManifest(serverManifest);
-        else 
-          servers[serverCode].manifest = serverManifest;
-      }).catch(error => {console.log(error)});
       // Open a socket connection with the server
       let socket = new WebSocket((pageUrl.protocol == "https:" ? "wss:" : "ws") + "//" + ip);
 
@@ -343,8 +345,13 @@ async function loadView(switchToServer) {
               ...states.focusedRoomRenderedMessages
             ]);
             break;
-          case "connecting":
           case "connected":
+            if (servers[serverCode].setManifest)
+              servers[serverCode].setManifest(packet.manifest);
+            else 
+              servers[serverCode].manifest = packet.manifest;
+            break;
+          case "connecting":
           case "disconnect":
           case "join":
           case "welcome":
@@ -390,7 +397,6 @@ export default function ChatPage() {
   // set a bunch of empty React state objects for stuff that needs to be accessed throughout the program
   [states.servers, states.setServers] = React.useState({}); // Data related to servers the user is in
   [states.focusedRoomRenderedMessages, states.setFocusedRoomRenderedMessages] = React.useState([]); // The <Message/> elements shown in the view, set in ChatPage
-  console.log(states.setFocusedRoomRenderedMessages);
   [states.focusedServer, states.setFocusedServer] = React.useState(null); // An object representing the currently focused server
   [states.focusedRoom, states.setFocusedRoom] = React.useState({}); // An object representing the currently focused room
   [states.focusedServerRenderedRooms, states.setFocusedServerRenderedRooms] = React.useState([]); // The <RoomLink/> elements in the sidebar for this server
@@ -405,7 +411,6 @@ export default function ChatPage() {
     <Common.PageHeader className="darkThemed" iconClickEvent={() => {
       if (states.useMobileUI) {
         setTimeout(() => {
-          console.log("doing thstufsf");
           if (states.mobileSidebarShown)
             states.setMobileSidebarShown(false);
           else

@@ -231,8 +231,9 @@ a {
     padding: 5px;
     gap: 5px;
     flex-grow: 1;
+    flex-shrink: 1;
     @media screen and (min-width: 20cm) {
-        flex-grow: 1;
+        flex-shrink: 0;
         max-width: 20%;
     }
 }
@@ -419,22 +420,54 @@ input[type="text"]:active, input[type="password"]:active, input[type="email"]:ac
 }
 
 #popover {
-    width: fit-content;
-    max-width: 90%;
-    height: fit-content;
+    padding: 5px;
+    gap: 5px;
     display: flex;
     flex-direction: column;
-    border: 0px solid var(--grey);
-    border-radius: 5px;
     background: var(--outgradient);
-    box-shadow: 0px 0px 10px black;
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-bottom: 10px;
-    gap: 5px;
-    margin: auto;
-    align-content: stretch;
-    max-height: 90%;
+
+    @media screen and (min-width: 20cm) {
+        width: fit-content;
+        max-width: 90%;
+        height: fit-content;
+        border: 0px solid var(--grey);
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px black;
+        margin: auto;
+        align-content: stretch;
+        max-height: 90%;
+    }
+
+    @media screen and (max-width: 20cm) {
+        background-color: var(--background-level4) !important;
+        position: absolute;
+        top: 0px;
+        bottom: 0px;
+        left: 0px;
+        right: 0px;
+    }
+}
+
+#popoverHeaderBar {
+    display: flex;
+    flex-direction: row;
+    padding: 3px;
+    gap: 3px;
+    align-items: center;
+}
+
+#popoverHeaderBar > h3 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-wrap: nowrap;
+    margin: 0px;
+}
+
+#popoverHeaderBar > button {
+    padding: 3px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
 }
 
 /**************************************
