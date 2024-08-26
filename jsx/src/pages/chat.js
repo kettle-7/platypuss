@@ -398,7 +398,7 @@ export default function ChatPage() {
   [states.useMobileUI, states.setUseMobileUI] = React.useState(browser ? (window.innerWidth * 2.54 / 96) < 20 : false); // Use mobile UI if the screen is less than 20cm wide
   [states.theme, states.setTheme] = React.useState(theme);
 
-  //React.useEffect(() => { loadView() }, []);
+  React.useEffect(() => { loadView() }, []);
   
   // return the basic page layout
   return (<>
@@ -423,6 +423,3 @@ export default function ChatPage() {
     </main>
   </>);
 }
-
-setTimeout(() => {
-  loadView();}, 30000);
