@@ -15,14 +15,38 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
 ************************************************************************/
 
-import * as Common from "../components/common";
 import * as React from "react";
 import { Link } from "gatsby";
 import "./themery.scss";
 
+var browser = typeof window !== "undefined"; // check if we're running in a browser rather than the build environment
+var pageUrl = browser ? new URL(window.location) : new URL("http://localhost:8000"); // window is not defined in the testing environment so just assume localhost
+var authUrl = "https://platypuss.net";
+var states = {};
+
+function PageHeader ({title, iconClickEvent, ...props}) {
+    [states.accountInformation, states.setAccountInformation] = React.useState({});
+
+    React.useEffect(() => {
+        fetch(authUrl + "/uinfo?id=" + localStorage.getItem("sessionID"))
+            .then(data => data.json())
+            .then(data => states.setAccountInformation(data))
+            .catch(() => { if (pageUrl.pathname == "/chat") window.location = "/" });
+    }, []);
+
+    return (<header {...props}>
+        <img className="avatar" onClick={iconClickEvent ? iconClickEvent : () => {window.location = "/"}} style={{cursor: "pointer"}} src="/icons/icon-48x48.png"/>
+        <h2 onClick={() => {window.location = "/"}} style={{cursor: "pointer"}}>
+            {title ? title : "(Beta!) Platypuss"}
+        </h2>
+        <div style={{flexGrow: 1}}></div>
+        <img className="avatar" alt="🐙" style={{cursor: "pointer"}} src={authUrl+states.accountInformation.avatar}/>
+    </header>);
+};
+
 const NotFoundPage = () => {
   return (<>
-    <Common.PageHeader title="(Beta!) Platypuss" className="darkThemed" states={{}}/>
+    <PageHeader title="(Beta!) Platypuss" className="darkThemed" states={{}}/>
     <main id="mainPage" className="lightThemed">
         <h2>Error 404</h2>
         <p>

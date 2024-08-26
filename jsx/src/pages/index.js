@@ -15,15 +15,15 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
 ************************************************************************/
 
-import * as Common from "../components/common";
 import * as React from "react";
 import "./themery.scss";
 
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
 var browser = typeof window !== "undefined"; // check if we're running in a browser rather than the build environment
+var pageUrl = browser ? new URL(window.location) : new URL("http://localhost:8000"); // window is not defined in the testing environment so just assume localhost
 const authUrl = "https://platypuss.net"; // this shouldn't need to change but just in case
 var states = {}; // serves the same purpose as in chat.js
-var emailRef, passwordRef;
+var emailRef, passwordRef, confirmPasswordRef, usernameRef;
 
 // thanks bryc on stack overflow ^w^
 function hashPassword (str, seed = 20) { // hashes passwords somehow
@@ -42,9 +42,21 @@ function hashPassword (str, seed = 20) { // hashes passwords somehow
     return (h2>>>0).toString(16).padStart(8,0)+(h1>>>0).toString(16).padStart(8,0);
 };
 
-var createNewAccount = false; // whether we're signing in or making a new account, signing in being false and default
-
-function doTheLoginThingy() {
+function doTheLoginThingy(createNewAccount) {
+  if (createNewAccount) {
+    if (passwordRef.current.value != confirmPasswordRef.current.value) {
+      states.setActivePopover(<CreateAccountPopover error="Your passwords don't match"/>);
+      return;
+    }
+    if (passwordRef.current.value.replace(/[\n\r\t ]/g, "") == "") {
+      states.setActivePopover(<CreateAccountPopover error="Your password must be at least one character"/>);
+      return;
+    }
+    if (usernameRef.current.value.replace(/[\n\r\t ]/g, "") == "") {
+      states.setActivePopover(<CreateAccountPopover error="Your username must be at least one character"/>);
+      return;
+    }
+  }
   fetch(`${authUrl}/login`, { // send this data to the authentication server, accepting a json response
     method: "POST",
     headers: {
@@ -52,25 +64,117 @@ function doTheLoginThingy() {
     },
     body: JSON.stringify({ // the information we send to the authentication server
       createNew: createNewAccount,
-      ift: createNewAccount, // deprecated
       server: "example.com", // can be anything so long as no platypuss server will actually be hosted there,
-      ser: "example.com", // also deprecated
       email: emailRef.current.value,
-      pwd: hashPassword(passwordRef.current.value), // guess what ? also deprecated >:3
+      username: createNewAccount ? usernameRef.current.value : undefined,
       password: hashPassword(passwordRef.current.value)
     })
     // we take the response and save the session token to the browser
   }).then(response => response.json()).then(response => {
-    console.log(response);
+    if (createNewAccount) {
+      if (response.alreadyExists) {
+        states.setActivePopover(<CreateAccountPopover error={<>There's already an account with that email address,
+          would you like to <a href="#" onClick={() => states.setActivePopover(<SignInPopover/>)}>sign in</a> instead?</>}/>);
+        return;
+      }
+      states.setActivePopover(<Popover title="Check your emails!">Thanks for joining us, 
+        you should get <br/> an email in the next few minutes to <br/> confirm the new account.</Popover>);
+      return;
+    } else {
+      if (!response.alreadyExists) {
+        states.setActivePopover(<SignInPopover error={<>There's no account with that email address,
+          would you like to <a href="#" onClick={() => states.setActivePopover(<CreateAccountPopover/>)}>create one</a>?</>}/>);
+        return;
+      }
+      if (!response.passwordMatches) {
+        states.setActivePopover(<SignInPopover error="Incorrect password for this account"/>);
+        return;
+      }
+    }
     localStorage.setItem("sessionID", response.sessionID);
     window.location = "/chat";
   });
+}
+
+function PageHeader ({title, iconClickEvent, ...props}) {
+    [states.accountInformation, states.setAccountInformation] = React.useState({});
+
+    React.useEffect(() => {
+        fetch(authUrl + "/uinfo?id=" + localStorage.getItem("sessionID"))
+            .then(data => data.json())
+            .then(data => states.setAccountInformation(data))
+            .catch(() => { if (pageUrl.pathname == "/chat") window.location = "/" });
+    }, []);
+
+    return (<header {...props}>
+        <img className="avatar" onClick={iconClickEvent ? iconClickEvent : () => {window.location = "/"}} style={{cursor: "pointer"}} src="/icons/icon-48x48.png"/>
+        <h2 onClick={() => {window.location = "/"}} style={{cursor: "pointer"}}>
+            {title ? title : "(Beta!) Platypuss"}
+        </h2>
+        <div style={{flexGrow: 1}}></div>
+        <img className="avatar" alt="🐙" style={{cursor: "pointer"}} src={authUrl+states.accountInformation.avatar}/>
+    </header>);
+};
+
+function PopoverParent({...props}) {
+  [states.activePopover, states.setActivePopover] = React.useState(null);
+  return (
+    <div id="popoverParent" style={{display: states.activePopover == null ? "none" : "flex"}} onClick={() => {
+      states.setActivePopover(null);
+    }} {...props}>{states.activePopover}</div>
+  );
+}
+
+// for popups / popovers in desktop, render as separate screens on mobile
+function Popover({children, title, style={}, ...props}) {
+  return <div id="popover" style={{margin: style.margin ? style.margin : "auto", ...style}} onClick={event => {
+    event.stopPropagation();
+  }} {...props}>
+    <div id="popoverHeaderBar">
+      <h3>{title}</h3>
+      <div style={{flexGrow: 1}}></div>
+      <button onClick={() => {states.setActivePopover(null);}} className="material-symbols-outlined">close</button>
+    </div>
+    {children}
+  </div>
+}
+
+function SignInPopover ({ error="" }) {
+  return (<Popover title="Sign In">
+    <span>Welcome back! If you don't already have an account <br/> please <a href="#" onClick={() => states.setActivePopover(<CreateAccountPopover/>)}>create an account</a> instead.</span>
+    <div id="loginform">
+      <em id="signInErrorMessage">{error}</em>
+      <div style={{display:"grid",gridTemplateColumns:"auto auto"}}>
+      <label>Email address </label><input type="email" id="email" className="textBox" ref={emailRef}/>
+      <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef}/>
+      </div><br/>
+      <button onClick={() => doTheLoginThingy(false)}>Sign In</button>
+    </div>
+  </Popover>);
+}
+
+function CreateAccountPopover ({ error="" }) {
+  return (<Popover title="Create Account">
+    <span>Welcome to Platypuss! If you already have an account <br/> please <a href="#" onClick={() => states.setActivePopover(<SignInPopover/>)}>sign in</a> instead.</span>
+    <div id="loginform">
+      {error ? <em id="signInErrorMessage">{error}</em> : ""}
+      <div style={{display:"grid",gridTemplateColumns:"auto auto"}}>
+      <label>Email address </label><input type="email" id="email" className="textBox" ref={emailRef}/>
+      <label>Username </label><input type="text" id="unam" className="textBox" ref={usernameRef}/>
+      <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef}/>
+      <label>Confirm Password </label><input type="password" id="confirmPassword" className="textBox" ref={confirmPasswordRef}/>
+      </div><br/>
+      <button onClick={() => doTheLoginThingy(true)}>Create Account</button>
+    </div>
+  </Popover>);
 }
 
 const IndexPage = () => {
   // These let us refer to the text boxes later on
   emailRef = React.useRef(null);
   passwordRef = React.useRef(null);
+  usernameRef = React.useRef(null);
+  confirmPasswordRef = React.useRef(null);
   let theme = "medium";
   if (browser)
     if (localStorage.getItem("theme"))
@@ -79,9 +183,9 @@ const IndexPage = () => {
   [states.theme, states.setTheme] = React.useState(theme);
 
   return (<>
-    <Common.PageHeader className={states.theme == "light" ? "lightThemed" : "darkThemed"} states={states}/>
+    <PageHeader className={states.theme == "light" ? "lightThemed" : "darkThemed"}/>
     <main id="mainPage" className={states.theme == "dark" ? "darkThemed" : "lightThemed"}>
-      <a href="/chat">cat</a>
+      <a href="/chat">Chat page, only works if you're logged in</a>
       <h1>
         You found the Platypuss public beta!
       </h1>
@@ -92,22 +196,11 @@ const IndexPage = () => {
         break certain functionality. Should anything not work properly you're better off using
         the <a href="https://platypuss.net">stable version</a> of the site.
       </p>
-      <div id="P" className="popupParent" style={{display: "flex"}}><div id="p" className="popup">
-        <h2 id="lit1">Sign In</h2>
-        <span id="lit2">Welcome back! If you don't already have an account <br/> please <a href="https://platypuss.net">create an account</a> instead.</span>
-        <div id="loginform">
-          <div style={{display:"grid",gridTemplateColumns:"auto auto"}}>
-          {/* The four lines below contain a weird thing with anonymous functions, this is the only way I know of to assign the element to a variable and position it at the same time */}
-          <label>Email address </label><input type="email" id="email" className="textBox" ref={emailRef}/>
-          {/*<label id="pr2">Username </label><input type="text" id="unam" className="textBox" ref={usernameRef}/>*/}
-          <label>Password </label><input type="password" id="pwd1" className="textBox" ref={passwordRef}/>
-          {/*<label id="pr1">Confirm Password </label><input type="password" id="pwd2" className="textBox" ref={secondPasswordRef}/>*/}
-          </div><br/>
-          <button onClick={doTheLoginThingy} id="lit3">Sign In</button>
-        </div>
-      </div></div>
+      <button onClick={() => {states.setActivePopover(<SignInPopover/>)}}>Sign In</button>
+      <button onClick={() => {states.setActivePopover(<CreateAccountPopover/>)}}>Create Account</button>
     </main>
     <footer className={states.theme == "dark" ? "darkThemed" : "lightThemed"}>links to stuff maybe</footer>
+    <PopoverParent className={states.theme == "light" ? "lightThemed" : "darkThemed"}/>
   </>);
 };
 

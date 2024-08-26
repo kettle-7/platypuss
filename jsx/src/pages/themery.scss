@@ -276,6 +276,7 @@ a {
     object-fit: cover;
     border-radius: 20%;
     background: var(--background-level3);
+    cursor: pointer;
     flex-shrink: 0;
     display: flex;
     justify-content: space-evenly;
@@ -375,6 +376,10 @@ a {
     height: 48px;
     border-radius: 50%;
     flex-shrink: 0;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    font-size: xx-large;
 }
 
 input[type="text"], input[type="password"], input[type="email"] {
@@ -468,6 +473,17 @@ input[type="text"]:active, input[type="password"]:active, input[type="email"]:ac
     display: flex;
     justify-content: space-evenly;
     align-items: center;
+}
+
+#loadMoreMessagesButton {
+    align-self: center;
+    font-size: large;
+}
+
+#aboveMessageArea {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
 /**************************************

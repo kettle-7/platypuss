@@ -16,7 +16,6 @@
 ************************************************************************/
 // °^° i am pingu
 
-import * as Common from "../components/common";
 import Markdown from 'markdown-to-jsx';
 import hljs from 'highlight.js';
 import * as React from "react";
@@ -31,6 +30,7 @@ var peers = {}; // Keeps track of other people on the server (platonically of co
 var loadedMessages = 0; // The number of messages loaded in the current view, used when loading older messages
 var serverHashes = {}; // We can use these to get links to specific servers / maybe rooms in the future
 var browser = typeof window !== "undefined"; // check if we're running in a browser rather than the build environment
+var finishedLoading = false;
 var roomCache = {};
 
 var pageUrl = browser ? new URL(window.location) : new URL("http://localhost:8000"); // window is not defined in the testing environment so just assume localhost
@@ -62,21 +62,6 @@ function hashPassword (str, seed = 20) { // hashes things somehow
     return (h2>>>0).toString(16).padStart(8,0)+(h1>>>0).toString(16).padStart(8,0);
 };
 
-function SyntaxHighlightedCode(props) {
-  const ref = React.useRef(null);
-
-  React.useEffect(() => {
-    if (ref.current && props.className?.includes('lang-') && hljs) {
-      hljs.highlightElement(ref.current)
-
-      // hljs won't reprocess the element unless this attribute is removed
-      ref.current.removeAttribute('data-highlighted')
-    }
-  }, [props.className, props.children])
-
-  return <code {...props} ref={ref} />
-}
-
 // Fetch data on one user, from cache if possible but from the authentication server otherwise
 function fetchUser(id) {
   return new Promise((resolve, reject) => {
@@ -95,19 +80,28 @@ function fetchUser(id) {
   });
 }
 
-// The bar on the left showing the servers you're in, also for navigation
-function ServersBar({shown, className, ...props}) {
-  return (<div className={className + " sidebar"} id="serversBar" style={{display: shown ? "flex" : "none"}} {...props}>
-    <img className="serverIcon" src="" alt="+" id="newServerButton"/>
-    {Object.values(states.servers).map(server => (<ServerIcon server={server}></ServerIcon>))}
-  </div>);
+function SyntaxHighlightedCode(props) {
+  const ref = React.useRef(null);
+
+  React.useEffect(() => {
+    if (ref.current && props.className?.includes('lang-') && hljs) {
+      hljs.highlightElement(ref.current)
+
+      // hljs won't reprocess the element unless this attribute is removed
+      ref.current.removeAttribute('data-highlighted')
+    }
+  }, [props.className, props.children])
+
+  return <code {...props} ref={ref} />
 }
 
-// The bar on the right showing other server members
-function PeersBar({shown, className, ...props}) {
-  return (<div className={className + " sidebar"} id="serversBar" style={{display: shown ? "flex" : "none"}} {...props}>
-    <img className="serverIcon material-symbols-outlined" src="" alt="+" id="newServerButton"/>
-  </div>);
+function PopoverParent({...props}) {
+  [states.activePopover, states.setActivePopover] = React.useState(null);
+  return (
+    <div id="popoverParent" style={{display: states.activePopover == null ? "none" : "flex"}} onClick={() => {
+      states.setActivePopover(null);
+    }} {...props}>{states.activePopover}</div>
+  );
 }
 
 // for popups / popovers in desktop, render as separate screens on mobile
@@ -124,30 +118,6 @@ function Popover({children, title, style={}, ...props}) {
   </div>
 }
 
-// Renders a single message
-function Message({message}) {
-  // We might have the author cached already, if not we'll just get them later
-  let [author, setAuthor] = React.useState(userCache[message.author] || {
-    avatar: "https://img.freepik.com/premium-vector/hand-drawn-cartoon-doodle-skull-funny-cartoon-skull-isolated-white-background_217204-944.jpg",
-    username: "Deleted User"
-  });
-  let uploads = message.uploads ? message.uploads : [];
-  fetchUser(message.author).then(newAuthor=>{setAuthor(newAuthor)});
-  return (<div className="message1">
-    <img src={author.avatar} alt="" className="avatar"/>
-    <div className="message2">
-      <h3 className="messageUsernameDisplay">{author.username}</h3>
-      <Markdown options={markdownOptions}>{message.content}</Markdown>
-      {uploads.map(upload => <img className="upload" src={authUrl+upload.url} onClick={() => {
-        states.setActivePopover(<Popover style={{background: "transparent", boxShadow: "none"}} title={upload.name}>
-          <img src={authUrl+upload.url} style={{borderRadius: 10, boxShadow: "0px 0px 10px black"}}/>
-          <a href={authUrl+upload.url} style={{color: "white"}}>Download this image</a>
-        </Popover>);
-      }}/>)}
-    </div>
-  </div>);
-}
-
 // The midsection between these two aforementioned bars
 function MiddleSection({shown, className, ...props}) {
   const belowMessagesRef = React.useRef(null);
@@ -156,7 +126,7 @@ function MiddleSection({shown, className, ...props}) {
     let scrolledArea = scrolledAreaRef.current;
     if ( // only scroll down if we're near the bottom or the page has just loaded
         (scrolledArea.scrollHeight < scrolledArea.scrollTop  + (2 * scrolledArea.clientHeight)) ||
-        states.focusedRoomRenderedMessages[states.focusedRoomRenderedMessages.length - 1]?.isHistoric
+        !finishedLoading
     ) {
       belowMessagesRef.current?.scrollIntoView({ behaviour: "smooth" });
     }
@@ -164,7 +134,9 @@ function MiddleSection({shown, className, ...props}) {
   return (<div id="middleSection" className={className} style={{display: shown ? "flex" : "none"}} {...props}>
     <div id="aboveScrolledArea"></div>
     <div id="scrolledArea" ref={scrolledAreaRef}> {/* Has a scrollbar, contains load more messages button but not message typing box */}
-      <div id="aboveMessageArea"></div>
+      <div id="aboveMessageArea">
+        <button id="loadMoreMessagesButton" onClick={loadMoreMessages}>Load more messages</button>
+      </div>
       <div id="messageArea">{states.focusedRoomRenderedMessages.map(message => <Message message={message} key={message.id}/>)}</div>
       <div id="belowMessageArea" ref={belowMessagesRef}></div>
     </div>
@@ -182,6 +154,30 @@ function MiddleSection({shown, className, ...props}) {
   </div>);
 }
 
+// Renders a single message
+function Message({message}) {
+  // We might have the author cached already, if not we'll just get them later
+  let [author, setAuthor] = React.useState(userCache[message.author] || {
+    avatar: "https://img.freepik.com/premium-vector/hand-drawn-cartoon-doodle-skull-funny-cartoon-skull-isolated-white-background_217204-944.jpg",
+    username: "Deleted User"
+  });
+  let uploads = message.uploads ? message.uploads : [];
+  fetchUser(message.author).then(newAuthor=>{setAuthor(newAuthor)});
+  return (<div className="message1">
+    <img src={author.avatar} alt="🐙" className="avatar"/>
+    <div className="message2">
+      <h3 className="messageUsernameDisplay">{author.username}</h3>
+      <Markdown options={markdownOptions}>{message.content}</Markdown>
+      {uploads.map(upload => <img className="upload" src={authUrl+upload.url} onClick={() => {
+        states.setActivePopover(<Popover style={{background: "transparent", boxShadow: "none"}} title={upload.name}>
+          <img src={authUrl+upload.url} style={{borderRadius: 10, boxShadow: "0px 0px 10px black"}}/>
+          <a href={authUrl+upload.url} style={{color: "white"}}>Download this image</a>
+        </Popover>);
+      }}/>)}
+    </div>
+  </div>);
+}
+
 function triggerMessageSend() {
   let socket = openSockets[states.focusedServer];
   let messageTextBox = document.getElementById("messageBox");
@@ -192,6 +188,35 @@ function triggerMessageSend() {
     }
   }));
   messageTextBox.innerHTML = "";
+}
+
+// A SLIGHTLY DIFFERENT COMMENT
+function RoomsBar({shown, className, ...props}) {
+  return (<div className={className + " sidebar"} id="roomsBar" style={{display: shown ? "flex" : "none"}} {...props}>
+    <div id="serverTitle" style={{cursor: "pointer", backgroundImage: states.focusedServer ? states.servers[states.focusedServer].manifest.icon : ""}}>
+    <h3 style={{margin: 5}}>
+      {states.focusedServer ? states.servers[states.focusedServer].manifest.title : "Loading servers..."}
+    </h3>
+    <div style={{flexGrow: 1}}></div>
+    <span className="material-symbols-outlined">stat_minus_1</span></div>
+    {Object.values(states.focusedServerRenderedRooms).map(room => (<RoomLink server={room}></RoomLink>))}
+    {Object.values(states.focusedServerRenderedRooms).length == 0 ? <p>This server doesn't have any rooms in it.</p> : <></>}
+  </div>);
+}
+
+// a comment
+function RoomLink({room}) {
+  return (<div className="roomLink" style={{cursor:"pointer"}}>
+    <a>{room.name}</a>
+  </div>);
+}
+
+// The bar on the left showing the servers you're in, also for navigation
+function ServersBar({shown, className, ...props}) {
+  return (<div className={className + " sidebar"} id="serversBar" style={{display: shown ? "flex" : "none"}} {...props}>
+    <img className="serverIcon" src="" alt="+" id="newServerButton"/>
+    {Object.values(states.servers).map(server => (<ServerIcon server={server}></ServerIcon>))}
+  </div>);
 }
 
 // a server icon button thing
@@ -209,34 +234,19 @@ function ServerIcon({server}) {
   </div>);
 }
 
-// a comment
-function RoomLink({room}) {
-  return (<div className="roomLink" style={{cursor:"pointer"}}>
-    <a>{room.name}</a>
+// The bar on the right showing other server members
+function PeersBar({shown, className, ...props}) {
+  return (<div className={className + " sidebar"} id="serversBar" style={{display: shown ? "flex" : "none"}} {...props}>
+    <img className="serverIcon material-symbols-outlined" src="" alt="+" id="newServerButton"/>
   </div>);
 }
 
-// A SLIGHTLY DIFFERENT COMMENT
-function RoomsBar({shown, className, ...props}) {
-  return (<div className={className + " sidebar"} id="roomsBar" style={{display: shown ? "flex" : "none"}} {...props}>
-    <div id="serverTitle" style={{cursor: "pointer", backgroundImage: states.focusedServer ? states.servers[states.focusedServer].manifest.icon : ""}}>
-    <h3 style={{margin: 5}}>
-      {states.focusedServer ? states.servers[states.focusedServer].manifest.title : "Loading servers..."}
-    </h3>
-    <div style={{flexGrow: 1}}></div>
-    <span className="material-symbols-outlined">stat_minus_1</span></div>
-    {Object.values(states.focusedServerRenderedRooms).map(room => (<RoomLink server={room}></RoomLink>))}
-    {Object.values(states.focusedServerRenderedRooms).length == 0 ? <p>This server doesn't have any rooms in it.</p> : <></>}
-  </div>);
-}
-
-function PopoverParent({...props}) {
-  [states.activePopover, states.setActivePopover] = React.useState(null);
-  return (
-    <div id="popoverParent" style={{display: states.activePopover == null ? "none" : "flex"}} onClick={() => {
-      states.setActivePopover(null);
-    }} {...props}>{states.activePopover}</div>
-  );
+function loadMoreMessages() {
+  openSockets[states.focusedServer].send(JSON.stringify({
+    eventType: "messageLoad",
+    start: loadedMessages,
+    max: 100
+  }));
 }
 
 // The document head contains metadata, most of it is defined in use-site-metadata.jsx
@@ -254,6 +264,7 @@ async function loadView(switchToServer) {
   };
   // delete all messages
   states.setFocusedRoomRenderedMessages([]);
+  finishedLoading = false;
   // connect to the authentication server to get the list of server's we're in and their session tokens
   fetch(`${authUrl}/getServerTokens?id=${localStorage.getItem("sessionID")}`).then(data => data.json()).then(async function(data) {
     for (let socket of Object.values(openSockets)) {
@@ -333,6 +344,7 @@ async function loadView(switchToServer) {
               ...states.focusedRoomRenderedMessages,
               messageCache[packet.message.id]
             ]);
+            loadedMessages++;
             break;
           case "messages":
             if (states.focusedServer !== serverCode) break;
@@ -344,6 +356,8 @@ async function loadView(switchToServer) {
               ...packet.messages,
               ...states.focusedRoomRenderedMessages
             ]);
+            loadedMessages += packet.messages.length;
+            setTimeout(() => { finishedLoading = true; }, 1000);
             break;
           case "connected":
             if (servers[serverCode].setManifest)
@@ -380,6 +394,26 @@ async function loadView(switchToServer) {
   }).catch(error => console.log(error));
 }
 
+function PageHeader ({title, iconClickEvent, ...props}) {
+  [states.accountInformation, states.setAccountInformation] = React.useState({});
+
+  React.useEffect(() => {
+      fetch(authUrl + "/uinfo?id=" + localStorage.getItem("sessionID"))
+          .then(data => data.json())
+          .then(data => states.setAccountInformation(data))
+          .catch(() => { if (pageUrl.pathname == "/chat") window.location = "/" });
+  }, []);
+
+  return (<header {...props}>
+      <img className="avatar" onClick={iconClickEvent ? iconClickEvent : () => {window.location = "/"}} style={{cursor: "pointer"}} src="/icons/icon-48x48.png"/>
+      <h2 onClick={() => {window.location = "/"}} style={{cursor: "pointer"}}>
+          {title ? title : "(Beta!) Platypuss"}
+      </h2>
+      <div style={{flexGrow: 1}}></div>
+      <img className="avatar" style={{cursor: "pointer"}} src={authUrl+states.accountInformation.avatar}/>
+  </header>);
+};
+
 // The page itself
 export default function ChatPage() {
   let theme = "medium";
@@ -408,7 +442,7 @@ export default function ChatPage() {
   
   // return the basic page layout
   return (<>
-    <Common.PageHeader className="darkThemed" iconClickEvent={() => {
+    <PageHeader className="darkThemed" iconClickEvent={() => {
       if (states.useMobileUI) {
         setTimeout(() => {
           if (states.mobileSidebarShown)
@@ -429,7 +463,7 @@ export default function ChatPage() {
           shown={(!states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}
         />
         <PeersBar className={states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
-        <PopoverParent className="darkThemed"/>
+        <PopoverParent className={states.theme == "light" ? "lightThemed" : "darkThemed"}/>
       </div>
     </main>
   </>);
