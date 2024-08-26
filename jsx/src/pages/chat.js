@@ -321,6 +321,9 @@ async function loadView(switchToServer) {
             states.setFocusedServer(serverCode);
           }
         }
+        if (states.focusedServer == serverCode) {
+          window.history.pushState({}, "", "#"+serverHashes[serverCode]);
+        }
       };
 
       socket.onclose = () => {
