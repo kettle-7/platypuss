@@ -398,13 +398,19 @@ export default function ChatPage() {
   [states.useMobileUI, states.setUseMobileUI] = React.useState(browser ? (window.innerWidth * 2.54 / 96) < 20 : false); // Use mobile UI if the screen is less than 20cm wide
   [states.theme, states.setTheme] = React.useState(theme);
 
-  React.useEffect(() => { loadView() }, []);
+  React.useEffect(() => { loadView(); }, []);
   
   // return the basic page layout
   return (<>
     <Common.PageHeader className="darkThemed" iconClickEvent={() => {
       if (states.useMobileUI) {
-        states.setMobileSidebarShown(!states.mobileSidebarShown);
+        setTimeout(() => {
+          console.log("doing thstufsf");
+          if (states.mobileSidebarShown)
+            states.setMobileSidebarShown(false);
+          else
+            states.setMobileSidebarShown(true);
+        }, 50);
       } else {
         window.location = "/";
       }
