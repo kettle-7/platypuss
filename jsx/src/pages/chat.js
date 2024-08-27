@@ -30,6 +30,7 @@ var peers = {}; // Keeps track of other people on the server (platonically of co
 var loadedMessages = 0; // The number of messages loaded in the current view, used when loading older messages
 var serverHashes = {}; // We can use these to get links to specific servers / maybe rooms in the future
 var browser = typeof window !== "undefined"; // check if we're running in a browser rather than the build environment
+var emailRef, passwordRef, confirmPasswordRef, usernameRef;
 var finishedLoading = false;
 var roomCache = {};
 
@@ -78,6 +79,90 @@ function fetchUser(id) {
       resolve(userCache[id]); // we already know about the user so don't look them up
     }
   });
+}
+
+function doTheLoginThingy(createNewAccount) {
+  if (createNewAccount) {
+    if (passwordRef.current.value != confirmPasswordRef.current.value) {
+      states.setActivePopover(<CreateAccountPopover error="Your passwords don't match"/>);
+      return;
+    }
+    if (passwordRef.current.value.replace(/[\n\r\t ]/g, "") == "") {
+      states.setActivePopover(<CreateAccountPopover error="Your password must be at least one character"/>);
+      return;
+    }
+    if (usernameRef.current.value.replace(/[\n\r\t ]/g, "") == "") {
+      states.setActivePopover(<CreateAccountPopover error="Your username must be at least one character"/>);
+      return;
+    }
+  }
+  fetch(`${authUrl}/login`, { // send this data to the authentication server, accepting a json response
+    method: "POST",
+    headers: {
+      'Content-Type': 'text/plain'
+    },
+    body: JSON.stringify({ // the information we send to the authentication server
+      createNew: createNewAccount,
+      server: "example.com", // can be anything so long as no platypuss server will actually be hosted there,
+      email: emailRef.current.value,
+      username: createNewAccount ? usernameRef.current.value : undefined,
+      password: hashPassword(passwordRef.current.value)
+    })
+    // we take the response and save the session token to the browser
+  }).then(response => response.json()).then(response => {
+    if (createNewAccount) {
+      if (response.alreadyExists) {
+        states.setActivePopover(<CreateAccountPopover error={<>There's already an account with that email address,
+          would you like to <a href="#" onClick={() => states.setActivePopover(<SignInPopover/>)}>sign in</a> instead?</>}/>);
+        return;
+      }
+      states.setActivePopover(<Popover title="Check your emails!">Thanks for joining us, 
+        you should get <br/> an email in the next few minutes to <br/> confirm the new account.</Popover>);
+      return;
+    } else {
+      if (!response.alreadyExists) {
+        states.setActivePopover(<SignInPopover error={<>There's no account with that email address,
+          would you like to <a href="#" onClick={() => states.setActivePopover(<CreateAccountPopover/>)}>create one</a>?</>}/>);
+        return;
+      }
+      if (!response.passwordMatches) {
+        states.setActivePopover(<SignInPopover error="Incorrect password for this account"/>);
+        return;
+      }
+    }
+    localStorage.setItem("sessionID", response.sessionID);
+    window.location.reload();
+  });
+}
+
+function SignInPopover ({ error="" }) {
+  return (<Popover title="Sign In">
+    <span>Welcome back! If you don't already have an account <br/> please <a href="#" onClick={() => states.setActivePopover(<CreateAccountPopover/>)}>create an account</a> instead.</span>
+    <div id="loginform">
+      <em id="signInErrorMessage">{error}</em>
+      <div style={{display:"grid",gridTemplateColumns:"auto auto"}}>
+      <label>Email address </label><input type="email" id="email" className="textBox" ref={emailRef}/>
+      <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef}/>
+      </div><br/>
+      <button onClick={() => doTheLoginThingy(false)}>Sign In</button>
+    </div>
+  </Popover>);
+}
+
+function CreateAccountPopover ({ error="" }) {
+  return (<Popover title="Create Account">
+    <span>Welcome to Platypuss! If you already have an account <br/> please <a href="#" onClick={() => states.setActivePopover(<SignInPopover/>)}>sign in</a> instead.</span>
+    <div id="loginform">
+      {error ? <em id="signInErrorMessage">{error}</em> : ""}
+      <div style={{display:"grid",gridTemplateColumns:"auto auto"}}>
+      <label>Email address </label><input type="email" id="email" className="textBox" ref={emailRef}/>
+      <label>Username </label><input type="text" id="unam" className="textBox" ref={usernameRef}/>
+      <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef}/>
+      <label>Confirm Password </label><input type="password" id="confirmPassword" className="textBox" ref={confirmPasswordRef}/>
+      </div><br/>
+      <button onClick={() => doTheLoginThingy(true)}>Create Account</button>
+    </div>
+  </Popover>);
 }
 
 function SyntaxHighlightedCode(props) {
@@ -254,6 +339,70 @@ export const Head = () => (
   <title>(Beta!) Platypuss</title>
 );
 
+function showInvitePopup(invite, domain) {
+  // thing
+  let ip = [ // the first 8 characters are the ip address in hex form
+    Number("0x"+invite[0]+invite[1]).toString(),
+    Number("0x"+invite[2]+invite[3]).toString(),
+    Number("0x"+invite[4]+invite[5]).toString(),
+    Number("0x"+invite[6]+invite[7]).toString()].join(".");
+  let subserver = ip;
+  if (domain !== null) {
+    ip = domain;
+  }
+  let port = 0;
+  for (let c = 8; c + 2 < invite.length; c++) {
+    port = port * 16 + parseInt(invite[c], 16);
+  }
+  let code = Number("0x"+invite[invite.length - 2]+invite[invite.length - 1]).toString();
+  fetch(`http${pageUrl.protocol == "https:" ? "s" : ""}://${ip}:${port}/${subserver}`).then(res => res.json()).then(data => {
+    states.setActivePopover(
+      <Popover title={"You've been invited to join "+(data.title ? data.title.toString() : "an untitled server")}>
+        <div className='inviteServerBanner'>
+          <img className='avatar inviteServerIcon' alt="🐙" src={data.icon}/>
+          <p>IP address: {ip}:{port}
+          <br/>{data.memberCount} members</p>
+        </div>
+        <div style={{border: "1px solid var(--grey)",padding:3}}><Markdown options={markdownOptions}>{data.description}</Markdown></div>
+        <div style={{flexGrow: 1}}/>
+        <button onClick={() => {
+          if (states.accountInformation.username) {
+            fetch(authUrl+`/joinServer?id=${localStorage.getItem("sessionID")}&ip=${ip}:${port}+${code}+${subserver}`).then(() => {
+              states.setActivePopover(null);
+              window.history.pushState({}, '', "/chat");
+              states.setFocusedServer(`${ip}:${port}+${code}+${subserver}`);
+              loadView();
+            }).catch(error => {
+              states.setActivePopover(
+                <Popover title="Couldn't join the server">
+                  <p>We don't know why this happened but you might be able to try reload the page.<br/>
+                  Here's an error message:<br/><code>{error.toString()}</code></p>
+                </Popover>
+              );
+            });
+          } else {
+            states.setActivePopover(<CreateAccountPopover/>);
+          }
+        }}>Accept</button>
+        <button onClick={() => {window.location = states.accountInformation.username ? "/chat" : "/"}}>Decline</button>
+      </Popover>
+    );
+  }).catch(error => {
+    states.setActivePopover(
+      <Popover title="You were invited to join a server but we couldn't connect.">
+        <div className='inviteServerBanner'>
+          <img className='avatar inviteServerIcon' alt="🐙"/>
+          <p>IP address: {ip}:{port}
+          <br/>Error message: <code>{error.toString()}</code></p>
+        </div>
+        <div style={{flexGrow: 1}}/>
+        {/*<button>Accept Anyway</button>*/}
+        <button onClick={() => {window.location = '/chat'}}>Close</button>
+      </Popover>
+    );
+  });
+}
+
 async function loadView(switchToServer) {
   // don't try load the client as part of the page compiling
   if (!browser) return;
@@ -262,6 +411,10 @@ async function loadView(switchToServer) {
       states.setActivePopover(null);
     }
   };
+  if (pageUrl.searchParams.has("invite")) {
+    showInvitePopup(pageUrl.searchParams.get("invite"), pageUrl.searchParams.get("ip"));
+  }
+
   // delete all messages
   states.setFocusedRoomRenderedMessages([]);
   finishedLoading = false;
