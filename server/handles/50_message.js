@@ -105,7 +105,7 @@ all the information specified in the Platypuss API."
         let author = packet.ws.uid;
         packet.message.author = author;
         packet.message.id = mid;
-        packet.message.stamp = Date.now();
+        packet.message.timestamp = Date.now();
         
         if (sdata.properties.admins.includes(packet.message.author) &&
                 packet.message.content == "/restart") {
@@ -125,7 +125,7 @@ all the information specified in the Platypuss API."
                     eventType: "message",
                     message: {
                         content: `\`\`\`\nPulled from git\nstdout:\n${stdout}\n\nstderr:\n${stderr}\n\`\`\``,
-                        stamp: packet.message.stamp,
+                        timestamp: packet.message.timestamp,
                         id: mid,
                         author: "server",
                         special: true
@@ -166,7 +166,7 @@ all the information specified in the Platypuss API."
                 eventType: "message",
                 message: {
                     content: `New subserver named ${words.join(" ")}, join [here](${generateInviteCode(ogip, packet.servers.properties.port, inviteCode)}).`,
-                    stamp: packet.message.stamp,
+                    timestamp: packet.message.timestamp,
                     id: mid,
                     author: "server",
                     special: true
@@ -183,7 +183,7 @@ all the information specified in the Platypuss API."
                     eventType: "message",
                     message: {
                         content: `that subserver doesn't exist, use /listsubservers to list subservers`,
-                        stamp: packet.message.stamp,
+                        timestamp: packet.message.timestamp,
                         id: mid,
                         author: "server",
                         special: true
@@ -198,7 +198,7 @@ all the information specified in the Platypuss API."
                 eventType: "message",
                 message: {
                     content: `removed that subserver`,
-                    stamp: packet.message.stamp,
+                    timestamp: packet.message.timestamp,
                     id: mid,
                     author: "server",
                     special: true
@@ -214,7 +214,7 @@ all the information specified in the Platypuss API."
                 eventType: "message",
                 message: {
                     content: `${JSON.stringify(Object.keys(packet.servers))}`,
-                    stamp: packet.message.stamp,
+                    timestamp: packet.message.timestamp,
                     id: mid,
                     author: "server",
                     special: true
@@ -231,7 +231,7 @@ all the information specified in the Platypuss API."
                 eventType: "message",
                 message: {
                     content: `renamed this subserver to ${words.join(" ")}`,
-                    stamp: packet.message.stamp,
+                    timestamp: packet.message.timestamp,
                     id: mid,
                     author: "server",
                     special: true
@@ -248,7 +248,7 @@ all the information specified in the Platypuss API."
                 eventType: "message",
                 message: {
                     content: `changed the icon of this subserver to ${words.join(" ")}`,
-                    stamp: packet.message.stamp,
+                    timestamp: packet.message.timestamp,
                     id: mid,
                     author: "server",
                     special: true
@@ -265,7 +265,7 @@ all the information specified in the Platypuss API."
                 eventType: "message",
                 message: {
                     content: `changed the description of this subserver to ${words.join(" ")}`,
-                    stamp: packet.message.stamp,
+                    timestamp: packet.message.timestamp,
                     id: mid,
                     author: "server",
                     special: true
@@ -279,7 +279,7 @@ all the information specified in the Platypuss API."
                 eventType: "message",
                 message: {
                     content: `${generateInviteCode(sdata.properties.ogip, packet.servers.properties.port, sdata.properties.inviteCode)}`,
-                    stamp: packet.message.stamp,
+                    timestamp: packet.message.timestamp,
                     id: mid,
                     author: "server",
                     special: true
@@ -295,7 +295,7 @@ all the information specified in the Platypuss API."
                         eventType: "message",
                         message: {
                             content: `they're already an admin`,
-                            stamp: packet.message.stamp,
+                            timestamp: packet.message.timestamp,
                             id: mid,
                             author: "server",
                             special: true
@@ -309,7 +309,7 @@ all the information specified in the Platypuss API."
                     eventType: "message",
                     message: {
                         content: `they don't exist`,
-                        stamp: packet.message.stamp,
+                        timestamp: packet.message.timestamp,
                         id: mid,
                         author: "server",
                         special: true
@@ -328,7 +328,7 @@ all the information specified in the Platypuss API."
                         eventType: "message",
                         message: {
                             content: `they're not an admin`,
-                            stamp: packet.message.stamp,
+                            timestamp: packet.message.timestamp,
                             id: mid,
                             author: "server",
                             special: true
@@ -340,7 +340,7 @@ all the information specified in the Platypuss API."
                     eventType: "message",
                     message: {
                         content: `they don't exist`,
-                        stamp: packet.message.stamp,
+                        timestamp: packet.message.timestamp,
                         id: mid,
                         author: "server",
                         special: true
@@ -351,7 +351,7 @@ all the information specified in the Platypuss API."
         }
         sdata.messages[mid] = {
             content: packet.message.content,
-            stamp: packet.message.stamp,
+            timestamp: packet.message.timestamp,
             id: mid,
             author: author,
             uploads: packet.message.uploads,
@@ -364,7 +364,7 @@ all the information specified in the Platypuss API."
                 eventType: "message",
                 message: {
                     content: packet.message.content,
-                    stamp: packet.message.stamp,
+                    timestamp: packet.message.timestamp,
                     id: mid,
                     author: author,
                     uploads: packet.message.uploads,

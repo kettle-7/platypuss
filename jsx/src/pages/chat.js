@@ -150,6 +150,12 @@ function SignInPopover ({ error="" }) {
 }
 
 function CreateAccountPopover ({ error="" }) {
+  [emailRef, usernameRef, passwordRef, confirmPasswordRef] = [
+    React.useRef(null),
+    React.useRef(null),
+    React.useRef(null),
+    React.useRef(null)
+  ];
   return (<Popover title="Create Account">
     <span>Welcome to Platypuss! If you already have an account <br/> please <a href="#" onClick={() => states.setActivePopover(<SignInPopover/>)}>sign in</a> instead.</span>
     <div id="loginform">
@@ -251,7 +257,10 @@ function Message({message}) {
   return (<div className="message1">
     <img src={author.avatar} alt="🐙" className="avatar"/>
     <div className="message2">
-      <h3 className="messageUsernameDisplay">{author.username}</h3>
+      <div className="messageAuthor">
+        <h3 className="messageUsernameDisplay">{author.username}</h3>
+        <span className="messageTimestamp">@{author.tag} at {message.timestamp ? new Date(message.timestamp).toLocaleString() : new Date(message.stamp).toLocaleString()}</span>
+      </div>
       <Markdown options={markdownOptions}>{message.content}</Markdown>
       {uploads.map(upload => <img className="upload" src={authUrl+upload.url} onClick={() => {
         states.setActivePopover(<Popover style={{background: "transparent", boxShadow: "none"}} title={upload.name}>
@@ -368,10 +377,7 @@ function showInvitePopup(invite, domain) {
         <button onClick={() => {
           if (states.accountInformation.username) {
             fetch(authUrl+`/joinServer?id=${localStorage.getItem("sessionID")}&ip=${ip}:${port}+${code}+${subserver}`).then(() => {
-              states.setActivePopover(null);
-              window.history.pushState({}, '', "/chat");
-              states.setFocusedServer(`${ip}:${port}+${code}+${subserver}`);
-              loadView();
+              window.location = "/chat";
             }).catch(error => {
               states.setActivePopover(
                 <Popover title="Couldn't join the server">
@@ -560,13 +566,67 @@ function PageHeader ({title, iconClickEvent, ...props}) {
           .catch(() => { if (pageUrl.pathname == "/chat") window.location = "/" });
   }, []);
 
+  let difficultySliderRef = React.useRef(null);
+
   return (<header {...props}>
       <img className="avatar" onClick={iconClickEvent ? iconClickEvent : () => {window.location = "/"}} style={{cursor: "pointer"}} src="/icons/icon-48x48.png"/>
       <h2 onClick={() => {window.location = "/"}} style={{cursor: "pointer"}}>
           {title ? title : "(Beta!) Platypuss"}
       </h2>
       <div style={{flexGrow: 1}}></div>
-      <img className="avatar" style={{cursor: "pointer"}} src={authUrl+states.accountInformation.avatar}/>
+      <img className="avatar" style={{cursor: "pointer"}} src={authUrl+states.accountInformation.avatar} onClick={() => {
+        states.setActivePopover(
+          <Popover title="Account Settings">
+            <div id="profileBanner">
+              <div className="avatar" id="changeAvatarHoverButton">
+                <span>Change</span>
+                <img className='avatar' id="changeAvatar" src={authUrl+states.accountInformation.avatar}/>
+              </div>
+              <span id="accountSettingsUsername" contentEditable>(username)</span>
+            </div>
+            <div contentEditable id="changeAboutMe"></div>
+            <fieldset id="themeRadioButtons">
+              <legend>Difficulty:</legend>
+              <input type="range" min="0" max="3" ref={difficultySliderRef} className="slider" id="difficultySlider" onInput={() => {
+                if (difficultySliderRef.current.value < 1) {
+                  setTimeout(()=>{states.setTheme("dark"); localStorage.setItem("theme", "dark");});
+                } else if (difficultySliderRef.current.value < 2) {
+                  setTimeout(()=>{states.setTheme("medium"); localStorage.setItem("theme", "medium");});
+                } else if (difficultySliderRef.current.value < 3) {
+                  setTimeout(()=>{states.setTheme("light"); localStorage.setItem("theme", "light");});
+                } else if (difficultySliderRef.current.value < 4) {
+                  setTimeout(()=>{states.setTheme("green"); localStorage.setItem("theme", "green");});
+                }
+              }}/>
+              {/*
+              <div>
+                <input type="radio" id="darkThemeRadioButton" checked={states.theme == "dark"}
+                  onChange={() => {setTimeout(()=>{states.setTheme("dark"); localStorage.setItem("theme", "dark");})}}/>
+                <label for="darkThemeRadioButton">Easy</label>
+              </div>
+              <div>
+                <input type="radio" id="mediumThemeRadioButton" checked={states.theme == "medium"}
+                  onChange={() => {setTimeout(()=>{states.setTheme("medium"); localStorage.setItem("theme", "medium");})}}/>
+                <label for="mediumThemeRadioButton">Medium</label>
+              </div>
+              <div>
+                <input type="radio" id="lightThemeRadioButton" checked={states.theme == "light"}
+                  onChange={() => {setTimeout(()=>{states.setTheme("light"); localStorage.setItem("theme", "light");}, 50)}}/>
+                <label for="lightThemeRadioButton">Hard</label>
+              </div>
+              <div>
+                <input type="radio" id="greenThemeRadioButton" checked={states.theme == "green"}
+                  onChange={() => {setTimeout(()=>{states.setTheme("green"); localStorage.setItem("theme", "green");}, 50)}}/>
+                <label for="greenThemeRadioButton">Harder</label>
+              </div>*/}
+            </fieldset>
+            <button>Delete Account</button>
+            <button>Change Password</button>
+            <button>Log Out</button>
+            <button>Done</button>
+          </Popover>
+        );
+      }}/>
   </header>);
 };
 
@@ -577,6 +637,7 @@ export default function ChatPage() {
   switch (localStorage.getItem("theme")) {
     case "dark":
     case "light":
+    case "green":
     case "medium":
       theme = localStorage.getItem("theme");
       break;
@@ -598,7 +659,7 @@ export default function ChatPage() {
   
   // return the basic page layout
   return (<>
-    <PageHeader className="darkThemed" iconClickEvent={() => {
+    <PageHeader className={states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} iconClickEvent={() => {
       if (states.useMobileUI) {
         setTimeout(() => {
           if (states.mobileSidebarShown)
@@ -612,14 +673,14 @@ export default function ChatPage() {
     }} states={states}/>
     <main>
       <div id="chatPage">
-        <ServersBar className={states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
-        <RoomsBar className={states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
+        <ServersBar className={states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
+        <RoomsBar className={states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
         <MiddleSection
-          className={states.theme == "dark" ? "darkThemed" : "lightThemed"}
+          className={states.theme == "green" ? "greenThemed" : states.theme == "dark" ? "darkThemed" : "lightThemed"}
           shown={(!states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}
         />
-        <PeersBar className={states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
-        <PopoverParent className={states.theme == "light" ? "lightThemed" : "darkThemed"}/>
+        <PeersBar className={states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
+        <PopoverParent className={states.theme == "green" ? "greenThemed" : states.theme == "dark" ? "darkThemed" : "lightThemed"}/>
       </div>
     </main>
   </>);
