@@ -921,6 +921,7 @@ function ke(e) {
                     return;
                 }
                 try {
+                    console.log(res);
                     responseText = JSON.parse(res);
                 } catch (e) {
                     console.error(e);
@@ -969,6 +970,7 @@ function ce(e) {
                 progress.style.marginRight = "100%";
                 return;
             }
+            console.log(res);
             responseText = JSON.parse(res);
             for (let u of responseText) {
                 uploads.push({"url": u.url, "type": u.type, "name": u.name});
