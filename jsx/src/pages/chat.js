@@ -252,6 +252,7 @@ function Message({message}) {
     avatar: "https://img.freepik.com/premium-vector/hand-drawn-cartoon-doodle-skull-funny-cartoon-skull-isolated-white-background_217204-944.jpg",
     username: "Deleted User"
   });
+  let sentByThisUser = message.author == states.accountInformation.id;
   let uploads = message.uploads ? message.uploads : [];
   fetchUser(message.author).then(newAuthor=>{setAuthor(newAuthor)});
   return (<div className="message1">
@@ -261,13 +262,27 @@ function Message({message}) {
         <h3 className="messageUsernameDisplay">{author.username}</h3>
         <span className="messageTimestamp">@{author.tag} at {message.timestamp ? new Date(message.timestamp).toLocaleString() : new Date(message.stamp).toLocaleString()}</span>
       </div>
-      <Markdown options={markdownOptions}>{message.content}</Markdown>
-      {uploads.map(upload => <img className="upload" src={authUrl+upload.url} onClick={() => {
-        states.setActivePopover(<Popover style={{background: "transparent", boxShadow: "none"}} title={upload.name}>
-          <img src={authUrl+upload.url} style={{borderRadius: 10, boxShadow: "0px 0px 10px black"}}/>
-          <a href={authUrl+upload.url} style={{color: "white"}}>Download this image</a>
-        </Popover>);
-      }}/>)}
+      <div id="messageContent">
+        <Markdown options={markdownOptions}>{message.content}</Markdown>
+        {uploads.map(upload => <img className="upload" src={authUrl+upload.url} onClick={() => {
+          states.setActivePopover(<Popover style={{background: "transparent", boxShadow: "none"}} title={upload.name}>
+            <img src={authUrl+upload.url} style={{borderRadius: 10, boxShadow: "0px 0px 10px black"}}/>
+            <a href={authUrl+upload.url} style={{color: "white"}}>Download this image</a>
+          </Popover>);
+        }}/>)}
+      </div>
+    </div>
+    <div className="message3">
+      <button className='material-symbols-outlined' hidden={
+        sentByThisUser ? !states.focusedServerPermissions.includes("message.edit")
+        : true // You shouldn't be able to edit other people's messages no matter what
+      }>Edit</button>
+      <button className='material-symbols-outlined'>Reply</button>
+      <button className='material-symbols-outlined'>alternate_email</button>
+      <button className='material-symbols-outlined' hidden={
+        sentByThisUser ? !states.focusedServerPermissions.includes("message.delete")
+        : !states.focusedServerPermissions.includes("moderation.delete")
+      }>Delete</button>
     </div>
   </div>);
 }
@@ -526,6 +541,9 @@ async function loadView(switchToServer) {
               servers[serverCode].setManifest(packet.manifest);
             else 
               servers[serverCode].manifest = packet.manifest;
+            if (serverCode == states.focusedServer) {
+              states.setFocusedServerPermissions(packet.permissions);
+            }
             break;
           case "connecting":
           case "disconnect":
@@ -647,6 +665,7 @@ export default function ChatPage() {
 
   // set a bunch of empty React state objects for stuff that needs to be accessed throughout the program
   [states.servers, states.setServers] = React.useState({}); // Data related to servers the user is in
+  [states.focusedServerPermissions, states.setFocusedServerPermissions] = React.useState({}); // what permissions we have in the currently focused server
   [states.focusedRoomRenderedMessages, states.setFocusedRoomRenderedMessages] = React.useState([]); // The <Message/> elements shown in the view, set in ChatPage
   [states.focusedServer, states.setFocusedServer] = React.useState(null); // An object representing the currently focused server
   [states.focusedRoom, states.setFocusedRoom] = React.useState({}); // An object representing the currently focused room
