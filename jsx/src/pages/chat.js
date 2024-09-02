@@ -347,7 +347,12 @@ function ServerIcon({server}) {
 function PeersBar({shown, className, ...props}) {
   return (<div className={className + " sidebar"} id="serversBar" style={{display: shown ? "flex" : "none"}} {...props}>
     <img className="serverIcon material-symbols-outlined" src="" alt="+" id="inviteButton" onClick={() => {
-
+      openSockets[states.focusedServer].send(JSON.stringify({
+        eventType: "message",
+        message: {
+          content: "/invite"
+        }
+      }));
     }}/>
   </div>);
 }
