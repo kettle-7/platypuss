@@ -346,7 +346,9 @@ function ServerIcon({server}) {
 // The bar on the right showing other server members
 function PeersBar({shown, className, ...props}) {
   return (<div className={className + " sidebar"} id="serversBar" style={{display: shown ? "flex" : "none"}} {...props}>
-    <img className="serverIcon material-symbols-outlined" src="" alt="+" id="newServerButton"/>
+    <img className="serverIcon material-symbols-outlined" src="" alt="+" id="inviteButton" onClick={() => {
+
+    }}/>
   </div>);
 }
 
@@ -640,8 +642,11 @@ function PageHeader ({title, iconClickEvent, ...props}) {
             </fieldset>
             <button>Delete Account</button>
             <button>Change Password</button>
-            <button>Log Out</button>
-            <button>Done</button>
+            <button onClick={() => {
+              localStorage.setItem("sessionID", null);
+              window.location.reload();
+            }}>Log Out</button>
+            <button onClick={() => {states.setActivePopover(null);}}>Done</button>
           </Popover>
         );
       }}/>
