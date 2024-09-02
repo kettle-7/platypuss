@@ -357,13 +357,17 @@ function PeersBar({shown, className, ...props}) {
       }));
     }}/>
     {states.focusedServerPeers.map(peer => {
-      let [peerInfo, setPeerInfo] = React.useState(userCache[peer.id]);
-      fetchUser(peer.id).then(setPeerInfo);
-      return (<img src={peerInfo.avatar} className="serverIcon avatar" alt="🐙" style={{
-        opacity: peer.online ? 1 : 0.5
-      }}/>);
+      <PeerIcon peer={peer}/>
     })}
   </div>);
+}
+
+function PeerIcon({peer}) {
+  let [peerInfo, setPeerInfo] = React.useState(userCache[peer.id]);
+  fetchUser(peer.id).then(setPeerInfo);
+  return (<img src={peerInfo.avatar} className="serverIcon avatar" alt="🐙" style={{
+    opacity: peer.online ? 1 : 0.5
+  }}/>);
 }
 
 function loadMoreMessages() {
