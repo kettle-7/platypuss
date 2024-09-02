@@ -256,9 +256,11 @@ function Message({message}) {
   let uploads = message.uploads ? message.uploads : [];
   fetchUser(message.author).then(newAuthor=>{setAuthor(newAuthor)});
   return (<div className="message1">
-    <img src={author.avatar} alt="🐙" className="avatar"/>
+    <img src={author.avatar} alt="🐙" className="avatar" style={{
+      height: message.special ? "0px" : undefined
+    }}/>
     <div className="message2">
-      <div className="messageAuthor">
+      <div className="messageAuthor" hidden={message.special}>
         <h3 className="messageUsernameDisplay">{author.username}</h3>
         <span className="messageTimestamp">@{author.tag} at {message.timestamp ? new Date(message.timestamp).toLocaleString() : new Date(message.stamp).toLocaleString()}</span>
       </div>
@@ -354,6 +356,13 @@ function PeersBar({shown, className, ...props}) {
         }
       }));
     }}/>
+    {states.focusedServerPeers.map(peer => {
+      let [peerInfo, setPeerInfo] = React.useState(userCache[peer.id]);
+      fetchUser(peer.id).then(setPeerInfo);
+      return (<img src={peerInfo.avatar} className="serverIcon avatar" alt="🐙" style={{
+        opacity: peer.online ? 1 : 0.5
+      }}/>);
+    })}
   </div>);
 }
 
@@ -551,6 +560,7 @@ async function loadView(switchToServer) {
             if (serverCode == states.focusedServer) {
               states.setFocusedServerPermissions(packet.permissions);
             }
+            states.setFocusedServerPeers(Object.values(packet.peers));
             break;
           case "connecting":
           case "disconnect":
@@ -682,6 +692,7 @@ export default function ChatPage() {
   [states.focusedServerRenderedRooms, states.setFocusedServerRenderedRooms] = React.useState([]); // The <RoomLink/> elements in the sidebar for this server
   [states.mobileSidebarShown, states.setMobileSidebarShown] = React.useState(true); // whether to show the sidebar on mobile devices, is open by default when you load the page
   [states.useMobileUI, states.setUseMobileUI] = React.useState(browser ? (window.innerWidth * 2.54 / 96) < 20 : false); // Use mobile UI if the screen is less than 20cm wide
+  [states.focusedServerPeers, states.setFocusedServerPeers] = React.useState([]); // other people in this server
   [states.theme, states.setTheme] = React.useState(theme);
 
   React.useEffect(() => { loadView(); }, []);
