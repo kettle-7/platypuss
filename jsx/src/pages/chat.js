@@ -563,8 +563,8 @@ async function loadView(switchToServer) {
               servers[serverCode].manifest = packet.manifest;
             if (serverCode == states.focusedServer) {
               states.setFocusedServerPermissions(packet.permissions);
+              states.setFocusedServerPeers(Object.values(packet.peers));
             }
-            states.setFocusedServerPeers(Object.values(packet.peers));
             break;
           case "connecting":
           case "disconnect":

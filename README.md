@@ -1,4 +1,4 @@
-# platypuss
+# [platypuss](https://beta.platypuss.net)
 A decentralised chat platform
 
 The system is made of three main parts:

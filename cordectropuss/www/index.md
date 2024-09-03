@@ -1,5 +1,14 @@
 Platypuss
 
+New beta site!
+==============
+
+Make sure to check out <https://beta.platypuss.net> to see the new React-based client we're
+working on, with new features and lots of improvements coming. There are some bugs and missing
+features still but from now on only the new client will be supported with features, bug fixes
+and other great things. Once more of the features are added the main Platypuss website will
+point to the new client.
+
 Platypuss
 =========
 
