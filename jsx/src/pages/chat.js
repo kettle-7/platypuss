@@ -605,20 +605,20 @@ function PageHeader ({title, iconClickEvent, ...props}) {
           .catch(() => { if (pageUrl.pathname == "/chat") window.location = "/" });
   }, []);
 
-  let difficultySliderRef = React.useRef(null);
+  let difficultySliderRef = React.useRef(0);
   React.useEffect(() => {
     switch (localStorage.getItem("theme")) {
       case "dark":
-        difficultySliderRef.current.value = 0;
+        difficultySliderRef.current = 0;
         break;
       case "medium":
-        difficultySliderRef.current.value = 1;
+        difficultySliderRef.current = 1;
         break;
       case "light":
-        difficultySliderRef.current.value = 2;
+        difficultySliderRef.current = 2;
         break;
       case "green":
-        difficultySliderRef.current.value = 3;
+        difficultySliderRef.current = 3;
         break;
       default:
         break;
