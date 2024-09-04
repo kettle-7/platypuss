@@ -605,26 +605,6 @@ function PageHeader ({title, iconClickEvent, ...props}) {
           .catch(() => { if (pageUrl.pathname == "/chat") window.location = "/" });
   }, []);
 
-  let difficultySliderRef = React.useRef(0);
-  React.useEffect(() => {
-    switch (localStorage.getItem("theme")) {
-      case "dark":
-        difficultySliderRef.current = 0;
-        break;
-      case "medium":
-        difficultySliderRef.current = 1;
-        break;
-      case "light":
-        difficultySliderRef.current = 2;
-        break;
-      case "green":
-        difficultySliderRef.current = 3;
-        break;
-      default:
-        break;
-    }
-  }, []);
-
   return (<header {...props}>
       <img className="avatar" onClick={iconClickEvent ? iconClickEvent : () => {window.location = "/"}} style={{cursor: "pointer"}} src="/icons/icon-48x48.png"/>
       <h2 onClick={() => {window.location = "/"}} style={{cursor: "pointer"}}>
@@ -644,12 +624,14 @@ function PageHeader ({title, iconClickEvent, ...props}) {
             <div contentEditable id="changeAboutMe"></div>
             <div style={{flexGrow: 0}}>
               <select className="dropdown-button">
-                  <option value="dark">Dark</option>
-                  <option value="medium">Medium</option>
-                  <option value="light">Light</option>
-                  <option value="green">Green</option>
+                  <option value="dark" onClick={() => {setTimeout(()=>{states.setTheme("dark"); localStorage.setItem("theme", "dark");});}}>Dark</option>
+                  <option value="medium" onClick={() => {setTimeout(()=>{states.setTheme("medium"); localStorage.setItem("theme", "medium");});}}>Medium</option>
+                  <option value="light" onClick={() => {setTimeout(()=>{states.setTheme("light"); localStorage.setItem("theme", "light");});}}>Light</option>
+                  <option value="green" onClick={() => {setTimeout(()=>{states.setTheme("green"); localStorage.setItem("theme", "green");});}}>Green</option>
+                  <option value="custom" onClick={() => {setTimeout(()=>{states.setTheme("custom"); localStorage.setItem("theme", "custom");});}}>Custom</option>
               </select>
             </div>
+            <span id="accountSettingsCustomTheme">Custom Theme <span contentEditable>#000000</span></span> {/* change this so it only shows when custom theme is enabled */}
             <button>Delete Account</button>
             <button>Change Password</button>
             <button onClick={() => {
@@ -671,6 +653,7 @@ export default function ChatPage() {
       case "dark":
       case "light":
       case "green":
+      case "custom":
       case "medium":
         theme = localStorage.getItem("theme");
         break;
@@ -695,7 +678,7 @@ export default function ChatPage() {
   
   // return the basic page layout
   return (<>
-    <PageHeader className={states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} iconClickEvent={() => {
+    <PageHeader className={states.theme == "custom" ? "customThemed" : states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} iconClickEvent={() => {
       if (states.useMobileUI) {
         setTimeout(() => {
           if (states.mobileSidebarShown)
@@ -709,14 +692,14 @@ export default function ChatPage() {
     }} states={states}/>
     <main>
       <div id="chatPage">
-        <ServersBar className={states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
-        <RoomsBar className={states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
+        <ServersBar className={states.theme == "custom" ? "customThemed" : states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
+        <RoomsBar className={states.theme == "custom" ? "customThemed" : states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
         <MiddleSection
-          className={states.theme == "green" ? "greenThemed" : states.theme == "dark" ? "darkThemed" : "lightThemed"}
+          className={states.theme == "custom" ? "customThemed" : states.theme == "green" ? "greenThemed" : states.theme == "dark" ? "darkThemed" : "lightThemed"}
           shown={(!states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}
         />
-        <PeersBar className={states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
-        <PopoverParent className={states.theme == "green" ? "greenThemed" : states.theme == "dark" ? "darkThemed" : "lightThemed"}/>
+        <PeersBar className={states.theme == "custom" ? "customThemed" : states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
+        <PopoverParent className={states.theme == "custom" ? "customThemed" : states.theme == "green" ? "greenThemed" : states.theme == "dark" ? "darkThemed" : "lightThemed"}/>
       </div>
     </main>
   </>);
