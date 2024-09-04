@@ -619,68 +619,26 @@ function PageHeader ({title, iconClickEvent, ...props}) {
             <div id="profileBanner">
               <div className="avatar" id="changeAvatarHoverButton">
                 <span>Change</span>
-                <img className='avatar' id="changeAvatar" src={authUrl+states.accountInformation.avatar}/>
+                <img className="avatar" id="changeAvatar" src={authUrl+states.accountInformation.avatar}/>
               </div>
-              <span id="accountSettingsUsername" contentEditable>(username)</span>
+              <span className="account-settings-username" id="accountSettingsUsername" contentEditable>{states.accountInformation.username}</span>
             </div>
             <div contentEditable id="changeAboutMe"></div>
-            <fieldset id="themeRadioButtons">
-              <legend>Difficulty:</legend>
-              <input type="range" min="0" max="3" ref={difficultySliderRef} className="slider" id="difficultySlider" onInput={() => {
-                if (difficultySliderRef.current.value < 1) {
-                  setTimeout(()=>{states.setTheme("dark"); localStorage.setItem("theme", "dark");});
-                } else if (difficultySliderRef.current.value < 2) {
-                  setTimeout(()=>{states.setTheme("medium"); localStorage.setItem("theme", "medium");});
-                } else if (difficultySliderRef.current.value < 3) {
-                  setTimeout(()=>{states.setTheme("light"); localStorage.setItem("theme", "light");});
-                } else if (difficultySliderRef.current.value < 4) {
-                  setTimeout(()=>{states.setTheme("green"); localStorage.setItem("theme", "green");});
-                }
-              }} onLoad={() => {
-                switch (localStorage.getItem("theme")) {
-                  case "dark":
-                    difficultySliderRef.current.value = 0;
-                    break;
-                  case "medium":
-                    difficultySliderRef.current.value = 1;
-                    break;
-                  case "light":
-                    difficultySliderRef.current.value = 2;
-                    break;
-                  case "green":
-                    difficultySliderRef.current.value = 3;
-                    break;
-                  default:
-                    break;
-                }
-              }}/>
-              {/*
-              <div>
-                <input type="radio" id="darkThemeRadioButton" checked={states.theme == "dark"}
-                  onChange={() => {setTimeout(()=>{states.setTheme("dark"); localStorage.setItem("theme", "dark");})}}/>
-                <label for="darkThemeRadioButton">Easy</label>
-              </div>
-              <div>
-                <input type="radio" id="mediumThemeRadioButton" checked={states.theme == "medium"}
-                  onChange={() => {setTimeout(()=>{states.setTheme("medium"); localStorage.setItem("theme", "medium");})}}/>
-                <label for="mediumThemeRadioButton">Medium</label>
-              </div>
-              <div>
-                <input type="radio" id="lightThemeRadioButton" checked={states.theme == "light"}
-                  onChange={() => {setTimeout(()=>{states.setTheme("light"); localStorage.setItem("theme", "light");}, 50)}}/>
-                <label for="lightThemeRadioButton">Hard</label>
-              </div>
-              <div>
-                <input type="radio" id="greenThemeRadioButton" checked={states.theme == "green"}
-                  onChange={() => {setTimeout(()=>{states.setTheme("green"); localStorage.setItem("theme", "green");}, 50)}}/>
-                <label for="greenThemeRadioButton">Harder</label>
-              </div>*/}
-            </fieldset>
+            <div style={{flexGrow: 0}}>
+              <select className="dropdown-button">
+                  <option value="dark" onClick={() => {setTimeout(()=>{states.setTheme("dark"); localStorage.setItem("theme", "dark");});}}>Dark</option>
+                  <option value="medium" onClick={() => {setTimeout(()=>{states.setTheme("medium"); localStorage.setItem("theme", "medium");});}}>Medium</option>
+                  <option value="light" onClick={() => {setTimeout(()=>{states.setTheme("light"); localStorage.setItem("theme", "light");});}}>Light</option>
+                  <option value="green" onClick={() => {setTimeout(()=>{states.setTheme("green"); localStorage.setItem("theme", "green");});}}>Green</option>
+                  <option value="custom" onClick={() => {setTimeout(()=>{states.setTheme("custom"); localStorage.setItem("theme", "custom");});}}>Custom</option>
+              </select>
+            </div>
+            <span id="accountSettingsCustomTheme">Custom Accent Colour <span contentEditable>#000000</span></span> {/* change this so it only shows when custom theme is enabled */}
             <button>Delete Account</button>
             <button>Change Password</button>
             <button onClick={() => {
               localStorage.setItem("sessionID", null);
-              window.location.reload();
+              window.location = "/";
             }}>Log Out</button>
             <button onClick={() => {states.setActivePopover(null);}}>Done</button>
           </Popover>
@@ -697,6 +655,7 @@ export default function ChatPage() {
       case "dark":
       case "light":
       case "green":
+      case "custom":
       case "medium":
         theme = localStorage.getItem("theme");
         break;
@@ -721,7 +680,7 @@ export default function ChatPage() {
   
   // return the basic page layout
   return (<>
-    <PageHeader className={states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} iconClickEvent={() => {
+    <PageHeader className={states.theme == "custom" ? "customThemed" : states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} iconClickEvent={() => {
       if (states.useMobileUI) {
         setTimeout(() => {
           if (states.mobileSidebarShown)
@@ -735,14 +694,14 @@ export default function ChatPage() {
     }} states={states}/>
     <main>
       <div id="chatPage">
-        <ServersBar className={states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
-        <RoomsBar className={states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
+        <ServersBar className={states.theme == "custom" ? "customThemed" : states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
+        <RoomsBar className={states.theme == "custom" ? "customThemed" : states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
         <MiddleSection
-          className={states.theme == "green" ? "greenThemed" : states.theme == "dark" ? "darkThemed" : "lightThemed"}
+          className={states.theme == "custom" ? "customThemed" : states.theme == "green" ? "greenThemed" : states.theme == "dark" ? "darkThemed" : "lightThemed"}
           shown={(!states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}
         />
-        <PeersBar className={states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
-        <PopoverParent className={states.theme == "green" ? "greenThemed" : states.theme == "dark" ? "darkThemed" : "lightThemed"}/>
+        <PeersBar className={states.theme == "custom" ? "customThemed" : states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
+        <PopoverParent className={states.theme == "custom" ? "customThemed" : states.theme == "green" ? "greenThemed" : states.theme == "dark" ? "darkThemed" : "lightThemed"}/>
       </div>
     </main>
   </>);
