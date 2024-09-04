@@ -197,8 +197,8 @@ const IndexPage = () => {
         break certain functionality. Should anything not work properly you're better off using
         the <a href="https://platypuss.net">stable version</a> of the site.
       </p>
-      {(Object.keys(states.accountInformation).length == 0) && <button onClick={() => {states.setActivePopover(<SignInPopover/>)}}>Sign In</button>}
-      {(Object.keys(states.accountInformation).length == 0) && <button onClick={() => {states.setActivePopover(<CreateAccountPopover/>)}}>Create Account</button>}
+      {(Object.keys(states.accountInformation).length === 0) && <button onClick={() => {states.setActivePopover(<SignInPopover/>)}}>Sign In</button>}
+      {(Object.keys(states.accountInformation).length === 0) && <button onClick={() => {states.setActivePopover(<CreateAccountPopover/>)}}>Create Account</button>}
     </main>
     <footer className={states.theme == "dark" ? "darkThemed" : "lightThemed"}>links to stuff maybe</footer>
     <PopoverParent className={states.theme == "light" ? "lightThemed" : "darkThemed"}/>
