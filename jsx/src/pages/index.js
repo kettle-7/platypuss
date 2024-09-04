@@ -102,6 +102,7 @@ function PageHeader ({title, iconClickEvent, ...props}) {
         <h2 onClick={() => {window.location = "/"}} style={{cursor: "pointer"}}>
             {title ? title : "(Beta!) Platypuss"}
         </h2>
+        {(Object.keys(states.accountInformation).length != 0) && <button onClick={() => {window.location = '/chat'}}>Chat</button>}
         <div style={{flexGrow: 1}}></div>
         {(Object.keys(states.accountInformation).length != 0) && <img className="avatar" alt="🐙" style={{cursor: "pointer"}} src={authUrl+states.accountInformation.avatar}/>}
     </header>);
@@ -186,7 +187,6 @@ const IndexPage = () => {
   return (<>
     <PageHeader className={states.theme == "light" ? "lightThemed" : "darkThemed"}/>
     <main id="mainPage" className={states.theme == "dark" ? "darkThemed" : "lightThemed"}>
-      {(Object.keys(states.accountInformation).length != 0) && <a href="/chat">Chat page</a>}
       <h1>
         You found the Platypuss public beta!
       </h1>

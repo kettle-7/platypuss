@@ -681,7 +681,7 @@ function PageHeader ({title, iconClickEvent, ...props}) {
             <button>Change Password</button>
             <button onClick={() => {
               localStorage.setItem("sessionID", null);
-              window.location.reload();
+              window.location = "/";
             }}>Log Out</button>
             <button onClick={() => {states.setActivePopover(null);}}>Done</button>
           </Popover>
