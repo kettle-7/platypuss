@@ -637,46 +637,19 @@ function PageHeader ({title, iconClickEvent, ...props}) {
             <div id="profileBanner">
               <div className="avatar" id="changeAvatarHoverButton">
                 <span>Change</span>
-                <img className='avatar' id="changeAvatar" src={authUrl+states.accountInformation.avatar}/>
+                <img className="avatar" id="changeAvatar" src={authUrl+states.accountInformation.avatar}/>
               </div>
-              <span id="accountSettingsUsername" contentEditable>{states.accountInformation.username}</span>
+              <span className="account-settings-username" id="accountSettingsUsername" contentEditable>{states.accountInformation.username}</span>
             </div>
             <div contentEditable id="changeAboutMe"></div>
-            <fieldset id="themeRadioButtons">
-              <legend>Difficulty:</legend>
-              <input type="range" min="0" max="3" ref={difficultySliderRef} className="slider" id="difficultySlider" onInput={() => {
-                if (difficultySliderRef.current.value < 1) {
-                  setTimeout(()=>{states.setTheme("dark"); localStorage.setItem("theme", "dark");});
-                } else if (difficultySliderRef.current.value < 2) {
-                  setTimeout(()=>{states.setTheme("medium"); localStorage.setItem("theme", "medium");});
-                } else if (difficultySliderRef.current.value < 3) {
-                  setTimeout(()=>{states.setTheme("light"); localStorage.setItem("theme", "light");});
-                } else if (difficultySliderRef.current.value < 4) {
-                  setTimeout(()=>{states.setTheme("green"); localStorage.setItem("theme", "green");});
-                }
-              }}/>
-              {/*
-              <div>
-                <input type="radio" id="darkThemeRadioButton" checked={states.theme == "dark"}
-                  onChange={() => {setTimeout(()=>{states.setTheme("dark"); localStorage.setItem("theme", "dark");})}}/>
-                <label for="darkThemeRadioButton">Easy</label>
-              </div>
-              <div>
-                <input type="radio" id="mediumThemeRadioButton" checked={states.theme == "medium"}
-                  onChange={() => {setTimeout(()=>{states.setTheme("medium"); localStorage.setItem("theme", "medium");})}}/>
-                <label for="mediumThemeRadioButton">Medium</label>
-              </div>
-              <div>
-                <input type="radio" id="lightThemeRadioButton" checked={states.theme == "light"}
-                  onChange={() => {setTimeout(()=>{states.setTheme("light"); localStorage.setItem("theme", "light");}, 50)}}/>
-                <label for="lightThemeRadioButton">Hard</label>
-              </div>
-              <div>
-                <input type="radio" id="greenThemeRadioButton" checked={states.theme == "green"}
-                  onChange={() => {setTimeout(()=>{states.setTheme("green"); localStorage.setItem("theme", "green");}, 50)}}/>
-                <label for="greenThemeRadioButton">Harder</label>
-              </div>*/}
-            </fieldset>
+            <div style={{flexGrow: 0}}>
+              <select className="dropdown-button">
+                  <option value="dark">Dark</option>
+                  <option value="medium">Medium</option>
+                  <option value="light">Light</option>
+                  <option value="green">Green</option>
+              </select>
+            </div>
             <button>Delete Account</button>
             <button>Change Password</button>
             <button onClick={() => {
