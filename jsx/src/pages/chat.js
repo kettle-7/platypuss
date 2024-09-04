@@ -606,24 +606,6 @@ function PageHeader ({title, iconClickEvent, ...props}) {
   }, []);
 
   let difficultySliderRef = React.useRef(null);
-  React.useEffect(() => {
-    switch (localStorage.getItem("theme")) {
-      case "dark":
-        difficultySliderRef.current.value = 0;
-        break;
-      case "medium":
-        difficultySliderRef.current.value = 1;
-        break;
-      case "light":
-        difficultySliderRef.current.value = 2;
-        break;
-      case "green":
-        difficultySliderRef.current.value = 3;
-        break;
-      default:
-        break;
-    }
-  }, []);
 
   return (<header {...props}>
       <img className="avatar" onClick={iconClickEvent ? iconClickEvent : () => {window.location = "/"}} style={{cursor: "pointer"}} src="/icons/icon-48x48.png"/>
@@ -653,6 +635,23 @@ function PageHeader ({title, iconClickEvent, ...props}) {
                   setTimeout(()=>{states.setTheme("light"); localStorage.setItem("theme", "light");});
                 } else if (difficultySliderRef.current.value < 4) {
                   setTimeout(()=>{states.setTheme("green"); localStorage.setItem("theme", "green");});
+                }
+              }} onLoad={() => {
+                switch (localStorage.getItem("theme")) {
+                  case "dark":
+                    difficultySliderRef.current.value = 0;
+                    break;
+                  case "medium":
+                    difficultySliderRef.current.value = 1;
+                    break;
+                  case "light":
+                    difficultySliderRef.current.value = 2;
+                    break;
+                  case "green":
+                    difficultySliderRef.current.value = 3;
+                    break;
+                  default:
+                    break;
                 }
               }}/>
               {/*
