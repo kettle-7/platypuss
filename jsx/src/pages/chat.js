@@ -347,7 +347,7 @@ function ServerIcon({server}) {
 
 // The bar on the right showing other server members
 function PeersBar({shown, className, ...props}) {
-  return (<div className={className + " sidebar"} id="serversBar" style={{display: shown ? "flex" : "none"}} {...props}>
+  return (<div className={className + " sidebar"} id="peersBar" style={{display: shown ? "flex" : "none"}} {...props}>
     <img className="serverIcon material-symbols-outlined" src="" alt="+" id="inviteButton" onClick={() => {
       openSockets[states.focusedServer].send(JSON.stringify({
         eventType: "message",
@@ -606,6 +606,24 @@ function PageHeader ({title, iconClickEvent, ...props}) {
   }, []);
 
   let difficultySliderRef = React.useRef(null);
+  React.useEffect(() => {
+    switch (localStorage.getItem("theme")) {
+      case "dark":
+        difficultySliderRef.current.value = 0;
+        break;
+      case "medium":
+        difficultySliderRef.current.value = 1;
+        break;
+      case "light":
+        difficultySliderRef.current.value = 2;
+        break;
+      case "green":
+        difficultySliderRef.current.value = 3;
+        break;
+      default:
+        break;
+    }
+  }, []);
 
   return (<header {...props}>
       <img className="avatar" onClick={iconClickEvent ? iconClickEvent : () => {window.location = "/"}} style={{cursor: "pointer"}} src="/icons/icon-48x48.png"/>
@@ -675,16 +693,17 @@ function PageHeader ({title, iconClickEvent, ...props}) {
 // The page itself
 export default function ChatPage() {
   let theme = "medium";
-  if (browser)
-  switch (localStorage.getItem("theme")) {
-    case "dark":
-    case "light":
-    case "green":
-    case "medium":
-      theme = localStorage.getItem("theme");
-      break;
-    default:
-      break;
+  if (browser) {
+    switch (localStorage.getItem("theme")) {
+      case "dark":
+      case "light":
+      case "green":
+      case "medium":
+        theme = localStorage.getItem("theme");
+        break;
+      default:
+        break;
+    }
   }
 
   // set a bunch of empty React state objects for stuff that needs to be accessed throughout the program
