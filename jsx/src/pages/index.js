@@ -22,7 +22,7 @@ const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-
 var browser = typeof window !== "undefined"; // check if we're running in a browser rather than the build environment
 var pageUrl = browser ? new URL(window.location) : new URL("http://localhost:8000"); // window is not defined in the testing environment so just assume localhost
 const authUrl = "https://platypuss.net"; // this shouldn't need to change but just in case
-var states = {}; // serves the same purpose as in chat.js
+var states = {}; // One global variable for storing React state objects so we can access them anywhere
 var emailRef, passwordRef, confirmPasswordRef, usernameRef;
 
 // thanks bryc on stack overflow ^w^
@@ -97,22 +97,13 @@ function doTheLoginThingy(createNewAccount) {
 }
 
 function PageHeader ({title, iconClickEvent, ...props}) {
-    [states.accountInformation, states.setAccountInformation] = React.useState({});
-
-    React.useEffect(() => {
-        fetch(authUrl + "/uinfo?id=" + localStorage.getItem("sessionID"))
-            .then(data => data.json())
-            .then(data => states.setAccountInformation(data))
-            .catch(() => { if (pageUrl.pathname == "/chat") window.location = "/" });
-    }, []);
-
     return (<header {...props}>
         <img className="avatar" onClick={iconClickEvent ? iconClickEvent : () => {window.location = "/"}} style={{cursor: "pointer"}} src="/icons/icon-48x48.png"/>
         <h2 onClick={() => {window.location = "/"}} style={{cursor: "pointer"}}>
             {title ? title : "(Beta!) Platypuss"}
         </h2>
         <div style={{flexGrow: 1}}></div>
-        <img className="avatar" alt="🐙" style={{cursor: "pointer"}} src={authUrl+states.accountInformation.avatar}/>
+        {(Object.keys(states.accountInformation).length != 0) && <img className="avatar" alt="🐙" style={{cursor: "pointer"}} src={authUrl+states.accountInformation.avatar}/>}
     </header>);
 };
 
@@ -170,6 +161,16 @@ function CreateAccountPopover ({ error="" }) {
 }
 
 const IndexPage = () => {
+  // Get the account information for the user
+  [states.accountInformation, states.setAccountInformation] = React.useState({});
+
+  React.useEffect(() => {
+      fetch(authUrl + "/uinfo?id=" + localStorage.getItem("sessionID"))
+          .then(data => data.json())
+          .then(data => states.setAccountInformation(data))
+          .catch(() => { if (pageUrl.pathname == "/chat") window.location = "/" });
+  }, []);
+
   // These let us refer to the text boxes later on
   emailRef = React.useRef(null);
   passwordRef = React.useRef(null);
@@ -185,7 +186,7 @@ const IndexPage = () => {
   return (<>
     <PageHeader className={states.theme == "light" ? "lightThemed" : "darkThemed"}/>
     <main id="mainPage" className={states.theme == "dark" ? "darkThemed" : "lightThemed"}>
-      <a href="/chat">Chat page, only works if you're logged in</a>
+      {(Object.keys(states.accountInformation).length != 0) && <a href="/chat">Chat page</a>}
       <h1>
         You found the Platypuss public beta!
       </h1>
@@ -196,8 +197,8 @@ const IndexPage = () => {
         break certain functionality. Should anything not work properly you're better off using
         the <a href="https://platypuss.net">stable version</a> of the site.
       </p>
-      <button onClick={() => {states.setActivePopover(<SignInPopover/>)}}>Sign In</button>
-      <button onClick={() => {states.setActivePopover(<CreateAccountPopover/>)}}>Create Account</button>
+      {(Object.keys(states.accountInformation).length == 0) && <button onClick={() => {states.setActivePopover(<SignInPopover/>)}}>Sign In</button>}
+      {(Object.keys(states.accountInformation).length == 0) && <button onClick={() => {states.setActivePopover(<CreateAccountPopover/>)}}>Create Account</button>}
     </main>
     <footer className={states.theme == "dark" ? "darkThemed" : "lightThemed"}>links to stuff maybe</footer>
     <PopoverParent className={states.theme == "light" ? "lightThemed" : "darkThemed"}/>

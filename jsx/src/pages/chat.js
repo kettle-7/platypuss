@@ -639,7 +639,7 @@ function PageHeader ({title, iconClickEvent, ...props}) {
                 <span>Change</span>
                 <img className='avatar' id="changeAvatar" src={authUrl+states.accountInformation.avatar}/>
               </div>
-              <span id="accountSettingsUsername" contentEditable>(username)</span>
+              <span id="accountSettingsUsername" contentEditable>{states.accountInformation.username}</span>
             </div>
             <div contentEditable id="changeAboutMe"></div>
             <fieldset id="themeRadioButtons">
