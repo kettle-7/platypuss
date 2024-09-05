@@ -566,6 +566,11 @@ async function loadView(switchToServer) {
               states.setFocusedServerPeers(Object.values(packet.peers));
             }
             break;
+          case "rateLimit":
+            setTimeout(() => {
+              socket.send(JSON.stringify(packet.repeatedPacket));
+            }, packet.delay);
+            break;
           case "connecting":
           case "disconnect":
           case "join":
