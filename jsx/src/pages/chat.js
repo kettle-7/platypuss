@@ -383,21 +383,82 @@ export const Head = () => (
   <title>(Beta!) Platypuss</title>
 );
 
-function updateCustomTheme() {
-  document.body.style.setProperty('--outgradient', "#" + states.themeHex);
-  document.body.style.setProperty('--ingradient', "#" + states.themeHex);
-  document.body.style.setProperty('--outgradientsmooth', "#" + states.themeHex);
-  document.body.style.setProperty('--ingradientsmooth', "#" + states.themeHex);
-  document.body.style.setProperty('--background-level1', "#" + states.themeHex);
-  document.body.style.setProperty('--background-level2', "#" + states.themeHex);
-  document.body.style.setProperty('--background-level3', "#" + states.themeHex);
-  document.body.style.setProperty('--background-level4', "#" + states.themeHex);
-  document.body.style.setProperty('--background-level5', "#" + states.themeHex);
-  document.body.style.setProperty('--background-level6', "#" + states.themeHex);
-  document.body.style.setProperty('--foreground-level1', "#" + states.themeHex);
-  document.body.style.setProperty('--foreground-level2', "#" + states.themeHex);
-  document.body.style.setProperty('--accent', "#" + states.themeHex);
-  document.body.style.setProperty('--gray', "#" + states.themeHex);
+function stringToRGB(hexString) {
+  let hex = parseInt(hexString, 16);
+  let convertedHex = [];
+  let finalHex = [];
+  for (let i = 0; i < 6; i++) {
+    convertedHex.unshift(hex % 16);
+    hex = (hex - (hex % 16)) / 16;
+  }
+  for (let i = 0; i < 6; i += 2) {
+    finalHex.push(convertedHex[i] * 16 + convertedHex[i+1]);
+  }
+  return finalHex;
+}
+
+function RGBToString(RGB) {
+  let convertedString = [];
+  let finalString = "";
+  for (let i = 0; i < 3; i++) {
+    convertedString.push(Math.floor(((RGB[i] - RGB[i] % 16) / 16)).toString(16), Math.floor((RGB[i] % 16)).toString(16));
+  }
+  for (let i = 0; i < 6; i++) {
+      finalString += convertedString[i];
+  }
+  return finalString;
+}
+
+function multiplyRGB(RGB, multiplier) {
+  let newRGB = [];
+  for (let i = 0; i < 3; i++) {
+    newRGB.push(RGB[i] * multiplier);
+  }
+  return newRGB;
+}
+
+function updateCustomTheme(attemptHex) {
+  let darkColorFix = attemptHex;
+  for (let i = 0; i < 5; i++) {
+    if (darkColorFix[0] != "0") break;
+    darkColorFix = darkColorFix.slice(1);
+  }
+  console.log(attemptHex, parseInt(attemptHex, 16).toString(16), darkColorFix);
+  if (attemptHex.length != 6 || parseInt(attemptHex, 16).toString(16) != darkColorFix) return;
+
+  setTimeout(()=>{states.setThemeHex(attemptHex)});
+  localStorage.setItem("themeHex", attemptHex);
+
+  let rgb = stringToRGB(attemptHex);
+
+  let colorScheme = 0;
+  for (let i = 0; i < 3; i++) colorScheme += rgb[i];
+  if (colorScheme > 382.5) colorScheme = "light";
+  else colorScheme = "dark";
+
+  let primaryColor = "#" + attemptHex;
+  let secondaryColor = "#" + RGBToString(multiplyRGB(rgb, 0.75));
+  if (colorScheme == "light") {
+    document.body.style.setProperty('--foreground-level1', "#000000");
+    document.body.style.setProperty('--foreground-level2', "#222222");
+  }
+  else {
+    document.body.style.setProperty('--foreground-level1', "#ffffff");
+    document.body.style.setProperty('--foreground-level2', "#e0e0e0");
+  }
+
+  document.body.style.setProperty('--outgradient', primaryColor);
+  document.body.style.setProperty('--ingradient', primaryColor);
+  document.body.style.setProperty('--outgradientsmooth', "linear-gradient(" + primaryColor + ", " + secondaryColor + ")");
+  document.body.style.setProperty('--ingradientsmooth', "linear-gradient(" + secondaryColor + ", " + primaryColor + ")");
+  document.body.style.setProperty('--background-level1', "#" + RGBToString(multiplyRGB(rgb, 0.82189542485)));
+  document.body.style.setProperty('--background-level2', "#" + RGBToString(multiplyRGB(rgb, 0.85751633988)));
+  document.body.style.setProperty('--background-level3', "#" + RGBToString(multiplyRGB(rgb, 0.89313725491)));
+  document.body.style.setProperty('--background-level4', "#" + RGBToString(multiplyRGB(rgb, 0.92875816994)));
+  document.body.style.setProperty('--background-level5', "#" + RGBToString(multiplyRGB(rgb, 0.96437908497)));
+  document.body.style.setProperty('--background-level6', primaryColor);
+  document.body.style.setProperty('--accent', "#c847ff");
+  document.body.style.setProperty('--gray', "#888888");
 }
 
 function showInvitePopup(invite, domain) {
@@ -649,7 +710,7 @@ function PageHeader ({title, iconClickEvent, ...props}) {
               </select>
             </div>
             <span>Custom Accent Colour #
-              <span id="accountSettingsCustomTheme" minLength={6} maxLength={6} contentEditable onInput={() => {setTimeout(()=>{states.setThemeHex(document.getElementById("accountSettingsCustomTheme").innerText)}); localStorage.setItem("themeHex", document.getElementById("accountSettingsCustomTheme").innerText); updateCustomTheme();}}>
+              <span id="accountSettingsCustomTheme" minLength={6} maxLength={6} contentEditable onInput={() => {updateCustomTheme(document.getElementById("accountSettingsCustomTheme").innerText)}}>
                 {states.themeHex}</span></span> {/* change this so it only shows when custom theme is enabled */}
             <button>Delete Account</button>
             <button>Change Password</button>
@@ -696,11 +757,9 @@ export default function ChatPage() {
 
   React.useEffect(() => { loadView(); }, []);
 
-  updateCustomTheme();
-
   // return the basic page layout
   return (<>
-    <PageHeader className={states.theme == "custom" ? "customThemed" : states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} iconClickEvent={() => {
+    <PageHeader className={states.theme == "custom" ? "" : states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} iconClickEvent={() => {
       if (states.useMobileUI) {
         setTimeout(() => {
           if (states.mobileSidebarShown)
