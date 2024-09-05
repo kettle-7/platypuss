@@ -383,6 +383,23 @@ export const Head = () => (
   <title>(Beta!) Platypuss</title>
 );
 
+function updateCustomTheme() {
+  document.body.style.setProperty('--outgradient', "#" + states.themeHex);
+  document.body.style.setProperty('--ingradient', "#" + states.themeHex);
+  document.body.style.setProperty('--outgradientsmooth', "#" + states.themeHex);
+  document.body.style.setProperty('--ingradientsmooth', "#" + states.themeHex);
+  document.body.style.setProperty('--background-level1', "#" + states.themeHex);
+  document.body.style.setProperty('--background-level2', "#" + states.themeHex);
+  document.body.style.setProperty('--background-level3', "#" + states.themeHex);
+  document.body.style.setProperty('--background-level4', "#" + states.themeHex);
+  document.body.style.setProperty('--background-level5', "#" + states.themeHex);
+  document.body.style.setProperty('--background-level6', "#" + states.themeHex);
+  document.body.style.setProperty('--foreground-level1', "#" + states.themeHex);
+  document.body.style.setProperty('--foreground-level2', "#" + states.themeHex);
+  document.body.style.setProperty('--accent', "#" + states.themeHex);
+  document.body.style.setProperty('--gray', "#" + states.themeHex);
+}
+
 function showInvitePopup(invite, domain) {
   // thing
   let ip = [ // the first 8 characters are the ip address in hex form
@@ -605,8 +622,6 @@ function PageHeader ({title, iconClickEvent, ...props}) {
           .catch(() => { if (pageUrl.pathname == "/chat") window.location = "/" });
   }, []);
 
-  let difficultySliderRef = React.useRef(null);
-
   return (<header {...props}>
       <img className="avatar" onClick={iconClickEvent ? iconClickEvent : () => {window.location = "/"}} style={{cursor: "pointer"}} src="/icons/icon-48x48.png"/>
       <h2 onClick={() => {window.location = "/"}} style={{cursor: "pointer"}}>
@@ -625,7 +640,7 @@ function PageHeader ({title, iconClickEvent, ...props}) {
             </div>
             <div contentEditable id="changeAboutMe"></div>
             <div style={{flexGrow: 0}}>
-              <select className="dropdown-button">
+              <select className="dropdown-button" defaultValue={states.theme}>
                   <option value="dark" onClick={() => {setTimeout(()=>{states.setTheme("dark"); localStorage.setItem("theme", "dark");});}}>Dark</option>
                   <option value="medium" onClick={() => {setTimeout(()=>{states.setTheme("medium"); localStorage.setItem("theme", "medium");});}}>Medium</option>
                   <option value="light" onClick={() => {setTimeout(()=>{states.setTheme("light"); localStorage.setItem("theme", "light");});}}>Light</option>
@@ -633,7 +648,9 @@ function PageHeader ({title, iconClickEvent, ...props}) {
                   <option value="custom" onClick={() => {setTimeout(()=>{states.setTheme("custom"); localStorage.setItem("theme", "custom");});}}>Custom</option>
               </select>
             </div>
-            <span id="accountSettingsCustomTheme">Custom Accent Colour <span contentEditable>#000000</span></span> {/* change this so it only shows when custom theme is enabled */}
+            <span>Custom Accent Colour #
+              <span id="accountSettingsCustomTheme" minLength={6} maxLength={6} contentEditable onInput={() => {setTimeout(()=>{states.setThemeHex(document.getElementById("accountSettingsCustomTheme").innerText)}); localStorage.setItem("themeHex", document.getElementById("accountSettingsCustomTheme").innerText); updateCustomTheme();}}>
+                {states.themeHex}</span></span> {/* change this so it only shows when custom theme is enabled */}
             <button>Delete Account</button>
             <button>Change Password</button>
             <button onClick={() => {
@@ -675,9 +692,12 @@ export default function ChatPage() {
   [states.useMobileUI, states.setUseMobileUI] = React.useState(browser ? (window.innerWidth * 2.54 / 96) < 20 : false); // Use mobile UI if the screen is less than 20cm wide
   [states.focusedServerPeers, states.setFocusedServerPeers] = React.useState([]); // other people in this server
   [states.theme, states.setTheme] = React.useState(theme);
+  [states.themeHex, states.setThemeHex] = React.useState("000000");
 
   React.useEffect(() => { loadView(); }, []);
-  
+
+  updateCustomTheme();
+
   // return the basic page layout
   return (<>
     <PageHeader className={states.theme == "custom" ? "customThemed" : states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} iconClickEvent={() => {
@@ -694,14 +714,14 @@ export default function ChatPage() {
     }} states={states}/>
     <main>
       <div id="chatPage">
-        <ServersBar className={states.theme == "custom" ? "customThemed" : states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
-        <RoomsBar className={states.theme == "custom" ? "customThemed" : states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
+        <ServersBar className={states.theme == "custom" ? "" : states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
+        <RoomsBar className={states.theme == "custom" ? "" : states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
         <MiddleSection
-          className={states.theme == "custom" ? "customThemed" : states.theme == "green" ? "greenThemed" : states.theme == "dark" ? "darkThemed" : "lightThemed"}
+          className={states.theme == "custom" ? "" : states.theme == "green" ? "greenThemed" : states.theme == "dark" ? "darkThemed" : "lightThemed"}
           shown={(!states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}
         />
-        <PeersBar className={states.theme == "custom" ? "customThemed" : states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
-        <PopoverParent className={states.theme == "custom" ? "customThemed" : states.theme == "green" ? "greenThemed" : states.theme == "dark" ? "darkThemed" : "lightThemed"}/>
+        <PeersBar className={states.theme == "custom" ? "" : states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
+        <PopoverParent className={states.theme == "custom" ? "" : states.theme == "green" ? "greenThemed" : states.theme == "dark" ? "darkThemed" : "lightThemed"}/>
       </div>
     </main>
   </>);
