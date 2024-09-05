@@ -26,7 +26,7 @@
   'opsz' 24
 }
 
-*, .lightThemed, .lightThemed * {
+.lightThemed, .lightThemed * {
     --outgradient: linear-gradient(#e0e0e0, #c4c4c4, #c4c4c4, #a8a8a8);
     --ingradient: linear-gradient(#a8a8a8, #c4c4c4, #c4c4c4, #e0e0e0);
     --outgradientsmooth: linear-gradient(#eeeeee, #aaaaaa);
@@ -78,24 +78,6 @@
     /*--accent: #349efa;*/
     --accent: black;
     --grey: rgb(0, 182, 0);
-}
-
-.customThemed, .customThemed * {
-    --outgradient: #373737;
-    --ingradient: #373737;
-    --outgradientsmooth: linear-gradient(#373737, #2a2a2a);
-    --ingradientsmooth: linear-gradient(#2a2a2a, #373737);
-    --background-level1: black;
-    --background-level2: #0e0e0e;
-    --background-level3: #1b1b1b;
-    --background-level4: #262626;
-    --background-level5: #2e2e2e;
-    --background-level6: #373737;
-    --foreground-level1: white;
-    --foreground-level2: #e0e0e0;
-    /*--accent: #349efa;*/
-    --accent: #c847ff;
-    --grey: #888888;
 }
 
 .account-settings-username {
@@ -489,7 +471,6 @@ a {
     align-items: center;
     font-size: xx-large;
     float: left;
-    margin-right: 2px;
 }
 
 input[type="text"], input[type="password"], input[type="email"] {
