@@ -255,6 +255,9 @@ function Message({message}) {
   let sentByThisUser = message.author == states.accountInformation.id;
   let uploads = message.uploads ? message.uploads : [];
   fetchUser(message.author).then(newAuthor=>{setAuthor(newAuthor)});
+  if (states.reply != null) {
+    message.content = "> " + states.reply + "\n";
+  }
   return (<div className="message1" id={message.id}>
     <img src={author.avatar} alt="🐙" className="avatar" style={{
       height: message.special ? "0px" : undefined
@@ -279,9 +282,9 @@ function Message({message}) {
         sentByThisUser ? !states.focusedServerPermissions.includes("message.edit")
         : true // You shouldn't be able to edit other people's messages no matter what
       }>Edit</button>
-      <button className='material-symbols-outlined'>Reply</button>
-      <button className='material-symbols-outlined'>alternate_email</button>
-      <button className='material-symbols-outlined' onClick={()=>{deleteMessage(message.id); document.getElementById(message.id).remove()}} hidden={
+      <button className='material-symbols-outlined' onClick={()=>{replyToMessage(message.id)}}>Reply</button>
+      <button className='material-symbols-outlined' onClick={()=>{pingUser(message.author)}}>alternate_email</button>
+      <button className='material-symbols-outlined' onClick={()=>{deleteMessage(message.id)}} hidden={
         sentByThisUser ? !states.focusedServerPermissions.includes("message.delete")
         : !states.focusedServerPermissions.includes("moderation.delete")
       }>Delete</button>
@@ -389,6 +392,17 @@ function deleteMessage(id) {
     eventType: "messageDelete",
     id: id
   }));
+  document.getElementById(id).remove();
+}
+
+// Make the next message a reply to the said message
+function replyToMessage(id) {
+
+}
+
+// Add ping text for the specified user to the message box
+function pingUser(id) {
+  document.getElementById("messageBox").innerText += "[@" + id + "]";
 }
 
 // Convert a hex string "7600bc" to a list of rgb values [118, 0, 188]
@@ -435,7 +449,6 @@ function updateCustomTheme(attemptHex) {
     if (darkColorFix[0] != "0") break;
     darkColorFix = darkColorFix.slice(1);
   }
-  console.log(attemptHex, parseInt(attemptHex, 16).toString(16), darkColorFix);
   if (attemptHex.length != 6 || parseInt(attemptHex, 16).toString(16) != darkColorFix) return;
 
   setTimeout(()=>{states.setThemeHex(attemptHex)});
@@ -775,6 +788,7 @@ export default function ChatPage() {
   [states.focusedServerPeers, states.setFocusedServerPeers] = React.useState([]); // other people in this server
   [states.theme, states.setTheme] = React.useState(theme);
   [states.themeHex, states.setThemeHex] = React.useState(themeHex);
+  [states.reply, states.setReply] = React.useState(null);
 
   React.useEffect(() => { loadView(); }, []);
 
