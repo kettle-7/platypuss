@@ -270,7 +270,7 @@ function Message({message}) {
       <div id="messageContent">
         <Markdown options={markdownOptions}>{message.content}</Markdown>
         {uploads.map(upload => <img className="upload" src={authUrl+upload.url} onClick={() => {
-          states.setActivePopover(<Popover style={{background: "transparent", boxShadow: "none"}} title={upload.name}>
+          states.setActivePopover(<Popover className="darkThemed" style={{background: "transparent", boxShadow: "none"}} title={upload.name}>
             <img src={authUrl+upload.url} style={{borderRadius: 10, boxShadow: "0px 0px 10px black"}}/>
             <a href={authUrl+upload.url} style={{color: "white"}}>Download this image</a>
           </Popover>);
@@ -328,7 +328,7 @@ function RoomLink({room}) {
 // The bar on the left showing the servers you're in, also for navigation
 function ServersBar({shown, className, ...props}) {
   return (<div className={className + " sidebar"} id="serversBar" style={{display: shown ? "flex" : "none"}} {...props}>
-    <img className="serverIcon" src="" alt="+" id="newServerButton"/>
+    <span className="serverIcon material-symbols-outlined" id="newServerButton">add</span>
     {Object.values(states.servers).map(server => (<ServerIcon server={server}></ServerIcon>))}
   </div>);
 }
@@ -351,14 +351,14 @@ function ServerIcon({server}) {
 // The bar on the right showing other server members
 function PeersBar({shown, className, ...props}) {
   return (<div className={className + " sidebar"} id="peersBar" style={{display: shown ? "flex" : "none"}} {...props}>
-    <img className="serverIcon material" src="" alt="+" id="inviteButton" onClick={() => {
+    <button className="serverIcon material-symbols-outlined" id="inviteButton" onClick={() => {
       openSockets[states.focusedServer].send(JSON.stringify({
         eventType: "message",
         message: {
           content: "/invite"
         }
       }));
-    }}/>
+    }}>add</button>
     {states.focusedServerPeers.map(peer => {
       <PeerIcon peer={peer}/>
     })}
@@ -444,14 +444,16 @@ function multiplyRGB(RGB, multiplier) {
 
 // Update the custom theme settings to a specific color pallete
 function updateCustomTheme(attemptHex) {
+  attemptHex = attemptHex.toLowerCase();
   let darkColorFix = attemptHex;
   for (let i = 0; i < 5; i++) {
     if (darkColorFix[0] != "0") break;
     darkColorFix = darkColorFix.slice(1);
   }
+  console.log(attemptHex, parseInt(attemptHex, 16).toString(16), darkColorFix);
   if (attemptHex.length != 6 || parseInt(attemptHex, 16).toString(16) != darkColorFix) return;
 
-  setTimeout(()=>{states.setThemeHex(attemptHex)});
+  setTimeout(()=>{states.setThemeHex(attemptHex)}, 50);
   localStorage.setItem("themeHex", attemptHex);
 
   let rgb = stringToRGB(attemptHex);
@@ -562,6 +564,7 @@ async function loadView(switchToServer) {
   // delete all messages
   states.setFocusedRoomRenderedMessages([]);
   finishedLoading = false;
+  updateCustomTheme(states.themeHex);
   // connect to the authentication server to get the list of server's we're in and their session tokens
   fetch(`${authUrl}/getServerTokens?id=${localStorage.getItem("sessionID")}`).then(data => data.json()).then(async function(data) {
     for (let socket of Object.values(openSockets)) {
@@ -706,52 +709,88 @@ async function loadView(switchToServer) {
 function PageHeader ({title, iconClickEvent, ...props}) {
   [states.accountInformation, states.setAccountInformation] = React.useState({});
 
+  let customThemeDisplayRef = React.useRef(null);
+  let customThemeEditRef = React.useRef(null);
+
   React.useEffect(() => {
-      fetch(authUrl + "/uinfo?id=" + localStorage.getItem("sessionID"))
-          .then(data => data.json())
-          .then(data => states.setAccountInformation(data))
-          .catch(() => { if (pageUrl.pathname == "/chat") window.location = "/" });
+    fetch(authUrl + "/uinfo?id=" + localStorage.getItem("sessionID"))
+      .then(data => data.json())
+      .then(data => states.setAccountInformation(data))
+      .catch(() => { if (pageUrl.pathname == "/chat") window.location = "/" });
   }, []);
 
   return (<header {...props}>
-      <img className="avatar" onClick={iconClickEvent ? iconClickEvent : () => {window.location = "/"}} style={{cursor: "pointer"}} src="/icons/icon-48x48.png"/>
-      <h2 onClick={() => {window.location = "/"}} style={{cursor: "pointer"}}>
-          {title ? title : "(Beta!) Platypuss"}
-      </h2>
-      <div style={{flexGrow: 1}}></div>
-      <img className="avatar" style={{cursor: "pointer"}} src={authUrl+states.accountInformation.avatar} onClick={() => {
-        states.setActivePopover(
-          <Popover title="Account Settings">
-            <div id="profileBanner">
-              <div className="avatar" id="changeAvatarHoverButton">
-                <span>Change</span>
-                <img className="avatar" id="changeAvatar" src={authUrl+states.accountInformation.avatar}/>
-              </div>
-              <span className="account-settings-username" id="accountSettingsUsername" contentEditable>{states.accountInformation.username}</span>
+    <img className="avatar" onClick={iconClickEvent ? iconClickEvent : () => {window.location = "/"}} style={{cursor: "pointer"}} src="/icons/icon-48x48.png"/>
+    <h2 onClick={() => {window.location = "/"}} style={{cursor: "pointer"}}>
+        {title ? title : "(Beta!) Platypuss"}
+    </h2>
+    <div style={{flexGrow: 1}}></div>
+    <img className="avatar" style={{cursor: "pointer"}} src={authUrl+states.accountInformation.avatar} onClick={() => {
+      states.setActivePopover(
+        <Popover title="Account Settings">
+          <div id="profileBanner">
+            <div className="avatar" id="changeAvatarHoverButton">
+              <span>Change</span>
+              <img className="avatar" id="changeAvatar" src={authUrl+states.accountInformation.avatar}/>
             </div>
-            <div contentEditable id="changeAboutMe"></div>
-            <div style={{flexGrow: 0}}>
-              <select className="dropdown-button" defaultValue={states.theme}>
-                  <option value="dark" onClick={() => {setTimeout(()=>{states.setTheme("dark"); localStorage.setItem("theme", "dark");});}}>Dark</option>
-                  <option value="medium" onClick={() => {setTimeout(()=>{states.setTheme("medium"); localStorage.setItem("theme", "medium");});}}>Medium</option>
-                  <option value="light" onClick={() => {setTimeout(()=>{states.setTheme("light"); localStorage.setItem("theme", "light");});}}>Light</option>
-                  <option value="green" onClick={() => {setTimeout(()=>{states.setTheme("green"); localStorage.setItem("theme", "green");});}}>Green</option>
-                  <option value="custom" onClick={() => {setTimeout(()=>{states.setTheme("custom"); localStorage.setItem("theme", "custom");});}}>Custom</option>
-              </select>
-            </div>
-            <span>Custom Accent Colour #
-              <span id="accountSettingsCustomTheme" minLength={6} maxLength={6} contentEditable onInput={() => {updateCustomTheme(document.getElementById("accountSettingsCustomTheme").innerText)}}>
-                {states.themeHex}</span></span> {/* change this so it only shows when custom theme is enabled */}
-            <button>Delete Account</button>
-            <button>Change Password</button>
-            <button onClick={() => {
-              localStorage.setItem("sessionID", null);
-              window.location = "/";
-            }}>Log Out</button>
-            <button onClick={() => {states.setActivePopover(null);}}>Done</button>
-          </Popover>
-        );
-      }}/>
+            <h3 className="account-settings-username" id="accountSettingsUsername" contentEditable>{states.accountInformation.username}</h3>
+          </div>
+          <h5>Tell us a bit about you:</h5>
+          <div contentEditable id="changeAboutMe"></div>
+          <div style={{
+              flexGrow: 0,
+              display: "flex",
+              flexDirection: "row",
+              gap: 5,
+              alignItems: "center"
+              }}>
+            Theme:
+            <select defaultValue={states.theme}>
+              <option value="dark" onClick={() => {setTimeout(() => {
+                states.setTheme("dark");
+                localStorage.setItem("theme", "dark");
+                customThemeDisplayRef.current.hidden = true;
+              }, 50);}}>Dark</option>
+              <option value="medium" onClick={() => {setTimeout(() => {
+                states.setTheme("medium");
+                localStorage.setItem("theme", "medium");
+                customThemeDisplayRef.current.hidden = true;
+              }, 50);}}>Medium</option>
+              <option value="light" onClick={() => {setTimeout(() => {
+                states.setTheme("light");
+                localStorage.setItem("theme", "light");
+                customThemeDisplayRef.current.hidden = true;
+              }, 50);}}>Light</option>
+              <option value="green" onClick={() => {setTimeout(() => {
+                states.setTheme("green");
+                localStorage.setItem("theme", "green");
+                customThemeDisplayRef.current.hidden = true;
+              }, 50);}}>Green</option>
+              <option value="custom" onClick={() => {setTimeout(() => {
+                states.setTheme("custom");
+                localStorage.setItem("theme", "custom");
+                customThemeDisplayRef.current.hidden = false;
+              }, 50);}}>Custom</option>
+            </select>
+          </div>
+          <span hidden={states.theme != "custom"} ref={customThemeDisplayRef}>Custom Theme Hex Colour: #
+            <span id="accountSettingsCustomTheme" contentEditable
+            ref={customThemeEditRef} onInput={() => {
+                updateCustomTheme(customThemeEditRef.current.innerText)
+              }}>
+              {states.themeHex}
+            </span>
+          </span>
+          <button>Delete Account</button>
+          <button>Change Password</button>
+          <button onClick={() => {
+            localStorage.setItem("sessionID", null);
+            window.location = "/";
+          }}>Log Out</button>
+          <button onClick={() => {states.setActivePopover(null);}}>Done</button>
+        </Popover>
+      );
+    }}/>
   </header>);
 };
 
@@ -759,15 +798,14 @@ function PageHeader ({title, iconClickEvent, ...props}) {
 export default function ChatPage() {
   let theme = "medium";
   let themeHex = "000000";
-  if (browser) {
+  if (browser && !states.hasRendered) {
     themeHex = localStorage.getItem("themeHex");
     if (themeHex == null) themeHex = "000000";
     switch (localStorage.getItem("theme")) {
+      case "custom":
       case "dark":
       case "light":
       case "green":
-      case "custom":
-        updateCustomTheme(themeHex);
       case "medium":
         theme = localStorage.getItem("theme");
         break;
@@ -788,9 +826,8 @@ export default function ChatPage() {
   [states.focusedServerPeers, states.setFocusedServerPeers] = React.useState([]); // other people in this server
   [states.theme, states.setTheme] = React.useState(theme);
   [states.themeHex, states.setThemeHex] = React.useState(themeHex);
-  [states.reply, states.setReply] = React.useState(null);
 
-  React.useEffect(() => { loadView(); }, []);
+  React.useEffect(() => { loadView();}, []);
 
   // return the basic page layout
   return (<>
