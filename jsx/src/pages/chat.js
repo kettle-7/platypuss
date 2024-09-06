@@ -431,8 +431,15 @@ function multiplyRGB(RGB, multiplier) {
 
 // Update the custom theme settings to a specific color pallete
 function updateCustomTheme(attemptHex) {
-  console.log("[" + attemptHex + "]");
-  
+  attemptHex = attemptHex.toLowerCase();
+  let darkColorFix = attemptHex;
+  for (let i = 0; i < 5; i++) {
+    if (darkColorFix[0] != "0") break;
+    darkColorFix = darkColorFix.slice(1);
+  }
+
+  if (attemptHex.length != 6 || parseInt(attemptHex, 16).toString(16) != darkColorFix) return;
+
   setTimeout(()=>{states.setThemeHex(attemptHex)}, 50);
   localStorage.setItem("themeHex", attemptHex);
 
@@ -544,6 +551,7 @@ async function loadView(switchToServer) {
   // delete all messages
   states.setFocusedRoomRenderedMessages([]);
   finishedLoading = false;
+  updateCustomTheme(states.themeHex);
   // connect to the authentication server to get the list of server's we're in and their session tokens
   fetch(`${authUrl}/getServerTokens?id=${localStorage.getItem("sessionID")}`).then(data => data.json()).then(async function(data) {
     for (let socket of Object.values(openSockets)) {
@@ -748,13 +756,12 @@ function PageHeader ({title, iconClickEvent, ...props}) {
               <option value="custom" onClick={() => {setTimeout(() => {
                 states.setTheme("custom");
                 localStorage.setItem("theme", "custom");
-                updateCustomTheme(customThemeEditRef.current.innerText || localStorage.getItem("themeHex"));
                 customThemeDisplayRef.current.hidden = false;
               }, 50);}}>Custom</option>
             </select>
           </div>
           <span hidden={states.theme != "custom"} ref={customThemeDisplayRef}>Custom Theme Hex Colour: #
-            <span id="accountSettingsCustomTheme" minLength={6} maxLength={6} contentEditable
+            <span id="accountSettingsCustomTheme" contentEditable
             ref={customThemeEditRef} onInput={() => {
                 updateCustomTheme(customThemeEditRef.current.innerText)
               }}>
@@ -783,7 +790,6 @@ export default function ChatPage() {
     if (themeHex == null) themeHex = "000000";
     switch (localStorage.getItem("theme")) {
       case "custom":
-        updateCustomTheme(themeHex);
       case "dark":
       case "light":
       case "green":
@@ -809,7 +815,7 @@ export default function ChatPage() {
   [states.themeHex, states.setThemeHex] = React.useState(themeHex);
   states.hasRendered = true;
 
-  React.useEffect(() => { loadView(); }, []);
+  React.useEffect(() => { loadView();}, []);
 
   // return the basic page layout
   return (<>
