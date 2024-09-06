@@ -667,8 +667,9 @@ async function loadView(switchToServer) {
             setTimeout(() => { finishedLoading = true; }, 1000);
             break;
           case "messageDeleted":
-            if (messageCache[packet.messageId] == undefined) break;
+            if (!messageCache[packet.messageId]) break;
             document.getElementById(packet.messageId).remove();
+            delete messageCache[packet.messageId];
             break;
           case "connected":
             if (servers[serverCode].setManifest)
