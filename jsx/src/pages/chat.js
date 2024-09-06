@@ -431,15 +431,9 @@ function multiplyRGB(RGB, multiplier) {
 
 // Update the custom theme settings to a specific color pallete
 function updateCustomTheme(attemptHex) {
-  let darkColorFix = attemptHex;
-  for (let i = 0; i < 5; i++) {
-    if (darkColorFix[0] != "0") break;
-    darkColorFix = darkColorFix.slice(1);
-  }
-  console.log(attemptHex, parseInt(attemptHex, 16).toString(16), darkColorFix);
-  if (attemptHex.length != 6 || parseInt(attemptHex, 16).toString(16) != darkColorFix) return;
-
-  setTimeout(()=>{states.setThemeHex(attemptHex)});
+  console.log("[" + attemptHex + "]");
+  
+  setTimeout(()=>{states.setThemeHex(attemptHex)}, 50);
   localStorage.setItem("themeHex", attemptHex);
 
   let rgb = stringToRGB(attemptHex);
@@ -775,7 +769,7 @@ function PageHeader ({title, iconClickEvent, ...props}) {
 export default function ChatPage() {
   let theme = "medium";
   let themeHex = "000000";
-  if (browser) {
+  if (browser && !states.hasRendered) {
     themeHex = localStorage.getItem("themeHex");
     if (themeHex == null) themeHex = "000000";
     switch (localStorage.getItem("theme")) {
@@ -804,6 +798,7 @@ export default function ChatPage() {
   [states.focusedServerPeers, states.setFocusedServerPeers] = React.useState([]); // other people in this server
   [states.theme, states.setTheme] = React.useState(theme);
   [states.themeHex, states.setThemeHex] = React.useState(themeHex);
+  states.hasRendered = true;
 
   React.useEffect(() => { loadView(); }, []);
 
