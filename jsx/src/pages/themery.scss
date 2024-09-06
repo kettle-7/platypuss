@@ -1,591 +1,594 @@
- /************************************************************************
- * Copyright 2021-2024 Ben Keppel                                        *
- *                                                                       *
- * This program is free software: you can redistribute it and/or modify  *
- * it under the terms of the GNU General Public License as published by  *
- * the Free Software Foundation, either version 3 of the License, or     *
- * (at your option) any later version.                                   *
- *                                                                       *
- * This program is distributed in the hope that it will be useful,       *
- * but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- * GNU General Public License for more details.                          *
- *                                                                       *
- * You should have received a copy of the GNU General Public License     *
- * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
- ************************************************************************/
+/************************************************************************
+* Copyright 2021-2024 Ben Keppel                                        *
+*                                                                       *
+* This program is free software: you can redistribute it and/or modify  *
+* it under the terms of the GNU General Public License as published by  *
+* the Free Software Foundation, either version 3 of the License, or     *
+* (at your option) any later version.                                   *
+*                                                                       *
+* This program is distributed in the hope that it will be useful,       *
+* but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+* GNU General Public License for more details.                          *
+*                                                                       *
+* You should have received a copy of the GNU General Public License     *
+* along with this program.  If not, see <http://www.gnu.org/licenses/>. *
+************************************************************************/
 
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
 @import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
 
 .material-symbols-outlined {
-  font-variation-settings:
-  'FILL' 0,
-  'wght' 400,
-  'GRAD' 0,
-  'opsz' 24
+font-variation-settings:
+'FILL' 0,
+'wght' 400,
+'GRAD' 0,
+'opsz' 24
 }
 
 .lightThemed, .lightThemed * {
-    --outgradient: linear-gradient(#e0e0e0, #c4c4c4, #c4c4c4, #a8a8a8);
-    --ingradient: linear-gradient(#a8a8a8, #c4c4c4, #c4c4c4, #e0e0e0);
-    --outgradientsmooth: linear-gradient(#eeeeee, #aaaaaa);
-    --ingradientsmooth: linear-gradient(#aaaaaa, #eeeeee);
-    --background-level1: white;
-    --background-level2: #f6f6f6;
-    --background-level3: #eeeeee;
-    --background-level4: #dedede;
-    --background-level5: #d3d3d3;
-    --background-level6: #c9c9c9;
-    --foreground-level1: black;
-    --foreground-level2: #222222;
-    /*--accent: #0075db;*/
-    --accent: #b300ff;
-    --grey: #888888;
+  --outgradient: linear-gradient(#e0e0e0, #c4c4c4, #c4c4c4, #a8a8a8);
+  --ingradient: linear-gradient(#a8a8a8, #c4c4c4, #c4c4c4, #e0e0e0);
+  --outgradientsmooth: linear-gradient(#eeeeee, #aaaaaa);
+  --ingradientsmooth: linear-gradient(#aaaaaa, #eeeeee);
+  --background-level1: white;
+  --background-level2: #f6f6f6;
+  --background-level3: #eeeeee;
+  --background-level4: #dedede;
+  --background-level5: #d3d3d3;
+  --background-level6: #c9c9c9;
+  --foreground-level1: black;
+  --foreground-level2: #222222;
+  /*--accent: #0075db;*/
+  --accent: #b300ff;
+  --grey: #888888;
 }
 
 .darkThemed, .darkThemed * {
-    --outgradient: #373737;
-    --ingradient: #373737;
-    --outgradientsmooth: linear-gradient(#373737, #2a2a2a);
-    --ingradientsmooth: linear-gradient(#2a2a2a, #373737);
-    --background-level1: black;
-    --background-level2: #0e0e0e;
-    --background-level3: #1b1b1b;
-    --background-level4: #262626;
-    --background-level5: #2e2e2e;
-    --background-level6: #373737;
-    --foreground-level1: white;
-    --foreground-level2: #e0e0e0;
-    /*--accent: #349efa;*/
-    --accent: #c847ff;
-    --grey: #888888;
+  --outgradient: #373737;
+  --ingradient: #373737;
+  --outgradientsmooth: linear-gradient(#373737, #2a2a2a);
+  --ingradientsmooth: linear-gradient(#2a2a2a, #373737);
+  --background-level1: black;
+  --background-level2: #0e0e0e;
+  --background-level3: #1b1b1b;
+  --background-level4: #262626;
+  --background-level5: #2e2e2e;
+  --background-level6: #373737;
+  --foreground-level1: white;
+  --foreground-level2: #e0e0e0;
+  /*--accent: #349efa;*/
+  --accent: #c847ff;
+  --grey: #888888;
 }
 
 .greenThemed, .greenThemed * {
-    --outgradient: lime;
-    --ingradient: lime;
-    --outgradientsmooth: linear-gradient(lime, rgb(3, 90, 3));
-    --ingradientsmooth: linear-gradient(rgb(3, 90, 3), lime);
-    --background-level1: lime;
-    --background-level2: lime;
-    --background-level3: lime;
-    --background-level4: lime;
-    --background-level5: lime;
-    --background-level6: lime;
-    --foreground-level1: green;
-    --foreground-level2: green;
-    /*--accent: #349efa;*/
-    --accent: black;
-    --grey: rgb(0, 182, 0);
+  --outgradient: lime;
+  --ingradient: lime;
+  --outgradientsmooth: linear-gradient(lime, rgb(3, 90, 3));
+  --ingradientsmooth: linear-gradient(rgb(3, 90, 3), lime);
+  --background-level1: lime;
+  --background-level2: lime;
+  --background-level3: lime;
+  --background-level4: lime;
+  --background-level5: lime;
+  --background-level6: lime;
+  --foreground-level1: green;
+  --foreground-level2: green;
+  /*--accent: #349efa;*/
+  --accent: black;
+  --grey: rgb(0, 182, 0);
 }
 
 .account-settings-username {
-    margin-left: 2px;
+  margin-left: 2px;
 }
 
-.dropdown-button {
-    color: var(--foreground-level1);
-    background: var(--outgradient);
-    border: 1px solid var(--grey);
-    border-radius: 5px;
-    padding: 2px;
-    padding-left: 10px;
-    padding-right: 10px;
-    cursor: pointer;
-    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+select {
+  color: var(--foreground-level1);
+  background: var(--outgradient);
+  border: 1px solid var(--grey);
+  border-radius: 5px;
+  padding: 2px;
+  padding-left: 10px;
+  padding-right: 10px;
+  cursor: pointer;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
-.dropdown-button:hover, .dropdown-button:focus {
-    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5) inset !important;
-    background: var(--ingradient);
-    opacity: 0.8;
+select:focus {
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5) inset !important;
+  background: var(--ingradient);
+}
+
+select:hover {
+  opacity: 0.8;
 }
 
 #___gatsby, #gatsby-focus-wrapper, body {
-    position: absolute;
-    left: 0px;
-    right: 0px;
-    top: 0px;
-    bottom: 0px;
-    overflow: hidden;
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
+  overflow: hidden;
 }
 
 #gatsby-focus-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: stretch;
 }
 
 * {
-    font-family: Inter, sans-serif;
-    color: var(--foreground-level1);
+  font-family: Inter, sans-serif;
+  color: var(--foreground-level1);
 }
 
 body {
-    padding: 0px;
-    margin: 0px;
-    background-color: var(--background-level4);
+  padding: 0px;
+  margin: 0px;
+  background-color: var(--background-level4);
 }
 
 button {
-    color: var(--foreground-level1);
-    background: var(--outgradient);
-    border: 1px solid var(--grey);
-    border-radius: 5px;
-    padding: 2px;
-    padding-left: 10px;
-    padding-right: 10px;
-    cursor: pointer;
-    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-    &:active {
-        box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5) inset !important;
-        background: var(--ingradient);
-    }
-    &:focus {
-        border: 1px solid var(--accent);
-    }
-    &:hover {
-        opacity: 0.8;
-    }
+  color: var(--foreground-level1);
+  background: var(--outgradient);
+  border: 1px solid var(--grey);
+  border-radius: 5px;
+  padding: 2px;
+  padding-left: 10px;
+  padding-right: 10px;
+  cursor: pointer;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  &:active {
+      box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5) inset !important;
+      background: var(--ingradient);
+  }
+  &:focus {
+      border: 1px solid var(--accent);
+  }
+  &:hover {
+      opacity: 0.8;
+  }
 }
 
 code {
-    font-family: "Ubuntu Mono", "Lucida Sans Console", monospace, mono;
-    background-color: var(--background-level4);
-    border-radius: 5px;
-    padding: 3px;
-    overflow-wrap: anywhere;
+  font-family: "Ubuntu Mono", "Lucida Sans Console", monospace, mono;
+  background-color: var(--background-level4);
+  border-radius: 5px;
+  padding: 3px;
+  overflow-wrap: anywhere;
 }
 
 code * {
-    font-family: "Ubuntu Mono", "Lucida Sans Console", monospace, mono;
+  font-family: "Ubuntu Mono", "Lucida Sans Console", monospace, mono;
 }
 
 pre > code {
-    border: 0px solid transparent;
-    background-color: transparent;
-    padding: 0px;
+  border: 0px solid transparent;
+  background-color: transparent;
+  padding: 0px;
 }
 
 pre {
-    background-color: var(--background-level1);
-    border: 2px solid var(--grey);
-    border-radius: 5px;
-    padding: 3px;
-    margin: 1px;
-    overflow-x: auto;
+  background-color: var(--background-level1);
+  border: 2px solid var(--grey);
+  border-radius: 5px;
+  padding: 3px;
+  margin: 1px;
+  overflow-x: auto;
 }
 
 a {
-    color: var(--accent);
+  color: var(--accent);
 }
 
 blockquote {
-    border-left: 3px solid var(--grey);
-    margin-left: 0;
-    padding: 5px;
+  border-left: 3px solid var(--grey);
+  margin-left: 0;
+  padding: 5px;
 }
 
 table, th, td {
-    width: min-content;
-    /*border: 1px solid;*/
+  width: min-content;
+  /*border: 1px solid;*/
 }
 
 table {
-    background: var(--background-level3);
-    border-radius: 5px;
+  background: var(--background-level3);
+  border-radius: 5px;
 }
 
 th, td {
-    padding: 5px;
-    border-radius: 4px;
-    background: var(--outgradient);
-    /*linear-gradient(var(--background-level4, var(--background-level3);*/
+  padding: 5px;
+  border-radius: 4px;
+  background: var(--outgradient);
+  /*linear-gradient(var(--background-level4, var(--background-level3);*/
 }
 
 blockquote p {
-    margin-top: 0px;
-    margin-bottom: 0px;
+  margin-top: 0px;
+  margin-bottom: 0px;
 }
 
 .message2 > p {
-    margin-top: 0px;
-    margin-bottom: 0px;
+  margin-top: 0px;
+  margin-bottom: 0px;
 }
 
 footer {
-    flex-shrink: 0;
-    padding: 20px;
-    background: var(--outgradientsmooth);
-    border-top: 1px solid var(--background-level2);
+  flex-shrink: 0;
+  padding: 20px;
+  background: var(--outgradientsmooth);
+  border-top: 1px solid var(--background-level2);
 }
 
 header {
-    color: var(--foreground-level2);
-    background: var(--outgradientsmooth);
-    display: flex;
-    flex-direction: row;
-    justify-content: stretch;
-    gap: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    align-items: center;
-    height: fit-content;
-    border-bottom: 1px solid var(--background-level5);
-    flex-shrink: 0;
+  color: var(--foreground-level2);
+  background: var(--outgradientsmooth);
+  display: flex;
+  flex-direction: row;
+  justify-content: stretch;
+  gap: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  align-items: center;
+  height: fit-content;
+  border-bottom: 1px solid var(--background-level5);
+  flex-shrink: 0;
 }
 
 #mainPage {
-    padding: 48px;
+  padding: 48px;
 }
 
 main {
-    background-color: var(--background-level4);
-    overflow: auto;
-    flex-shrink: 1;
-    flex-grow: 1;
+  background-color: var(--background-level4);
+  overflow: auto;
+  flex-shrink: 1;
+  flex-grow: 1;
 }
 
 a {
-    color: var(--accent);
+  color: var(--accent);
 }
 
 .sidebar {
-    width: fit-content;
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    padding: 3px;
-    flex-grow: 0;
-    flex-shrink: 0;
-    background: var(--background-level5);
-    overflow-y: scroll;
-    scrollbar-width: none;
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 3px;
+  flex-grow: 0;
+  flex-shrink: 0;
+  background: var(--background-level5);
+  overflow-y: scroll;
+  scrollbar-width: none;
 }
 
 #roomsBar {
-    display: flex;
-    padding: 5px;
-    gap: 5px;
-    flex-grow: 1;
-    flex-shrink: 1;
-    @media screen and (min-width: 20cm) {
-        flex-shrink: 0;
-        max-width: 20%;
-    }
+  display: flex;
+  padding: 5px;
+  gap: 5px;
+  flex-grow: 1;
+  flex-shrink: 1;
+  @media screen and (min-width: 20cm) {
+      flex-shrink: 0;
+      max-width: 20%;
+  }
 }
 
 #chatPage {
-    display: flex;
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
 }
 
 #scrolledArea {
-    display: flex;
-    overflow: auto;
-    flex-direction: column;
-    flex-grow: 1;
+  display: flex;
+  overflow: auto;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
 #messageArea {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    gap: 3px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 3px;
 }
 
 #middleSection {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    flex-shrink: 1;
-    background: var(--background-level3);
-    overflow: hidden;
-    border: 1px solid var(--background-level6);
-    gap: 3px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  flex-shrink: 1;
+  background: var(--background-level3);
+  overflow: hidden;
+  border: 1px solid var(--background-level6);
+  gap: 3px;
 }
 
 .serverIcon {
-    width: 48px;
-    height: 48px;
-    object-fit: cover;
-    border-radius: 20%;
-    background: var(--background-level3);
-    cursor: pointer;
-    flex-shrink: 0;
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    font-size: xx-large;
-    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 20%;
+  background: var(--background-level3);
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  font-size: xx-large;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 .tooltipContainer .serverIconTooltip {
-    display: none;
-    position: absolute;
-    transform: translate(52px, -39px);
-    background: var(--background-level3);
-    padding: 5px;
-    border-radius: 5px;
-    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-    z-index: 2;
+  display: none;
+  position: absolute;
+  transform: translate(52px, -39px);
+  background: var(--background-level3);
+  padding: 5px;
+  border-radius: 5px;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  z-index: 2;
 }
 
 .tooltipContainer:hover .serverIconTooltip {
-    @media screen and (min-width: 20cm) {
-        display: inline-block;
-    }
+  @media screen and (min-width: 20cm) {
+      display: inline-block;
+  }
 }
 
 #belowScrolledArea {
-    display: flex;
-    flex-direction: row;
-    gap: 5px;
-    flex-shrink: 0;
-    flex-grow: 0;
-    background: var(--background-level4);
-    padding: 5px;
-    flex-wrap: nowrap;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  flex-shrink: 0;
+  flex-grow: 0;
+  background: var(--background-level4);
+  padding: 5px;
+  flex-wrap: nowrap;
+  align-items: center;
 }
 
 #belowScrolledArea button {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
 }
 
 #messageBox {
-    flex-grow: 1;
-    font-weight: normal;
-    background: var(--background-level2);
-    border: 1px solid var(--grey);
-    box-shadow: 2px 2px 2px #1b1b1b88 inset;
-    border-radius: 10px;
-    min-height: 48px;
-    max-height: 33vh;
-    overflow: scroll;
-    overflow-wrap: anywhere;
-    padding: 5px;
+  flex-grow: 1;
+  font-weight: normal;
+  background: var(--background-level2);
+  border: 1px solid var(--grey);
+  box-shadow: 2px 2px 2px #1b1b1b88 inset;
+  border-radius: 10px;
+  min-height: 48px;
+  max-height: 33vh;
+  overflow: scroll;
+  overflow-wrap: anywhere;
+  padding: 5px;
 }
 
 #messageBox :active {
-    border: 1px solid var(--accent);
+  border: 1px solid var(--accent);
 }
 
 #serverTitle {
-    display: flex;
-    flex-direction: row;
-    overflow: hidden;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  align-items: center;
 }
 
 #serverTitle h3 {
-    flex-shrink: 1;
-    text-overflow: ellipsis;
-    text-wrap: nowrap;
-    overflow: hidden;
+  flex-shrink: 1;
+  text-overflow: ellipsis;
+  text-wrap: nowrap;
+  overflow: hidden;
 }
 
 .messageUsernameDisplay {
-    margin: 0px;
-    padding: 2px;
+  margin: 0px;
+  padding: 2px;
 }
 
 .message1 {
-    overflow: visible;
-    padding-left: 5px;
-    padding-right: 5px;
-    display: flex;
-    flex-direction: row;
-    position: relative;
-    gap: 5px;
+  overflow: visible;
+  padding-left: 5px;
+  padding-right: 5px;
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  gap: 5px;
 }
 
 .message1 * {
-    overflow-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .message1 p {
-    margin-top: 0px;
-    margin-bottom: 0px;
+  margin-top: 0px;
+  margin-bottom: 0px;
 }
 
 .message1:hover {
-    background: var(--background-level2);
+  background: var(--background-level2);
 }
 
 .message2 {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    overflow-x: hidden;
-    overflow-y: visible;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow-x: hidden;
+  overflow-y: visible;
 }
 
 .message3 {
-    opacity: 0;
-    position: absolute;
-    overflow-y: visible;
-    transform: translate(0px, -16px);
-    right: 8px;
+  opacity: 0;
+  position: absolute;
+  overflow-y: visible;
+  transform: translate(0px, -16px);
+  right: 8px;
 }
 
 .message1:hover .message3 {
-    opacity: 1;
+  opacity: 1;
 }
 
 .message3 > button {
-    padding: 4px;
+  padding: 4px;
 }
 
 .messageAuthor {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 .messageTimestamp {
-    color: var(--grey);
-    padding-left: 2px;
-    opacity: 0;
+  color: var(--grey);
+  padding-left: 2px;
+  opacity: 0;
 }
 
 .message1:hover .messageTimestamp {
-    opacity: 1;
+  opacity: 1;
 }
 
 .avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    font-size: xx-large;
-    float: left;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  font-size: xx-large;
+  float: left;
 }
 
 input[type="text"], input[type="password"], input[type="email"] {
-    background-color: var(--background-level3);
-    box-shadow: 2px 2px 2px #1b1b1b88 inset;
-    background-color: var(--background-level5);
-    border: 1px solid var(--accent);
-    color: var(--foreground-level1);
-    border-color: var(--grey);
-    border-radius: 5px;
-    margin-top: 3px;
+  background-color: var(--background-level3);
+  box-shadow: 2px 2px 2px #1b1b1b88 inset;
+  background-color: var(--background-level5);
+  border: 1px solid var(--accent);
+  color: var(--foreground-level1);
+  border-color: var(--grey);
+  border-radius: 5px;
+  margin-top: 3px;
 }
 
 input[type="text"]:active, input[type="password"]:active, input[type="email"]:active {
-    background-color: var(--background-level4);
-    border-color: var(--grey);
-    box-shadow: 2px 2px 2px #1b1b1b88 inset;
+  background-color: var(--background-level4);
+  border-color: var(--grey);
+  box-shadow: 2px 2px 2px #1b1b1b88 inset;
 }
 
 .message2 img {
-    padding: 1px;
-    display: flex;
-    flex-direction: row;
-    gap: 3px;
-    border: none;
-    align-content: center;
-    border-radius: 5px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
-    height: 20vh;
-    width: 35vh;
-    object-fit: cover;
-    background-color: var(--background-level6);
-    margin: 3px;
+  padding: 1px;
+  display: flex;
+  flex-direction: row;
+  gap: 3px;
+  border: none;
+  align-content: center;
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+  height: 20vh;
+  width: 35vh;
+  object-fit: cover;
+  background-color: var(--background-level6);
+  margin: 3px;
 }
 
 #popoverParent {
-    position: absolute;
-    background-color: rgba(0, 0, 0, 0.5);
-    top: 0px;
-    bottom: 0px;
-    left: 0px;
-    right: 0px;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.5);
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
 }
 
 #popover {
-    padding: 5px;
-    gap: 5px;
-    display: flex;
-    flex-direction: column;
-    background: var(--outgradient);
+  padding: 5px;
+  gap: 5px;
+  display: flex;
+  flex-direction: column;
+  background: var(--outgradient);
 
-    @media screen and (min-width: 20cm) {
-        min-width: fit-content;
-        max-width: 90%;
-        min-height: fit-content;
-        width: 50vh;
-        border: 0px solid var(--grey);
-        border-radius: 5px;
-        box-shadow: 0px 0px 10px black;
-        margin: auto;
-        align-content: stretch;
-        max-height: 90%;
-    }
+  @media screen and (min-width: 20cm) {
+      min-width: fit-content;
+      max-width: 90%;
+      min-height: fit-content;
+      width: 50vh;
+      border: 0px solid var(--grey);
+      border-radius: 5px;
+      box-shadow: 0px 0px 10px black;
+      margin: auto;
+      align-content: stretch;
+      max-height: 90%;
+  }
 
-    @media screen and (max-width: 20cm) {
-        background-color: var(--background-level4) !important;
-        position: absolute;
-        top: 0px;
-        bottom: 0px;
-        left: 0px;
-        right: 0px;
-    }
+  @media screen and (max-width: 20cm) {
+      background-color: var(--background-level4) !important;
+      position: absolute;
+      top: 0px;
+      bottom: 0px;
+      left: 0px;
+      right: 0px;
+  }
 }
 
 #popoverHeaderBar {
-    display: flex;
-    flex-direction: row;
-    padding: 3px;
-    gap: 3px;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  padding: 3px;
+  gap: 3px;
+  align-items: center;
 }
 
 #popoverHeaderBar > h3 {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-wrap: nowrap;
-    margin: 0px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-wrap: nowrap;
+  margin: 0px;
 }
 
 #popoverHeaderBar > button {
-    padding: 3px;
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
+  padding: 3px;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
 }
 
 #loadMoreMessagesButton {
-    align-self: center;
-    font-size: large;
+  align-self: center;
+  font-size: large;
 }
 
 #aboveMessageArea {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 #changeAvatarHoverButton > span {
-    display: none;
+  display: none;
 }
 
 #changeAvatarHoverButton:hover > span {
-    display: flex;
-    align-items: center;
-    align-content: center;
+  display: flex;
+  align-items: center;
+  align-content: center;
 }
 
 /**************************************
@@ -613,34 +616,34 @@ hue-6-2: #c18401
 */
 
 .hljs {
-    color: var(--foreground-level2);
+  color: var(--foreground-level2);
 }
 .hljs-comment,
 .hljs-quote {
-    color: #67686e;
-    font-style: italic
+  color: #67686e;
+  font-style: italic
 }
 .hljs-doctag,
 .hljs-keyword,
 .hljs-formula {
-    color: #a626a4
+  color: #a626a4
 }
 .hljs-section,
 .hljs-name,
 .hljs-selector-tag,
 .hljs-deletion,
 .hljs-subst {
-    color: #e45649
+  color: #e45649
 }
 .hljs-literal {
-    color: #0184bb
+  color: #0184bb
 }
 .hljs-string,
 .hljs-regexp,
 .hljs-addition,
 .hljs-attribute,
 .hljs-meta .hljs-string {
-    color: #50a14f
+  color: #50a14f
 }
 .hljs-attr,
 .hljs-variable,
@@ -650,7 +653,7 @@ hue-6-2: #c18401
 .hljs-selector-attr,
 .hljs-selector-pseudo,
 .hljs-number {
-    color: #986801
+  color: #986801
 }
 .hljs-symbol,
 .hljs-bullet,
@@ -658,19 +661,19 @@ hue-6-2: #c18401
 .hljs-meta,
 .hljs-selector-id,
 .hljs-title {
-    color: #4078f2
+  color: #4078f2
 }
 .hljs-built_in,
 .hljs-title.class_,
 .hljs-class .hljs-title {
-    color: #c18401
+  color: #c18401
 }
 .hljs-emphasis {
-    font-style: italic
+  font-style: italic
 }
 .hljs-strong {
-    font-weight: bold
+  font-weight: bold
 }
 .hljs-link {
-    text-decoration: underline
+  text-decoration: underline
 }

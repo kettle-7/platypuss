@@ -281,6 +281,7 @@ function Message({message}) {
       }>Edit</button>
       <button className='material-symbols-outlined'>Reply</button>
       <button className='material-symbols-outlined'>alternate_email</button>
+      {/* TODO: we don't like document.getElementById because it's slow -- kettle */}
       <button className='material-symbols-outlined' onClick={()=>{deleteMessage(message.id); document.getElementById(message.id).remove()}} hidden={
         sentByThisUser ? !states.focusedServerPermissions.includes("message.delete")
         : !states.focusedServerPermissions.includes("moderation.delete")
@@ -348,14 +349,14 @@ function ServerIcon({server}) {
 // The bar on the right showing other server members
 function PeersBar({shown, className, ...props}) {
   return (<div className={className + " sidebar"} id="peersBar" style={{display: shown ? "flex" : "none"}} {...props}>
-    <img className="serverIcon material" src="" alt="+" id="inviteButton" onClick={() => {
+    <button className="serverIcon material-symbols-outlined" id="inviteButton" onClick={() => {
       openSockets[states.focusedServer].send(JSON.stringify({
         eventType: "message",
         message: {
           content: "/invite"
         }
       }));
-    }}/>
+    }}>add</button>
     {states.focusedServerPeers.map(peer => {
       <PeerIcon peer={peer}/>
     })}
@@ -693,52 +694,80 @@ async function loadView(switchToServer) {
 function PageHeader ({title, iconClickEvent, ...props}) {
   [states.accountInformation, states.setAccountInformation] = React.useState({});
 
+  let customThemeEditRef = React.useRef(null);
+
   React.useEffect(() => {
-      fetch(authUrl + "/uinfo?id=" + localStorage.getItem("sessionID"))
-          .then(data => data.json())
-          .then(data => states.setAccountInformation(data))
-          .catch(() => { if (pageUrl.pathname == "/chat") window.location = "/" });
+    fetch(authUrl + "/uinfo?id=" + localStorage.getItem("sessionID"))
+      .then(data => data.json())
+      .then(data => states.setAccountInformation(data))
+      .catch(() => { if (pageUrl.pathname == "/chat") window.location = "/" });
   }, []);
 
   return (<header {...props}>
-      <img className="avatar" onClick={iconClickEvent ? iconClickEvent : () => {window.location = "/"}} style={{cursor: "pointer"}} src="/icons/icon-48x48.png"/>
-      <h2 onClick={() => {window.location = "/"}} style={{cursor: "pointer"}}>
-          {title ? title : "(Beta!) Platypuss"}
-      </h2>
-      <div style={{flexGrow: 1}}></div>
-      <img className="avatar" style={{cursor: "pointer"}} src={authUrl+states.accountInformation.avatar} onClick={() => {
-        states.setActivePopover(
-          <Popover title="Account Settings">
-            <div id="profileBanner">
-              <div className="avatar" id="changeAvatarHoverButton">
-                <span>Change</span>
-                <img className="avatar" id="changeAvatar" src={authUrl+states.accountInformation.avatar}/>
-              </div>
-              <span className="account-settings-username" id="accountSettingsUsername" contentEditable>{states.accountInformation.username}</span>
+    <img className="avatar" onClick={iconClickEvent ? iconClickEvent : () => {window.location = "/"}} style={{cursor: "pointer"}} src="/icons/icon-48x48.png"/>
+    <h2 onClick={() => {window.location = "/"}} style={{cursor: "pointer"}}>
+        {title ? title : "(Beta!) Platypuss"}
+    </h2>
+    <div style={{flexGrow: 1}}></div>
+    <img className="avatar" style={{cursor: "pointer"}} src={authUrl+states.accountInformation.avatar} onClick={() => {
+      states.setActivePopover(
+        <Popover title="Account Settings">
+          <div id="profileBanner">
+            <div className="avatar" id="changeAvatarHoverButton">
+              <span>Change</span>
+              <img className="avatar" id="changeAvatar" src={authUrl+states.accountInformation.avatar}/>
             </div>
-            <div contentEditable id="changeAboutMe"></div>
-            <div style={{flexGrow: 0}}>
-              <select className="dropdown-button" defaultValue={states.theme}>
-                  <option value="dark" onClick={() => {setTimeout(()=>{states.setTheme("dark"); localStorage.setItem("theme", "dark");});}}>Dark</option>
-                  <option value="medium" onClick={() => {setTimeout(()=>{states.setTheme("medium"); localStorage.setItem("theme", "medium");});}}>Medium</option>
-                  <option value="light" onClick={() => {setTimeout(()=>{states.setTheme("light"); localStorage.setItem("theme", "light");});}}>Light</option>
-                  <option value="green" onClick={() => {setTimeout(()=>{states.setTheme("green"); localStorage.setItem("theme", "green");});}}>Green</option>
-                  <option value="custom" onClick={() => {setTimeout(()=>{states.setTheme("custom"); localStorage.setItem("theme", "custom");});}}>Custom</option>
-              </select>
-            </div>
-            <span>Custom Accent Colour #
-              <span id="accountSettingsCustomTheme" minLength={6} maxLength={6} contentEditable onInput={() => {updateCustomTheme(document.getElementById("accountSettingsCustomTheme").innerText)}}>
-                {states.themeHex}</span></span> {/* change this so it only shows when custom theme is enabled */}
-            <button>Delete Account</button>
-            <button>Change Password</button>
-            <button onClick={() => {
-              localStorage.setItem("sessionID", null);
-              window.location = "/";
-            }}>Log Out</button>
-            <button onClick={() => {states.setActivePopover(null);}}>Done</button>
-          </Popover>
-        );
-      }}/>
+            <span className="account-settings-username" id="accountSettingsUsername" contentEditable>{states.accountInformation.username}</span>
+          </div>
+          <div contentEditable id="changeAboutMe"></div>
+          <div style={{
+              flexGrow: 0,
+              display: "flex",
+              flexDirection: "row",
+              gap: 5
+              }}>
+            Theme:
+            <select defaultValue={states.theme}>
+              <option value="dark" onClick={() => {setTimeout(() => {
+                states.setTheme("dark");
+                localStorage.setItem("theme", "dark");
+              }, 50);}}>Dark</option>
+              <option value="medium" onClick={() => {setTimeout(() => {
+                states.setTheme("medium");
+                localStorage.setItem("theme", "medium");
+              }, 50);}}>Medium</option>
+              <option value="light" onClick={() => {setTimeout(() => {
+                states.setTheme("light");
+                localStorage.setItem("theme", "light");
+              }, 50);}}>Light</option>
+              <option value="green" onClick={() => {setTimeout(() => {
+                states.setTheme("green");
+                localStorage.setItem("theme", "green");
+              }, 50);}}>Green</option>
+              <option value="custom" onClick={() => {setTimeout(() => {
+                states.setTheme("custom");
+                localStorage.setItem("theme", "custom");
+              }, 50);}}>Custom</option>
+            </select>
+          </div>
+          <span hidden={states.theme != "custom"}>Custom Theme Hex Colour #
+            <span id="accountSettingsCustomTheme" minLength={6} maxLength={6} contentEditable
+            ref={customThemeEditRef} onInput={() => {
+                updateCustomTheme(customThemeEditRef.current.innerText)
+              }}>
+              {states.themeHex}
+            </span>
+          </span>
+          <button>Delete Account</button>
+          <button>Change Password</button>
+          <button onClick={() => {
+            localStorage.setItem("sessionID", null);
+            window.location = "/";
+          }}>Log Out</button>
+          <button onClick={() => {states.setActivePopover(null);}}>Done</button>
+        </Popover>
+      );
+    }}/>
   </header>);
 };
 
