@@ -252,10 +252,12 @@ function Message({message}) {
   });
   let sentByThisUser = message.author == states.accountInformation.id;
   let uploads = message.uploads ? message.uploads : [];
-  fetchUser(message.author).then(newAuthor=>{setAuthor(newAuthor)});
-  if (states.reply != null) {
-    message.content = "> " + states.reply + "\n";
+  let messageContent = message.content;
+  if (message.reply) {
+    let replyText = messageCache[message.reply] ? messageCache[message.reply].content : "[Message couldn't be loaded]";
+    messageContent = "> " + replyText + "  \n\n" + messageContent;
   }
+  fetchUser(message.author).then(newAuthor=>{setAuthor(newAuthor)});
   return (<div className="message1" id={message.id}>
     <img src={author.avatar} alt="🐙" className="avatar" style={{
       height: message.special ? "0px" : undefined
@@ -266,7 +268,7 @@ function Message({message}) {
         <span className="messageTimestamp">@{author.tag} at {message.timestamp ? new Date(message.timestamp).toLocaleString() : new Date(message.stamp).toLocaleString()}</span>
       </div>
       <div id="messageContent">
-        <Markdown options={markdownOptions}>{message.content}</Markdown>
+        <Markdown options={markdownOptions}>{messageContent}</Markdown>
         {uploads.map(upload => <img className="upload" src={authUrl+upload.url} onClick={() => {
           states.setActivePopover(<Popover className="darkThemed" style={{background: "transparent", boxShadow: "none"}} title={upload.name}>
             <img src={authUrl+upload.url} style={{borderRadius: 10, boxShadow: "0px 0px 10px black"}}/>
@@ -294,12 +296,14 @@ function triggerMessageSend() {
   let socket = openSockets[states.focusedServer];
   let messageTextBox = document.getElementById("messageBox");
   socket.send(JSON.stringify({
-    "eventType": "message",
-    "message": {
-      "content": messageTextBox.innerText
+    eventType: "message",
+    message: {
+      content: messageTextBox.innerText,
+      reply: states.reply ? states.reply : undefined
     }
   }));
   messageTextBox.innerHTML = "";
+  setTimeout(()=>{states.setReply(null)}, 50);
 }
 
 // A SLIGHTLY DIFFERENT COMMENT
@@ -390,12 +394,11 @@ function deleteMessage(id) {
     eventType: "messageDelete",
     id: id
   }));
-  document.getElementById(id).remove();
 }
 
 // Make the next message a reply to the said message
 function replyToMessage(id) {
-
+  setTimeout(()=>{states.setReply(id)}, 50);
 }
 
 // Add ping text for the specified user to the message box
@@ -448,7 +451,7 @@ function updateCustomTheme(attemptHex) {
     if (darkColorFix[0] != "0") break;
     darkColorFix = darkColorFix.slice(1);
   }
-  console.log(attemptHex, parseInt(attemptHex, 16).toString(16), darkColorFix);
+
   if (attemptHex.length != 6 || parseInt(attemptHex, 16).toString(16) != darkColorFix) return;
 
   setTimeout(()=>{states.setThemeHex(attemptHex)}, 50);
@@ -466,10 +469,12 @@ function updateCustomTheme(attemptHex) {
   if (colorScheme == "light") {
     document.body.style.setProperty('--foreground-level1', "#000000");
     document.body.style.setProperty('--foreground-level2', "#222222");
+    document.body.style.setProperty('--accent', "#b300ff");
   }
   else {
     document.body.style.setProperty('--foreground-level1', "#ffffff");
     document.body.style.setProperty('--foreground-level2', "#e0e0e0");
+    document.body.style.setProperty('--accent', "#c847ff");
   }
 
   document.body.style.setProperty('--outgradient', primaryColor);
@@ -482,7 +487,6 @@ function updateCustomTheme(attemptHex) {
   document.body.style.setProperty('--background-level4', "#" + RGBToString(multiplyRGB(rgb, 0.92875816994)));
   document.body.style.setProperty('--background-level5', "#" + RGBToString(multiplyRGB(rgb, 0.96437908497)));
   document.body.style.setProperty('--background-level6', primaryColor);
-  document.body.style.setProperty('--accent', "#c847ff");
   document.body.style.setProperty('--gray', "#888888");
 }
 
@@ -660,6 +664,11 @@ async function loadView(switchToServer) {
             loadedMessages += packet.messages.length;
             setTimeout(() => { finishedLoading = true; }, 1000);
             break;
+          case "messageDeleted":
+            if (!messageCache[packet.messageId]) break;
+            document.getElementById(packet.messageId).remove();
+            delete messageCache[packet.messageId];
+            break;
           case "connected":
             if (servers[serverCode].setManifest)
               servers[serverCode].setManifest(packet.manifest);
@@ -825,6 +834,7 @@ export default function ChatPage() {
   [states.focusedServerPeers, states.setFocusedServerPeers] = React.useState([]); // other people in this server
   [states.theme, states.setTheme] = React.useState(theme);
   [states.themeHex, states.setThemeHex] = React.useState(themeHex);
+  [states.reply, states.setReply] = React.useState(null);
 
   React.useEffect(() => { loadView();}, []);
 
