@@ -49,6 +49,7 @@ module.exports = {
                     data = JSON.parse(Buffer.concat(chunks).toString('utf8'));
                     packet.ws.loggedinbytoken = true;
                     packet.ws.uid = data.id;
+                    packet.ws.sessionID = packet.sessionID;
                     if (!(Object.keys(sdata.users).includes(data.id))) {
                         console.log(`${data.unam} has joined us today.`);
                         sdata.users[data.id] = new User(data.id, data.tag);

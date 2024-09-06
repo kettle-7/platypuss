@@ -19,8 +19,9 @@
 
 const { v4 } = require('uuid');
 
-// Feel free to modify these to your liking (you may want different default permissions)
+// Feel free to modify these to your liking (you may want different default permissions or maximum file size)
 module.exports = {
+    maximumFileSize: 25 * 1024 * 1024,
     defaultPerms: [
         "message.send",
         "message.read",
@@ -47,6 +48,7 @@ module.exports = {
             this.id = id;
             this.groups = [];
             this.globalPerms = module.exports.defaultPerms;
+            this.uploadedFiles = [];
         }
     },
 

@@ -19,8 +19,9 @@ const { WebSocketServer } = require('ws');
 const https = require('https');
 const { readFileSync, readdirSync, writeFileSync, existsSync } = require("fs");
 const path = require('path');
+// feel free to comment out this line if you already have a config and don't want extra packages to install
 const { questionInt, question, keyInYN } = require("readline-sync");
-const { randomInt } = require('crypto');
+const { randomInt, createHash } = require('crypto');
 
 if (!existsSync(__dirname+"/server.properties")) {
     writeFileSync(__dirname+"/server.properties", JSON.stringify({
@@ -85,6 +86,109 @@ for (const file of handleFiles) {
 const httpser = https.createServer({
     cert: sslCert, key: sslKey
 }, (req, res) => {
+    if (url.pathname == "/upload") {
+        if (!url.searchParams.has("sessionID")) {
+            res.writeHead(403, {
+                "Content-Type": "text/plain",
+                "Access-Control-Allow-Origin": "*"
+            });
+            res.end("No session token was provided for the uploading user.");
+            return;
+        }
+        let mimeType = "text/plain";
+        if (url.searchParams.has("mimeType")) {
+            mimeType = decodeURIComponent(url.searchParams.get("mimeType"));
+        }
+        let fileName = "file";
+        if (url.searchParams.has("fileName")) {
+            fileName = decodeURIComponent(url.searchParams.get("fileName"));
+        }
+        let sessionID = url.searchParams.get("sessionID");
+        let userID = false;
+        // lets us look up the id of the user trying to upload a file without having to contact the authentication
+        // server, also comes with the added benefit of not accepting users who aren't currently online or in the server
+        for (let socket of clients) {
+            if (socket.sessionID = sessionID) {
+                userID = socket.uid;
+                break;
+            }
+        }
+        if (!userID) {
+            res.writeHead(403, {
+                "Content-Type": "text/plain",
+                "Access-Control-Allow-Origin": "*"
+            });
+            res.end("The session token provided isn't in use by any client currently connected to the server.");
+            return;
+        }
+        let received = 0;
+        fs.mkdirSync(`./usercontent/uploads/${userID}/`, {recursive: true})
+        let filePath = `./usercontent/uploads/${userID}/temp_${v4()}`;
+        let file = fs.openSync(filePath, 'w');
+        req.on("data", (buffer) => {
+            received += buffer.length;
+            if (received > maximumFileSize) {
+                req.destroy();
+            } else {
+                fs.write(file, buffer);
+            }
+        });
+        req.on("end", () => {
+            fs.closeSync(file);
+            let fileData = fs.readFileSync(filePath);
+            let hash = createHash('sha512').update(fileData).digest("hex");
+            let newPath = `./usercontent/uploads/${userID}/`;
+            fs.mkdirSync(`${newPath}${hash}`, {recursive: true});
+            // remove spaces (because we can't have them in urls) and null characters (because it's a good idea to)
+            newPath += "/" + path.basename(file.originalFilename.toString().replace(/ \0/g, "_"));
+            fs.renameSync(filePath, newPath);
+            if (sdata.users[userID].uploadedFiles === undefined) {
+                sdata.users[userID].uploadedFiles == [{url: newPath.replace("./usercontent", ""), type: mimeType, name: fileName, path: "/", public: true}];
+            } else {
+                sdata.users[userID].uploadedFiles.push({url: newPath.replace("./usercontent", ""), type: mimeType, name: fileName, path: "/", public: true});
+            }
+            res.writeHead(200, {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*"
+            });
+            res.end(JSON.stringify({url: newPath.replace("./usercontent", ""), type: mimeType, name: path.basename(fileName)}));
+        });
+        return;
+    } else if (url.pathname.startsWith("/uploads")) {
+        url.pathname = url.pathname.replace(/\.\./g, "");
+        if (!fs.existsSync("./usercontent"+url.pathname)) {
+            res.writeHead(404, "not found", { "Content-Type": "text/html",
+            "Access-Control-Allow-Origin": "*" });
+            res.end("that file couldn't be found or you don't have permission to see it");
+            return;
+        }
+
+        if (fs.lstatSync("./usercontent"+url.pathname).isDirectory()) {
+            /*if (!url.searchParams.has('id')) {*/
+                res.writeHead(201, {"Content-Type": "text/plain",
+                "Access-Control-Allow-Origin": "*"});
+                res.end("that's a folder");
+                return;
+            /*}
+            res.writeHead(200, { "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*" });
+            try {
+                // i have no memory of what the hell this is meant to be
+                res.end(JSON.stringify(fs.readdirSync(`./usercontent/uploads/${sessions[sid].uid}/`)));
+            } catch (e) {
+                console.error(e);
+                res.end('[]');
+            }
+            return;*/
+        }
+
+        let stream = fs.createReadStream("./usercontent"+url.pathname);
+        res.writeHead(200, {"Access-Control-Allow-Origin": "*", 'Content-disposition': `attachment; filename=${path.basename(url.pathname)}`});
+        stream.on("ready", () => {
+            stream.pipe(res);
+        });
+        return;
+    }
     res.writeHead(200, {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*"

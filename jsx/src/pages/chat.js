@@ -22,17 +22,15 @@ import * as React from "react";
 import "./themery.scss";
 
 var userCache = {}; // A cache of data on users so we don't constantly have to look it up
-var messageCache = {}; // The same but for messages, we might not need this
-var permissions = {}; // The permissions we have, key being an identifier and value being a friendly description
+var messageCache = {}; // The same but for messages
 var states = {populated:false}; // One global variable for storing React state objects so we can access them anywhere
 var openSockets = {}; // Keeps track of open websockets
-var peers = {}; // Keeps track of other people on the server (platonically of course :3)
 var loadedMessages = 0; // The number of messages loaded in the current view, used when loading older messages
 var serverHashes = {}; // We can use these to get links to specific servers / maybe rooms in the future
 var browser = typeof window !== "undefined"; // check if we're running in a browser rather than the build environment
-var emailRef, passwordRef, confirmPasswordRef, usernameRef;
-var finishedLoading = false;
-var roomCache = {};
+var emailRef, passwordRef, confirmPasswordRef, usernameRef; // these refer to the input fields on the login popup
+var finishedLoading = false; // to prevent some code from being ran multiple times
+var focusedServerSessionToken = null; // the server specific session token for the focused server
 
 var pageUrl = browser ? new URL(window.location) : new URL("http://localhost:8000"); // window is not defined in the testing environment so just assume localhost
 var authUrl = "https://platypuss.net"; // Authentication server, you shouldn't have to change this but it's a variable just in case
@@ -670,6 +668,7 @@ async function loadView(switchToServer) {
             if (serverCode == states.focusedServer) {
               states.setFocusedServerPermissions(packet.permissions);
               states.setFocusedServerPeers(Object.values(packet.peers));
+              focusedServerSessionToken = data.servers[serverCode];
             }
             break;
           case "rateLimit":
