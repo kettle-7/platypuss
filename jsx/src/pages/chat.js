@@ -267,7 +267,7 @@ function Message({message}) {
       <div id="messageContent">
         <Markdown options={markdownOptions}>{message.content}</Markdown>
         {uploads.map(upload => <img className="upload" src={authUrl+upload.url} onClick={() => {
-          states.setActivePopover(<Popover style={{background: "transparent", boxShadow: "none"}} title={upload.name}>
+          states.setActivePopover(<Popover className="darkThemed" style={{background: "transparent", boxShadow: "none"}} title={upload.name}>
             <img src={authUrl+upload.url} style={{borderRadius: 10, boxShadow: "0px 0px 10px black"}}/>
             <a href={authUrl+upload.url} style={{color: "white"}}>Download this image</a>
           </Popover>);
@@ -712,14 +712,16 @@ function PageHeader ({title, iconClickEvent, ...props}) {
               <span>Change</span>
               <img className="avatar" id="changeAvatar" src={authUrl+states.accountInformation.avatar}/>
             </div>
-            <span className="account-settings-username" id="accountSettingsUsername" contentEditable>{states.accountInformation.username}</span>
+            <h3 className="account-settings-username" id="accountSettingsUsername" contentEditable>{states.accountInformation.username}</h3>
           </div>
+          <h5>Tell us a bit about you:</h5>
           <div contentEditable id="changeAboutMe"></div>
           <div style={{
               flexGrow: 0,
               display: "flex",
               flexDirection: "row",
-              gap: 5
+              gap: 5,
+              alignItems: "center"
               }}>
             Theme:
             <select defaultValue={states.theme}>
