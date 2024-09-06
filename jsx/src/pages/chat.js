@@ -779,11 +779,11 @@ export default function ChatPage() {
     themeHex = localStorage.getItem("themeHex");
     if (themeHex == null) themeHex = "000000";
     switch (localStorage.getItem("theme")) {
+      case "custom":
+        updateCustomTheme(themeHex);
       case "dark":
       case "light":
       case "green":
-      case "custom":
-        updateCustomTheme(themeHex);
       case "medium":
         theme = localStorage.getItem("theme");
         break;
