@@ -253,10 +253,6 @@ function Message({message}) {
   let sentByThisUser = message.author == states.accountInformation.id;
   let uploads = message.uploads ? message.uploads : [];
   let messageContent = message.content;
-  if (message.reply) {
-    let replyText = messageCache[message.reply] ? messageCache[message.reply].content : "[Message couldn't be loaded]";
-    messageContent = "> " + replyText + "  \n\n" + messageContent;
-  }
   fetchUser(message.author).then(newAuthor=>{setAuthor(newAuthor)});
   return (<div className="message1" id={message.id}>
     <img src={author.avatar} alt="🐙" className="avatar" style={{
@@ -267,7 +263,11 @@ function Message({message}) {
         <h3 className="messageUsernameDisplay">{author.username}</h3>
         <span className="messageTimestamp">@{author.tag} at {message.timestamp ? new Date(message.timestamp).toLocaleString() : new Date(message.stamp).toLocaleString()}</span>
       </div>
-      <div id="messageContent">
+      {message.reply ? messageCache[message.reply] ? <blockquote className='messageReply'>
+        <span className='ping'>@{userCache[messageCache[message.reply].author]?.username} </span>
+        <span className='messageReplyContent'>{messageCache[message.reply]?.content}</span>
+      </blockquote> : <blockquote className='messageReply'><em>Message couldn't be loaded</em></blockquote> : ""}
+      <div className="messageContent">
         <Markdown options={markdownOptions}>{messageContent}</Markdown>
         {uploads.map(upload => <img className="upload" src={authUrl+upload.url} onClick={() => {
           states.setActivePopover(<Popover className="darkThemed" style={{background: "transparent", boxShadow: "none"}} title={upload.name}>
