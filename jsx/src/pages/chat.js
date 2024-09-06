@@ -396,7 +396,6 @@ function deleteMessage(id) {
     eventType: "messageDelete",
     id: id
   }));
-  document.getElementById(id).remove();
 }
 
 // Make the next message a reply to the said message
@@ -454,7 +453,7 @@ function updateCustomTheme(attemptHex) {
     if (darkColorFix[0] != "0") break;
     darkColorFix = darkColorFix.slice(1);
   }
-  console.log(attemptHex, parseInt(attemptHex, 16).toString(16), darkColorFix);
+
   if (attemptHex.length != 6 || parseInt(attemptHex, 16).toString(16) != darkColorFix) return;
 
   setTimeout(()=>{states.setThemeHex(attemptHex)}, 50);
@@ -666,6 +665,10 @@ async function loadView(switchToServer) {
             ]);
             loadedMessages += packet.messages.length;
             setTimeout(() => { finishedLoading = true; }, 1000);
+            break;
+          case "messageDeleted":
+            if (messageCache[packet.messageId] == undefined) break;
+            document.getElementById(packet.messageId).remove();
             break;
           case "connected":
             if (servers[serverCode].setManifest)
