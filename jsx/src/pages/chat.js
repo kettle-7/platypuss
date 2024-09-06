@@ -688,6 +688,7 @@ async function loadView(switchToServer) {
 function PageHeader ({title, iconClickEvent, ...props}) {
   [states.accountInformation, states.setAccountInformation] = React.useState({});
 
+  let customThemeDisplayRef = React.useRef(null);
   let customThemeEditRef = React.useRef(null);
 
   React.useEffect(() => {
@@ -725,26 +726,32 @@ function PageHeader ({title, iconClickEvent, ...props}) {
               <option value="dark" onClick={() => {setTimeout(() => {
                 states.setTheme("dark");
                 localStorage.setItem("theme", "dark");
+                customThemeDisplayRef.current.hidden = true;
               }, 50);}}>Dark</option>
               <option value="medium" onClick={() => {setTimeout(() => {
                 states.setTheme("medium");
                 localStorage.setItem("theme", "medium");
+                customThemeDisplayRef.current.hidden = true;
               }, 50);}}>Medium</option>
               <option value="light" onClick={() => {setTimeout(() => {
                 states.setTheme("light");
                 localStorage.setItem("theme", "light");
+                customThemeDisplayRef.current.hidden = true;
               }, 50);}}>Light</option>
               <option value="green" onClick={() => {setTimeout(() => {
                 states.setTheme("green");
                 localStorage.setItem("theme", "green");
+                customThemeDisplayRef.current.hidden = true;
               }, 50);}}>Green</option>
               <option value="custom" onClick={() => {setTimeout(() => {
                 states.setTheme("custom");
                 localStorage.setItem("theme", "custom");
+                updateCustomTheme(customThemeEditRef.current.innerText || localStorage.getItem("themeHex"));
+                customThemeDisplayRef.current.hidden = false;
               }, 50);}}>Custom</option>
             </select>
           </div>
-          <span hidden={states.theme != "custom"}>Custom Theme Hex Colour #
+          <span hidden={states.theme != "custom"} ref={customThemeDisplayRef}>Custom Theme Hex Colour: #
             <span id="accountSettingsCustomTheme" minLength={6} maxLength={6} contentEditable
             ref={customThemeEditRef} onInput={() => {
                 updateCustomTheme(customThemeEditRef.current.innerText)
