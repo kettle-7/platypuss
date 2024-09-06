@@ -326,7 +326,7 @@ function RoomLink({room}) {
 // The bar on the left showing the servers you're in, also for navigation
 function ServersBar({shown, className, ...props}) {
   return (<div className={className + " sidebar"} id="serversBar" style={{display: shown ? "flex" : "none"}} {...props}>
-    <img className="serverIcon" src="" alt="+" id="newServerButton"/>
+    <span className="serverIcon material-symbols-outlined" id="newServerButton">add</span>
     {Object.values(states.servers).map(server => (<ServerIcon server={server}></ServerIcon>))}
   </div>);
 }
