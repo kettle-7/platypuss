@@ -255,7 +255,7 @@ function Message({message}) {
   let sentByThisUser = message.author == states.accountInformation.id;
   let uploads = message.uploads ? message.uploads : [];
   fetchUser(message.author).then(newAuthor=>{setAuthor(newAuthor)});
-  return (<div className="message1">
+  return (<div className="message1" id={message.id}>
     <img src={author.avatar} alt="🐙" className="avatar" style={{
       height: message.special ? "0px" : undefined
     }}/>
@@ -281,7 +281,7 @@ function Message({message}) {
       }>Edit</button>
       <button className='material-symbols-outlined'>Reply</button>
       <button className='material-symbols-outlined'>alternate_email</button>
-      <button className='material-symbols-outlined' hidden={
+      <button className='material-symbols-outlined' onClick={()=>{deleteMessage(message.id); document.getElementById(message.id).remove()}} hidden={
         sentByThisUser ? !states.focusedServerPermissions.includes("message.delete")
         : !states.focusedServerPermissions.includes("moderation.delete")
       }>Delete</button>
@@ -348,7 +348,7 @@ function ServerIcon({server}) {
 // The bar on the right showing other server members
 function PeersBar({shown, className, ...props}) {
   return (<div className={className + " sidebar"} id="peersBar" style={{display: shown ? "flex" : "none"}} {...props}>
-    <img className="serverIcon material-symbols-outlined" src="" alt="+" id="inviteButton" onClick={() => {
+    <img className="serverIcon material" src="" alt="+" id="inviteButton" onClick={() => {
       openSockets[states.focusedServer].send(JSON.stringify({
         eventType: "message",
         message: {
@@ -383,6 +383,15 @@ export const Head = () => (
   <title>(Beta!) Platypuss</title>
 );
 
+// Send a packet to delete a message
+function deleteMessage(id) {
+  openSockets[states.focusedServer].send(JSON.stringify({
+    eventType: "messageDelete",
+    id: id
+  }));
+}
+
+// Convert a hex string "7600bc" to a list of rgb values [118, 0, 188]
 function stringToRGB(hexString) {
   let hex = parseInt(hexString, 16);
   let convertedHex = [];
@@ -397,6 +406,7 @@ function stringToRGB(hexString) {
   return finalHex;
 }
 
+// Convert a list of rgb values [118, 0, 188] into a hex string "7600bc"
 function RGBToString(RGB) {
   let convertedString = [];
   let finalString = "";
@@ -409,6 +419,7 @@ function RGBToString(RGB) {
   return finalString;
 }
 
+// Multiply a list of rgb values by a specific number
 function multiplyRGB(RGB, multiplier) {
   let newRGB = [];
   for (let i = 0; i < 3; i++) {
@@ -417,6 +428,7 @@ function multiplyRGB(RGB, multiplier) {
   return newRGB;
 }
 
+// Update the custom theme settings to a specific color pallete
 function updateCustomTheme(attemptHex) {
   let darkColorFix = attemptHex;
   for (let i = 0; i < 5; i++) {
@@ -733,12 +745,16 @@ function PageHeader ({title, iconClickEvent, ...props}) {
 // The page itself
 export default function ChatPage() {
   let theme = "medium";
+  let themeHex = "000000";
   if (browser) {
+    themeHex = localStorage.getItem("themeHex");
+    if (themeHex == null) themeHex = "000000";
     switch (localStorage.getItem("theme")) {
       case "dark":
       case "light":
       case "green":
       case "custom":
+        updateCustomTheme(themeHex);
       case "medium":
         theme = localStorage.getItem("theme");
         break;
@@ -758,7 +774,7 @@ export default function ChatPage() {
   [states.useMobileUI, states.setUseMobileUI] = React.useState(browser ? (window.innerWidth * 2.54 / 96) < 20 : false); // Use mobile UI if the screen is less than 20cm wide
   [states.focusedServerPeers, states.setFocusedServerPeers] = React.useState([]); // other people in this server
   [states.theme, states.setTheme] = React.useState(theme);
-  [states.themeHex, states.setThemeHex] = React.useState("000000");
+  [states.themeHex, states.setThemeHex] = React.useState(themeHex);
 
   React.useEffect(() => { loadView(); }, []);
 
