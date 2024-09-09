@@ -102,7 +102,6 @@ function PageHeader ({title, iconClickEvent, ...props}) {
         <h2 onClick={() => {window.location = "/"}} style={{cursor: "pointer"}}>
             {title ? title : "(Beta!) Platypuss"}
         </h2>
-        {(Object.keys(states.accountInformation).length != 0) && <button onClick={() => {window.location = '/chat'}}>Chat</button>}
         <div style={{flexGrow: 1}}></div>
         {(Object.keys(states.accountInformation).length != 0) && <img className="avatar" alt="🐙" style={{cursor: "pointer"}} src={authUrl+states.accountInformation.avatar}/>}
     </header>);
@@ -197,8 +196,9 @@ const IndexPage = () => {
         break certain functionality. Should anything not work properly you're better off using
         the <a href="https://platypuss.net">stable version</a> of the site.
       </p>
-      {(Object.keys(states.accountInformation).length === 0) && <button onClick={() => {states.setActivePopover(<SignInPopover/>)}}>Sign In</button>}
-      {(Object.keys(states.accountInformation).length === 0) && <button onClick={() => {states.setActivePopover(<CreateAccountPopover/>)}}>Create Account</button>}
+      {(Object.keys(states.accountInformation).length != 0) && <button style={{fontSize: "14pt"}} onClick={() => {window.location = '/chat'}}>Chat</button>}
+      {(Object.keys(states.accountInformation).length == 0) && <button style={{fontSize: "14pt"}} onClick={() => {states.setActivePopover(<SignInPopover/>)}}>Sign In</button>}
+      {(Object.keys(states.accountInformation).length == 0) && <button style={{fontSize: "14pt"}} onClick={() => {states.setActivePopover(<CreateAccountPopover/>)}}>Create Account</button>}
     </main>
     <footer className={states.theme == "dark" ? "darkThemed" : "lightThemed"}>links to stuff maybe</footer>
     <PopoverParent className={states.theme == "light" ? "lightThemed" : "darkThemed"}/>

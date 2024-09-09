@@ -230,6 +230,20 @@ function MiddleSection({shown, className, ...props}) {
       <div id="belowMessageArea" ref={belowMessagesRef}></div>
     </div>
     <div style={{height:5,background:"linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3))"}}></div>
+    <div id="showReplyingMessage" hidden={!states.reply}>
+      <div style={{display: "flex", flexDirection: "row"}}>
+        <h3>Replying to <strong>
+          {userCache[messageCache[states.reply]?.author]?.username}
+        </strong></h3>
+        <div style={{flexGrow: 1}}></div>
+        <button onClick={() => {setTimeout(() => {states.setReply(null)}, 50)}} style={{
+          height: "fit-content",
+          width: "fit-content",
+          padding: 3
+        }}>x</button>
+      </div>
+      <blockquote><Markdown options={markdownOptions}>{messageCache[states.reply]?.content}</Markdown></blockquote>
+    </div>
     <div id="belowScrolledArea">
       <div contentEditable id="messageBox" onKeyDown={event=>{
         if (event.key == "Enter" && !states.useMobileUI && !event.shiftKey) {
@@ -677,7 +691,7 @@ async function loadView(switchToServer) {
             if (serverCode == states.focusedServer) {
               states.setFocusedServerPermissions(packet.permissions);
               states.setFocusedServerPeers(Object.values(packet.peers));
-              focusedServerSessionToken = data.servers[serverCode];
+              window.focusedServerSessionToken = data.servers[serverCode];
             }
             break;
           case "rateLimit":
@@ -802,7 +816,7 @@ function PageHeader ({title, iconClickEvent, ...props}) {
   </header>);
 };
 
-// The page itself
+// Renders the page
 export default function ChatPage() {
   let theme = "medium";
   let themeHex = "000000";
@@ -840,7 +854,12 @@ export default function ChatPage() {
 
   // return the basic page layout
   return (<>
-    <PageHeader className={states.theme == "custom" ? "" : states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} iconClickEvent={() => {
+    <PageHeader className={
+      states.theme == "custom" ? "" :
+      states.theme == "green" ? "greenThemed" :
+      states.theme == "light" ? "lightThemed" :
+      "darkThemed"
+    } iconClickEvent={() => {
       if (states.useMobileUI) {
         setTimeout(() => {
           if (states.mobileSidebarShown)
@@ -854,14 +873,48 @@ export default function ChatPage() {
     }} states={states}/>
     <main>
       <div id="chatPage">
-        <ServersBar className={states.theme == "custom" ? "" : states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
-        <RoomsBar className={states.theme == "custom" ? "" : states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
-        <MiddleSection
-          className={states.theme == "custom" ? "" : states.theme == "green" ? "greenThemed" : states.theme == "dark" ? "darkThemed" : "lightThemed"}
-          shown={(!states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}
-        />
-        <PeersBar className={states.theme == "custom" ? "" : states.theme == "green" ? "greenThemed" : states.theme == "light" ? "lightThemed" : "darkThemed"} shown={(states.mobileSidebarShown && !states.activePopover) || !states.useMobileUI}/>
-        <PopoverParent className={states.theme == "custom" ? "" : states.theme == "green" ? "greenThemed" : states.theme == "dark" ? "darkThemed" : "lightThemed"}/>
+        <ServersBar className={
+          states.theme == "custom" ? "" :
+          states.theme == "green" ? "greenThemed" :
+          states.theme == "light" ? "lightThemed" :
+          "darkThemed"
+        } shown={
+          (states.mobileSidebarShown && !states.activePopover)
+          || !states.useMobileUI
+        }/>
+        <RoomsBar className={
+          states.theme == "custom" ? "" :
+          states.theme == "green" ? "greenThemed" :
+          states.theme == "light" ? "lightThemed" :
+          "darkThemed"
+        } shown={
+          (states.mobileSidebarShown && !states.activePopover)
+          || !states.useMobileUI
+        }/>
+        <MiddleSection className={
+          states.theme == "custom" ? "" :
+          states.theme == "green" ? "greenThemed" :
+          states.theme == "dark" ? "darkThemed" :
+          "lightThemed"
+        } shown={
+          (!states.mobileSidebarShown && !states.activePopover)
+          || !states.useMobileUI
+        }/>
+        <PeersBar className={
+          states.theme == "custom" ? "" :
+          states.theme == "green" ? "greenThemed" :
+          states.theme == "light" ? "lightThemed" :
+          "darkThemed"
+        } shown={
+          (states.mobileSidebarShown && !states.activePopover)
+          || !states.useMobileUI
+        }/>
+        <PopoverParent className={
+          states.theme == "custom" ? "" :
+          states.theme == "green" ? "greenThemed" :
+          states.theme == "dark" ? "darkThemed" :
+          "lightThemed"
+        }/>
       </div>
     </main>
   </>);
