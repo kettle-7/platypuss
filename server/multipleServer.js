@@ -244,7 +244,10 @@ const httpser = https.createServer({
         }
     } catch (e) {
         console.error(e);
-        res.end("oops that did work");
+        res.writeHead(502, {
+            "Access-Control-Allow-Origin": "*"
+        })
+        res.end("oops that did work\n\n")+e.toString();
     }
 });
 
