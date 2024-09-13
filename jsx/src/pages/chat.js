@@ -593,7 +593,7 @@ function updateCustomTheme(attemptHex) {
   document.body.style.setProperty('--background-level4', "#" + RGBToString(multiplyRGB(rgb, 0.92875816994)));
   document.body.style.setProperty('--background-level5', "#" + RGBToString(multiplyRGB(rgb, 0.96437908497)));
   document.body.style.setProperty('--background-level6', primaryColor);
-  document.body.style.setProperty('--gray', "#888888");
+  document.body.style.setProperty('--grey', "#888888");
 }
 
 function showInvitePopup(invite, domain) {
