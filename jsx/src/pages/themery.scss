@@ -311,7 +311,6 @@ a {
   background: var(--background-level3);
   overflow: hidden;
   border: 1px solid var(--background-level6);
-  gap: 3px;
 }
 
 .serverIcon {
@@ -352,10 +351,37 @@ a {
   gap: 5px;
   flex-shrink: 0;
   flex-grow: 0;
-  background: var(--background-level4);
-  padding: 5px;
+  padding-top: 3px;
   flex-wrap: nowrap;
   align-items: center;
+}
+
+#progressBar {
+  left: 0px;
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
+  border-radius: 3px;
+  height: 6px;
+  background-color: var(--accent);
+}
+
+#progressBarContainer {
+  position: relative;
+  height: 6px;
+  align-self: stretch;
+}
+
+#messageGradientArea {
+  background: var(--outgradient);
+  flex-direction: column;
+  display: flex;
+  padding: 5px;
+  gap: 3px;
+}
+
+blockquote {
+  margin: 3px;
 }
 
 #belowScrolledArea button {

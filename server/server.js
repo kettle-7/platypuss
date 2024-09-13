@@ -84,6 +84,7 @@ const httpser = http.createServer((req, res) => {
     if (req.url == "http://") return;
     if (req.url == "https://") return;
     if (req.url.startsWith("https")) return;
+    let url = new URL(req.url, `http://${req.headers.host}/`);
     if (url.pathname == "/upload") {
         if (!url.searchParams.has("sessionID")) {
             res.writeHead(403, {
@@ -138,7 +139,7 @@ const httpser = http.createServer((req, res) => {
             let newPath = `./usercontent/uploads/${userID}/`;
             fs.mkdirSync(`${newPath}${hash}`, {recursive: true});
             // remove spaces (because we can't have them in urls) and null characters (because it's a good idea to)
-            newPath += "/" + path.basename(file.originalFilename.toString().replace(/ \0/g, "_"));
+            newPath += "/" + path.basename(fileName.toString().replace(/ \0/g, "_"));
             fs.renameSync(filePath, newPath);
             if (sdata.users[userID].uploadedFiles === undefined) {
                 sdata.users[userID].uploadedFiles == [{url: newPath.replace("./usercontent", ""), type: mimeType, name: fileName, path: "/", public: true}];

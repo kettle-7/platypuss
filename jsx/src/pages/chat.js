@@ -30,7 +30,6 @@ var serverHashes = {}; // We can use these to get links to specific servers / ma
 var browser = typeof window !== "undefined"; // check if we're running in a browser rather than the build environment
 var emailRef, passwordRef, confirmPasswordRef, usernameRef; // these refer to the input fields on the login popup
 var finishedLoading = false; // to prevent some code from being ran multiple times
-var focusedServerSessionToken = null; // the server specific session token for the focused server
 
 var pageUrl = browser ? new URL(window.location) : new URL("http://localhost:8000"); // window is not defined in the testing environment so just assume localhost
 var authUrl = "https://platypuss.net"; // Authentication server, you shouldn't have to change this but it's a variable just in case
@@ -211,6 +210,7 @@ function Popover({children, title, style={}, ...props}) {
 function MiddleSection({shown, className, ...props}) {
   const belowMessagesRef = React.useRef(null);
   const scrolledAreaRef = React.useRef(null);
+  const progressBarRef = React.useRef(null);
   React.useEffect(() => {
     let scrolledArea = scrolledAreaRef.current;
     if ( // only scroll down if we're near the bottom or the page has just loaded
@@ -230,29 +230,71 @@ function MiddleSection({shown, className, ...props}) {
       <div id="belowMessageArea" ref={belowMessagesRef}></div>
     </div>
     <div style={{height:5,background:"linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3))"}}></div>
-    <div id="showReplyingMessage" hidden={!states.reply}>
-      <div style={{display: "flex", flexDirection: "row"}}>
-        <h3>Replying to <strong>
-          {userCache[messageCache[states.reply]?.author]?.username}
-        </strong></h3>
-        <div style={{flexGrow: 1}}></div>
-        <button onClick={() => {setTimeout(() => {states.setReply(null)}, 50)}} style={{
-          height: "fit-content",
-          width: "fit-content",
-          padding: 3
-        }}>x</button>
+    <div id="messageGradientArea">
+      <div id="showReplyingMessage" hidden={!states.reply}>
+        <div style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+          <h3 style={{margin: 3}}>Replying to <strong>
+            {userCache[messageCache[states.reply]?.author]?.username}
+          </strong></h3>
+          <div style={{flexGrow: 1}}></div>
+          <button className='material-symbols-outlined' onClick={() => {setTimeout(() => {
+            states.setReply(null);
+          }, 50)}} style={{
+            height: "fit-content",
+            width: "fit-content",
+            padding: 3,
+            margin: 3
+          }}>close</button>
+        </div>
+        <blockquote><Markdown options={markdownOptions}>{messageCache[states.reply]?.content}</Markdown></blockquote>
       </div>
-      <blockquote><Markdown options={markdownOptions}>{messageCache[states.reply]?.content}</Markdown></blockquote>
-    </div>
-    <div id="belowScrolledArea">
-      <div contentEditable id="messageBox" onKeyDown={event=>{
-        if (event.key == "Enter" && !states.useMobileUI && !event.shiftKey) {
-          triggerMessageSend();
-          event.preventDefault();
-        }
-      }}></div>
-      <button className="material-symbols-outlined">publish</button>
-      <button className="material-symbols-outlined" onClick={triggerMessageSend}>send</button>
+      <span hidden={states.uploads.length == 0}>Attackments: (Click on a file to delete it)</span>
+      <div id="showFiles" hidden={states.uploads.length == 0}>
+        {states.uploads.map(upload => (
+          <img src={upload.thumbnail} className='avatar material-symbols-outlined' onClick={() => {
+            let newUploads = [];
+            for (let newUpload of states.uploads) {
+              if (upload !== newUpload) {
+                newUploads.push(newUpload);
+              }
+            }
+            setTimeout(() => states.setUploads(newUploads), 50);
+          }} style={{borderRadius: "50%"}} alt="draft"/>
+        ))}
+      </div>
+      <div id="progressBarContainer" hidden={states.uploadProgress == null}>
+        <div id="progressBar" ref={progressBarRef} style={{
+          left: `${100-states.uploadProgress}%`
+        }}></div>
+      </div>
+      <div id="belowScrolledArea">
+        <div contentEditable id="messageBox" onKeyDown={event=>{
+          if (event.key == "Enter" && !states.useMobileUI && !event.shiftKey) {
+            triggerMessageSend();
+            event.preventDefault();
+          }
+        }}></div>
+        <button className="material-symbols-outlined" onClick={() => {
+          let input = document.createElement('input');
+          input.type = "file";
+          input.multiple = true;
+          input.onchange = event => {
+            let files = event.target.files;
+            let newUploads = [...states.uploads];
+            for (let file of files) {
+              let id = Math.random().toString().replace(/[.]/g, "");
+              newUploads.push({
+                id: id,
+                fileObject: file,
+                thumbnail: URL.createObjectURL(file)
+              });
+            }
+            setTimeout(() => states.setUploads(newUploads), 50);
+          };
+          input.click();
+        }}>publish</button>
+        <button className="material-symbols-outlined" onClick={triggerMessageSend}>send</button>
+      </div>
     </div>
   </div>);
 }
@@ -309,15 +351,65 @@ function Message({message}) {
 function triggerMessageSend() {
   let socket = openSockets[states.focusedServer];
   let messageTextBox = document.getElementById("messageBox");
-  socket.send(JSON.stringify({
-    eventType: "message",
-    message: {
-      content: messageTextBox.innerText,
-      reply: states.reply ? states.reply : undefined
+  if (states.uploads.length == 0) {
+    socket.send(JSON.stringify({
+      eventType: "message",
+      message: {
+        content: messageTextBox.innerText,
+        reply: states.reply ? states.reply : undefined
+      }
+    }));
+    messageTextBox.innerHTML = "";
+    setTimeout(() => {
+      states.setReply(null);
+      states.setUploads([]);
+    }, 50);
+  } else {
+    let remainingUploads = 0;
+    let attachmentObjects = [];
+    for (let upload of states.uploads) {
+      remainingUploads++;
+      // fetch still doesn't support progress tracking which sucks so we use xmlhttprequest
+      let request = new XMLHttpRequest();
+      request.open("POST", `https://${states.servers[states.focusedServer].ip}/upload?sessionID=${states.servers[states.focusedServer].token}&mimeType=${upload.fileObject.type}&fileName=${upload.fileObject.name}`);
+      request.onreadystatechange = () => {
+        if (request.readyState === XMLHttpRequest.DONE && request.status) {
+          remainingUploads--;
+          try {
+            let responseObject = JSON.parse(request.responseText);
+            attachmentObjects.push(responseObject);
+            if (remainingUploads == 0) {
+              states.setUploadProgress(null);
+            }
+            socket.send(JSON.stringify({
+              eventType: "message",
+              message: {
+                content: messageTextBox.innerText,
+                reply: states.reply ? states.reply : undefined,
+                uploads: attachmentObjects
+              }
+            }));
+            messageTextBox.innerHTML = "";
+            setTimeout(() => {
+              states.setReply(null);
+              states.setUploads([]);
+            }, 50);
+          } catch (error) {
+            states.setActivePopover(<Popover>
+              <span>We encountered an unknown error. Please report it as a bug if you can. Error message:</span>
+              <pre><code>{error.toString()}</code></pre>
+              <br/><span>Server response text:</span>
+              <pre><code>{request.responseText}</code></pre>
+            </Popover>);
+          }
+        }
+      };
+      request.upload.onprogress = (event) => {
+        states.setUploadProgress(event.loaded/event.total*100);
+      };
+      request.send(upload);
     }
-  }));
-  messageTextBox.innerHTML = "";
-  setTimeout(()=>{states.setReply(null)}, 50);
+  }
 }
 
 // A SLIGHTLY DIFFERENT COMMENT
@@ -600,6 +692,7 @@ async function loadView(switchToServer) {
       let subserver = splitServerCode[2];
       servers[serverCode] = { // add this server to our list of servers, making an icon
         ip: ip,
+        token: data.servers[serverCode],
         serverCode: serverCode,
         inviteCode: inviteCode,
         subserver: subserver,
@@ -691,7 +784,6 @@ async function loadView(switchToServer) {
             if (serverCode == states.focusedServer) {
               states.setFocusedServerPermissions(packet.permissions);
               states.setFocusedServerPeers(Object.values(packet.peers));
-              window.focusedServerSessionToken = data.servers[serverCode];
             }
             break;
           case "rateLimit":
@@ -787,7 +879,7 @@ function PageHeader ({title, iconClickEvent, ...props}) {
                 states.setTheme("green");
                 localStorage.setItem("theme", "green");
                 customThemeDisplayRef.current.hidden = true;
-              }, 50);}}>Green</option>
+              }, 50);}}>Greeeeeeeeeeeeeeeeeeeeeeeeeeen</option>
               <option value="custom" onClick={() => {setTimeout(() => {
                 states.setTheme("custom");
                 localStorage.setItem("theme", "custom");
@@ -816,11 +908,19 @@ function PageHeader ({title, iconClickEvent, ...props}) {
   </header>);
 };
 
+function fileDrop(event) {
+  // balaaaaaa
+}
+
 // Renders the page
 export default function ChatPage() {
   let theme = "medium";
   let themeHex = "000000";
   if (browser && !states.hasRendered) {
+    document.body.addEventListener("dragenter", () => {}, false);
+    document.body.addEventListener("dragover", () => {}, false);
+    document.body.addEventListener("drop", fileDrop, false);
+
     themeHex = localStorage.getItem("themeHex");
     if (themeHex == null) themeHex = "000000";
     switch (localStorage.getItem("theme")) {
@@ -846,11 +946,13 @@ export default function ChatPage() {
   [states.mobileSidebarShown, states.setMobileSidebarShown] = React.useState(true); // whether to show the sidebar on mobile devices, is open by default when you load the page
   [states.useMobileUI, states.setUseMobileUI] = React.useState(browser ? (window.innerWidth * 2.54 / 96) < 20 : false); // Use mobile UI if the screen is less than 20cm wide
   [states.focusedServerPeers, states.setFocusedServerPeers] = React.useState([]); // other people in this server
-  [states.theme, states.setTheme] = React.useState(theme);
-  [states.themeHex, states.setThemeHex] = React.useState(themeHex);
-  [states.reply, states.setReply] = React.useState(null);
+  [states.theme, states.setTheme] = React.useState(theme); // what theme we're using
+  [states.themeHex, states.setThemeHex] = React.useState(themeHex); // hex colour code of our custom theme
+  [states.reply, states.setReply] = React.useState(null); // id of the message we're replying to
+  [states.uploads, states.setUploads] = React.useState([]); // files we want to attach to the next message
+  [states.uploadProgress, states.setUploadProgress] = React.useState(null);
 
-  React.useEffect(() => { loadView();}, []);
+  React.useEffect(() => {loadView();}, []);
 
   // return the basic page layout
   return (<>

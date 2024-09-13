@@ -65,7 +65,7 @@ var clients = [];
 var handlers = {};
 const handlePath = path.join(__dirname, 'handles');
 // we don't want to load README.md, any JSON config or platypussDefaults.js as they're all definitely not event handles
-const handleFiles = readdirSync(handlePath).filter(file => file.endsWith('.js') && !file.includes("platypussDefaults"));
+const handleFiles = readdirSync(handlePath).filter(file => (file.endsWith('.js') && !file.includes("platypussDefaults")));
 const sslCert = readFileSync(conf.sslCertPath);
 const sslKey = readFileSync(conf.sslKeyPath);
 for (const file of handleFiles) {
@@ -86,6 +86,7 @@ for (const file of handleFiles) {
 const httpser = https.createServer({
     cert: sslCert, key: sslKey
 }, (req, res) => {
+    let url = new URL(req.url, `https://${req.headers.host}/`);
     if (url.pathname == "/upload") {
         if (!url.searchParams.has("sessionID")) {
             res.writeHead(403, {
@@ -140,7 +141,7 @@ const httpser = https.createServer({
             let newPath = `./usercontent/uploads/${userID}/`;
             fs.mkdirSync(`${newPath}${hash}`, {recursive: true});
             // remove spaces (because we can't have them in urls) and null characters (because it's a good idea to)
-            newPath += "/" + path.basename(file.originalFilename.toString().replace(/ \0/g, "_"));
+            newPath += "/" + path.basename(filePath.toString().replace(/ \0/g, "_"));
             fs.renameSync(filePath, newPath);
             if (sdata.users[userID].uploadedFiles === undefined) {
                 sdata.users[userID].uploadedFiles == [{url: newPath.replace("./usercontent", ""), type: mimeType, name: fileName, path: "/", public: true}];
