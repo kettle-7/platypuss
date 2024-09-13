@@ -18,14 +18,14 @@
 const { WebSocketServer } = require('ws');
 const https = require('https');
 const http = require('http');
-const { readFileSync, readdirSync, writeFileSync, existsSync } = require("fs");
+const fs = require("fs");
 const path = require('path');
 // feel free to comment out this line if you already have a config and don't want extra packages to install
 const { questionInt, question, keyInYN } = require("readline-sync");
 const { randomInt, createHash } = require('crypto');
 
-if (!existsSync(__dirname+"/server.properties")) {
-    writeFileSync(__dirname+"/server.properties", JSON.stringify({
+if (!fs.existsSync(__dirname+"/server.properties")) {
+    fs.writeFileSync(__dirname+"/server.properties", JSON.stringify({
         "port": questionInt("What port should the server bind to?\n> "),
         "inviteCode": randomInt(16, 256),
         "ip": "127.0.0.1",
@@ -45,10 +45,10 @@ server.properties file and add your Platypuss user ID there. You'll need to \
 restart this server afterwards for the changes to be applied.");
 }
 
-var conf = JSON.parse(readFileSync(__dirname+"/server.properties"));
+var conf = JSON.parse(fs.readFileSync(__dirname+"/server.properties"));
 
-if (!existsSync(__dirname+"/server.json")) {
-    writeFileSync(__dirname+"/server.json", JSON.stringify({
+if (!fs.existsSync(__dirname+"/server.json")) {
+    fs.writeFileSync(__dirname+"/server.json", JSON.stringify({
         "users": {},
         "rooms": {},
         "messages": {},
@@ -57,13 +57,13 @@ if (!existsSync(__dirname+"/server.json")) {
     }));
 }
 
-var sdata = JSON.parse(readFileSync(__dirname+"/server.json"));
+var sdata = JSON.parse(fs.readFileSync(__dirname+"/server.json"));
 sdata.properties = conf;
 var clients = [];
 var handlers = {};
 const handlePath = path.join(__dirname, 'handles');
 // we don't want to load README.md, any JSON config or platypussDefaults.js as they're all definitely not event handles
-const handleFiles = readdirSync(handlePath).filter(file => file.endsWith('.js') && !file.includes("platypussDefaults"));
+const handleFiles = fs.readdirSync(handlePath).filter(file => file.endsWith('.js') && !file.includes("platypussDefaults"));
 
 for (const file of handleFiles) {
 	const filePath = path.join(handlePath, file);
@@ -245,7 +245,7 @@ reference docs to see what event types should be supported.\n\nEvent type give\
 n: ${eventType}\n`);
                     }
                 } catch (e) {
-                    writeFileSync(__dirname+"/server.json", JSON.stringify(sdata));
+                    fs.writeFileSync(__dirname+"/server.json", JSON.stringify(sdata));
                     console.log (e);
                 }
             }
@@ -267,7 +267,7 @@ check your code thoroughly, otherwise please contact the developer."
         }));
         ws.on("error", console.log);
         ws.on("close", () => {
-            writeFileSync(__dirname+"/server.json", JSON.stringify(sdata));
+            fs.writeFileSync(__dirname+"/server.json", JSON.stringify(sdata));
             ws.readyState = 3;
             for (let client of clients) {
                 if (client.readyState < 2 && client.uid == ws.uid) {

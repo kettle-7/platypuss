@@ -24,7 +24,7 @@
 
 const { WebSocketServer } = require('ws');
 const https = require('https');
-const { readFileSync, readdirSync, writeFileSync, existsSync } = require("fs");
+const fs = require("fs");
 const path = require('path');
 // feel free to comment out this line if you already have a config and don't want extra packages to install
 const { questionInt, question, keyInYN } = require("readline-sync");
@@ -32,7 +32,7 @@ const { randomInt, createHash } = require('crypto');
 const { maximumFileSize } = require('./handles/platypussDefaults');
 const { v4 } = require("uuid");
 
-if (!existsSync(__dirname+"/servers.properties")) {
+if (!fs.existsSync(__dirname+"/servers.properties")) {
     let sata = {
         "port": questionInt("What port should the server bind to?\n> "),
         "sslCertPath": "./cert.pem",
@@ -51,15 +51,15 @@ if (!existsSync(__dirname+"/servers.properties")) {
         },
         "admins": []
     };
-    writeFileSync(__dirname+"/servers.properties", JSON.stringify(sata));
+    fs.writeFileSync(__dirname+"/servers.properties", JSON.stringify(sata));
     console.log("The server should now be set up nicely, although currently \
 nobody has administrative permissions so you may want to edit the \
 servers.properties file and add your Platypuss user ID there. You'll need to \
 restart this server afterwards for the changes to be applied.");
 }
-var conf = JSON.parse(readFileSync(__dirname+"/servers.properties"));
+var conf = JSON.parse(fs.readFileSync(__dirname+"/servers.properties"));
 
-if (!existsSync(__dirname+"/servers.json")) {
+if (!fs.existsSync(__dirname+"/servers.json")) {
     let ide = {}
     ide[Object.keys(conf)[2]] = {
         "users": {},
@@ -68,9 +68,9 @@ if (!existsSync(__dirname+"/servers.json")) {
         "groups": {},
         "meta": {}
     }
-    writeFileSync(__dirname+"/servers.json", JSON.stringify(ide));
+    fs.writeFileSync(__dirname+"/servers.json", JSON.stringify(ide));
 }
-var sdata = JSON.parse(readFileSync(__dirname+"/servers.json"));
+var sdata = JSON.parse(fs.readFileSync(__dirname+"/servers.json"));
 sdata.properties = conf;
 var handlers = {};
 var clientses = {};
@@ -94,14 +94,14 @@ for (let server in conf) {
     }
 }
 // insanity check
-writeFileSync(__dirname+"/servers.json", JSON.stringify(sdata));
+fs.writeFileSync(__dirname+"/servers.json", JSON.stringify(sdata));
 sdata.multiple = true;
 sdata.tls = true;
 const handlePath = path.join(__dirname, 'handles');
 // we don't want to load README.md, any JSON config or platypussDefaults.js as they're all definitely not event handles
-const handleFiles = readdirSync(handlePath).filter(file => file.endsWith('.js') && !file.includes("platypussDefaults"));
-const sslCert = readFileSync(conf.sslCertPath);
-const sslKey = readFileSync(conf.sslKeyPath);
+const handleFiles = fs.readdirSync(handlePath).filter(file => file.endsWith('.js') && !file.includes("platypussDefaults"));
+const sslCert = fs.readFileSync(conf.sslCertPath);
+const sslKey = fs.readFileSync(conf.sslKeyPath);
 for (const file of handleFiles) {
     const filePath = path.join(handlePath, file);
     var handler = require(filePath);
@@ -333,8 +333,8 @@ reference docs to see what event types should be supported.\n\nEvent type give\
 n: ${eventType}\n`);
                     }
                 } catch (e) {
-                    writeFileSync(__dirname+"/servers.json", JSON.stringify(sdata));
-                    writeFileSync(__dirname+"/servers.properties", JSON.stringify(sdata.properties));
+                    fs.writeFileSync(__dirname+"/servers.json", JSON.stringify(sdata));
+                    fs.writeFileSync(__dirname+"/servers.properties", JSON.stringify(sdata.properties));
                     console.log (e);
                 }
             }
@@ -356,8 +356,8 @@ check your code thoroughly, otherwise please contact the developer."
         }));
         ws.on("error", console.log);
         ws.on("close", () => {
-            writeFileSync(__dirname+"/servers.json", JSON.stringify(sdata));
-            writeFileSync(__dirname+"/servers.properties", JSON.stringify(sdata.properties));
+            fs.writeFileSync(__dirname+"/servers.json", JSON.stringify(sdata));
+            fs.writeFileSync(__dirname+"/servers.properties", JSON.stringify(sdata.properties));
             https.get(`${sdata[ws.ogip].properties.authAddr}/uinfo?id=${ws.uid}`, (res) => {
                 let chunks = [];
                 res.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
