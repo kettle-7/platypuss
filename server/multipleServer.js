@@ -165,7 +165,7 @@ const httpser = https.createServer({
                     "Content-Type": "text/plain",
                     "Access-Control-Allow-Origin": "*"
                 });
-                res.end("The session token provided isn't in use by any client currently connected to the server.");
+                res.end("The session token provided isn't in use by any client currently connected to the server.\n\n"+JSON.stringify(Object.values(clientses)));
                 return;
             }
             let received = 0;
