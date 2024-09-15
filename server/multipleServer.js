@@ -165,7 +165,7 @@ const httpser = https.createServer({
                     "Content-Type": "text/plain",
                     "Access-Control-Allow-Origin": "*"
                 });
-                res.end("The session token provided isn't in use by any client currently connected to the server.\n\n"+JSON.stringify(Object.values(clientses)));
+                res.end("The session token provided isn't in use by any client currently connected to the server.");
                 return;
             }
             let received = 0;
@@ -294,7 +294,7 @@ of the invite code."
                             }))
                             return;
                         }
-                        if (!clientses[ws.ogip]) {
+                        if (clientses[ws.ogip] === undefined) {
                             clientses[ws.ogip] = [];
                         }
                         ws.ogip = packet.subserver;
