@@ -132,6 +132,7 @@ const httpser = https.createServer({
             });
             res.end(JSON.stringify(o));
         } else if (url.pathname == "/upload") {
+            try{
             if (!url.searchParams.has("sessionID")) {
                 res.writeHead(403, {
                     "Content-Type": "text/plain",
@@ -165,7 +166,7 @@ const httpser = https.createServer({
                     "Content-Type": "text/plain",
                     "Access-Control-Allow-Origin": "*"
                 });
-                res.end("The session token provided isn't in use by any client currently connected to the server.\n\n"+JSON.stringify(clientses));
+                res.end("The session token provided isn't in use by any client currently connected to the server.");
                 return;
             }
             let received = 0;
@@ -199,7 +200,7 @@ const httpser = https.createServer({
                     "Access-Control-Allow-Origin": "*"
                 });
                 res.end(JSON.stringify({url: newPath.replace("./usercontent", ""), type: mimeType, name: path.basename(fileName)}));
-            });
+            });}catch(e){res.end(e)}
             return;
         } else if (url.pathname.startsWith("/uploads")) {
             url.pathname = url.pathname.replace(/\.\./g, "");
