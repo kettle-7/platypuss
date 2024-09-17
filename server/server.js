@@ -154,7 +154,7 @@ const httpser = http.createServer((req, res) => {
         });
         return;
     } else if (url.pathname.startsWith("/uploads")) {
-        url.pathname = url.pathname.replace(/\.\./g, "").replace(/(\%20|\+)/g, " ");
+        url.pathname = url.pathname.replace(/\.\./g, "");
         if (!fs.existsSync("./usercontent"+url.pathname)) {
             res.writeHead(404, "not found", { "Content-Type": "text/html",
             "Access-Control-Allow-Origin": "*" });

@@ -371,7 +371,7 @@ function triggerMessageSend() {
       remainingUploads++;
       // fetch still doesn't support progress tracking which sucks so we use xmlhttprequest
       let request = new XMLHttpRequest();
-      request.open("POST", `https://${states.servers[states.focusedServer].ip}/upload?sessionID=${states.servers[states.focusedServer].token}&mimeType=${upload.fileObject.type}&fileName=${upload.fileObject.name}`);
+      request.open("POST", `https://${states.servers[states.focusedServer].ip}/upload?sessionID=${states.servers[states.focusedServer].token}&mimeType=${upload.fileObject.type}&fileName=${upload.fileObject.name.replace(/[ \\\/]/g, "_")}`);
       request.onreadystatechange = () => {
         if (request.readyState === XMLHttpRequest.DONE && request.status) {
           remainingUploads--;
