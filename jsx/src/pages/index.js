@@ -44,15 +44,15 @@ function hashPassword (str, seed = 20) { // hashes passwords somehow
 
 function doTheLoginThingy(createNewAccount) {
   if (createNewAccount) {
-    if (passwordRef.current.value != confirmPasswordRef.current.value) {
+    if (passwordRef.current.value !== confirmPasswordRef.current.value) {
       states.setActivePopover(<CreateAccountPopover error="Your passwords don't match"/>);
       return;
     }
-    if (passwordRef.current.value.replace(/[\n\r\t ]/g, "") == "") {
+    if (passwordRef.current.value.replace(/[\n\r\t ]/g, "") === "") {
       states.setActivePopover(<CreateAccountPopover error="Your password must be at least one character"/>);
       return;
     }
-    if (usernameRef.current.value.replace(/[\n\r\t ]/g, "") == "") {
+    if (usernameRef.current.value.replace(/[\n\r\t ]/g, "") === "") {
       states.setActivePopover(<CreateAccountPopover error="Your username must be at least one character"/>);
       return;
     }
@@ -103,7 +103,7 @@ function PageHeader ({title, iconClickEvent, ...props}) {
             {title ? title : "(Beta!) Platypuss"}
         </h2>
         <div style={{flexGrow: 1}}></div>
-        {(Object.keys(states.accountInformation).length != 0) && <img className="avatar" alt="🐙" style={{cursor: "pointer"}} src={authUrl+states.accountInformation.avatar}/>}
+        {(Object.keys(states.accountInformation).length !== 0) && <img className="avatar" alt="🐙" style={{cursor: "pointer"}} src={authUrl+states.accountInformation.avatar}/>}
     </header>);
 };
 
@@ -168,7 +168,7 @@ const IndexPage = () => {
       fetch(authUrl + "/uinfo?id=" + localStorage.getItem("sessionID"))
           .then(data => data.json())
           .then(data => states.setAccountInformation(data))
-          .catch(() => { if (pageUrl.pathname == "/chat") window.location = "/" });
+          .catch(() => { if (pageUrl.pathname === "/chat") window.location = "/" });
   }, []);
 
   // These let us refer to the text boxes later on
@@ -184,8 +184,8 @@ const IndexPage = () => {
   [states.theme, states.setTheme] = React.useState(theme);
 
   return (<>
-    <PageHeader className={states.theme == "light" ? "lightThemed" : "darkThemed"}/>
-    <main id="mainPage" className={states.theme == "dark" ? "darkThemed" : "lightThemed"}>
+    <PageHeader className={states.theme === "light" ? "lightThemed" : "darkThemed"}/>
+    <main id="mainPage" className={states.theme === "dark" ? "darkThemed" : "lightThemed"}>
       <h1>
         You found the Platypuss public beta!
       </h1>
@@ -196,12 +196,12 @@ const IndexPage = () => {
         break certain functionality. Should anything not work properly you're better off using
         the <a href="https://platypuss.net">stable version</a> of the site.
       </p>
-      {(Object.keys(states.accountInformation).length != 0) && <button style={{fontSize: "14pt"}} onClick={() => {window.location = '/chat'}}>Chat</button>}
-      {(Object.keys(states.accountInformation).length == 0) && <button style={{fontSize: "14pt"}} onClick={() => {states.setActivePopover(<SignInPopover/>)}}>Sign In</button>}
-      {(Object.keys(states.accountInformation).length == 0) && <button style={{fontSize: "14pt"}} onClick={() => {states.setActivePopover(<CreateAccountPopover/>)}}>Create Account</button>}
+      {(Object.keys(states.accountInformation).length !== 0) && <button style={{fontSize: "14pt"}} onClick={() => {window.location = '/chat'}}>Chat</button>}
+      {(Object.keys(states.accountInformation).length === 0) && <button style={{fontSize: "14pt"}} onClick={() => {states.setActivePopover(<SignInPopover/>)}}>Sign In</button>}
+      {(Object.keys(states.accountInformation).length === 0) && <button style={{fontSize: "14pt"}} onClick={() => {states.setActivePopover(<CreateAccountPopover/>)}}>Create Account</button>}
     </main>
-    <footer className={states.theme == "dark" ? "darkThemed" : "lightThemed"}>links to stuff maybe</footer>
-    <PopoverParent className={states.theme == "light" ? "lightThemed" : "darkThemed"}/>
+    <footer className={states.theme === "dark" ? "darkThemed" : "lightThemed"}>links to stuff maybe</footer>
+    <PopoverParent className={states.theme === "light" ? "lightThemed" : "darkThemed"}/>
   </>);
 };
 

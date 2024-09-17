@@ -106,20 +106,21 @@ const httpser = https.createServer({
         }
         let sessionID = url.searchParams.get("sessionID");
         let userID = false;
+        let stringthing = "";
         // lets us look up the id of the user trying to upload a file without having to contact the authentication
         // server, also comes with the added benefit of not accepting users who aren't currently online or in the server
         for (let socket of clients) {
             if (socket.sessionID == sessionID) {
                 userID = socket.uid;
                 break;
-            }
+            } else stringthing += " " + socket.sessionID;
         }
         if (!userID) {
             res.writeHead(403, {
                 "Content-Type": "text/plain",
                 "Access-Control-Allow-Origin": "*"
             });
-            res.end("The session token provided isn't in use by any client currently connected to the server.");
+            res.end("The session token provided isn't in use by any client currently connected to the server.\n\n"+stringthing+"\n"+sessionID);
             return;
         }
         let received = 0;

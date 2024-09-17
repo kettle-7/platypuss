@@ -63,7 +63,7 @@ function hashPassword (str, seed = 20) { // hashes things somehow
 // Fetch data on one user, from cache if possible but from the authentication server otherwise
 function fetchUser(id) {
   return new Promise((resolve, reject) => {
-    if (userCache[id] == undefined) {
+    if (userCache[id] === undefined) {
       // try fetch data from the authentication server
       fetch(authUrl+'/uinfo?id='+id).then(response => {
         // try turn the json response into an object
@@ -80,15 +80,15 @@ function fetchUser(id) {
 
 function doTheLoginThingy(createNewAccount) {
   if (createNewAccount) {
-    if (passwordRef.current.value != confirmPasswordRef.current.value) {
+    if (passwordRef.current.value !== confirmPasswordRef.current.value) {
       states.setActivePopover(<CreateAccountPopover error="Your passwords don't match"/>);
       return;
     }
-    if (passwordRef.current.value.replace(/[\n\r\t ]/g, "") == "") {
+    if (passwordRef.current.value.replace(/[\n\r\t ]/g, "") === "") {
       states.setActivePopover(<CreateAccountPopover error="Your password must be at least one character"/>);
       return;
     }
-    if (usernameRef.current.value.replace(/[\n\r\t ]/g, "") == "") {
+    if (usernameRef.current.value.replace(/[\n\r\t ]/g, "") === "") {
       states.setActivePopover(<CreateAccountPopover error="Your username must be at least one character"/>);
       return;
     }
@@ -248,7 +248,7 @@ function MiddleSection({shown, className, ...props}) {
         </div>
         <blockquote><Markdown options={markdownOptions}>{messageCache[states.reply]?.content}</Markdown></blockquote>
       </div>
-      <span hidden={states.uploads.length == 0}>Attackments: (Click on a file to delete it)</span>
+      <span hidden={states.uploads.length === 0}>Attackments: (Click on a file to delete it)</span>
       <div id="showFiles" hidden={states.uploads.length == 0}>
         {states.uploads.map(upload => (
           <img src={upload.thumbnail} className='avatar material-symbols-outlined' onClick={() => {
@@ -269,7 +269,7 @@ function MiddleSection({shown, className, ...props}) {
       </div>
       <div id="belowScrolledArea">
         <div contentEditable id="messageBox" onKeyDown={event=>{
-          if (event.key == "Enter" && !states.useMobileUI && !event.shiftKey) {
+          if (event.key === "Enter" && !states.useMobileUI && !event.shiftKey) {
             triggerMessageSend();
             event.preventDefault();
           }
@@ -306,7 +306,7 @@ function Message({message}) {
     avatar: "https://img.freepik.com/premium-vector/hand-drawn-cartoon-doodle-skull-funny-cartoon-skull-isolated-white-background_217204-944.jpg",
     username: "Deleted User"
   });
-  let sentByThisUser = message.author == states.accountInformation.id;
+  let sentByThisUser = message.author === states.accountInformation.id;
   let uploads = message.uploads ? message.uploads : [];
   let messageContent = message.content;
   fetchUser(message.author).then(newAuthor=>{setAuthor(newAuthor)});
@@ -351,7 +351,7 @@ function Message({message}) {
 function triggerMessageSend() {
   let socket = openSockets[states.focusedServer];
   let messageTextBox = document.getElementById("messageBox");
-  if (states.uploads.length == 0) {
+  if (states.uploads.length === 0) {
     socket.send(JSON.stringify({
       eventType: "message",
       message: {
@@ -378,7 +378,7 @@ function triggerMessageSend() {
           try {
             let responseObject = JSON.parse(request.responseText);
             attachmentObjects.push(responseObject);
-            if (remainingUploads == 0) {
+            if (remainingUploads === 0) {
               states.setUploadProgress(null);
             }
             socket.send(JSON.stringify({
@@ -422,7 +422,7 @@ function RoomsBar({shown, className, ...props}) {
     <div style={{flexGrow: 1}}></div>
     <span className="material-symbols-outlined">stat_minus_1</span></div>
     {Object.values(states.focusedServerRenderedRooms).map(room => (<RoomLink server={room}></RoomLink>))}
-    {Object.values(states.focusedServerRenderedRooms).length == 0 ? <p>This server doesn't have any rooms in it.</p> : <></>}
+    {Object.values(states.focusedServerRenderedRooms).length === 0 ? <p>This server doesn't have any rooms in it.</p> : <></>}
   </div>);
 }
 
@@ -554,11 +554,11 @@ function updateCustomTheme(attemptHex) {
   attemptHex = attemptHex.toLowerCase();
   let darkColorFix = attemptHex;
   for (let i = 0; i < 5; i++) {
-    if (darkColorFix[0] != "0") break;
+    if (darkColorFix[0] !== "0") break;
     darkColorFix = darkColorFix.slice(1);
   }
 
-  if (attemptHex.length != 6 || parseInt(attemptHex, 16).toString(16) != darkColorFix) return;
+  if (attemptHex.length !== 6 || parseInt(attemptHex, 16).toString(16) !== darkColorFix) return;
 
   setTimeout(()=>{states.setThemeHex(attemptHex)}, 50);
   localStorage.setItem("themeHex", attemptHex);
@@ -572,7 +572,7 @@ function updateCustomTheme(attemptHex) {
 
   let primaryColor = "#" + attemptHex;
   let secondaryColor = "#" + RGBToString(multiplyRGB(rgb, 0.75));
-  if (colorScheme == "light") {
+  if (colorScheme === "light") {
     document.body.style.setProperty('--foreground-level1', "#000000");
     document.body.style.setProperty('--foreground-level2', "#222222");
     document.body.style.setProperty('--accent', "#b300ff");
@@ -612,7 +612,7 @@ function showInvitePopup(invite, domain) {
     port = port * 16 + parseInt(invite[c], 16);
   }
   let code = Number("0x"+invite[invite.length - 2]+invite[invite.length - 1]).toString();
-  fetch(`http${pageUrl.protocol == "https:" ? "s" : ""}://${ip}:${port}/${subserver}`).then(res => res.json()).then(data => {
+  fetch(`http${pageUrl.protocol === "https:" ? "s" : ""}://${ip}:${port}/${subserver}`).then(res => res.json()).then(data => {
     states.setActivePopover(
       <Popover title={"You've been invited to join "+(data.title ? data.title.toString() : "an untitled server")}>
         <div className='inviteServerBanner'>
@@ -661,7 +661,7 @@ async function loadView(switchToServer) {
   // don't try load the client as part of the page compiling
   if (!browser) return;
   window.onkeydown = event => {
-    if (event.key == "Escape") {
+    if (event.key === "Escape") {
       states.setActivePopover(null);
     }
   };
@@ -680,7 +680,7 @@ async function loadView(switchToServer) {
     }
     for (let serverName in data.servers) { // this for loop lets us keep the same server focused between reloads
       serverHashes[serverName] = hashPassword(serverName); // it's not a password but who cares
-      if (window.location.toString().replace(/^.*\#/g, "") == serverHashes[serverName] && !switchToServer) {
+      if (window.location.toString().replace(/^.*\#/g, "") === serverHashes[serverName] && !switchToServer) {
         states.setFocusedServer(serverName);
       }
     }
@@ -705,12 +705,12 @@ async function loadView(switchToServer) {
         }
       };
       // Open a socket connection with the server
-      let socket = new WebSocket((pageUrl.protocol == "https:" ? "wss:" : "ws") + "//" + ip);
+      let socket = new WebSocket((pageUrl.protocol === "https:" ? "wss:" : "ws") + "//" + ip);
 
       socket.onerror = () => {
         // The server's disconnected, in which case if we're focusing on it we should focus on a different server
         console.error(`Warning: couldn't connect to ${ip}, try check your internet connection or inform the owner(s) of the server.`);
-        if (states.focusedServer == serverCode) {
+        if (states.focusedServer === serverCode) {
           // window.location.reload();
         }
       };
@@ -730,7 +730,7 @@ async function loadView(switchToServer) {
             states.setFocusedServer(serverCode);
           }
         }
-        if (states.focusedServer == serverCode) {
+        if (states.focusedServer === serverCode) {
           window.history.pushState({}, "", "#"+serverHashes[serverCode]);
         }
       };
@@ -738,7 +738,7 @@ async function loadView(switchToServer) {
       socket.onclose = () => {
         // same as onerror above
         console.error(`Warning, the server at ${ip} closed.`);
-        if (states.focusedServer == serverCode) {
+        if (states.focusedServer === serverCode) {
           // window.location.reload();
         }
       };
@@ -747,7 +747,7 @@ async function loadView(switchToServer) {
         let packet = JSON.parse(event.data);
         switch (packet.eventType) {
           case "message":
-            if (document.visibilityState == "hidden" && data.userId != packet.message.author)
+            if (document.visibilityState == "hidden" && data.userId !== packet.message.author)
               new Audio(authUrl+'/randomsand.wav').play();
             if (states.focusedServer !== serverCode) break;
             // cache the message and add it to the list to render
@@ -781,7 +781,7 @@ async function loadView(switchToServer) {
               servers[serverCode].setManifest(packet.manifest);
             else 
               servers[serverCode].manifest = packet.manifest;
-            if (serverCode == states.focusedServer) {
+            if (serverCode === states.focusedServer) {
               states.setFocusedServerPermissions(packet.permissions);
               states.setFocusedServerPeers(Object.values(packet.peers));
             }
@@ -830,7 +830,7 @@ function PageHeader ({title, iconClickEvent, ...props}) {
     fetch(authUrl + "/uinfo?id=" + localStorage.getItem("sessionID"))
       .then(data => data.json())
       .then(data => states.setAccountInformation(data))
-      .catch(() => { if (pageUrl.pathname == "/chat") window.location = "/" });
+      .catch(() => { if (pageUrl.pathname === "/chat") window.location = "/" });
   }, []);
 
   return (<header {...props}>
@@ -887,7 +887,7 @@ function PageHeader ({title, iconClickEvent, ...props}) {
               }, 50);}}>Custom</option>
             </select>
           </div>
-          <span hidden={states.theme != "custom"} ref={customThemeDisplayRef}>Custom Theme Hex Colour: #
+          <span hidden={states.theme !== "custom"} ref={customThemeDisplayRef}>Custom Theme Hex Colour: #
             <span id="accountSettingsCustomTheme" contentEditable
             ref={customThemeEditRef} onInput={() => {
                 updateCustomTheme(customThemeEditRef.current.innerText)
@@ -957,9 +957,9 @@ export default function ChatPage() {
   // return the basic page layout
   return (<>
     <PageHeader className={
-      states.theme == "custom" ? "" :
-      states.theme == "green" ? "greenThemed" :
-      states.theme == "light" ? "lightThemed" :
+      states.theme === "custom" ? "" :
+      states.theme === "green" ? "greenThemed" :
+      states.theme === "light" ? "lightThemed" :
       "darkThemed"
     } iconClickEvent={() => {
       if (states.useMobileUI) {
@@ -976,45 +976,45 @@ export default function ChatPage() {
     <main>
       <div id="chatPage">
         <ServersBar className={
-          states.theme == "custom" ? "" :
-          states.theme == "green" ? "greenThemed" :
-          states.theme == "light" ? "lightThemed" :
+          states.theme === "custom" ? "" :
+          states.theme === "green" ? "greenThemed" :
+          states.theme === "light" ? "lightThemed" :
           "darkThemed"
         } shown={
           (states.mobileSidebarShown && !states.activePopover)
           || !states.useMobileUI
         }/>
         <RoomsBar className={
-          states.theme == "custom" ? "" :
-          states.theme == "green" ? "greenThemed" :
-          states.theme == "light" ? "lightThemed" :
+          states.theme === "custom" ? "" :
+          states.theme === "green" ? "greenThemed" :
+          states.theme === "light" ? "lightThemed" :
           "darkThemed"
         } shown={
           (states.mobileSidebarShown && !states.activePopover)
           || !states.useMobileUI
         }/>
         <MiddleSection className={
-          states.theme == "custom" ? "" :
-          states.theme == "green" ? "greenThemed" :
-          states.theme == "dark" ? "darkThemed" :
+          states.theme === "custom" ? "" :
+          states.theme === "green" ? "greenThemed" :
+          states.theme === "dark" ? "darkThemed" :
           "lightThemed"
         } shown={
           (!states.mobileSidebarShown && !states.activePopover)
           || !states.useMobileUI
         }/>
         <PeersBar className={
-          states.theme == "custom" ? "" :
-          states.theme == "green" ? "greenThemed" :
-          states.theme == "light" ? "lightThemed" :
+          states.theme === "custom" ? "" :
+          states.theme === "green" ? "greenThemed" :
+          states.theme === "light" ? "lightThemed" :
           "darkThemed"
         } shown={
           (states.mobileSidebarShown && !states.activePopover)
           || !states.useMobileUI
         }/>
         <PopoverParent className={
-          states.theme == "custom" ? "" :
-          states.theme == "green" ? "greenThemed" :
-          states.theme == "dark" ? "darkThemed" :
+          states.theme === "custom" ? "" :
+          states.theme === "green" ? "greenThemed" :
+          states.theme === "dark" ? "darkThemed" :
           "lightThemed"
         }/>
       </div>
