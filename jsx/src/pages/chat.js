@@ -325,10 +325,10 @@ function Message({message}) {
       </blockquote> : <blockquote className='messageReply'><em>Message couldn't be loaded</em></blockquote> : ""}
       <div className="messageContent">
         <Markdown options={markdownOptions}>{messageContent}</Markdown>
-        {uploads.map(upload => <img className="upload" src={authUrl+upload.url} onClick={() => {
+        {uploads.map(upload => <img className="upload" src={"https://"+states.servers[states.focusedServer].ip+upload.url} onClick={() => {
           states.setActivePopover(<Popover className="darkThemed" style={{background: "transparent", boxShadow: "none", width: "auto"}} title={upload.name}>
-            <img src={authUrl+upload.url} style={{borderRadius: 10, boxShadow: "0px 0px 10px black"}}/>
-            <a href={authUrl+upload.url} style={{color: "white"}}>Download this image</a>
+            <img src={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{borderRadius: 10, boxShadow: "0px 0px 10px black"}}/>
+            <a href={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{color: "white"}}>Download this image</a>
           </Popover>);
         }}/>)}
       </div>
