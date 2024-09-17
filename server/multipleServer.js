@@ -151,15 +151,16 @@ const httpser = https.createServer({
             }
             let sessionID = url.searchParams.get("sessionID");
             let userID = false;
-            let STRINGTHING = "{";
+            let subserver = "";
             // lets us look up the id of the user trying to upload a file without having to contact the authentication
             // server, also comes with the added benefit of not accepting users who aren't currently online or in the server
-            for (let clients of Object.values(clientses)) {
-                for (let socket of clients) {
+            for (let sub of Object.keys(clientses)) {
+                for (let socket of clientses[sub]) {
                     if (socket.sessionID === sessionID) {
                         userID = socket.uid;
+                        subserver = sub;
                         break;
-                    } else STRINGTHING += "}{" + socket.sessionID;
+                    }
                 }
             }
             if (!userID) {
@@ -167,7 +168,7 @@ const httpser = https.createServer({
                     "Content-Type": "text/plain",
                     "Access-Control-Allow-Origin": "*"
                 });
-                res.end("The session token provided isn't in use by any client currently connected to the server."+`${STRINGTHING}, ${sessionID}`);
+                res.end("The session token provided isn't in use by any client currently connected to the server.");
                 return;
             }
             let received = 0;
@@ -191,10 +192,10 @@ const httpser = https.createServer({
                 // remove spaces (because we can't have them in urls) and null characters (because it's a good idea to)
                 newPath += "/" + path.basename(fileName.toString().replace(/ \0/g, "_"));
                 fs.renameSync(filePath, newPath);
-                if (sdata.users[userID].uploadedFiles === undefined) {
-                    sdata.users[userID].uploadedFiles == [{url: newPath.replace("./usercontent", ""), type: mimeType, name: fileName, path: "/", public: true}];
+                if (sdata[subserver].users[userID].uploadedFiles === undefined) {
+                    sdata[subserver].users[userID].uploadedFiles == [{url: newPath.replace("./usercontent", ""), type: mimeType, name: fileName, path: "/", public: true}];
                 } else {
-                    sdata.users[userID].uploadedFiles.push({url: newPath.replace("./usercontent", ""), type: mimeType, name: fileName, path: "/", public: true});
+                    sdata[subserver].users[userID].uploadedFiles.push({url: newPath.replace("./usercontent", ""), type: mimeType, name: fileName, path: "/", public: true});
                 }
                 res.writeHead(200, {
                     "Content-Type": "application/json",
