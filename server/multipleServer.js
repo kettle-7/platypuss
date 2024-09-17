@@ -208,7 +208,7 @@ const httpser = https.createServer({
             if (!fs.existsSync("./usercontent"+url.pathname)) {
                 res.writeHead(404, "not found", { "Content-Type": "text/html",
                 "Access-Control-Allow-Origin": "*" });
-                res.end("that file couldn't be found or you don't have permission to see it");
+                res.end("that file couldn't be found or you don't have permission to see it\n\n"+url.pathname);
                 return;
             }
 
