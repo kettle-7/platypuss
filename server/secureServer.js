@@ -109,7 +109,7 @@ const httpser = https.createServer({
         // lets us look up the id of the user trying to upload a file without having to contact the authentication
         // server, also comes with the added benefit of not accepting users who aren't currently online or in the server
         for (let socket of clients) {
-            if (socket.sessionID = sessionID) {
+            if (socket.sessionID == sessionID) {
                 userID = socket.uid;
                 break;
             }
