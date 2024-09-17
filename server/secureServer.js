@@ -125,17 +125,17 @@ const httpser = https.createServer({
         let received = 0;
         fs.mkdirSync(`./usercontent/uploads/${userID}/`, {recursive: true})
         let filePath = `./usercontent/uploads/${userID}/temp_${v4()}`;
-        let file = fs.openSync(filePath, 'w');
+        let file = fs.createWriteStream(filePath, 'w');
         req.on("data", (buffer) => {
             received += buffer.length;
             if (received > maximumFileSize) {
                 req.destroy();
             } else {
-                fs.writeSync(file, buffer);
+                file.write(buffer);
             }
         });
         req.on("end", () => {
-            fs.closeSync(file);
+            file.close();
             let fileData = fs.readFileSync(filePath);
             let hash = createHash('sha512').update(fileData).digest("hex");
             let newPath = `./usercontent/uploads/${userID}/${hash}/`;
