@@ -138,10 +138,10 @@ const httpser = https.createServer({
             fs.closeSync(file);
             let fileData = fs.readFileSync(filePath);
             let hash = createHash('sha512').update(fileData).digest("hex");
-            let newPath = `./usercontent/uploads/${userID}/`;
-            fs.mkdirSync(`${newPath}${hash}`, {recursive: true});
+            let newPath = `./usercontent/uploads/${userID}/${hash}/`;
+            fs.mkdirSync(`${newPath}`, {recursive: true});
             // remove spaces (because we can't have them in urls) and null characters (because it's a good idea to)
-            newPath += "/" + path.basename(fileName.toString().replace(/ \0/g, "_"));
+            newPath += path.basename(fileName.toString().replace(/ \0/g, "_"));
             fs.renameSync(filePath, newPath);
             if (sdata.users[userID].uploadedFiles === undefined) {
                 sdata.users[userID].uploadedFiles == [{url: newPath.replace("./usercontent", ""), type: mimeType, name: fileName, path: "/", public: true}];
