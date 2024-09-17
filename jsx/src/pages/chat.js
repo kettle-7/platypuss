@@ -407,7 +407,7 @@ function triggerMessageSend() {
       request.upload.onprogress = (event) => {
         states.setUploadProgress(event.loaded/event.total*100);
       };
-      request.send(upload);
+      request.send(upload.fileObject);
     }
   }
 }

@@ -178,6 +178,7 @@ const httpser = https.createServer({
                 received += buffer.length;
                 if (received > maximumFileSize) {
                     req.destroy();
+                    file.close();
                 } else {
                     file.write(buffer);
                 }
