@@ -155,7 +155,7 @@ const httpser = https.createServer({
             // server, also comes with the added benefit of not accepting users who aren't currently online or in the server
             for (let clients of Object.values(clientses)) {
                 for (let socket of clients) {
-                    if (socket.sessionID = sessionID) {
+                    if (socket.sessionID === sessionID) {
                         userID = socket.uid;
                         break;
                     }
@@ -188,7 +188,7 @@ const httpser = https.createServer({
                 let newPath = `./usercontent/uploads/${userID}/`;
                 fs.mkdirSync(`${newPath}${hash}`, {recursive: true});
                 // remove spaces (because we can't have them in urls) and null characters (because it's a good idea to)
-                newPath += "/" + path.basename(file.originalFilename.toString().replace(/ \0/g, "_"));
+                newPath += "/" + path.basename(fileName.toString().replace(/ \0/g, "_"));
                 fs.renameSync(filePath, newPath);
                 if (sdata.users[userID].uploadedFiles === undefined) {
                     sdata.users[userID].uploadedFiles == [{url: newPath.replace("./usercontent", ""), type: mimeType, name: fileName, path: "/", public: true}];
