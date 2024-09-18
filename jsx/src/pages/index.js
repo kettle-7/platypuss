@@ -200,7 +200,7 @@ const IndexPage = () => {
       {(Object.keys(states.accountInformation).length === 0) && <button style={{fontSize: "14pt"}} onClick={() => {states.setActivePopover(<SignInPopover/>)}}>Sign In</button>}
       {(Object.keys(states.accountInformation).length === 0) && <button style={{fontSize: "14pt"}} onClick={() => {states.setActivePopover(<CreateAccountPopover/>)}}>Create Account</button>}
     </main>
-    <footer className={states.theme === "dark" ? "darkThemed" : "lightThemed"}>links to stuff maybe</footer>
+    <footer className={states.theme === "dark" ? "darkThemed" : "lightThemed"}>do you like the new interim logo? if not then feel free to design your own and hit me up with a <a href="https://github.com/kettle-7/platypuss/issues/new">github issue</a></footer>
     <PopoverParent className={states.theme === "light" ? "lightThemed" : "darkThemed"}/>
   </>);
 };

@@ -315,7 +315,7 @@ function Message({message}) {
       height: message.special ? "0px" : undefined
     }}/>
     <div className="message2">
-      <div className="messageAuthor" hidden={message.special}>
+      <div className="messageAuthor" style={{ display: message.special ? "none" : "flex" }}>
         <h3 className="messageUsernameDisplay">{author.username}</h3>
         <span className="messageTimestamp">@{author.tag} at {message.timestamp ? new Date(message.timestamp).toLocaleString() : new Date(message.stamp).toLocaleString()}</span>
       </div>
