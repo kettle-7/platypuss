@@ -200,7 +200,7 @@ function Popover({children, title, style={}, ...props}) {
     <div id="popoverHeaderBar">
       <h3>{title}</h3>
       <div style={{flexGrow: 1}}></div>
-      <button onClick={() => {states.setActivePopover(null);}} className="material-symbols-outlined">close</button>
+      <button onClick={() => {states.setActivePopover(null); states.setMobileSidebarShown(false);}} className="material-symbols-outlined">close</button>
     </div>
     {children}
   </div>
@@ -660,6 +660,7 @@ function showInvitePopup(invite, domain) {
 async function loadView(switchToServer) {
   // don't try load the client as part of the page compiling
   if (!browser) return;
+  states.setMobileSidebarShown(true);
   window.onkeydown = event => {
     if (event.key === "Escape") {
       states.setActivePopover(null);
