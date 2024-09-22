@@ -88,6 +88,6 @@ module.exports = {
         }
         // the invite code must be at least 16
         code += parseInt(port, 10).toString(16) + parseInt(inviteCode, 10).toString(16);
-        return `https://platypuss.net/chat?invite=${code}&invip=www.platypuss.net`;
+        return `https://beta.platypuss.net/chat/?invite=${code}&ip=www.platypuss.net`;
     }
 };
