@@ -197,7 +197,7 @@ const IndexPage = () => {
         the <a href="https://platypuss.net">stable version</a> of the site.
       </p>
       {(Object.keys(states.accountInformation).length !== 0) && <button style={{fontSize: "14pt"}} onClick={() => {window.location = '/chat'}}>Chat</button>}
-      {(Object.keys(states.accountInformation).length === 0) && <button style={{fontSize: "14pt"}} onClick={() => {states.setActivePopover(<SignInPopover/>)}}>Sign In</button>}
+      {(Object.keys(states.accountInformation).length === 0) && <><button style={{fontSize: "14pt"}} onClick={() => {states.setActivePopover(<SignInPopover/>)}}>Sign In</button><br/></>}
       {(Object.keys(states.accountInformation).length === 0) && <button style={{fontSize: "14pt"}} onClick={() => {states.setActivePopover(<CreateAccountPopover/>)}}>Create Account</button>}
     </main>
     <footer className={states.theme === "dark" ? "darkThemed" : "lightThemed"}>do you like the new interim logo? if not then feel free to design your own and hit me up with a <a href="https://github.com/kettle-7/platypuss/issues/new">github issue</a></footer>
