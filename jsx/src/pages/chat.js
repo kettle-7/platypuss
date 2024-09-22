@@ -380,20 +380,20 @@ function triggerMessageSend() {
             attachmentObjects.push(responseObject);
             if (remainingUploads === 0) {
               states.setUploadProgress(null);
+              socket.send(JSON.stringify({
+                eventType: "message",
+                message: {
+                  content: messageTextBox.innerText,
+                  reply: states.reply ? states.reply : undefined,
+                  uploads: attachmentObjects
+                }
+              }));
+              messageTextBox.innerHTML = "";
+              setTimeout(() => {
+                states.setReply(null);
+                states.setUploads([]);
+              }, 50);
             }
-            socket.send(JSON.stringify({
-              eventType: "message",
-              message: {
-                content: messageTextBox.innerText,
-                reply: states.reply ? states.reply : undefined,
-                uploads: attachmentObjects
-              }
-            }));
-            messageTextBox.innerHTML = "";
-            setTimeout(() => {
-              states.setReply(null);
-              states.setUploads([]);
-            }, 50);
           } catch (error) {
             states.setActivePopover(<Popover>
               <span>We encountered an unknown error. Please report it as a bug if you can. Error message:</span>
