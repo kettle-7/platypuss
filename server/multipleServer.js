@@ -174,6 +174,7 @@ const httpser = https.createServer({
             fs.mkdirSync(`./usercontent/uploads/${userID}/`, {recursive: true})
             let filePath = `./usercontent/uploads/${userID}/temp_${v4()}`;
             let file = fs.createWriteStream(filePath);
+            let hash = createHash('sha512');
             req.on("data", (buffer) => {
                 received += buffer.length;
                 if (received > maximumFileSize) {
@@ -181,12 +182,12 @@ const httpser = https.createServer({
                     file.close();
                 } else {
                     file.write(buffer);
+                    hash.update(buffer);
                 }
             });
             req.on("end", () => {
                 file.close();
-                let fileData = fs.readFileSync(filePath);
-                let hash = createHash('sha512').update(fileData).digest("hex");
+                hash = hash.digest("hex");
                 let newPath = `./usercontent/uploads/${userID}/${hash}/`;
                 fs.mkdirSync(`${newPath}`, {recursive: true});
                 // remove spaces (because we can't have them in urls) and null characters (because it's a good idea to)
