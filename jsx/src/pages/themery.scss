@@ -244,6 +244,10 @@ header {
 
 #mainPage {
   padding: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+  gap: 2px;
 }
 
 main {
@@ -608,14 +612,44 @@ input[type="text"]:active, input[type="password"]:active, input[type="email"]:ac
   width: 100%;
 }
 
+#changeAvatarText {
+  font-size: x-large;
+  position: absolute;
+  left: 0px;
+  padding-left: 3px;
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border-radius: 50%;
+}
+
+#changeAvatar {
+  width: 96px;
+  height: 96px;
+}
+
 #changeAvatarHoverButton > span {
   display: none;
+}
+
+#changeAvatarHoverButton {
+  width: 96px;
+  height: 96px;
+  cursor: pointer;
+  position: relative;
 }
 
 #changeAvatarHoverButton:hover > span {
   display: flex;
   align-items: center;
   align-content: center;
+}
+
+#accountSettingsUsername {
+  margin-left: 5px;
+  font-size: xx-large;
 }
 
 #profileBanner {

@@ -1,5 +1,5 @@
 /************************************************************************
-* Copyright 2021-2024 Ben Keppel                                        *
+* Copyright 2021-2024 Ben Keppel, Moss Finder                           *
 *                                                                       *
 * This program is free software: you can redistribute it and/or modify  *
 * it under the terms of the GNU General Public License as published by  *
@@ -844,11 +844,41 @@ function PageHeader ({title, iconClickEvent, ...props}) {
       states.setActivePopover(
         <Popover title="Account Settings">
           <div id="profileBanner">
-            <div className="avatar" id="changeAvatarHoverButton">
-              <span>Change</span>
+            <div className="avatar" id="changeAvatarHoverButton" onClick={() => {
+              let input = document.createElement('input');
+              input.type = "file";
+              input.multiple = false;
+              input.accept = "image/*";
+              input.onchange = async function (event) {
+                let file = event.target.files[0];
+                if (file.size >= 10000000) {
+                  states.setActivePopover(<Popover title="Woah, that's too big!">
+                    We only allow avatar sizes up to 10MB, this is to save storage space on the server. Please choose a smaller image or resize it in an image editor.
+                  </Popover>);
+                  return;
+                }
+                let request = new XMLHttpRequest();
+                request.open("POST", `${authUrl}/pfpUpload?id=${localStorage.getItem("sessionID")}`);
+                request.onreadystatechange = () => {
+                  if (request.readyState === XMLHttpRequest.DONE && request.status) {
+                    window.location.reload();
+                  }
+                  else {
+                    console.log(request);
+                  }
+                };
+                request.upload.onprogress = (event) => {
+                  states.setAvatarProgress(event.loaded/event.total*100);
+                };
+                request.send(await file.bytes()); // pppppppppppppppppp
+                console.log("sent", await file.bytes());
+              };
+              input.click();
+            }}>
               <img className="avatar" id="changeAvatar" src={authUrl+states.accountInformation.avatar}/>
+              <span id="changeAvatarText">Change</span>
             </div>
-            <h3 className="account-settings-username" id="accountSettingsUsername" contentEditable>{states.accountInformation.username}</h3>
+            <h3 id="accountSettingsUsername" contentEditable>{states.accountInformation.username}</h3> @{states.accountInformation.tag}
           </div>
           <h5>Tell us a bit about you:</h5>
           <div contentEditable id="changeAboutMe"></div>
@@ -951,7 +981,8 @@ export default function ChatPage() {
   [states.themeHex, states.setThemeHex] = React.useState(themeHex); // hex colour code of our custom theme
   [states.reply, states.setReply] = React.useState(null); // id of the message we're replying to
   [states.uploads, states.setUploads] = React.useState([]); // files we want to attach to the next message
-  [states.uploadProgress, states.setUploadProgress] = React.useState(null);
+  [states.uploadProgress, states.setUploadProgress] = React.useState(null); // progress bar for uploading message attachments
+  [states.avatarProgress, states.setAvatarProgress] = React.useState(null); // how far through we are uploading our avatar
 
   React.useEffect(() => {loadView();}, []);
 

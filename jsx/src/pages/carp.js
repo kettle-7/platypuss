@@ -186,19 +186,11 @@ const IndexPage = () => {
   return (<>
     <PageHeader className={states.theme === "light" ? "lightThemed" : "darkThemed"}/>
     <main id="mainPage" className={states.theme === "dark" ? "darkThemed" : "lightThemed"}>
-      <h1>
-        You found the Platypuss public beta!
-      </h1>
-      <p>
-        This website sees new changes to the Platypuss client before they're published.
-        This means you get to try out new features and improvements before they make their way
-        to the main site. Beware though, many of the changes you see here aren't tested and may
-        break certain functionality. Should anything not work properly you're better off using
-        the <a href="https://platypuss.net">stable version</a> of the site.
-      </p>
-      {(Object.keys(states.accountInformation).length !== 0) && <button style={{fontSize: "14pt"}} onClick={() => {window.location = '/chat'}}>Chat</button>}
-      {(Object.keys(states.accountInformation).length === 0) && <><button style={{fontSize: "14pt"}} onClick={() => {states.setActivePopover(<SignInPopover/>)}}>Sign In</button><br/></>}
-      {(Object.keys(states.accountInformation).length === 0) && <button style={{fontSize: "14pt"}} onClick={() => {states.setActivePopover(<CreateAccountPopover/>)}}>Create Account</button>}
+      <img style={{
+        flexShrink: 1,
+        overflow: "hidden",
+        alignSelf: "stretch"
+      }} alt="imagine a fish" src="https://upload.wikimedia.org/wikipedia/commons/a/ac/Unsere_S%C3%BC%C3%9Fwasserfische_%28Tafel_33%29_%286102602781%29.jpg"/>
     </main>
     <footer className={states.theme === "dark" ? "darkThemed" : "lightThemed"}>do you like the new interim logo? if not then feel free to design your own and hit me up with a <a href="https://github.com/kettle-7/platypuss/issues/new">github issue</a></footer>
     <PopoverParent className={states.theme === "light" ? "lightThemed" : "darkThemed"}/>
@@ -208,5 +200,5 @@ const IndexPage = () => {
 export default IndexPage;
 
 export const Head = () => (
-  <title>(Beta!) Platypuss</title>
+  <title>hehe faush &gt;:3</title>
 );
