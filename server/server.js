@@ -89,7 +89,7 @@ const httpser = http.createServer((req, res) => {
         if (!url.searchParams.has("sessionID")) {
             res.writeHead(403, {
                 "Content-Type": "text/plain",
-                "Access-Control-Allow-Origin": "*/*"
+                "Access-Control-Allow-Origin": "*"
             });
             res.end("No session token was provided for the uploading user.");
             return;
@@ -115,7 +115,7 @@ const httpser = http.createServer((req, res) => {
         if (!userID) {
             res.writeHead(403, {
                 "Content-Type": "text/plain",
-                "Access-Control-Allow-Origin": "*/*"
+                "Access-Control-Allow-Origin": "*"
             });
             res.end("The session token provided isn't in use by any client currently connected to the server.");
             return;
@@ -150,7 +150,7 @@ const httpser = http.createServer((req, res) => {
             }
             res.writeHead(200, {
                 "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*/*",
+                "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Headers": "Content-Type"
             });
             res.end(JSON.stringify({url: newPath.replace("./usercontent", ""), type: mimeType, name: path.basename(fileName)}));
@@ -160,7 +160,7 @@ const httpser = http.createServer((req, res) => {
         url.pathname = url.pathname.replace(/\.\./g, "");
         if (!fs.existsSync("./usercontent"+url.pathname)) {
             res.writeHead(404, "not found", { "Content-Type": "text/html",
-            "Access-Control-Allow-Origin": "*/*" });
+            "Access-Control-Allow-Origin": "*" });
             res.end("that file couldn't be found or you don't have permission to see it");
             return;
         }
@@ -168,12 +168,12 @@ const httpser = http.createServer((req, res) => {
         if (fs.lstatSync("./usercontent"+url.pathname).isDirectory()) {
             /*if (!url.searchParams.has('id')) {*/
                 res.writeHead(201, {"Content-Type": "text/plain",
-                "Access-Control-Allow-Origin": "*/*"});
+                "Access-Control-Allow-Origin": "*"});
                 res.end("that's a folder");
                 return;
             /*}
             res.writeHead(200, { "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "**" });
+            "Access-Control-Allow-Origin": "*" });
             try {
                 // i have no memory of what the hell this is meant to be
                 res.end(JSON.stringify(fs.readdirSync(`./usercontent/uploads/${sessions[sid].uid}/`)));
@@ -185,7 +185,7 @@ const httpser = http.createServer((req, res) => {
         }
 
         let stream = fs.createReadStream("./usercontent"+url.pathname);
-        res.writeHead(200, {"Access-Control-Allow-Origin": "*/*", 'Content-disposition': `attachment; filename=${path.basename(url.pathname)}`});
+        res.writeHead(200, {"Access-Control-Allow-Origin": "*", 'Content-disposition': `attachment; filename=${path.basename(url.pathname)}`});
         stream.on("ready", () => {
             stream.pipe(res);
         });
@@ -193,7 +193,7 @@ const httpser = http.createServer((req, res) => {
     }
     res.writeHead(200, {
         "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*/*"
+        "Access-Control-Allow-Origin": "*"
     });
     let o = conf.manifest;
     o.memberCount = Object.keys(sdata.users).length;
