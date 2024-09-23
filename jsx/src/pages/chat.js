@@ -16,6 +16,7 @@
 ************************************************************************/
 // °^° i am pingu
 
+import updateCustomTheme from '../components/rgb.js';
 import Markdown from 'markdown-to-jsx';
 import hljs from 'highlight.js';
 import * as React from "react";
@@ -512,90 +513,6 @@ function pingUser(id) {
   document.getElementById("messageBox").innerText += "[@" + id + "]";
 }
 
-// Convert a hex string "7600bc" to a list of rgb values [118, 0, 188]
-function stringToRGB(hexString) {
-  let hex = parseInt(hexString, 16);
-  let convertedHex = [];
-  let finalHex = [];
-  for (let i = 0; i < 6; i++) {
-    convertedHex.unshift(hex % 16);
-    hex = (hex - (hex % 16)) / 16;
-  }
-  for (let i = 0; i < 6; i += 2) {
-    finalHex.push(convertedHex[i] * 16 + convertedHex[i+1]);
-  }
-  return finalHex;
-}
-
-// Convert a list of rgb values [118, 0, 188] into a hex string "7600bc"
-function RGBToString(RGB) {
-  let convertedString = [];
-  let finalString = "";
-  for (let i = 0; i < 3; i++) {
-    convertedString.push(Math.floor(((RGB[i] - RGB[i] % 16) / 16)).toString(16), Math.floor((RGB[i] % 16)).toString(16));
-  }
-  for (let i = 0; i < 6; i++) {
-      finalString += convertedString[i];
-  }
-  return finalString;
-}
-
-// Multiply a list of rgb values by a specific number
-function multiplyRGB(RGB, multiplier) {
-  let newRGB = [];
-  for (let i = 0; i < 3; i++) {
-    newRGB.push(RGB[i] * multiplier);
-  }
-  return newRGB;
-}
-
-// Update the custom theme settings to a specific color pallete
-function updateCustomTheme(attemptHex) {
-  attemptHex = attemptHex.toLowerCase();
-  let darkColorFix = attemptHex;
-  for (let i = 0; i < 5; i++) {
-    if (darkColorFix[0] !== "0") break;
-    darkColorFix = darkColorFix.slice(1);
-  }
-
-  if (attemptHex.length !== 6 || parseInt(attemptHex, 16).toString(16) !== darkColorFix) return;
-
-  setTimeout(()=>{states.setThemeHex(attemptHex)}, 50);
-  localStorage.setItem("themeHex", attemptHex);
-
-  let rgb = stringToRGB(attemptHex);
-
-  let colorScheme = 0;
-  for (let i = 0; i < 3; i++) colorScheme += rgb[i];
-  if (colorScheme > 382.5) colorScheme = "light";
-  else colorScheme = "dark";
-
-  let primaryColor = "#" + attemptHex;
-  let secondaryColor = "#" + RGBToString(multiplyRGB(rgb, 0.75));
-  if (colorScheme === "light") {
-    document.body.style.setProperty('--foreground-level1', "#000000");
-    document.body.style.setProperty('--foreground-level2', "#222222");
-    document.body.style.setProperty('--accent', "#b300ff");
-  }
-  else {
-    document.body.style.setProperty('--foreground-level1', "#ffffff");
-    document.body.style.setProperty('--foreground-level2', "#e0e0e0");
-    document.body.style.setProperty('--accent', "#c847ff");
-  }
-
-  document.body.style.setProperty('--outgradient', primaryColor);
-  document.body.style.setProperty('--ingradient', primaryColor);
-  document.body.style.setProperty('--outgradientsmooth', "linear-gradient(" + primaryColor + ", " + secondaryColor + ")");
-  document.body.style.setProperty('--ingradientsmooth', "linear-gradient(" + secondaryColor + ", " + primaryColor + ")");
-  document.body.style.setProperty('--background-level1', "#" + RGBToString(multiplyRGB(rgb, 0.82189542485)));
-  document.body.style.setProperty('--background-level2', "#" + RGBToString(multiplyRGB(rgb, 0.85751633988)));
-  document.body.style.setProperty('--background-level3', "#" + RGBToString(multiplyRGB(rgb, 0.89313725491)));
-  document.body.style.setProperty('--background-level4', "#" + RGBToString(multiplyRGB(rgb, 0.92875816994)));
-  document.body.style.setProperty('--background-level5', "#" + RGBToString(multiplyRGB(rgb, 0.96437908497)));
-  document.body.style.setProperty('--background-level6', primaryColor);
-  document.body.style.setProperty('--grey', "#888888");
-}
-
 function showInvitePopup(invite, domain) {
   // thing
   let ip = [ // the first 8 characters are the ip address in hex form
@@ -611,6 +528,7 @@ function showInvitePopup(invite, domain) {
   for (let c = 8; c + 2 < invite.length; c++) {
     port = port * 16 + parseInt(invite[c], 16);
   }
+  pageUrl.searchParams.delete("invite");
   let code = Number("0x"+invite[invite.length - 2]+invite[invite.length - 1]).toString();
   fetch(`http${pageUrl.protocol === "https:" ? "s" : ""}://${ip}:${port}/${subserver}`).then(res => res.json()).then(data => {
     states.setActivePopover(
@@ -673,7 +591,7 @@ async function loadView(switchToServer) {
   // delete all messages
   states.setFocusedRoomRenderedMessages([]);
   finishedLoading = false;
-  updateCustomTheme(states.themeHex);
+  updateCustomTheme(states.themeHex, states);
   // connect to the authentication server to get the list of server's we're in and their session tokens
   fetch(`${authUrl}/getServerTokens?id=${localStorage.getItem("sessionID")}`).then(data => data.json()).then(async function(data) {
     for (let socket of Object.values(openSockets)) {
@@ -870,8 +788,7 @@ function PageHeader ({title, iconClickEvent, ...props}) {
                 request.upload.onprogress = (event) => {
                   states.setAvatarProgress(event.loaded/event.total*100);
                 };
-                request.send(await file.bytes()); // pppppppppppppppppp
-                console.log("sent", await file.bytes());
+                request.send(await file.bytes());
               };
               input.click();
             }}>
@@ -921,7 +838,7 @@ function PageHeader ({title, iconClickEvent, ...props}) {
           <span hidden={states.theme !== "custom"} ref={customThemeDisplayRef}>Custom Theme Hex Colour: #
             <span id="accountSettingsCustomTheme" contentEditable
             ref={customThemeEditRef} onInput={() => {
-                updateCustomTheme(customThemeEditRef.current.innerText)
+                updateCustomTheme(customThemeEditRef.current.innerText, states);
               }}>
               {states.themeHex}
             </span>
