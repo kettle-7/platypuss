@@ -16,8 +16,11 @@
 ************************************************************************/
 
 import updateCustomTheme from '../components/rgb';
+import Markdown from 'markdown-to-jsx';
 import * as React from "react";
 import "./themery.scss";
+
+const PRODUCTION = false; // don't change this other than for testing
 
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
 var browser = typeof window !== "undefined"; // check if we're running in a browser rather than the build environment
@@ -109,9 +112,9 @@ function PageHeader ({title, iconClickEvent, ...props}) {
   }, []);
 
   return (<header {...props}>
-    <img className="avatar" onClick={iconClickEvent ? iconClickEvent : () => {window.location = "/"}} style={{cursor: "pointer"}} src="/icons/icon-48x48.png"/>
+    <img className="avatar" onClick={iconClickEvent ? iconClickEvent : () => {window.location = "/"}} style={{cursor: "pointer"}} src="/icons/icon-96x96.png"/>
     <h2 onClick={() => {window.location = "/"}} style={{cursor: "pointer"}}>
-        {title ? title : "(Beta!) Platypuss"}
+        {title ? title : PRODUCTION ? "Platypuss" : "(Beta!) Platypuss"}
     </h2>
     <div style={{flexGrow: 1}}></div>
     <img className="avatar" style={{cursor: "pointer"}} src={authUrl+states.accountInformation.avatar} onClick={() => {
@@ -237,7 +240,7 @@ function Popover({children, title, style={}, ...props}) {
 
 function SignInPopover ({ error="" }) {
   return (<Popover title="Sign In">
-    <span>Welcome back! If you don't already have an account <br/> please <a href="#" onClick={() => states.setActivePopover(<CreateAccountPopover/>)}>create an account</a> instead.</span>
+    <span>Welcome back! If you don't already have an account please <a href="#" onClick={() => states.setActivePopover(<CreateAccountPopover/>)}>create an account</a> instead.</span>
     <div id="loginform">
       <em id="signInErrorMessage">{error}</em>
       <div style={{display:"grid",gridTemplateColumns:"auto auto"}}>
@@ -251,7 +254,8 @@ function SignInPopover ({ error="" }) {
 
 function CreateAccountPopover ({ error="" }) {
   return (<Popover title="Create Account">
-    <span>Welcome to Platypuss! If you already have an account <br/> please <a href="#" onClick={() => states.setActivePopover(<SignInPopover/>)}>sign in</a> instead.</span>
+    <span>Welcome to Platypuss! If you already have an account please <a href="#" onClick={() => states.setActivePopover(<SignInPopover/>)}>sign in</a> instead.</span>
+    <br/><strong>By using Platypuss you confirm that you have read and agreed to our <a href="/legal">legal agreements</a>.</strong>
     <div id="loginform">
       {error ? <em id="signInErrorMessage">{error}</em> : ""}
       <div style={{display:"grid",gridTemplateColumns:"auto auto"}}>
@@ -314,19 +318,58 @@ const IndexPage = () => {
       states.theme === "green" ? "greenThemed" :
       states.theme === "dark" ? "darkThemed" :
       "lightThemed"}>
-      <h1>
-        You found the Platypuss public beta!
-      </h1>
-      <p>
-        This website sees new changes to the Platypuss client before they're published.
-        This means you get to try out new features and improvements before they make their way
-        to the main site. Beware though, many of the changes you see here aren't tested and may
-        break certain functionality. Should anything not work properly you're better off using
-        the <a href="https://platypuss.net">stable version</a> of the site.
-      </p>
       {(Object.keys(states.accountInformation).length !== 0) && <button style={{fontSize: "14pt"}} onClick={() => {window.location = '/chat'}}>Chat</button>}
       {(Object.keys(states.accountInformation).length === 0) && <><button style={{fontSize: "14pt"}} onClick={() => {states.setActivePopover(<SignInPopover/>)}}>Sign In</button><br/></>}
       {(Object.keys(states.accountInformation).length === 0) && <button style={{fontSize: "14pt"}} onClick={() => {states.setActivePopover(<CreateAccountPopover/>)}}>Create Account</button>}
+      {PRODUCTION ? <Markdown>{`
+Platypuss
+=========
+
+Platypuss is an open-source, decentralised platform for communicating and file sharing.
+It's a three-part system with a client, one or more servers and an authentication backend.
+The client handles allowing you to connect to all of your servers and send a recieve messages.
+The servers are responsible for storing and distribution of messages, and the authentication
+backend keeps track of accounts, logging in, and logging out.
+
+Why use Platypuss?
+------------------
+
+There are a few Platypuss alternatives floating around out there. There are a few main goals of
+Platypuss:
+- Performance: Platypuss should be efficient on your system so that anyone can use it without
+  waiting minutes for button clicks to register. This is sadly underconsidered in the development of modern apps.
+- Open source: [Platypuss' code](https://github.com/kettle-7/platypuss) is free to use, modify
+  and distribute as per [the GNU GPL version 3](https://www.gnu.org/licenses/gpl-3.0.en.html).
+  It does not cost you money, there are no ads (so far) and it's built and maintained by volunteers.
+- More decentralised: Compared to many other alternatives Platypuss is more decentralised,
+  meaning flexibility for server owners and users while avoiding compromising security and
+  privacy where possible.
+- Easy to use: Platypuss is designed to not need a user guide. You can invite people to
+  servers with links, and from there they will comfortably find their way around.
+- Customisable: Because of how decentralised it is server owners are free to add functionality
+  and the client can also easily be modified. You can make Platypuss do just about anything you
+  like.
+
+How to get started
+------------------
+
+Platypuss is in an alpha stage at the moment. I will not neccessarily provide support for any
+issues you have, although do please [let me know](https://github.com/kettle-7/platypuss/issues)
+about any you come across so that I can work towards fixing them. It's in a rather volatile
+state where lots is prone to change so I will not yet publicise the instructions for how to
+host your own server, although you can expect this to come soon.
+      `}</Markdown> : <>
+        <h1>
+          You found the Platypuss public beta!
+        </h1>
+        <p>
+          This website sees new changes to the Platypuss client before they're published.
+          This means you get to try out new features and improvements before they make their way
+          to the main site. Beware though, many of the changes you see here aren't tested and may
+          break certain functionality. Should anything not work properly you're better off using
+          the <a href="https://platypuss.net">stable version</a> of the site.
+        </p>
+      </>}
     </main>
     <footer className={
       states.theme === "custom" ? "" :
@@ -344,5 +387,5 @@ const IndexPage = () => {
 export default IndexPage;
 
 export const Head = () => (
-  <title>(Beta!) Platypuss</title>
+  <title>{PRODUCTION ? "" : "(Beta!) "}Platypuss</title>
 );

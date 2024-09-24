@@ -1,0 +1,32 @@
+{
+    "files":{
+        "/.html": {
+            "type": "text/html",
+            "path": "index.html"
+        },
+        "/chat.html": {
+            "type": "text/html",
+            "path": "chat/index.html"
+        },
+        "/chat/.html": {
+            "type": "text/html",
+            "path": "chat/index.html"
+        },
+        "/carp.html": {
+            "type": "text/html",
+            "path": "carp/index.html"
+        },
+        "/carp/.html": {
+            "type": "text/html",
+            "path": "carp/index.html"
+        },
+        "/legal.html": {
+            "type": "text/html",
+            "path": "legal/index.html"
+        },
+        "/legal/.html": {
+            "type": "text/html",
+            "path": "legal/index.html"
+        }
+    }
+}

@@ -135,7 +135,7 @@ function doTheLoginThingy(createNewAccount) {
 
 function SignInPopover ({ error="" }) {
   return (<Popover title="Sign In">
-    <span>Welcome back! If you don't already have an account <br/> please <a href="#" onClick={() => states.setActivePopover(<CreateAccountPopover/>)}>create an account</a> instead.</span>
+    <span>Welcome back! If you don't already have an account please <a href="#" onClick={() => states.setActivePopover(<CreateAccountPopover/>)}>create an account</a> instead.</span>
     <div id="loginform">
       <em id="signInErrorMessage">{error}</em>
       <div style={{display:"grid",gridTemplateColumns:"auto auto"}}>
@@ -155,7 +155,8 @@ function CreateAccountPopover ({ error="" }) {
     React.useRef(null)
   ];
   return (<Popover title="Create Account">
-    <span>Welcome to Platypuss! If you already have an account <br/> please <a href="#" onClick={() => states.setActivePopover(<SignInPopover/>)}>sign in</a> instead.</span>
+  <span>Welcome to Platypuss! If you already have an account please <a href="#" onClick={() => states.setActivePopover(<SignInPopover/>)}>sign in</a> instead.</span>
+  <br/><strong>By using Platypuss you confirm that you have read and agreed to our <a href="/legal">legal agreements</a>.</strong>
     <div id="loginform">
       {error ? <em id="signInErrorMessage">{error}</em> : ""}
       <div style={{display:"grid",gridTemplateColumns:"auto auto"}}>
@@ -753,7 +754,7 @@ function PageHeader ({title, iconClickEvent, ...props}) {
   }, []);
 
   return (<header {...props}>
-    <img className="avatar" onClick={iconClickEvent ? iconClickEvent : () => {window.location = "/"}} style={{cursor: "pointer"}} src="/icons/icon-48x48.png"/>
+    <img className="avatar" onClick={iconClickEvent ? iconClickEvent : () => {window.location = "/"}} style={{cursor: "pointer"}} src="/icons/icon-96x96.png"/>
     <h2 onClick={() => {window.location = "/"}} style={{cursor: "pointer"}}>
         {title ? title : "(Beta!) Platypuss"}
     </h2>
