@@ -55,6 +55,7 @@ all the information specified in the Platypuss API."
             return;
         }*/
         if (sdata.rooms[packet.room] == undefined) {
+            console.log(packet.room, Object.keys(sdata.rooms))
             packet.ws.send(JSON.stringify({
                 "eventType": "error",
                 "code": "nonexistentRoom",
