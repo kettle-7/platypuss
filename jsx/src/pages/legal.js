@@ -18,6 +18,7 @@
 import updateCustomTheme from '../components/rgb';
 import * as React from "react";
 import "./themery.scss";
+import Markdown from 'markdown-to-jsx';
 
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
 var browser = typeof window !== "undefined"; // check if we're running in a browser rather than the build environment
@@ -266,7 +267,7 @@ function CreateAccountPopover ({ error="" }) {
   </Popover>);
 }
 
-const CarpPage = () => {
+const LegalPage = () => {
   // Get the account information for the user
   [states.accountInformation, states.setAccountInformation] = React.useState({});
 
@@ -315,11 +316,112 @@ const CarpPage = () => {
       states.theme === "green" ? "greenThemed" :
       states.theme === "dark" ? "darkThemed" :
       "lightThemed"}>
-      <img style={{
-        flexShrink: 1,
-        overflow: "hidden",
-        alignSelf: "stretch"
-      }} alt="imagine a fish" src="https://upload.wikimedia.org/wikipedia/commons/a/ac/Unsere_S%C3%BC%C3%9Fwasserfische_%28Tafel_33%29_%286102602781%29.jpg"/>
+      <Markdown>{`
+Legal stuff!
+============
+
+I would strongly reccommend reading this document, as it outlines a lot of
+very important information and many websites will sneak whatever they want
+in here and you won't notice, and then you'll be legally bound to those
+terms. Anyway, I want to keep this short, sweet and easy to understand.
+
+Updates to this agreement
+-------------------------
+
+By making an account for Platypuss you agree to be bound by this agreement,
+and because I'm not a lawyer I'll probably need to update it from time to
+time to ensure my website doesn't end up in a fiery grave due to some new
+loophole. If I do need to push an update I will provide notice by way of a
+banner at the top of the Platypuss home page
+([https://platypuss.net](https://platypuss.net)) for two weeks, and starting
+from when you next log in after these two weeks you will be bound by the new
+terms. Should a more urgent update need to be made I will provide you notice
+by email.
+
+Using this software
+-------------------
+
+I'm not a company. I will not accept responsibility for anything that happens
+as a result of your use or misuse of the software. You can use it, modify it,
+share it, etc. under the terms of the
+[GNU Public License V3](https://www.gnu.org/licenses/gpl-3.0.html). By using
+the software you are saying that you agree to those terms. I believe in
+open-source software, so the "reference" server and client are both open
+sourced and available on GitHub. The usual common sense applies, don't say
+that you made it (or anybody else except for me), don't try take me to court
+if it doesn't work the way you want it to, but do tell me about any bugs
+because I do actually want to fix them.
+
+I reserve the right to stop you from using the software:
+--------------------------------------------------------
+
+- If you claim to have made it,
+- If you are using it or trying to use it for illegal purposes or to harm other
+  people or
+- If you are attempting to exploit flaws in the software for malicious purposes.
+
+Data the software collects about you
+------------------------------------
+
+When you use the website I do collect some neccessary data on you so that I
+can make it actually work the way it should, this includes:
+- Your e-mail address (for most accounts): I don't send you emails unless I
+  have to because it's quite annoying to try and do. I don't have any reason
+  to look at your email address either, it's stored safely in a database. The
+  only reason I collect it at all is so that I can try to prevent people from
+  making lots of accounts (you can just use another e-mail address but that's
+  enough to deter most people). I don't share your e-mail address with anyone.
+  The only times it will be used is when you first create your account to
+  verify that you do in fact own that e-mail address, when any urgent updates
+  need to be made to this document (hopefully never) and when you request an
+  e-mail to reset your Platypuss password.
+- Your password: I can't see your password. It's encrypted on the client side
+  (in your browser before you click the Sign In button) so neither the actual
+  password nor the neccessary information to acquire it is provided to the
+  server. Nonetheless this will not be shared with any third party and is used
+  to allow you to sign in to your account securely.
+- A list of servers you're in: This is collected so that the app can sync the
+  servers you're in between devices, this just means you don't have to join
+  the same server once for every device you log into. This is not shared with
+  third parties.
+- Your profile picture (if you upload one): This is shared publicly with others
+  using the service, it's sort of the entire point of having a profile picture,
+  and as such you take responsibility over what you upload and accept that you're
+  sharing it publicly.
+- Your "about me" section (if you set one): Same goes as for the profile
+  picture. I'd suggest not putting sensitive information here.
+
+Data server owners can collect
+------------------------------
+
+I can't control what server owners do with the data they get but I do know
+what data they get and why they get it.
+- The messages you send: So that they can send it to everybody else. This is
+  seen by the server owner and usually everybody else in the server too. Don't
+  share anything you're not confident sharing.
+- Images you attach to your messages: These are uploaded to the individual
+  servers now. The owner of the server can see this, usually everybody else on
+  the server can as well. Don't share information you don't want shared.
+- Your profile information: your profile picture (if you upload one), your
+  username and your "about me" section are visible to everybody else who is in
+  a server with you, including the owner of the server.
+
+Data they can't collect
+-----------------------
+
+- Your password: this is never shared with anyone, and server owners can't gain
+  access to your account unless you provide them with your password or access to
+  your email address.
+- Your email address: this is never shared with server owners or other users of
+  the platform. We use a third-party partner called [mailtrap](https://mailtrap.io/)
+  to allow us to send emails such as verification emails and password reset emails,
+  as such the content of these emails and the addresses they're sent to does need
+  to be shared with them, and I don't have control over and won't take responsibility
+  for what they do with it.
+- Which other servers you're in, this isn't shared with anybody else either.
+
+© 2020-2024 Ben Keppel and [other github contributors](https://github.com/kettle-7/platypuss/graphs/contributors)
+      `}</Markdown>
     </main>
     <footer className={
       states.theme === "custom" ? "" :
@@ -334,8 +436,8 @@ const CarpPage = () => {
   </>);
 };
 
-export default CarpPage;
+export default LegalPage;
 
 export const Head = () => (
-  <title>hehe faush &gt;:3</title>
+  <title>Legal | Beta Platypuss</title>
 );

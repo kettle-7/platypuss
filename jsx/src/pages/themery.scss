@@ -57,7 +57,7 @@
   --background-level6: #373737;
   --foreground-level1: white;
   --foreground-level2: #e0e0e0;
-  /*--accent: #349efa;*/
+  /*--accent: #349eff;*/
   --accent: #c847ff;
   --grey: #888888;
 }
@@ -82,6 +82,11 @@
 
 .account-settings-username {
   margin-left: 2px;
+}
+
+::selection {
+  color: white;
+  background-color: var(--accent);
 }
 
 select {
@@ -122,6 +127,8 @@ select:hover {
 }
 
 * {
+  outline: none; /* Thanks firefox but if I want borders for
+                    accessibility I'll add them myself */
   font-family: Inter, sans-serif;
   color: var(--foreground-level1);
 }
@@ -408,8 +415,8 @@ blockquote {
   padding: 5px;
 }
 
-#messageBox :active {
-  border: 1px solid var(--accent);
+#messageBox:active {
+  border: 2px solid var(--accent);
 }
 
 #serverTitle {
@@ -510,17 +517,16 @@ input[type="text"], input[type="password"], input[type="email"] {
   background-color: var(--background-level3);
   box-shadow: 2px 2px 2px #1b1b1b88 inset;
   background-color: var(--background-level5);
-  border: 1px solid var(--accent);
   color: var(--foreground-level1);
-  border-color: var(--grey);
+  border: 1px solid var(--grey);
   border-radius: 5px;
   margin-top: 3px;
 }
 
 input[type="text"]:active, input[type="password"]:active, input[type="email"]:active {
   background-color: var(--background-level4);
-  border-color: var(--grey);
   box-shadow: 2px 2px 2px #1b1b1b88 inset;
+  border: 2px solid var(--accent);
 }
 
 .message2 img {
@@ -665,9 +671,8 @@ input[type="text"]:active, input[type="password"]:active, input[type="email"]:ac
   background-color: var(--background-level3);
   box-shadow: 2px 2px 2px #1b1b1b88 inset;
   background-color: var(--background-level5);
-  border: 1px solid var(--accent);
   color: var(--foreground-level1);
-  border-color: var(--grey);
+  border: 1px solid var(--grey);
   border-radius: 5px;
   margin-right: 3px;
   margin-left: 3px;
@@ -678,8 +683,8 @@ input[type="text"]:active, input[type="password"]:active, input[type="email"]:ac
 
 #changeAboutMe:active {
   background-color: var(--background-level4);
-  border-color: var(--grey);
   box-shadow: 2px 2px 2px #1b1b1b88 inset;
+  border: 1px solid var(--accent);
 }
 
 h5, h4, h6 {
