@@ -119,14 +119,15 @@ module.exports = {
                             obj.peers[client.uid].online = true;
                         }
                     }
-                    packet.ws.send(JSON.stringify(obj));
-                    if (sdata.users[packet.ws.uid].globalPerms.includes("message.history") && sdata.users[packet.ws.uid].globalPerms.includes("message.read")) {
-                        packet.ws.send(JSON.stringify({
-                            eventType: "messages",
-                            messages: msgstld,
-                            isTop: (mids.length <= 50)
-                        }));
+                    obj.rooms = {};
+                    for (let room of sdata.rooms) {
+                        // TODO: permissions
+                        obj.rooms[room.id] = {
+                            id: room.id,
+                            name: room.name
+                        }
                     }
+                    packet.ws.send(JSON.stringify(obj));
                     return sdata;
                 } catch (e) {
                     console.log(e);

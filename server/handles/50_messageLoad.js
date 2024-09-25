@@ -28,6 +28,14 @@
             }));
             return;
         }
+        if (sdata.rooms[packet.room] == undefined) {
+            packet.ws.send(JSON.stringify({
+                "eventType": "error",
+                "code": "nonexistentRoom",
+                "explanation": "This server does not contain a room by that ID."
+            }));
+            return;
+        }
         let max = 20;
         let start = 0;
         if (packet.max != undefined)
@@ -35,15 +43,16 @@
         if (packet.start != undefined)
             start = packet.start;
         let msgstld = [];
-        let mids = Object.keys(sdata.messages);
+        let mids = Object.keys(sdata.rooms[packet.room].messages);
         for (let i = mids.length - max - start; i < mids.length - start; i++) { // this acts weirdly when no messages have been sent
             while (i < 0) i++;
-            msgstld.push(sdata.messages[mids[i]]);
+            msgstld.push(sdata.rooms[packet.room].messages[mids[i]]);
         }
         let done = (max + start >= mids.length);
         packet.ws.send(JSON.stringify({
             eventType: "messages",
             messages: msgstld,
+            room: packet.room,
             isTop: done
         }));
     }

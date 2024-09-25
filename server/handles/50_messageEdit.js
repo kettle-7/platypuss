@@ -28,7 +28,15 @@
             }));
             return;
         }
-        if (sdata.messages[packet.id] == undefined) {
+        if (sdata.rooms[packet.room] == undefined) {
+            packet.ws.send(JSON.stringify({
+                "eventType": "error",
+                "code": "nonexistentRoom",
+                "explanation": "This server does not contain a room by that ID."
+            }));
+            return;
+        }
+        if (sdata.rooms[packet.room].messages[packet.id] == undefined) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
                 code: "nothingModify",
@@ -36,7 +44,7 @@
             }));
             return;
         }
-        if (sdata.messages[packet.id].author != packet.ws.uid) {
+        if (sdata.rooms[packet.room].messages[packet.id].author != packet.ws.uid) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
                 code: "noPerm",
@@ -117,14 +125,15 @@ all the information specified in the Platypuss API."
 		packet.message.author = author;
 		packet.message.id = mid;
 		packet.message.edited = Date.now();
-		sdata.messages[mid] = {
+		sdata.rooms[packet.room].messages[mid] = {
 			content: packet.message.content,
-			stamp: sdata.messages[mid].stamp,
+			stamp: sdata.rooms[packet.room].messages[mid].stamp,
             edited: packet.message.edited,
 			id: mid,
 			author: author,
-			uploads: sdata.messages[mid].uploads,
-			reply: sdata.messages[mid].reply
+			uploads: sdata.rooms[packet.room].messages[mid].uploads,
+			reply: sdata.rooms[packet.room].messages[mid].reply,
+			room: packet.room
 		};
 		console.log(`<${author}> ${packet.message.content}`);
 		for (let client of clients) {
@@ -133,12 +142,13 @@ all the information specified in the Platypuss API."
 				eventType: "messageEdited",
 				message: {
 					content: packet.message.content,
-					stamp: sdata.messages[mid].stamp,
+					stamp: sdata.rooms[packet.room].messages[mid].stamp,
                     edited: packet.message.edited,
 					id: mid,
 					author: author,
-					uploads: sdata.messages[mid].uploads,
-					reply: sdata.messages[mid].reply
+					uploads: sdata.rooms[packet.room].messages[mid].uploads,
+					reply: sdata.rooms[packet.room].messages[mid].reply,
+					room: packet.room
 				},
                 "explanation": "A message was edited."
 			}));

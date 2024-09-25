@@ -115,7 +115,7 @@ function PageHeader ({title, iconClickEvent, ...props}) {
         {title ? title : "(Beta!) Platypuss"}
     </h2>
     <div style={{flexGrow: 1}}></div>
-    <img className="avatar" style={{cursor: "pointer"}} src={authUrl+states.accountInformation.avatar} onClick={() => {
+    <img className="avatar" style={{cursor: "pointer", display: Object.keys(states.accountInformation).length ? "flex" : "none"}} src={authUrl+states.accountInformation.avatar} onClick={() => {
       states.setActivePopover(
         <Popover title="Account Settings">
           <div id="profileBanner">

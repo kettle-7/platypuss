@@ -358,6 +358,7 @@ function triggerMessageSend() {
       eventType: "message",
       message: {
         content: messageTextBox.innerText,
+        room: states.focusedRoom?.id,
         reply: states.reply ? states.reply : undefined
       }
     }));
@@ -386,6 +387,7 @@ function triggerMessageSend() {
                 eventType: "message",
                 message: {
                   content: messageTextBox.innerText,
+                  room: states.focusedRoom?.id,
                   reply: states.reply ? states.reply : undefined,
                   uploads: attachmentObjects
                 }
@@ -423,7 +425,7 @@ function RoomsBar({shown, className, ...props}) {
     </h3>
     <div style={{flexGrow: 1}}></div>
     <span className="material-symbols-outlined">stat_minus_1</span></div>
-    {Object.values(states.focusedServerRenderedRooms).map(room => (<RoomLink server={room}></RoomLink>))}
+    {Object.values(states.focusedServerRenderedRooms).map(room => (<RoomLink room={room}></RoomLink>))}
     {Object.values(states.focusedServerRenderedRooms).length === 0 ? <p>This server doesn't have any rooms in it.</p> : <></>}
   </div>);
 }
@@ -432,6 +434,7 @@ function RoomsBar({shown, className, ...props}) {
 function RoomLink({room}) {
   return (<div className="roomLink" style={{cursor:"pointer"}}>
     <a>{room.name}</a>
+    <button id="roomSettings">settings</button>
   </div>);
 }
 
@@ -465,7 +468,8 @@ function PeersBar({shown, className, ...props}) {
       openSockets[states.focusedServer].send(JSON.stringify({
         eventType: "message",
         message: {
-          content: "/invite"
+          content: "/invite",
+          room: states.focusedRoom?.id
         }
       }));
     }}>add</button>
@@ -487,6 +491,7 @@ function loadMoreMessages() {
   openSockets[states.focusedServer].send(JSON.stringify({
     eventType: "messageLoad",
     start: loadedMessages,
+    room: states.focusedRoom?.id,
     max: 100
   }));
 }
@@ -500,6 +505,7 @@ export const Head = () => (
 function deleteMessage(id) {
   openSockets[states.focusedServer].send(JSON.stringify({
     eventType: "messageDelete",
+    room: states.focusedRoom?.id,
     id: id
   }));
 }
@@ -679,7 +685,7 @@ async function loadView(switchToServer) {
             loadedMessages++;
             break;
           case "messages":
-            if (states.focusedServer !== serverCode) break;
+            if (states.focusedServer !== serverCode || states.focusedRoom?.id != packet.room) break;
             for (let messageID in packet.messages) {
               packet.messages[messageID].isHistoric = true; // whether it was sent before we loaded the page
               messageCache[packet.messages[messageID].id] = {...packet.messages[messageID]};
@@ -701,9 +707,13 @@ async function loadView(switchToServer) {
               servers[serverCode].setManifest(packet.manifest);
             else 
               servers[serverCode].manifest = packet.manifest;
-            if (serverCode === states.focusedServer) {
+            if (serverCode === states.focusedServer && states.focusedRoom?.id == packet.room) {
               states.setFocusedServerPermissions(packet.permissions);
+              states.setFocusedServerRenderedRooms(packet.rooms ? packet.rooms : {});
               states.setFocusedServerPeers(Object.values(packet.peers));
+              if (packet.rooms) {
+                states.setFocusedRoom(Object.values(packet.rooms)[0]);
+              }
             }
             break;
           case "rateLimit":
@@ -714,10 +724,9 @@ async function loadView(switchToServer) {
           case "connecting":
           case "disconnect":
           case "join":
-          case "welcome":
             break; // we don't care about these
           default:
-            if ("explanation" in packet && states.focusedServer === serverCode) {
+            if ("explanation" in packet && states.focusedServer === serverCode && states.focusedRoom?.id == packet.room) {
               let randomString = Math.random().toString();
               messageCache[randomString] = {
                 special: true,
@@ -759,7 +768,7 @@ function PageHeader ({title, iconClickEvent, ...props}) {
         {title ? title : "(Beta!) Platypuss"}
     </h2>
     <div style={{flexGrow: 1}}></div>
-    <img className="avatar" style={{cursor: "pointer"}} src={authUrl+states.accountInformation.avatar} onClick={() => {
+    <img className="avatar" style={{cursor: "pointer", display: Object.keys(states.accountInformation).length ? "flex" : "none"}} src={authUrl+states.accountInformation.avatar} onClick={() => {
       states.setActivePopover(
         <Popover title="Account Settings">
           <div id="profileBanner">

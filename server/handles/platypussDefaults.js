@@ -40,6 +40,9 @@ module.exports = {
         "message.attach": "attach files and images to their messages",
         "moderation.delete": "delete other people's messages",
         "moderation.ban": "ban others from the server",
+        "management.addRooms": "add rooms to the server",
+        "management.editRooms": "edit rooms on the server",
+        "management.deleteRooms": "delete rooms from the server",
         "admin.permedit": "edit other people's permissions (this does not include their own)"
     },
 
@@ -58,6 +61,18 @@ module.exports = {
             this.members = [];
             this.colour = "#eeeeee";
             this.globalPerms = module.exports.defaultPerms;
+        }
+    },
+
+    Room: class {
+        constructor(id, name) {
+            this.id = id;
+            this.name = name;
+            this.include = [];
+            this.exclude = [];
+            this.public = true;
+            this.messages = [];
+            this.permissionOverrides = {};
         }
     },
 

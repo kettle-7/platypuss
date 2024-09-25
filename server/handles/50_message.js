@@ -42,7 +42,23 @@ all the information specified in the Platypuss API."
             packet.ws.send(JSON.stringify({
                 "eventType": "error",
                 "code": "tooLong",
-                "explanation": "That message is too long. Please keep under " + (maxLength / 1000).toString() + "KB. This is to help prevent spam and abuse of the server."
+                "explanation": "That message is too long. Please keep under " + maxLength.toString() + " characters. This is to help prevent spam and abuse of the server."
+            }));
+            return;
+        }
+        if (!("room" in packet)) {
+            packet.ws.send(JSON.stringify({
+                "eventType": "error",
+                "code": "missingData",
+                "explanation": "This server supports rooms now, please see the Platypuss API for how to integrate this into your client."
+            }));
+            return;
+        }
+        if (sdata.rooms[packet.room] == undefined) {
+            packet.ws.send(JSON.stringify({
+                "eventType": "error",
+                "code": "nonexistentRoom",
+                "explanation": "This server does not contain a room by that ID."
             }));
             return;
         }
@@ -349,13 +365,14 @@ all the information specified in the Platypuss API."
             }
             return sdata;
         }
-        sdata.messages[mid] = {
+        sdata.rooms[packet.room].messages[mid] = {
             content: packet.message.content,
             timestamp: packet.message.timestamp,
             id: mid,
             author: author,
             uploads: packet.message.uploads,
-            reply: packet.message.reply
+            reply: packet.message.reply,
+            room: packet.room
         };
         console.log(`<${author}> ${packet.message.content}`);
         for (let client of clients) {

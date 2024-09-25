@@ -15,38 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ************************************************************************/
 
- const { } = require("./platypussDefaults.js");
+ const { Room } = require("./platypussDefaults.js");
+ const { v4 } = require('uuid');
 
  module.exports = {
-	eventType: "messageDelete",
+	eventType: "createRoom",
 	execute: function (sdata, wss, packet, clients) {
-        if (packet.id == undefined) {
+        if (packet.name == undefined) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
-                code: "missingId",
-                explanation: "messageDelete event requires an id of the message to delete"
+                code: "missingRoomName",
+                explanation: "createRoom event requires a name for the room to be created"
             }));
             return;
         }
-        if (sdata.rooms[packet.room] == undefined) {
-            packet.ws.send(JSON.stringify({
-                "eventType": "error",
-                "code": "nonexistentRoom",
-                "explanation": "This server does not contain a room by that ID."
-            }));
-            return;
-        }
-        if (sdata.rooms[packet.room].messages[packet.id] == undefined) {
-            packet.ws.send(JSON.stringify({
-                eventType: "error",
-                code: "nothingModify",
-                explanation: "The client requested a modification to a non-existent object"
-            }));
-            return;
-        }
-        if (!(
-            (sdata.rooms[packet.room].messages[packet.id].author == packet.ws.uid && sdata.users[packet.ws.uid].globalPerms.includes("message.delete"))
-            || sdata.users[packet.ws.uid].globalPerms.includes("moderation.delete"))) {
+        if (!(sdata.users[packet.ws.uid].globalPerms.includes("management.addRooms") || sdata.properties.admins.includes(packet.ws.uid))) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
                 code: "noPerm",
@@ -54,12 +37,13 @@
             }));
             return;
         }
-        delete sdata.rooms[packet.room].messages[packet.id];
+        let newRoomId = v4();
+        sdata.rooms[newRoomId] = new Room(newRoomId, packet.name.toString());
         for (let client of clients) {
             if (client.loggedinbytoken)
             client.send(JSON.stringify({
-                eventType: "messageDeleted",
-                messageId: packet.id
+                eventType: "roomAdded",
+                room: sdata.rooms[newRoomId]
             }));
         }
         return sdata;
