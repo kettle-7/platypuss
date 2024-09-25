@@ -711,6 +711,7 @@ async function loadView(switchToServer) {
               states.setFocusedServerPermissions(packet.permissions);
               states.setFocusedServerRenderedRooms(packet.rooms ? packet.rooms : {});
               states.setFocusedServerPeers(Object.values(packet.peers));
+              console.log(packet.rooms, states.focusedRoom);
               if (packet.rooms) {
                 states.setFocusedRoom(Object.values(packet.rooms)[0]);
               }

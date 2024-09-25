@@ -114,13 +114,17 @@ module.exports = {
                         }
                     }
                     obj.rooms = {};
+                    console.log(room, sdata.rooms);
                     for (let room of Object.values(sdata.rooms)) {
+                        console.log(room, sdata.rooms);
                         // TODO: permissions
                         obj.rooms[room.id] = {
                             id: room.id,
-                            name: room.name
+                            name: room.name,
+                            messages: {}
                         }
                     }
+                    console.log(obj.rooms);
                     packet.ws.send(JSON.stringify(obj));
                     return sdata;
                 } catch (e) {
