@@ -114,7 +114,7 @@ module.exports = {
                         }
                     }
                     obj.rooms = {};
-                    for (let room of sdata.rooms) {
+                    for (let room of Object.values(sdata.rooms)) {
                         // TODO: permissions
                         obj.rooms[room.id] = {
                             id: room.id,
