@@ -354,6 +354,7 @@ function triggerMessageSend() {
   let socket = openSockets[states.focusedServer];
   let messageTextBox = document.getElementById("messageBox");
   if (states.uploads.length === 0) {
+    console.log(states.focusedRoom?.id)
     socket.send(JSON.stringify({
       eventType: "message",
       message: {

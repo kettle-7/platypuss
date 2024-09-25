@@ -45,7 +45,7 @@ all the information specified in the Platypuss API."
                 "explanation": "That message is too long. Please keep under " + maxLength.toString() + " characters. This is to help prevent spam and abuse of the server."
             }));
             return;
-        }
+        }/*
         if (!("room" in packet)) {
             packet.ws.send(JSON.stringify({
                 "eventType": "error",
@@ -53,7 +53,7 @@ all the information specified in the Platypuss API."
                 "explanation": "This server supports rooms now, please see the Platypuss API for how to integrate this into your client."
             }));
             return;
-        }
+        }*/
         if (sdata.rooms[packet.room] == undefined) {
             packet.ws.send(JSON.stringify({
                 "eventType": "error",
