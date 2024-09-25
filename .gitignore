@@ -1,6 +1,9 @@
 # Sensitive Files (no commiter)
 
 server/server.json
+server/servers.json
+server/server.properties
+server/servers.properties
 temp.js
 
 # We don't need these
