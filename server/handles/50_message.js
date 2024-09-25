@@ -61,7 +61,8 @@ all the information specified in the Platypuss API."
                 "code": "nonexistentRoom",
                 "explanation": "This server does not contain a room by that ID."
             }));
-            return;
+            //return;
+            packet.room = Object.keys(sdata.rooms)[0];
         }
         //if (!(/[\!@#$%\^&\*()_+\-=\[\]{};':"\\|,.<>\/?A-Za-z0-9]/.test(packet.message.content)) && !packet) {
         if (packet.message.content.replace(/[ \t\r\n]/g, "").length < 1) {
