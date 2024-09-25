@@ -91,12 +91,6 @@ module.exports = {
                             }));
                         }
                     }
-                    let msgstld = [];
-                    let mids = Object.keys(sdata.messages);
-                    for (let i = mids.length - 50; i < mids.length; i++) { // this acts weirdly when no messages have been sent
-                        while (i < 0) i++;
-                        msgstld.push(sdata.messages[mids[i]]);
-                    }
                     let obj = {
                         eventType: "connected",
                         explanation: "You've connected to the server successfully.",
