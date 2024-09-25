@@ -114,7 +114,7 @@ module.exports = {
                         }
                     }
                     obj.rooms = {};
-                    console.log(room, sdata.rooms);
+                    console.log(sdata.rooms);
                     for (let room of Object.values(sdata.rooms)) {
                         console.log(room, sdata.rooms);
                         // TODO: permissions
