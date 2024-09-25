@@ -34,6 +34,7 @@
                 "code": "nonexistentRoom",
                 "explanation": "This server does not contain a room by that ID."
             }));
+            console.log(packet.room);
             return;
         }
         let max = 20;
