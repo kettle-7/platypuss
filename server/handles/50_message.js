@@ -54,15 +54,14 @@ all the information specified in the Platypuss API."
             }));
             return;
         }*/
-        if (sdata.rooms[packet.room] == undefined) {
-            console.log(packet.room, Object.keys(sdata.rooms))
+        if (sdata.rooms[packet.message.room] == undefined) {
             packet.ws.send(JSON.stringify({
                 "eventType": "error",
                 "code": "nonexistentRoom",
                 "explanation": "This server does not contain a room by that ID."
             }));
             //return;
-            packet.room = Object.keys(sdata.rooms)[0];
+            packet.message.room = Object.keys(sdata.rooms)[0];
         }
         //if (!(/[\!@#$%\^&\*()_+\-=\[\]{};':"\\|,.<>\/?A-Za-z0-9]/.test(packet.message.content)) && !packet) {
         if (packet.message.content.replace(/[ \t\r\n]/g, "").length < 1) {
@@ -209,7 +208,6 @@ all the information specified in the Platypuss API."
                 }));
                 return;
             }
-            console.log(packet.servers.properties[packet.message.content.split(" ")[1]]);
             delete packet.servers[packet.message.content.split(" ")[1]];
             delete packet.servers.properties[packet.message.content.split(" ")[1]];
             packet.ws.send(JSON.stringify({
@@ -367,14 +365,14 @@ all the information specified in the Platypuss API."
             }
             return sdata;
         }
-        sdata.rooms[packet.room].messages[mid] = {
+        sdata.rooms[packet.message.room].messages[mid] = {
             content: packet.message.content,
             timestamp: packet.message.timestamp,
             id: mid,
             author: author,
             uploads: packet.message.uploads,
             reply: packet.message.reply,
-            room: packet.room
+            room: packet.message.room
         };
         console.log(`<${author}> ${packet.message.content}`);
         for (let client of clients) {

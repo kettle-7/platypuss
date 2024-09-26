@@ -19,6 +19,7 @@ const { WebSocketServer } = require('ws');
 const https = require('https');
 const http = require('http');
 const fs = require("fs");
+const { v4 } = require("uuid");
 const path = require('path');
 // feel free to comment out this line if you already have a config and don't want extra packages to install
 const { questionInt, question, keyInYN } = require("readline-sync");
@@ -48,12 +49,19 @@ restart this server afterwards for the changes to be applied.");
 var conf = JSON.parse(fs.readFileSync(__dirname+"/server.properties"));
 
 if (!fs.existsSync(__dirname+"/server.json")) {
+    var newRoomID = v4();
+    var newRooms = {};
+    newRooms[newRoomID] = {
+        name: "home",
+        id: newRoomID,
+        messages: {}
+    }
     fs.writeFileSync(__dirname+"/server.json", JSON.stringify({
-        "users": {},
-        "rooms": {},
-        "messages": {},
-        "groups": {},
-        "meta": {}
+        users: {},
+        rooms: newRooms,
+        messages: {},
+        groups: {},
+        meta: {}
     }));
 }
 

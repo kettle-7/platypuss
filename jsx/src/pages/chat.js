@@ -35,7 +35,7 @@ var finishedLoading = false; // to prevent some code from being ran multiple tim
 var pageUrl = browser ? new URL(window.location) : new URL("http://localhost:8000"); // window is not defined in the testing environment so just assume localhost
 var authUrl = "https://platypuss.net"; // Authentication server, you shouldn't have to change this but it's a variable just in case
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
-pageUrl.protocol = "https"; // remove this in production
+pageUrl.protocol = "http:"; // remove this in production
 
 const markdownOptions = {
   disableParsingRawHTML: true, // poses a security thread we don't need
@@ -311,6 +311,7 @@ function Message({message}) {
   let sentByThisUser = message.author === states.accountInformation.id;
   let uploads = message.uploads ? message.uploads : [];
   let messageContent = message.content;
+  console.log(states.focusedServerPermissions);
   fetchUser(message.author).then(newAuthor=>{setAuthor(newAuthor)});
   return (<div className="message1" id={message.id}>
     <img src={author.avatar} alt="🐙" className="avatar" style={{
@@ -327,24 +328,24 @@ function Message({message}) {
       </blockquote> : <blockquote className='messageReply'><em>Message couldn't be loaded</em></blockquote> : ""}
       <div className="messageContent">
         <Markdown options={markdownOptions}>{messageContent}</Markdown>
-        {uploads.map(upload => <img className="upload" src={"https://"+states.servers[states.focusedServer].ip+upload.url} onClick={() => {
+        {uploads.map(upload => <img className="upload" src={"http://"+states.servers[states.focusedServer].ip+upload.url} onClick={() => {
           states.setActivePopover(<Popover className="darkThemed" style={{background: "transparent", boxShadow: "none", width: "auto"}} title={upload.name}>
-            <img src={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{borderRadius: 10, boxShadow: "0px 0px 10px black"}}/>
-            <a href={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{color: "white"}}>Download this image</a>
+            <img src={"http://"+states.servers[states.focusedServer].ip+upload.url} style={{borderRadius: 10, boxShadow: "0px 0px 10px black"}}/>
+            <a href={"http://"+states.servers[states.focusedServer].ip+upload.url} style={{color: "white"}}>Download this image</a>
           </Popover>);
         }}/>)}
       </div>
     </div>
     <div className="message3">
       <button className='material-symbols-outlined' hidden={
-        sentByThisUser ? !states.focusedServerPermissions.includes("message.edit")
+        sentByThisUser ? !Object.keys(states.focusedServerPermissions).includes("message.edit")
         : true // You shouldn't be able to edit other people's messages no matter what
       }>Edit</button>
       <button className='material-symbols-outlined' onClick={()=>{replyToMessage(message.id)}}>Reply</button>
       <button className='material-symbols-outlined' onClick={()=>{pingUser(message.author)}}>alternate_email</button>
       <button className='material-symbols-outlined' onClick={()=>{deleteMessage(message.id)}} hidden={
-        sentByThisUser ? !states.focusedServerPermissions.includes("message.delete")
-        : !states.focusedServerPermissions.includes("moderation.delete")
+        sentByThisUser ? !Object.keys(states.focusedServerPermissions).includes("message.delete")
+        : !Object.keys(states.focusedServerPermissions).includes("moderation.delete")
       }>Delete</button>
     </div>
   </div>);
@@ -354,12 +355,12 @@ function triggerMessageSend() {
   let socket = openSockets[states.focusedServer];
   let messageTextBox = document.getElementById("messageBox");
   if (states.uploads.length === 0) {
-    console.log(states.focusedRoom?.id)
+    console.log(states.focusedRoom.id)
     socket.send(JSON.stringify({
       eventType: "message",
       message: {
         content: messageTextBox.innerText,
-        room: states.focusedRoom?.id,
+        room: states.focusedRoom.id,
         reply: states.reply ? states.reply : undefined
       }
     }));
@@ -375,7 +376,7 @@ function triggerMessageSend() {
       remainingUploads++;
       // fetch still doesn't support progress tracking which sucks so we use xmlhttprequest
       let request = new XMLHttpRequest();
-      request.open("POST", `https://${states.servers[states.focusedServer].ip}/upload?sessionID=${states.servers[states.focusedServer].token}&mimeType=${upload.fileObject.type}&fileName=${upload.fileObject.name.replace(/[ \\\/]/g, "_")}`);
+      request.open("POST", `http://${states.servers[states.focusedServer].ip}/upload?sessionID=${states.servers[states.focusedServer].token}&mimeType=${upload.fileObject.type}&fileName=${upload.fileObject.name.replace(/[ \\\/]/g, "_")}`);
       request.onreadystatechange = () => {
         if (request.readyState === XMLHttpRequest.DONE && request.status) {
           remainingUploads--;
@@ -388,7 +389,7 @@ function triggerMessageSend() {
                 eventType: "message",
                 message: {
                   content: messageTextBox.innerText,
-                  room: states.focusedRoom?.id,
+                  room: states.focusedRoom.id,
                   reply: states.reply ? states.reply : undefined,
                   uploads: attachmentObjects
                 }
@@ -470,7 +471,7 @@ function PeersBar({shown, className, ...props}) {
         eventType: "message",
         message: {
           content: "/invite",
-          room: states.focusedRoom?.id
+          room: states.focusedRoom.id
         }
       }));
     }}>add</button>
@@ -492,7 +493,7 @@ function loadMoreMessages() {
   openSockets[states.focusedServer].send(JSON.stringify({
     eventType: "messageLoad",
     start: loadedMessages,
-    room: states.focusedRoom?.id,
+    room: states.focusedRoom.id,
     max: 100
   }));
 }
@@ -506,7 +507,7 @@ export const Head = () => (
 function deleteMessage(id) {
   openSockets[states.focusedServer].send(JSON.stringify({
     eventType: "messageDelete",
-    room: states.focusedRoom?.id,
+    room: states.focusedRoom.id,
     id: id
   }));
 }
@@ -538,7 +539,7 @@ function showInvitePopup(invite, domain) {
   }
   pageUrl.searchParams.delete("invite");
   let code = Number("0x"+invite[invite.length - 2]+invite[invite.length - 1]).toString();
-  fetch(`http${pageUrl.protocol === "https:" ? "s" : ""}://${ip}:${port}/${subserver}`).then(res => res.json()).then(data => {
+  fetch(`http${pageUrl.protocol === "http:" ? "" : "s"}://${ip}:${port}/${subserver}`).then(res => res.json()).then(data => {
     states.setActivePopover(
       <Popover title={"You've been invited to join "+(data.title ? data.title.toString() : "an untitled server")}>
         <div className='inviteServerBanner'>
@@ -632,7 +633,8 @@ async function loadView(switchToServer) {
         }
       };
       // Open a socket connection with the server
-      let socket = new WebSocket((pageUrl.protocol === "https:" ? "wss:" : "ws") + "//" + ip);
+      console.log((pageUrl.protocol === "https:" ? "wss:" : "ws:") + "//" + ip);
+      let socket = new WebSocket((pageUrl.protocol === "https:" ? "wss:" : "ws:") + "//" + ip);
 
       socket.onerror = () => {
         // The server's disconnected, in which case if we're focusing on it we should focus on a different server
@@ -686,7 +688,7 @@ async function loadView(switchToServer) {
             loadedMessages++;
             break;
           case "messages":
-            if (states.focusedServer !== serverCode || states.focusedRoom?.id != packet.room) break;
+            if (states.focusedServer !== serverCode || states.focusedRoom.id != packet.room) break;
             for (let messageID in packet.messages) {
               packet.messages[messageID].isHistoric = true; // whether it was sent before we loaded the page
               messageCache[packet.messages[messageID].id] = {...packet.messages[messageID]};
@@ -708,14 +710,22 @@ async function loadView(switchToServer) {
               servers[serverCode].setManifest(packet.manifest);
             else 
               servers[serverCode].manifest = packet.manifest;
-            if (serverCode === states.focusedServer && states.focusedRoom?.id == packet.room) {
+            if (serverCode === states.focusedServer && states.focusedRoom.id == packet.room) {
+              console.log(packet.permissions);
               states.setFocusedServerPermissions(packet.permissions);
               states.setFocusedServerRenderedRooms(packet.rooms ? packet.rooms : {});
               states.setFocusedServerPeers(Object.values(packet.peers));
-              console.log(packet.rooms, states.focusedRoom);
+              console.log(Object.values(packet.rooms)[0], states.focusedRoom);
               if (packet.rooms) {
                 states.setFocusedRoom(Object.values(packet.rooms)[0]);
+                socket.send(JSON.stringify({
+                  eventType: "messageLoad",
+                  start: 0,
+                  room: Object.values(packet.rooms)[0].id,
+                  max: 50
+                }));
               }
+              console.log(states.focusedRoom);
             }
             break;
           case "rateLimit":
@@ -728,7 +738,7 @@ async function loadView(switchToServer) {
           case "join":
             break; // we don't care about these
           default:
-            if ("explanation" in packet && states.focusedServer === serverCode && states.focusedRoom?.id == packet.room) {
+            if ("explanation" in packet && states.focusedServer === serverCode && states.focusedRoom.id == packet.room) {
               let randomString = Math.random().toString();
               messageCache[randomString] = {
                 special: true,

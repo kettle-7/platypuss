@@ -28,7 +28,7 @@
             }));
             return;
         }
-        if (sdata.rooms[packet.room] == undefined) {
+        if (sdata.rooms[packet.message.room] == undefined) {
             packet.ws.send(JSON.stringify({
                 "eventType": "error",
                 "code": "nonexistentRoom",
@@ -36,7 +36,7 @@
             }));
             return;
         }
-        if (sdata.rooms[packet.room].messages[packet.id] == undefined) {
+        if (sdata.rooms[packet.message.room].messages[packet.id] == undefined) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
                 code: "nothingModify",
@@ -44,7 +44,7 @@
             }));
             return;
         }
-        if (sdata.rooms[packet.room].messages[packet.id].author != packet.ws.uid) {
+        if (sdata.rooms[packet.message.room].messages[packet.id].author != packet.ws.uid) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
                 code: "noPerm",
@@ -125,30 +125,30 @@ all the information specified in the Platypuss API."
 		packet.message.author = author;
 		packet.message.id = mid;
 		packet.message.edited = Date.now();
-		sdata.rooms[packet.room].messages[mid] = {
+		sdata.rooms[packet.message.room].messages[mid] = {
 			content: packet.message.content,
-			stamp: sdata.rooms[packet.room].messages[mid].stamp,
+			stamp: sdata.rooms[packet.message.room].messages[mid].stamp,
             edited: packet.message.edited,
 			id: mid,
 			author: author,
-			uploads: sdata.rooms[packet.room].messages[mid].uploads,
-			reply: sdata.rooms[packet.room].messages[mid].reply,
-			room: packet.room
+			uploads: sdata.rooms[packet.message.room].messages[mid].uploads,
+			reply: sdata.rooms[packet.message.room].messages[mid].reply,
+			room: packet.message.room
 		};
-		console.log(`<${author}> ${packet.message.content}`);
+		console.log(`<${author} (edit)> ${packet.message.content}`);
 		for (let client of clients) {
 			if (client.loggedinbytoken && sdata.users[client.uid].globalPerms.includes("message.read"))
 			client.send(JSON.stringify({
 				eventType: "messageEdited",
 				message: {
 					content: packet.message.content,
-					stamp: sdata.rooms[packet.room].messages[mid].stamp,
+					stamp: sdata.rooms[packet.message.room].messages[mid].stamp,
                     edited: packet.message.edited,
 					id: mid,
 					author: author,
-					uploads: sdata.rooms[packet.room].messages[mid].uploads,
-					reply: sdata.rooms[packet.room].messages[mid].reply,
-					room: packet.room
+					uploads: sdata.rooms[packet.message.room].messages[mid].uploads,
+					reply: sdata.rooms[packet.message.room].messages[mid].reply,
+					room: packet.message.room
 				},
                 "explanation": "A message was edited."
 			}));

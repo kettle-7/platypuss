@@ -415,7 +415,7 @@ blockquote {
   padding: 5px;
 }
 
-#messageBox:active {
+#messageBox:focus {
   border: 2px solid var(--accent);
 }
 
@@ -523,7 +523,7 @@ input[type="text"], input[type="password"], input[type="email"] {
   margin-top: 3px;
 }
 
-input[type="text"]:active, input[type="password"]:active, input[type="email"]:active {
+input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus {
   background-color: var(--background-level4);
   box-shadow: 2px 2px 2px #1b1b1b88 inset;
   border: 2px solid var(--accent);
@@ -681,7 +681,7 @@ input[type="text"]:active, input[type="password"]:active, input[type="email"]:ac
   padding: 3px;
 }
 
-#changeAboutMe:active {
+#changeAboutMe:focus {
   background-color: var(--background-level4);
   box-shadow: 2px 2px 2px #1b1b1b88 inset;
   border: 1px solid var(--accent);
