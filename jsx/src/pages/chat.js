@@ -707,7 +707,7 @@ async function loadView(switchToServer) {
               servers[serverCode].setManifest(packet.manifest);
             else 
               servers[serverCode].manifest = packet.manifest;
-            if (serverCode === states.focusedServer && states.focusedRoom.id == packet.room) {
+            if (serverCode === states.focusedServer) {
               states.setFocusedServerPermissions(packet.permissions);
               states.setFocusedServerRenderedRooms(packet.rooms ? packet.rooms : {});
               states.setFocusedServerPeers(Object.values(packet.peers));

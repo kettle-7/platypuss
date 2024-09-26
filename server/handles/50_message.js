@@ -46,7 +46,7 @@ all the information specified in the Platypuss API."
             }));
             return;
         }
-        if (!("room" in packet)) {
+        if (!("room" in packet.message)) {
             packet.ws.send(JSON.stringify({
                 "eventType": "error",
                 "code": "missingData",
