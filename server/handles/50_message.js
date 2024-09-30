@@ -232,7 +232,7 @@ all the information specified in the Platypuss API."
                         return {
                             subServer: subserver,
                             inviteCode: packet.servers[subserver].properties?.inviteCode,
-                            inviteLink: generateInviteCode(subserver, packet.servers.properties?.port, packet.servers[subserver].properties?.inviteCode)
+                            inviteLink: "<"+generateInviteCode(subserver, packet.servers.properties?.port, packet.servers[subserver].properties?.inviteCode)+">"
                         };
                     }))}`,
                     timestamp: packet.message.timestamp,
