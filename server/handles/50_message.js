@@ -225,7 +225,7 @@ all the information specified in the Platypuss API."
         }
         else if (sdata.properties.admins.includes(packet.message.author) &&
                 packet.message.content.indexOf("/listsubservers") == 0) {
-            console.log(Object.keys(packet.servers).map(s => Object.keys(s)));
+            console.log(Object.values(packet.servers).map(s => Object.keys(s)));
             packet.ws.send(JSON.stringify({
                 eventType: "message",
                 message: {
