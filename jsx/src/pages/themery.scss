@@ -338,6 +338,25 @@ a {
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
+.roomLink {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  padding: 2px;
+  border-radius: 6px;
+  background-color: var(--background-level3);
+
+  &:hover {
+    background-color: var(--background-level2);
+  }
+}
+
+.roomLink a {
+  flex-grow: 1;
+  margin-left: 4px;
+  color: white;
+}
+
 .tooltipContainer .serverIconTooltip {
   display: none;
   position: absolute;
@@ -415,7 +434,7 @@ blockquote {
 }
 
 #messageBox:focus {
-  border: 2px solid var(--accent);
+  border: 1px solid var(--accent);
 }
 
 #serverTitle {
@@ -525,7 +544,7 @@ input[type="text"], input[type="password"], input[type="email"] {
 input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus {
   background-color: var(--background-level4);
   box-shadow: 2px 2px 2px #1b1b1b88 inset;
-  border: 2px solid var(--accent);
+  border: 1px solid var(--accent);
 }
 
 .message2 img {

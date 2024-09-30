@@ -424,17 +424,43 @@ function RoomsBar({shown, className, ...props}) {
       {states.focusedServer ? states.servers[states.focusedServer].manifest.title : "Loading servers..."}
     </h3>
     <div style={{flexGrow: 1}}></div>
-    <span className="material-symbols-outlined">stat_minus_1</span></div>
+    <button className="material-symbols-outlined" style={{
+      height: "fit-content",
+      width: "fit-content",
+      padding: 3,
+      margin: 3
+    }} onClick={() => {
+      states.setActivePopover(<Popover title="Server Settings">
+        <button onClick={leaveServer}>Leave this server</button>
+      </Popover>);
+    }}>stat_minus_1</button></div>
     {Object.values(states.focusedServerRenderedRooms).map(room => (<RoomLink room={room}></RoomLink>))}
     {Object.values(states.focusedServerRenderedRooms).length === 0 ? <p>This server doesn't have any rooms in it.</p> : <></>}
   </div>);
 }
 
+function leaveServer() {
+  fetch(`${authUrl}/leaveServer?id=${localStorage.getItem("sessionID")}&ip=${
+    states.servers[states.focusedServer].ip} ${
+    states.servers[states.focusedServer].inviteCode} ${
+    states.servers[states.focusedServer].subserver}`).then(() => {window.location.reload()});
+}
+
 // a comment
 function RoomLink({room}) {
-  return (<div className="roomLink" style={{cursor:"pointer"}}>
+  return (<div className="roomLink" style={{cursor:"pointer"}} onClick={() => {
+    states.setFocusedRoom(room);
+    loadView();
+  }}>
     <a>{room.name}</a>
-    <button id="roomSettings">settings</button>
+    <button className="roomSettings material-symbols-outlined" style={{
+      height: "fit-content",
+      width: "fit-content",
+      padding: 3,
+      margin: 3
+    }} onClick={event => {
+      event.stopPropagation();
+    }}>settings</button>
   </div>);
 }
 
@@ -712,11 +738,12 @@ async function loadView(switchToServer) {
               states.setFocusedServerRenderedRooms(packet.rooms ? packet.rooms : {});
               states.setFocusedServerPeers(Object.values(packet.peers));
               if (packet.rooms) {
-                states.setFocusedRoom(Object.values(packet.rooms)[0]);
+                if (!Object.values(packet.rooms).includes(states.focusedRoom))
+                  states.setFocusedRoom(Object.values(packet.rooms)[0]);
                 socket.send(JSON.stringify({
                   eventType: "messageLoad",
                   start: 0,
-                  room: Object.values(packet.rooms)[0].id,
+                  room: states.focusedRoom.id,
                   max: 50
                 }));
               }
