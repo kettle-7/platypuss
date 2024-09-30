@@ -231,8 +231,8 @@ all the information specified in the Platypuss API."
                     content: `${JSON.stringify(Object.keys(packet.servers).map(subserver => {
                         return {
                             subServer: subserver,
-                            inviteCode: packet.servers[subserver].properties.inviteCode,
-                            inviteLink: generateInviteCode(subserver, packet.servers.properties.port, packet.servers[subserver].properties.inviteCode)
+                            inviteCode: packet.servers.properties[subserver].inviteCode,
+                            inviteLink: generateInviteCode(subserver, packet.servers.properties.port, packet.servers.properties[subserver].inviteCode)
                         };
                     }))}`,
                     timestamp: packet.message.timestamp,
