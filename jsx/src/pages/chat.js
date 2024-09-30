@@ -234,7 +234,7 @@ function MiddleSection({shown, className, ...props}) {
       <div id="aboveMessageArea">
         <button id="loadMoreMessagesButton" onClick={loadMoreMessages}>Load more messages</button>
       </div>
-      {Object.keys(states.servers).length ? states.servers[states.focusedServer].manifest.pending ?
+      {Object.keys(states.servers).length ? states.servers[states.focusedServer]?.manifest?.pending ?
         <div id="messageArea" style={{position: "relative"}}>
           <div id="serverNotConnected">
             <h2>We couldn't connect to this server</h2>
