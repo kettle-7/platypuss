@@ -186,17 +186,16 @@ function SyntaxHighlightedCode(props) {
 }
 
 function PopoverParent({...props}) {
-  [states.activePopover, states.setActivePopover] = React.useState(null);
   return (
-    <div id="popoverParent" style={{display: states.activePopover == null ? "none" : "flex"}} onMouseDown={() => {
+    <div id="popoverParent" style={{display: states.activePopover === null ? "none" : "flex"}} onMouseDown={() => {setTimeout(() => {
       states.setActivePopover(null);
-    }} {...props}>{states.activePopover}</div>
+    }, 50)}} {...props}>{states.activePopover}</div>
   );
 }
 
 // for popups / popovers in desktop, render as separate screens on mobile
 function Popover({children, title, style={}, ...props}) {
-  return <div id="popover" style={{margin: style.margin ? style.margin : "auto", position: "relative", ...style}} onClick={event => {
+  return <div id="popover" style={{margin: style.margin ? style.margin : "auto", ...style}} onClick={event => {
     event.stopPropagation();
   }} onMouseDown={event => {
     event.stopPropagation();
@@ -235,15 +234,30 @@ function MiddleSection({shown, className, ...props}) {
       <div id="aboveMessageArea">
         <button id="loadMoreMessagesButton" onClick={loadMoreMessages}>Load more messages</button>
       </div>
-      {Object.keys(states.servers).length ?
-        <div id="messageArea">{states.focusedRoomRenderedMessages.map(message => <Message message={message} key={message.id}/>)}</div> : 
+      {Object.keys(states.servers).length ? states.servers[states.focusedServer].manifest.pending ?
+        <div id="messageArea" style={{position: "relative"}}>
+          <div id="serverNotConnected">
+            <h2>We couldn't connect to this server</h2>
+            <p>
+              For whatever reason we aren't able to connect to this server at the moment. This may be a problem with
+              your internet connection or something on the server's side. If you can connect to other Platypuss servers
+              maybe try get in touch with the server owner if possible.
+              <br/><br/>
+              Server Address (for troubleshooting): {states.servers[states.focusedServer].ip}
+              <br/>
+            </p>
+            <button onClick={leaveServer}>Leave this server</button>
+          </div>
+        </div> :
+        <div id="messageArea">{states.focusedRoomRenderedMessages.map(message => <Message message={message} key={message.id}/>)}</div> :
         <div id="messageArea" style={{position: "relative"}}>
           <div id="noServers">
             <h2>You're not in any servers!</h2>
             <p>
               You don't appear to be in any Platypuss servers at the moment. You can join one through an invite
               link or look at <a href="https://github.com/kettle-7/platypuss/wiki" target='_blank'>the wiki
-              page</a> for how to host your own.<br/><br/><a href="https://platypuss.net" target='_blank'>What's Platypuss?</a></p>
+              page</a> for how to host your own.<br/><br/><a href="https://platypuss.net" target='_blank'>What's Platypuss?</a>
+            </p>
           </div>
         </div>}
       <div id="belowMessageArea" ref={belowMessagesRef}></div>
@@ -348,12 +362,12 @@ function Message({message}) {
       </blockquote> : <blockquote className='messageReply'><em>Message couldn't be loaded</em></blockquote> : ""}
       <div className="messageContent">
         <Markdown options={markdownOptions}>{messageContent}</Markdown>
-        {uploads.map(upload => <img className="upload" src={"https://"+states.servers[states.focusedServer].ip+upload.url} onClick={() => {
+        {uploads.map(upload => <img className="upload" src={"https://"+states.servers[states.focusedServer].ip+upload.url} onClick={() => {setTimeout(() => {
           states.setActivePopover(<Popover className="darkThemed" style={{background: "transparent", boxShadow: "none", width: "auto"}} title={upload.name}>
             <img src={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{borderRadius: 10, boxShadow: "0px 0px 10px black"}}/>
             <a href={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{color: "white"}}>Download this image</a>
           </Popover>);
-        }}/>)}
+        }, 50);}}/>)}
       </div>
     </div>
     <div className="message3">
@@ -471,7 +485,7 @@ function RoomsBar({shown, className, ...props}) {
       width: "fit-content",
       padding: 3,
       margin: 3
-    }} onClick={() => {
+    }} onClick={() => {setTimeout(() => {
       states.setActivePopover(<Popover title="">
         <div className='popoverBanner'>
           <img className='avatar bannerIcon' alt="🐙" src={states.servers[states.focusedServer].manifest.icon}/>
@@ -490,7 +504,7 @@ function RoomsBar({shown, className, ...props}) {
         <div style={{flexGrow: 1}}/>
         <button onClick={leaveServer}>Leave this server</button>
       </Popover>);
-    }}>stat_minus_1</button></div>
+    }, 50);}}>stat_minus_1</button></div>
     {Object.values(states.focusedServerRenderedRooms).map(room => (<RoomLink room={room}></RoomLink>))}
     {Object.values(states.focusedServerRenderedRooms).length === 0 ? <p>This server doesn't have any rooms in it.</p> : <></>}
   </div>);
@@ -506,11 +520,12 @@ function leaveServer() {
 // a comment
 function RoomLink({room}) {
   return (<div className="roomLink" style={{cursor:"pointer"}} onClick={() => {
-    setTimeout(() => {
-      states.setFocusedRoom(room);
-      loadView();
-    }, 50);
-  }}>
+      setTimeout(() => {
+        states.setFocusedRoom(room);
+        states.setMobileSidebarShown(false);
+        loadView();
+      }, 50);
+    }}>
     <a>{room.name}</a>
     <button className="roomSettings material-symbols-outlined" style={{
       height: "fit-content",
@@ -535,7 +550,8 @@ function ServersBar({shown, className, ...props}) {
 function ServerIcon({server}) {
   [server.manifest, server.setManifest] = React.useState({
     icon: "",
-    title: "Couldn't connect to this server 🐙"
+    title: "Couldn't connect to this server 🐙",
+    pending: true
   });
   return (<div className="tooltipContainer">
     <img className="serverIcon" src={server.manifest.icon} alt="🐙" onClick={()=>{setTimeout(()=>{
@@ -683,7 +699,7 @@ function AccountSettings() {
         localStorage.setItem("sessionID", null);
         window.location = "/";
       }}>Log Out</button>
-      <button onClick={() => {states.setActivePopover(null);}}>Done</button>
+      <button onClick={() => {setTimeout(() => {states.setActivePopover(null);}, 50);}}>Done</button>
     </Popover>
   );
 }
@@ -786,7 +802,6 @@ function showInvitePopup(invite, domain) {
 async function loadView(switchToServer) {
   // don't try load the client as part of the page compiling
   if (!browser) return;
-  states.setMobileSidebarShown(true);
   window.onkeydown = event => {
     if (event.key === "Escape") {
       states.setActivePopover(null);
@@ -831,7 +846,8 @@ async function loadView(switchToServer) {
           icon: "/icon.png",
           memberCount: 0,
           public: false,
-          description: "Waiting for a response from the server"
+          description: "Waiting for a response from the server",
+          pending: true
         }
       };
       // Open a socket connection with the server
@@ -995,7 +1011,7 @@ function PageHeader ({title, iconClickEvent, ...props}) {
     </h2>
     <div style={{flexGrow: 1}}></div>
     <img className="avatar" style={{cursor: "pointer", display: Object.keys(states.accountInformation).length ? "flex" : "none"}} src={authUrl+states.accountInformation.avatar} onClick={() => {
-      states.setActivePopover(<AccountSettings/>);
+      setTimeout(() => {states.setActivePopover(<AccountSettings/>);}, 50);
     }}/>
   </header>);
 };
@@ -1029,6 +1045,7 @@ export default function ChatPage() {
   }
 
   // set a bunch of empty React state objects for stuff that needs to be accessed throughout the program
+  [states.activePopover, states.setActivePopover] = React.useState(null);
   [states.servers, states.setServers] = React.useState({}); // Data related to servers the user is in
   [states.focusedServerPermissions, states.setFocusedServerPermissions] = React.useState({}); // what permissions we have in the currently focused server
   [states.focusedRoomRenderedMessages, states.setFocusedRoomRenderedMessages] = React.useState([]); // The <Message/> elements shown in the view, set in ChatPage
@@ -1045,7 +1062,10 @@ export default function ChatPage() {
   [states.uploadProgress, states.setUploadProgress] = React.useState(null); // progress bar for uploading message attachments
   [states.avatarProgress, states.setAvatarProgress] = React.useState(null); // how far through we are uploading our avatar
 
-  React.useEffect(() => {loadView();}, []);
+  React.useEffect(() => {
+    loadView();
+    states.setMobileSidebarShown(true);
+  }, []);
 
   // return the basic page layout
   return (<>
@@ -1074,7 +1094,7 @@ export default function ChatPage() {
           states.theme === "light" ? "lightThemed" :
           "darkThemed"
         } shown={
-          (states.mobileSidebarShown && !states.activePopover)
+          (states.mobileSidebarShown && states.activePopover === null)
           || !states.useMobileUI
         }/>
         <RoomsBar className={
@@ -1083,7 +1103,7 @@ export default function ChatPage() {
           states.theme === "light" ? "lightThemed" :
           "darkThemed"
         } shown={
-          (states.mobileSidebarShown && !states.activePopover)
+          (states.mobileSidebarShown && states.activePopover === null)
           || !states.useMobileUI
         }/>
         <MiddleSection className={
@@ -1092,7 +1112,7 @@ export default function ChatPage() {
           states.theme === "dark" ? "darkThemed" :
           "lightThemed"
         } shown={
-          (!states.mobileSidebarShown && !states.activePopover)
+          (!states.mobileSidebarShown && states.activePopover === null)
           || !states.useMobileUI
         }/>
         <PeersBar className={
@@ -1101,7 +1121,7 @@ export default function ChatPage() {
           states.theme === "light" ? "lightThemed" :
           "darkThemed"
         } shown={
-          (states.mobileSidebarShown && !states.activePopover)
+          (states.mobileSidebarShown && states.activePopover === null)
           || !states.useMobileUI
         }/>
         <PopoverParent className={

@@ -8,4 +8,4 @@ The system is made of three main parts:
 
 The idea is that people can host their own server, customise the server-side code with plugins, and then others can join their server with an unique username that is theirs across all servers, and the server owners never get to see their passwords.
 
-much more will be coming here soon, after I add email verification I'll post instructions here on how to start hosting your own server.
+You can make your own account at <https://platypuss.net/> and either join a server with an invite link or see instructions on how to host your own on [the wiki](https://github.com/kettle-7/platypuss/wiki).
