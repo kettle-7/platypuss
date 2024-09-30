@@ -202,13 +202,13 @@ function Popover({children, title, style={}, ...props}) {
     <div id="popoverHeaderBar">
       <h3>{title}</h3>
       <div style={{flexGrow: 1}}></div>
-      <button onClick={() => {states.setActivePopover(null); states.setMobileSidebarShown(false);}} className="material-symbols-outlined">close</button>
+      <button onClick={()=>{setTimeout(()=>{states.setActivePopover(null); states.setMobileSidebarShown(false);}, 50)}} className="material-symbols-outlined">close</button>
     </div>
     {children}
   </div>
 }
 
-// The midsection between these two aforementioned bars
+// where messages go
 function MiddleSection({shown, className, ...props}) {
   const belowMessagesRef = React.useRef(null);
   const scrolledAreaRef = React.useRef(null);
@@ -313,7 +313,7 @@ function Message({message}) {
   let messageContent = message.content;
   fetchUser(message.author).then(newAuthor=>{setAuthor(newAuthor)});
   return (<div className="message1" id={message.id}>
-    <img src={author.avatar} alt="🐙" className="avatar" style={{
+    <img src={authUrl+author.avatar} alt="🐙" className="avatar" style={{
       height: message.special ? "0px" : undefined
     }}/>
     <div className="message2">
@@ -473,16 +473,16 @@ function PeersBar({shown, className, ...props}) {
         }
       }));
     }}>add</button>
-    {states.focusedServerPeers.map(peer => {
+    {Object.values(states.focusedServerPeers).map(peer =>
       <PeerIcon peer={peer}/>
-    })}
+    )}
   </div>);
 }
 
 function PeerIcon({peer}) {
   let [peerInfo, setPeerInfo] = React.useState(userCache[peer.id]);
   fetchUser(peer.id).then(setPeerInfo);
-  return (<img src={peerInfo.avatar} className="serverIcon avatar" alt="🐙" style={{
+  return (<img src={authUrl+peerInfo.avatar} className="serverIcon avatar" alt="🐙" style={{
     opacity: peer.online ? 1 : 0.5
   }}/>);
 }
@@ -710,7 +710,7 @@ async function loadView(switchToServer) {
             if (serverCode === states.focusedServer) {
               states.setFocusedServerPermissions(packet.permissions);
               states.setFocusedServerRenderedRooms(packet.rooms ? packet.rooms : {});
-              states.setFocusedServerPeers(Object.values(packet.peers));
+              states.setFocusedServerPeers(packet.peers);
               if (packet.rooms) {
                 states.setFocusedRoom(Object.values(packet.rooms)[0]);
                 socket.send(JSON.stringify({
@@ -909,7 +909,7 @@ export default function ChatPage() {
   [states.focusedServerRenderedRooms, states.setFocusedServerRenderedRooms] = React.useState([]); // The <RoomLink/> elements in the sidebar for this server
   [states.mobileSidebarShown, states.setMobileSidebarShown] = React.useState(false); // whether to show the sidebar on mobile devices, is open by default when you load the page
   [states.useMobileUI, states.setUseMobileUI] = React.useState(browser ? (window.innerWidth * 2.54 / 96) < 20 : false); // Use mobile UI if the screen is less than 20cm wide
-  [states.focusedServerPeers, states.setFocusedServerPeers] = React.useState([]); // other people in this server
+  [states.focusedServerPeers, states.setFocusedServerPeers] = React.useState({}); // other people in this server
   [states.theme, states.setTheme] = React.useState(theme); // what theme we're using
   [states.themeHex, states.setThemeHex] = React.useState(themeHex); // hex colour code of our custom theme
   [states.reply, states.setReply] = React.useState(null); // id of the message we're replying to
