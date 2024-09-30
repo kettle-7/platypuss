@@ -522,12 +522,13 @@ blockquote {
 .avatar {
   width: 48px;
   height: 48px;
-  border-radius: 50%;
-  flex-shrink: 0;
   display: flex;
+  flex-shrink: 0;
+  border-radius: 50%;
   justify-content: space-evenly;
   align-items: center;
   font-size: xx-large;
+  cursor: pointer;
   float: left;
 }
 
@@ -669,6 +670,11 @@ input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focu
   display: flex;
   align-items: center;
   align-content: center;
+}
+
+.inviteServerBanner {
+  display: flex;
+  align-items: center;
 }
 
 #accountSettingsUsername {
