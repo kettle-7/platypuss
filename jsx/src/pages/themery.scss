@@ -141,7 +141,7 @@ body {
 button {
   color: var(--foreground-level1);
   background: var(--outgradient);
-  border: 0px solid var(--grey);
+  border: 1px solid var(--grey);
   border-radius: 5px;
   padding: 2px;
   padding-left: 10px;
@@ -451,6 +451,13 @@ blockquote {
   overflow: hidden;
 }
 
+.popoverBanner h1 {
+  flex-shrink: 1;
+  text-overflow: ellipsis;
+  text-wrap: nowrap;
+  overflow: hidden;
+}
+
 .messageUsernameDisplay {
   margin: 0px;
   padding: 2px;
@@ -619,11 +626,8 @@ input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focu
   margin: 0px;
 }
 
-#popoverHeaderBar > button {
+button.material-symbols-outlined {
   padding: 3px;
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
 }
 
 #loadMoreMessagesButton {
@@ -635,6 +639,10 @@ input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focu
   display: flex;
   flex-direction: column;
   width: 100%;
+}
+
+#userAboutText > p {
+  margin: 0px;
 }
 
 #changeAvatarText {
@@ -672,9 +680,19 @@ input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focu
   align-content: center;
 }
 
-.inviteServerBanner {
+.popoverBanner {
   display: flex;
   align-items: center;
+  overflow: hidden;
+}
+
+.popoverBanner > div {
+  overflow: hidden;
+}
+
+.bannerIcon {
+  width: 96px;
+  height: 96px;
 }
 
 #accountSettingsUsername {

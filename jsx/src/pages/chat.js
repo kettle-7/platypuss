@@ -35,7 +35,7 @@ var authUrl = "https://platypuss.net"; // Authentication server, you shouldn't h
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
 pageUrl.protocol = "https:"; // remove this in production
 
-window.loadedMessages = 0; // The number of messages loaded in the current view, used when loading older messages
+if (browser) window.loadedMessages = 0; // The number of messages loaded in the current view, used when loading older messages
 
 const markdownOptions = {
   disableParsingRawHTML: true, // poses a security thread we don't need
@@ -188,7 +188,7 @@ function SyntaxHighlightedCode(props) {
 function PopoverParent({...props}) {
   [states.activePopover, states.setActivePopover] = React.useState(null);
   return (
-    <div id="popoverParent" style={{display: states.activePopover == null ? "none" : "flex"}} onClick={() => {
+    <div id="popoverParent" style={{display: states.activePopover == null ? "none" : "flex"}} onMouseDown={() => {
       states.setActivePopover(null);
     }} {...props}>{states.activePopover}</div>
   );
@@ -196,14 +196,20 @@ function PopoverParent({...props}) {
 
 // for popups / popovers in desktop, render as separate screens on mobile
 function Popover({children, title, style={}, ...props}) {
-  return <div id="popover" style={{margin: style.margin ? style.margin : "auto", ...style}} onClick={event => {
+  return <div id="popover" style={{margin: style.margin ? style.margin : "auto", position: "relative", ...style}} onClick={event => {
+    event.stopPropagation();
+  }} onMouseDown={event => {
     event.stopPropagation();
   }} {...props}>
-    <div id="popoverHeaderBar">
+    {title ? <div id="popoverHeaderBar">
       <h3>{title}</h3>
       <div style={{flexGrow: 1}}></div>
       <button onClick={()=>{setTimeout(()=>{states.setActivePopover(null); states.setMobileSidebarShown(false);}, 50)}} className="material-symbols-outlined">close</button>
-    </div>
+    </div> : <button onClick={()=>{setTimeout(()=>{states.setActivePopover(null); states.setMobileSidebarShown(false);}, 50)}} style={{
+      position: "absolute",
+      top: 3,
+      right: 3
+    }} className="material-symbols-outlined">close</button>}
     {children}
   </div>
 }
@@ -315,7 +321,9 @@ function Message({message}) {
   return (<div className="message1" id={message.id}>
     <img src={authUrl+author.avatar} alt="🐙" className="avatar" style={{
       height: message.special ? "0px" : undefined
-    }}/>
+    }} onClick={() => {setTimeout(() => {
+      showUser(message.author);
+    }, 50);}}/>
     <div className="message2">
       <div className="messageAuthor" style={{ display: message.special ? "none" : "flex" }}>
         <h3 className="messageUsernameDisplay">{author.username}</h3>
@@ -416,6 +424,27 @@ function triggerMessageSend() {
   }
 }
 
+async function showUser(id) {
+  let user = await fetchUser(id);
+  states.setActivePopover(<Popover title="">
+    <div className='popoverBanner'>
+      <img className='avatar bannerIcon' alt="🐙" src={authUrl+user.avatar}/>
+      <div style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 2,
+        paddingLeft: 5
+      }}>
+        <span style={{display:"flex", alignItems: "center"}}><h2 style={{margin: 0, marginRight: 5}}>{user.username}</h2>@{user.tag}</span>
+        <h6 style={{margin: 0}}>ID: {id}</h6>
+      </div>
+    </div>
+    <div id="userAboutText"><Markdown options={markdownOptions}>{user.aboutMe.text}</Markdown></div>
+    <div style={{flexGrow: 1}}/>
+    <button onClick={() => {setTimeout(() => {states.setActivePopover(null)}, 50);}}>Done</button>
+  </Popover>);
+}
+
 // A SLIGHTLY DIFFERENT COMMENT
 function RoomsBar({shown, className, ...props}) {
   return (<div className={className + " sidebar"} id="roomsBar" style={{display: shown ? "flex" : "none"}} {...props}>
@@ -430,7 +459,22 @@ function RoomsBar({shown, className, ...props}) {
       padding: 3,
       margin: 3
     }} onClick={() => {
-      states.setActivePopover(<Popover title="Server Settings">
+      states.setActivePopover(<Popover title="">
+        <div className='popoverBanner'>
+          <img className='avatar bannerIcon' alt="🐙" src={states.servers[states.focusedServer].manifest.icon}/>
+          <div style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            paddingLeft: 5
+          }}>
+            <h1 style={{margin: 0}}>{states.servers[states.focusedServer].manifest.title}</h1>
+            <p style={{margin: 0}}>IP address: {states.servers[states.focusedServer].ip}
+            <br/>{states.servers[states.focusedServer].manifest.memberCount} members</p>
+          </div>
+        </div>
+        <div><Markdown options={markdownOptions}>{states.servers[states.focusedServer].manifest.description}</Markdown></div>
+        <div style={{flexGrow: 1}}/>
         <button onClick={leaveServer}>Leave this server</button>
       </Popover>);
     }}>stat_minus_1</button></div>
@@ -512,7 +556,123 @@ function PeerIcon({peer}) {
   fetchUser(peer.id).then(setPeerInfo);
   return (<img src={authUrl+peerInfo.avatar} className="serverIcon avatar" alt="🐙" style={{
     opacity: peer.online ? 1 : 0.5
-  }}/>);
+  }} onClick={() => {setTimeout(() => {showUser(peer.id)}, 50);}}/>);
+}
+
+function AccountSettings() {
+  let customThemeDisplayRef = React.useRef(null);
+  let customThemeEditRef = React.useRef(null);
+  let aboutMeRef = React.useRef(null);
+
+  React.useEffect(() => {
+    aboutMeRef.current.innerText = states.accountInformation.aboutMe.text;
+  }, [states.accountInformation]);
+  
+  return (
+    <Popover title="Account Settings">
+      <div id="profileBanner">
+        <div className="avatar" id="changeAvatarHoverButton" onClick={() => {
+          let input = document.createElement('input');
+          input.type = "file";
+          input.multiple = false;
+          input.accept = "image/*";
+          input.onchange = async function (event) {
+            let file = event.target.files[0];
+            if (file.size >= 10000000) {
+              states.setActivePopover(<Popover title="Woah, that's too big!">
+                We only allow avatar sizes up to 10MB, this is to save storage space on the server. Please choose a smaller image or resize it in an image editor.
+              </Popover>);
+              return;
+            }
+            let request = new XMLHttpRequest();
+            request.open("POST", `${authUrl}/pfpUpload?id=${localStorage.getItem("sessionID")}`);
+            request.onreadystatechange = () => {
+              if (request.readyState === XMLHttpRequest.DONE && request.status) {
+                window.location.reload();
+              }
+              else {
+                console.log(request);
+              }
+            };
+            request.upload.onprogress = (event) => {
+              states.setAvatarProgress(event.loaded/event.total*100);
+            };
+            request.send(await file.bytes());
+          };
+          input.click();
+        }}>
+          <img className="avatar" id="changeAvatar" src={authUrl+states.accountInformation.avatar}/>
+          <span id="changeAvatarText">Change</span>
+        </div>
+        <h3 id="accountSettingsUsername" contentEditable>{states.accountInformation.username}</h3> @{states.accountInformation.tag}
+      </div>
+      <h5>Tell us a bit about you:</h5>
+      <div contentEditable id="changeAboutMe" ref={aboutMeRef} onInput={() => {
+        fetch(`${authUrl}/editAboutMe?id=${localStorage.getItem("sessionID")}`, {
+          headers: {
+            'Content-Type': 'text/plain'
+          },
+          method: "POST",
+          body: JSON.stringify({text: aboutMeRef.current.innerText})
+        });
+        userCache[states.accountInformation.id].aboutMe.text = aboutMeRef.current.innerText;
+        let newAccountInformation = {...states.accountInformation};
+        newAccountInformation.aboutMe.text = aboutMeRef.current.innerText;
+        states.setAccountInformation(newAccountInformation);
+      }}/>
+      <div style={{
+          flexGrow: 0,
+          display: "flex",
+          flexDirection: "row",
+          gap: 5,
+          alignItems: "center"
+          }}>
+        Theme:
+        <select defaultValue={states.theme}>
+          <option value="dark" onClick={() => {setTimeout(() => {
+            states.setTheme("dark");
+            localStorage.setItem("theme", "dark");
+            customThemeDisplayRef.current.hidden = true;
+          }, 50);}}>Dark</option>
+          <option value="medium" onClick={() => {setTimeout(() => {
+            states.setTheme("medium");
+            localStorage.setItem("theme", "medium");
+            customThemeDisplayRef.current.hidden = true;
+          }, 50);}}>Medium</option>
+          <option value="light" onClick={() => {setTimeout(() => {
+            states.setTheme("light");
+            localStorage.setItem("theme", "light");
+            customThemeDisplayRef.current.hidden = true;
+          }, 50);}}>Light</option>
+          <option value="green" onClick={() => {setTimeout(() => {
+            states.setTheme("green");
+            localStorage.setItem("theme", "green");
+            customThemeDisplayRef.current.hidden = true;
+          }, 50);}}>Greeeeeeeeeeeeeeeeeeeeeeeeeeen</option>
+          <option value="custom" onClick={() => {setTimeout(() => {
+            states.setTheme("custom");
+            localStorage.setItem("theme", "custom");
+            customThemeDisplayRef.current.hidden = false;
+          }, 50);}}>Custom</option>
+        </select>
+      </div>
+      <span hidden={states.theme !== "custom"} ref={customThemeDisplayRef}>Custom Theme Hex Colour: #
+        <span id="accountSettingsCustomTheme" contentEditable
+        ref={customThemeEditRef} onInput={() => {
+            updateCustomTheme(customThemeEditRef.current.innerText, states);
+          }}>
+          {states.themeHex}
+        </span>
+      </span>
+      <button>Delete Account</button>
+      <button>Change Password</button>
+      <button onClick={() => {
+        localStorage.setItem("sessionID", null);
+        window.location = "/";
+      }}>Log Out</button>
+      <button onClick={() => {states.setActivePopover(null);}}>Done</button>
+    </Popover>
+  );
 }
 
 function loadMoreMessages() {
@@ -568,8 +728,8 @@ function showInvitePopup(invite, domain) {
   fetch(`http${pageUrl.protocol === "http:" ? "" : "s"}://${ip}:${port}/${subserver}`).then(res => res.json()).then(data => {
     states.setActivePopover(
       <Popover title={"You've been invited to join "+(data.title ? data.title.toString() : "an untitled server")}>
-        <div className='inviteServerBanner'>
-          <img className='avatar inviteServerIcon' alt="🐙" src={data.icon}/>
+        <div className='popoverBanner'>
+          <img className='avatar bannerIcon' alt="🐙" src={data.icon}/>
           <p>IP address: {ip}:{port}
           <br/>{data.memberCount} members</p>
         </div>
@@ -597,8 +757,8 @@ function showInvitePopup(invite, domain) {
   }).catch(error => {
     states.setActivePopover(
       <Popover title="You were invited to join a server but we couldn't connect.">
-        <div className='inviteServerBanner'>
-          <img className='avatar inviteServerIcon' alt="🐙"/>
+        <div className='popoverBanner'>
+          <img className='avatar bannerIcon' alt="🐙"/>
           <p>IP address: {ip}:{port}
           <br/>Error message: <code>{error.toString()}</code></p>
         </div>
@@ -791,9 +951,6 @@ async function loadView(switchToServer) {
 function PageHeader ({title, iconClickEvent, ...props}) {
   [states.accountInformation, states.setAccountInformation] = React.useState({});
 
-  let customThemeDisplayRef = React.useRef(null);
-  let customThemeEditRef = React.useRef(null);
-
   React.useEffect(() => {
     fetch(authUrl + "/uinfo?id=" + localStorage.getItem("sessionID"))
       .then(data => data.json())
@@ -808,99 +965,7 @@ function PageHeader ({title, iconClickEvent, ...props}) {
     </h2>
     <div style={{flexGrow: 1}}></div>
     <img className="avatar" style={{cursor: "pointer", display: Object.keys(states.accountInformation).length ? "flex" : "none"}} src={authUrl+states.accountInformation.avatar} onClick={() => {
-      states.setActivePopover(
-        <Popover title="Account Settings">
-          <div id="profileBanner">
-            <div className="avatar" id="changeAvatarHoverButton" onClick={() => {
-              let input = document.createElement('input');
-              input.type = "file";
-              input.multiple = false;
-              input.accept = "image/*";
-              input.onchange = async function (event) {
-                let file = event.target.files[0];
-                if (file.size >= 10000000) {
-                  states.setActivePopover(<Popover title="Woah, that's too big!">
-                    We only allow avatar sizes up to 10MB, this is to save storage space on the server. Please choose a smaller image or resize it in an image editor.
-                  </Popover>);
-                  return;
-                }
-                let request = new XMLHttpRequest();
-                request.open("POST", `${authUrl}/pfpUpload?id=${localStorage.getItem("sessionID")}`);
-                request.onreadystatechange = () => {
-                  if (request.readyState === XMLHttpRequest.DONE && request.status) {
-                    window.location.reload();
-                  }
-                  else {
-                    console.log(request);
-                  }
-                };
-                request.upload.onprogress = (event) => {
-                  states.setAvatarProgress(event.loaded/event.total*100);
-                };
-                request.send(await file.bytes());
-              };
-              input.click();
-            }}>
-              <img className="avatar" id="changeAvatar" src={authUrl+states.accountInformation.avatar}/>
-              <span id="changeAvatarText">Change</span>
-            </div>
-            <h3 id="accountSettingsUsername" contentEditable>{states.accountInformation.username}</h3> @{states.accountInformation.tag}
-          </div>
-          <h5>Tell us a bit about you:</h5>
-          <div contentEditable id="changeAboutMe"></div>
-          <div style={{
-              flexGrow: 0,
-              display: "flex",
-              flexDirection: "row",
-              gap: 5,
-              alignItems: "center"
-              }}>
-            Theme:
-            <select defaultValue={states.theme}>
-              <option value="dark" onClick={() => {setTimeout(() => {
-                states.setTheme("dark");
-                localStorage.setItem("theme", "dark");
-                customThemeDisplayRef.current.hidden = true;
-              }, 50);}}>Dark</option>
-              <option value="medium" onClick={() => {setTimeout(() => {
-                states.setTheme("medium");
-                localStorage.setItem("theme", "medium");
-                customThemeDisplayRef.current.hidden = true;
-              }, 50);}}>Medium</option>
-              <option value="light" onClick={() => {setTimeout(() => {
-                states.setTheme("light");
-                localStorage.setItem("theme", "light");
-                customThemeDisplayRef.current.hidden = true;
-              }, 50);}}>Light</option>
-              <option value="green" onClick={() => {setTimeout(() => {
-                states.setTheme("green");
-                localStorage.setItem("theme", "green");
-                customThemeDisplayRef.current.hidden = true;
-              }, 50);}}>Greeeeeeeeeeeeeeeeeeeeeeeeeeen</option>
-              <option value="custom" onClick={() => {setTimeout(() => {
-                states.setTheme("custom");
-                localStorage.setItem("theme", "custom");
-                customThemeDisplayRef.current.hidden = false;
-              }, 50);}}>Custom</option>
-            </select>
-          </div>
-          <span hidden={states.theme !== "custom"} ref={customThemeDisplayRef}>Custom Theme Hex Colour: #
-            <span id="accountSettingsCustomTheme" contentEditable
-            ref={customThemeEditRef} onInput={() => {
-                updateCustomTheme(customThemeEditRef.current.innerText, states);
-              }}>
-              {states.themeHex}
-            </span>
-          </span>
-          <button>Delete Account</button>
-          <button>Change Password</button>
-          <button onClick={() => {
-            localStorage.setItem("sessionID", null);
-            window.location = "/";
-          }}>Log Out</button>
-          <button onClick={() => {states.setActivePopover(null);}}>Done</button>
-        </Popover>
-      );
+      states.setActivePopover(<AccountSettings/>);
     }}/>
   </header>);
 };
