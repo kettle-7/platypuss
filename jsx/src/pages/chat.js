@@ -453,10 +453,10 @@ function ServerIcon({server}) {
     title: "Couldn't connect to this server 🐙"
   });
   return (<div className="tooltipContainer">
-    <img className="serverIcon" src={server.manifest.icon} alt="🐙" onClick={()=>{
+    <img className="serverIcon" src={server.manifest.icon} alt="🐙" onClick={()=>{setTimeout(()=>{
       states.setFocusedServer(server.serverCode);
       loadView(server.serverCode);
-    }}/>
+    }, 50)}}/>
     <div className="serverIconTooltip">{server.manifest.title}</div>
   </div>);
 }
