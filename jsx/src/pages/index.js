@@ -100,6 +100,121 @@ function doTheLoginThingy(createNewAccount) {
   });
 }
 
+function AccountSettings() {
+  let customThemeDisplayRef = React.useRef(null);
+  let customThemeEditRef = React.useRef(null);
+  let aboutMeRef = React.useRef(null);
+
+  React.useEffect(() => {
+    aboutMeRef.current.innerText = states.accountInformation.aboutMe.text;
+  }, [states.accountInformation]);
+  
+  return (
+    <Popover title="Account Settings">
+      <div id="profileBanner">
+        <div className="avatar" id="changeAvatarHoverButton" onClick={() => {
+          let input = document.createElement('input');
+          input.type = "file";
+          input.multiple = false;
+          input.accept = "image/*";
+          input.onchange = async function (event) {
+            let file = event.target.files[0];
+            if (file.size >= 10000000) {
+              states.setActivePopover(<Popover title="Woah, that's too big!">
+                We only allow avatar sizes up to 10MB, this is to save storage space on the server. Please choose a smaller image or resize it in an image editor.
+              </Popover>);
+              return;
+            }
+            let request = new XMLHttpRequest();
+            request.open("POST", `${authUrl}/pfpUpload?id=${localStorage.getItem("sessionID")}`);
+            request.onreadystatechange = () => {
+              if (request.readyState === XMLHttpRequest.DONE && request.status) {
+                window.location.reload();
+              }
+              else {
+                console.log(request);
+              }
+            };
+            request.upload.onprogress = (event) => {
+              states.setAvatarProgress(event.loaded/event.total*100);
+            };
+            request.send(await file.bytes());
+          };
+          input.click();
+        }}>
+          <img className="avatar" id="changeAvatar" src={authUrl+states.accountInformation.avatar}/>
+          <span id="changeAvatarText">Change</span>
+        </div>
+        <h3 id="accountSettingsUsername" contentEditable>{states.accountInformation.username}</h3> @{states.accountInformation.tag}
+      </div>
+      <h5>Tell us a bit about you:</h5>
+      <div contentEditable id="changeAboutMe" ref={aboutMeRef} onInput={() => {
+        fetch(`${authUrl}/editAboutMe?id=${localStorage.getItem("sessionID")}`, {
+          headers: {
+            'Content-Type': 'text/plain'
+          },
+          method: "POST",
+          body: JSON.stringify({text: aboutMeRef.current.innerText})
+        });
+        let newAccountInformation = {...states.accountInformation};
+        newAccountInformation.aboutMe.text = aboutMeRef.current.innerText;
+        states.setAccountInformation(newAccountInformation);
+      }}/>
+      <div style={{
+          flexGrow: 0,
+          display: "flex",
+          flexDirection: "row",
+          gap: 5,
+          alignItems: "center"
+          }}>
+        Theme:
+        <select defaultValue={states.theme}>
+          <option value="dark" onClick={() => {setTimeout(() => {
+            states.setTheme("dark");
+            localStorage.setItem("theme", "dark");
+            customThemeDisplayRef.current.hidden = true;
+          }, 50);}}>Dark</option>
+          <option value="medium" onClick={() => {setTimeout(() => {
+            states.setTheme("medium");
+            localStorage.setItem("theme", "medium");
+            customThemeDisplayRef.current.hidden = true;
+          }, 50);}}>Medium</option>
+          <option value="light" onClick={() => {setTimeout(() => {
+            states.setTheme("light");
+            localStorage.setItem("theme", "light");
+            customThemeDisplayRef.current.hidden = true;
+          }, 50);}}>Light</option>
+          <option value="green" onClick={() => {setTimeout(() => {
+            states.setTheme("green");
+            localStorage.setItem("theme", "green");
+            customThemeDisplayRef.current.hidden = true;
+          }, 50);}}>Greeeeeeeeeeeeeeeeeeeeeeeeeeen</option>
+          <option value="custom" onClick={() => {setTimeout(() => {
+            states.setTheme("custom");
+            localStorage.setItem("theme", "custom");
+            customThemeDisplayRef.current.hidden = false;
+          }, 50);}}>Custom</option>
+        </select>
+      </div>
+      <span hidden={states.theme !== "custom"} ref={customThemeDisplayRef}>Custom Theme Hex Colour: #
+        <span id="accountSettingsCustomTheme" contentEditable
+        ref={customThemeEditRef} onInput={() => {
+            updateCustomTheme(customThemeEditRef.current.innerText, states);
+          }}>
+          {states.themeHex}
+        </span>
+      </span>
+      <button>Delete Account</button>
+      <button>Change Password</button>
+      <button onClick={() => {
+        localStorage.setItem("sessionID", null);
+        window.location = "/";
+      }}>Log Out</button>
+      <button onClick={() => {states.setActivePopover(null);}}>Done</button>
+    </Popover>
+  );
+}
+
 function PageHeader ({title, iconClickEvent, ...props}) {
   let customThemeDisplayRef = React.useRef(null);
   let customThemeEditRef = React.useRef(null);
@@ -118,99 +233,7 @@ function PageHeader ({title, iconClickEvent, ...props}) {
     </h2>
     <div style={{flexGrow: 1}}></div>
     <img className="avatar" style={{cursor: "pointer", display: Object.keys(states.accountInformation).length ? "flex" : "none"}} src={authUrl+states.accountInformation.avatar} onClick={() => {
-      states.setActivePopover(
-        <Popover title="Account Settings">
-          <div id="profileBanner">
-            <div className="avatar" id="changeAvatarHoverButton" onClick={() => {
-              let input = document.createElement('input');
-              input.type = "file";
-              input.multiple = false;
-              input.accept = "image/*";
-              input.onchange = async function (event) {
-                let file = event.target.files[0];
-                if (file.size >= 10000000) {
-                  states.setActivePopover(<Popover title="Woah, that's too big!">
-                    We only allow avatar sizes up to 10MB, this is to save storage space on the server. Please choose a smaller image or resize it in an image editor.
-                  </Popover>);
-                  return;
-                }
-                let request = new XMLHttpRequest();
-                request.open("POST", `${authUrl}/pfpUpload?id=${localStorage.getItem("sessionID")}`);
-                request.onreadystatechange = () => {
-                  if (request.readyState === XMLHttpRequest.DONE && request.status) {
-                    window.location.reload();
-                  }
-                  else {
-                    console.log(request);
-                  }
-                };
-                request.upload.onprogress = (event) => {
-                  states.setAvatarProgress(event.loaded/event.total*100);
-                };
-                request.send(await file.bytes());
-              };
-              input.click();
-            }}>
-              <img className="avatar" id="changeAvatar" src={authUrl+states.accountInformation.avatar}/>
-              <span id="changeAvatarText">Change</span>
-            </div>
-            <h3 id="accountSettingsUsername" contentEditable>{states.accountInformation.username}</h3> @{states.accountInformation.tag}
-          </div>
-          <h5>Tell us a bit about you:</h5>
-          <div contentEditable id="changeAboutMe"></div>
-          <div style={{
-              flexGrow: 0,
-              display: "flex",
-              flexDirection: "row",
-              gap: 5,
-              alignItems: "center"
-              }}>
-            Theme:
-            <select defaultValue={states.theme}>
-              <option value="dark" onClick={() => {setTimeout(() => {
-                states.setTheme("dark");
-                localStorage.setItem("theme", "dark");
-                customThemeDisplayRef.current.hidden = true;
-              }, 50);}}>Dark</option>
-              <option value="medium" onClick={() => {setTimeout(() => {
-                states.setTheme("medium");
-                localStorage.setItem("theme", "medium");
-                customThemeDisplayRef.current.hidden = true;
-              }, 50);}}>Medium</option>
-              <option value="light" onClick={() => {setTimeout(() => {
-                states.setTheme("light");
-                localStorage.setItem("theme", "light");
-                customThemeDisplayRef.current.hidden = true;
-              }, 50);}}>Light</option>
-              <option value="green" onClick={() => {setTimeout(() => {
-                states.setTheme("green");
-                localStorage.setItem("theme", "green");
-                customThemeDisplayRef.current.hidden = true;
-              }, 50);}}>Greeeeeeeeeeeeeeeeeeeeeeeeeeen</option>
-              <option value="custom" onClick={() => {setTimeout(() => {
-                states.setTheme("custom");
-                localStorage.setItem("theme", "custom");
-                customThemeDisplayRef.current.hidden = false;
-              }, 50);}}>Custom</option>
-            </select>
-          </div>
-          <span hidden={states.theme !== "custom"} ref={customThemeDisplayRef}>Custom Theme Hex Colour: #
-            <span id="accountSettingsCustomTheme" contentEditable
-            ref={customThemeEditRef} onInput={() => {
-                updateCustomTheme(customThemeEditRef.current.innerText, states);
-              }}>
-              {states.themeHex}
-            </span>
-          </span>
-          <button>Delete Account</button>
-          <button>Change Password</button>
-          <button onClick={() => {
-            localStorage.setItem("sessionID", null);
-            window.location = "/";
-          }}>Log Out</button>
-          <button onClick={() => {states.setActivePopover(null);}}>Done</button>
-        </Popover>
-      );
+      states.setActivePopover(<AccountSettings/>);
     }}/>
   </header>);
 };
@@ -318,9 +341,17 @@ const IndexPage = () => {
       states.theme === "green" ? "greenThemed" :
       states.theme === "dark" ? "darkThemed" :
       "lightThemed"}>
-      {(Object.keys(states.accountInformation).length !== 0) && <button style={{fontSize: "14pt"}} onClick={() => {window.location = '/chat'}}>Chat</button>}
-      {(Object.keys(states.accountInformation).length === 0) && <><button style={{fontSize: "14pt"}} onClick={() => {states.setActivePopover(<SignInPopover/>)}}>Sign In</button><br/></>}
-      {(Object.keys(states.accountInformation).length === 0) && <button style={{fontSize: "14pt"}} onClick={() => {states.setActivePopover(<CreateAccountPopover/>)}}>Create Account</button>}
+      <div style={{
+        display: "flex",
+        flexDirection: "row",
+        gap: 3
+      }}>{(Object.keys(states.accountInformation).length === 0) ? 
+        <>
+          <button style={{fontSize: "14pt"}} onClick={() => {states.setActivePopover(<SignInPopover/>)}}>Sign In</button>
+          <button style={{fontSize: "14pt"}} onClick={() => {states.setActivePopover(<CreateAccountPopover/>)}}>Create Account</button>
+        </>:
+        <button style={{fontSize: "14pt"}} onClick={() => {window.location = '/chat'}}>Chat page</button>}
+      </div>
       {PRODUCTION ? <Markdown>{`
 Platypuss
 =========
@@ -387,5 +418,8 @@ host your own server, although you can expect this to come soon.
 export default IndexPage;
 
 export const Head = () => (
-  <title>{PRODUCTION ? "" : "(Beta!) "}Platypuss</title>
+  <>
+    <title>{PRODUCTION ? "" : "(Beta!) "}Platypuss</title>
+    <link rel="canonical" href={PRODUCTION ? "https://platypuss.net" : "https://beta.platypuss.net"}/>
+  </>
 );

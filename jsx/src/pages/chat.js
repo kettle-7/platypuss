@@ -234,7 +234,17 @@ function MiddleSection({shown, className, ...props}) {
       <div id="aboveMessageArea">
         <button id="loadMoreMessagesButton" onClick={loadMoreMessages}>Load more messages</button>
       </div>
-      <div id="messageArea">{states.focusedRoomRenderedMessages.map(message => <Message message={message} key={message.id}/>)}</div>
+      {states.servers.length ?
+        <div id="messageArea">{states.focusedRoomRenderedMessages.map(message => <Message message={message} key={message.id}/>)}</div> : 
+        <div id="messageArea" style={{position: "relative"}}>
+          <div id="noServers">
+            <h2>You're not in any servers!</h2>
+            <p>
+              You don't appear to be in any Platypuss servers at the moment. You can join one through an invite
+              link or look at <a href="https://github.com/kettle-7/platypuss/wiki" target='_blank'>the wiki
+              page for how to host your own.</a></p>
+          </div>
+        </div>}
       <div id="belowMessageArea" ref={belowMessagesRef}></div>
     </div>
     <div style={{height:5,background:"linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3))"}}></div>
@@ -311,7 +321,7 @@ function MiddleSection({shown, className, ...props}) {
 function Message({message}) {
   // We might have the author cached already, if not we'll just get them later
   let [author, setAuthor] = React.useState(userCache[message.author] || {
-    avatar: "https://img.freepik.com/premium-vector/hand-drawn-cartoon-doodle-skull-funny-cartoon-skull-isolated-white-background_217204-944.jpg",
+    avatar: null,
     username: "Deleted User"
   });
   let sentByThisUser = message.author === states.accountInformation.id;
@@ -319,7 +329,9 @@ function Message({message}) {
   let messageContent = message.content;
   fetchUser(message.author).then(newAuthor=>{setAuthor(newAuthor)});
   return (<div className="message1" id={message.id}>
-    <img src={authUrl+author.avatar} alt="🐙" className="avatar" style={{
+    <img src={author.avatar ? authUrl+author.avatar :
+      "https://img.freepik.com/premium-vector/hand-drawn-cartoon-doodle-skull-funny-cartoon-skull-isolated-white-background_217204-944.jpg"
+    } alt="🐙" className="avatar" style={{
       height: message.special ? "0px" : undefined
     }} onClick={() => {setTimeout(() => {
       showUser(message.author);
@@ -344,16 +356,16 @@ function Message({message}) {
       </div>
     </div>
     <div className="message3">
-      <button className='material-symbols-outlined' hidden={
-        sentByThisUser ? !Object.keys(states.focusedServerPermissions).includes("message.edit")
+      <button className='material-symbols-outlined' style={{display:(
+        sentByThisUser ? !states.focusedServerPermissions.includes("message.edit")
         : true // You shouldn't be able to edit other people's messages no matter what
-      }>Edit</button>
+      ) ? "none" : "flex"}}>Edit</button>
       <button className='material-symbols-outlined' onClick={()=>{replyToMessage(message.id)}}>Reply</button>
       <button className='material-symbols-outlined' onClick={()=>{pingUser(message.author)}}>alternate_email</button>
-      <button className='material-symbols-outlined' onClick={()=>{deleteMessage(message.id)}} hidden={
-        sentByThisUser ? !Object.keys(states.focusedServerPermissions).includes("message.delete")
-        : !Object.keys(states.focusedServerPermissions).includes("moderation.delete")
-      }>Delete</button>
+      <button className='material-symbols-outlined' onClick={()=>{deleteMessage(message.id)}} style={{diplay: (
+        sentByThisUser ? !states.focusedServerPermissions.includes("message.delete")
+        : !states.focusedServerPermissions.includes("moderation.delete")
+      ) ? "none" : "flex"}}>Delete</button>
     </div>
   </div>);
 }
@@ -779,7 +791,9 @@ async function loadView(switchToServer) {
       states.setActivePopover(null);
     }
   };
+  let isInvite = false;
   if (pageUrl.searchParams.has("invite")) {
+    isInvite = true;
     showInvitePopup(pageUrl.searchParams.get("invite"), pageUrl.searchParams.get("ip"));
   }
 
@@ -945,7 +959,21 @@ async function loadView(switchToServer) {
     }
     // update our list of servers and if no server is currently focused pick the first one
     states.setServers(servers);
-  }).catch(error => console.log(error));
+  }).catch(error => {
+    if (!isInvite) {
+      // if something is wrong then i want to be able to test it but otherwise people are probably logged out and therefore should be redirected to the homepage
+      if (pageUrl.hostname.includes("localhost")) {
+        states.setActivePopover(<Popover title="client loading error">
+          <pre><code>{error.toString()}</code></pre>
+          <span>You probably need to <a onClick={() => {
+            states.setActivePopover(<SignInPopover/>)
+          }} href="#">sign in</a></span>
+        </Popover>);
+      } else {
+        window.location = "/";
+      }
+    }
+  });
 }
 
 function PageHeader ({title, iconClickEvent, ...props}) {
