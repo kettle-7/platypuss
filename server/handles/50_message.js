@@ -225,14 +225,15 @@ all the information specified in the Platypuss API."
         }
         else if (sdata.properties.admins.includes(packet.message.author) &&
                 packet.message.content.indexOf("/listsubservers") == 0) {
+            console.log(Object.keys(packet.servers).map(s => Object.keys(s)));
             packet.ws.send(JSON.stringify({
                 eventType: "message",
                 message: {
                     content: `${JSON.stringify(Object.keys(packet.servers).map(subserver => {
                         return {
                             subServer: subserver,
-                            inviteCode: packet.servers.properties[subserver].inviteCode,
-                            inviteLink: generateInviteCode(subserver, packet.servers.properties.port, packet.servers.properties[subserver].inviteCode)
+                            inviteCode: packet.servers[subserver].properties.inviteCode,
+                            inviteLink: generateInviteCode(subserver, packet.servers.properties.port, packet.servers[subserver].properties.inviteCode)
                         };
                     }))}`,
                     timestamp: packet.message.timestamp,
