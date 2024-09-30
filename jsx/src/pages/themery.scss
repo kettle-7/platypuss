@@ -445,7 +445,7 @@ blockquote {
 #messageBox {
   flex-grow: 1;
   font-weight: normal;
-  background: var(--background-level2);
+  background: var(--background-level3);
   border: 1px solid var(--grey);
   box-shadow: 2px 2px 2px #1b1b1b88 inset;
   border-radius: 10px;
@@ -458,6 +458,7 @@ blockquote {
 
 #messageBox:focus {
   border: 1px solid var(--accent);
+  background: var(--background-level2);
 }
 
 #serverTitle {

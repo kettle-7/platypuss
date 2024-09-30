@@ -228,13 +228,14 @@ function MiddleSection({shown, className, ...props}) {
       belowMessagesRef.current?.scrollIntoView({ behaviour: "smooth" });
     }
   }, [states.focusedRoomRenderedMessages]);
+
   return (<div id="middleSection" className={className} style={{display: shown ? "flex" : "none"}} {...props}>
     <div id="aboveScrolledArea"></div>
     <div id="scrolledArea" ref={scrolledAreaRef}> {/* Has a scrollbar, contains load more messages button but not message typing box */}
       <div id="aboveMessageArea">
         <button id="loadMoreMessagesButton" onClick={loadMoreMessages}>Load more messages</button>
       </div>
-      {states.servers.length ?
+      {Object.keys(states.servers).length ?
         <div id="messageArea">{states.focusedRoomRenderedMessages.map(message => <Message message={message} key={message.id}/>)}</div> : 
         <div id="messageArea" style={{position: "relative"}}>
           <div id="noServers">
@@ -242,7 +243,7 @@ function MiddleSection({shown, className, ...props}) {
             <p>
               You don't appear to be in any Platypuss servers at the moment. You can join one through an invite
               link or look at <a href="https://github.com/kettle-7/platypuss/wiki" target='_blank'>the wiki
-              page for how to host your own.</a></p>
+              page</a> for how to host your own.<br/><br/><a href="https://platypuss.net" target='_blank'>What's Platypuss?</a></p>
           </div>
         </div>}
       <div id="belowMessageArea" ref={belowMessagesRef}></div>
@@ -987,7 +988,8 @@ function PageHeader ({title, iconClickEvent, ...props}) {
   }, []);
 
   return (<header {...props}>
-    <img className="avatar" onClick={iconClickEvent ? iconClickEvent : () => {window.location = "/"}} style={{cursor: "pointer"}} src="/icons/icon-96x96.png"/>
+    <img className="avatar material-symbols-outlined" alt="menu" onClick={iconClickEvent ? iconClickEvent : () => {window.location = "/"}}
+      style={{cursor: "pointer"}} src={states.useMobileUI ? "" : "/icons/icon-96x96.png"}/>
     <h2 onClick={() => {window.location = "/"}} style={{cursor: "pointer"}}>
         {title ? title : "(Beta!) Platypuss"}
     </h2>
