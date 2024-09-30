@@ -26,16 +26,16 @@ var userCache = {}; // A cache of data on users so we don't constantly have to l
 var messageCache = {}; // The same but for messages
 var states = {populated:false}; // One global variable for storing React state objects so we can access them anywhere
 var openSockets = {}; // Keeps track of open websockets
-var loadedMessages = 0; // The number of messages loaded in the current view, used when loading older messages
 var serverHashes = {}; // We can use these to get links to specific servers / maybe rooms in the future
 var browser = typeof window !== "undefined"; // check if we're running in a browser rather than the build environment
 var emailRef, passwordRef, confirmPasswordRef, usernameRef; // these refer to the input fields on the login popup
 var finishedLoading = false; // to prevent some code from being ran multiple times
-
 var pageUrl = browser ? new URL(window.location) : new URL("http://localhost:8000"); // window is not defined in the testing environment so just assume localhost
 var authUrl = "https://platypuss.net"; // Authentication server, you shouldn't have to change this but it's a variable just in case
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
 pageUrl.protocol = "https:"; // remove this in production
+
+window.loadedMessages = 0; // The number of messages loaded in the current view, used when loading older messages
 
 const markdownOptions = {
   disableParsingRawHTML: true, // poses a security thread we don't need
@@ -449,8 +449,10 @@ function leaveServer() {
 // a comment
 function RoomLink({room}) {
   return (<div className="roomLink" style={{cursor:"pointer"}} onClick={() => {
-    states.setFocusedRoom(room);
-    loadView();
+    setTimeout(() => {
+      states.setFocusedRoom(room);
+      loadView();
+    }, 50);
   }}>
     <a>{room.name}</a>
     <button className="roomSettings material-symbols-outlined" style={{
@@ -516,7 +518,7 @@ function PeerIcon({peer}) {
 function loadMoreMessages() {
   openSockets[states.focusedServer].send(JSON.stringify({
     eventType: "messageLoad",
-    start: loadedMessages,
+    start: window.loadedMessages,
     room: states.focusedRoom.id,
     max: 100
   }));
@@ -623,6 +625,7 @@ async function loadView(switchToServer) {
 
   // delete all messages
   states.setFocusedRoomRenderedMessages([]);
+  window.loadedMessages = 0;
   finishedLoading = false;
   updateCustomTheme(states.themeHex, states);
   // connect to the authentication server to get the list of server's we're in and their session tokens
@@ -708,7 +711,7 @@ async function loadView(switchToServer) {
               ...states.focusedRoomRenderedMessages,
               messageCache[packet.message.id]
             ]);
-            loadedMessages++;
+            window.loadedMessages++;
             break;
           case "messages":
             if (states.focusedServer !== serverCode || states.focusedRoom.id != packet.room) break;
@@ -720,7 +723,7 @@ async function loadView(switchToServer) {
               ...packet.messages,
               ...states.focusedRoomRenderedMessages
             ]);
-            loadedMessages += packet.messages.length;
+            window.loadedMessages += packet.messages.length;
             setTimeout(() => { finishedLoading = true; }, 1000);
             break;
           case "messageDeleted":
@@ -737,13 +740,16 @@ async function loadView(switchToServer) {
               states.setFocusedServerPermissions(packet.permissions);
               states.setFocusedServerRenderedRooms(packet.rooms ? packet.rooms : {});
               states.setFocusedServerPeers(packet.peers);
+              let roomToFocus = states.focusedRoom;
               if (packet.rooms) {
-                if (!Object.values(packet.rooms).includes(states.focusedRoom))
-                  states.setFocusedRoom(Object.values(packet.rooms)[0]);
+                if (!Object.values(packet.rooms).includes(states.focusedRoom)) {
+                  roomToFocus = Object.values(packet.rooms)[0];
+                  states.setFocusedRoom(roomToFocus);
+                }
                 socket.send(JSON.stringify({
                   eventType: "messageLoad",
                   start: 0,
-                  room: states.focusedRoom.id,
+                  room: roomToFocus.id,
                   max: 50
                 }));
               }
