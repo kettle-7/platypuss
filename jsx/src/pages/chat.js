@@ -480,7 +480,7 @@ function PeersBar({shown, className, ...props}) {
 }
 
 function PeerIcon({peer}) {
-  let [peerInfo, setPeerInfo] = React.useState(userCache[peer.id]);
+  let [peerInfo, setPeerInfo] = React.useState(userCache[peer.id] || {avatar:"/icon.png"});
   fetchUser(peer.id).then(setPeerInfo);
   return (<img src={authUrl+peerInfo.avatar} className="serverIcon avatar" alt="🐙" style={{
     opacity: peer.online ? 1 : 0.5
