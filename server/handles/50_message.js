@@ -232,6 +232,7 @@ all the information specified in the Platypuss API."
                         return {
                             subServer: subserver,
                             inviteCode: packet.servers[subserver].properties?.inviteCode,
+                            title: packet.servers[subserver].properties?.manifest.title,
                             inviteLink: "<"+generateInviteCode(subserver, packet.servers.properties?.port, packet.servers[subserver].properties?.inviteCode)+">"
                         };
                     }))}`,
