@@ -110,9 +110,9 @@ module.exports = {
                                 isAdmin: sdata.properties.admins.includes(client.uid),
                                 online: true
                             }
-                            console.log(onlinePeers, client.uid)
                         }
                     }
+                    console.log(onlinePeers)
                     for (let user of Object.values(sdata.users)) {
                         if (!Object.keys(onlinePeers).includes(user))
                             offlinePeers[user.id] = {
