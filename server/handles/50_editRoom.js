@@ -56,7 +56,7 @@
         let newRooms = {};
         for (let room of Object.values(sdata.rooms)) {
             // TODO: permissions
-            newRooms.rooms[room.id] = {
+            newRooms[room.id] = {
                 id: room.id,
                 name: room.name,
                 messages: {}
