@@ -99,6 +99,8 @@ module.exports = {
                         availablePermissions: availablePerms,
                         isAdmin: sdata.properties.admins.includes(data.id)
                     }
+                    let onlinePeers = {};
+                    let offlinePeers = {};
                     obj.peers = {};
                     for (let user of Object.values(sdata.users)) {
                         obj.peers[user.id] = {
@@ -111,8 +113,13 @@ module.exports = {
                     for (let client of clients) {
                         if (client.readyState < 2 && client.loggedinbytoken && obj.peers[client.uid] != undefined) {
                             obj.peers[client.uid].online = true;
+                            onlinePeers[client.uid] = obj.peers[client.uid];
+                        } else {
+                            if (!Object.keys(onlinePeers).includes(client.uid))
+                                offlinePeers[client.uid] = obj.peers[client.uid];
                         }
                     }
+                    obj.peers = {...onlinePeers, ...offlinePeers};
                     obj.rooms = {};
                     for (let room of Object.values(sdata.rooms)) {
                         // TODO: permissions

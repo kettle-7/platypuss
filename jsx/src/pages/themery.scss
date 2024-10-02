@@ -647,6 +647,7 @@ input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focu
 
   @media screen and (max-width: 20cm) {
       background-color: var(--background-level4) !important;
+      border-radius: 5px 5px 0px 0px;
       position: absolute;
       bottom: 0px;
       left: 0px;
