@@ -19,25 +19,17 @@
  const { v4 } = require('uuid');
 
  module.exports = {
-	eventType: "editRoom",
+	eventType: "deleteRoom",
 	execute: function (sdata, wss, packet, clients) {
         if (packet.roomID == undefined) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
                 code: "missingRoomID",
-                explanation: "editRoom event requires an ID for the room to be edited"
+                explanation: "deleteRoom event requires an ID for the room to be deleted"
             }));
             return;
         }
-        if (packet.operation == undefined) {
-            packet.ws.send(JSON.stringify({
-                eventType: "error",
-                code: "missingRoomOperation",
-                explanation: "editRoom event requires an operation field for what will be changed"
-            }));
-            return;
-        }
-        if (!(sdata.users[packet.ws.uid].globalPerms.includes("room.edit") || sdata.properties.admins.includes(packet.ws.uid))) {
+        if (!(sdata.users[packet.ws.uid].globalPerms.includes("room.delete") || sdata.properties.admins.includes(packet.ws.uid))) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
                 code: "noPerm",
@@ -53,6 +45,7 @@
             }));
             return;
         }
+        delete sdata.rooms[packet.roomID];
         let newRooms = {};
         for (let room of Object.values(sdata.rooms)) {
             // TODO: permissions
@@ -65,9 +58,8 @@
         for (let client of clients) {
             if (client.loggedinbytoken)
             client.send(JSON.stringify({
-                eventType: "roomEdited",
+                eventType: "roomDeleted",
                 id: packet.roomID,
-                room: sdata.rooms[packet.roomID],
                 newRooms: newRooms
             }));
         }
