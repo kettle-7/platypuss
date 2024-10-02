@@ -103,7 +103,7 @@ module.exports = {
                     let offlinePeers = {};
                     obj.peers = {};
                     for (let client of clients) {
-                        if (client.readyState < 2 && client.loggedinbytoken && obj.peers[client.uid] != undefined) {
+                        if (client.readyState < 2 && client.loggedinbytoken && sdata.users[client.uid] != undefined) {
                             onlinePeers[client.uid] = {
                                 id: client.uid,
                                 globalPermissions: sdata.users[client.uid].globalPerms,
