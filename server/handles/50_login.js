@@ -103,6 +103,7 @@ module.exports = {
                     let offlinePeers = {};
                     obj.peers = {};
                     for (let client of clients) {
+                        console.log(client.readyState < 2 && client.loggedinbytoken && sdata.users[client.uid] != undefined)
                         if (client.readyState < 2 && client.loggedinbytoken && sdata.users[client.uid] != undefined) {
                             onlinePeers[client.uid] = {
                                 id: client.uid,
