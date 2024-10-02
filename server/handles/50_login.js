@@ -104,13 +104,13 @@ module.exports = {
                     obj.peers = {};
                     for (let client of clients) {
                         if (client.readyState < 2 && client.loggedinbytoken && sdata.users[client.uid] != undefined) {
-                            console.log(onlinePeers, client.uid)
                             onlinePeers[client.uid] = {
                                 id: client.uid,
                                 globalPermissions: sdata.users[client.uid].globalPerms,
                                 isAdmin: sdata.properties.admins.includes(client.uid),
                                 online: true
                             }
+                            console.log(onlinePeers, client.uid)
                         }
                     }
                     for (let user of Object.values(sdata.users)) {
