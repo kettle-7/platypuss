@@ -82,15 +82,15 @@ function fetchUser(id) {
 function doTheLoginThingy(createNewAccount) {
   if (createNewAccount) {
     if (passwordRef.current.value !== confirmPasswordRef.current.value) {
-      states.setActivePopover(<CreateAccountPopover error="Your passwords don't match"/>);
+      states.setActivePopover(<Popover title="Create Account"><CreateAccountPopover error="Your passwords don't match"/></Popover>);
       return;
     }
     if (passwordRef.current.value.replace(/[\n\r\t ]/g, "") === "") {
-      states.setActivePopover(<CreateAccountPopover error="Your password must be at least one character"/>);
+      states.setActivePopover(<Popover title="Create Account"><CreateAccountPopover error="Your password must be at least one character"/></Popover>);
       return;
     }
     if (usernameRef.current.value.replace(/[\n\r\t ]/g, "") === "") {
-      states.setActivePopover(<CreateAccountPopover error="Your username must be at least one character"/>);
+      states.setActivePopover(<Popover title="Create Account"><CreateAccountPopover error="Your username must be at least one character"/></Popover>);
       return;
     }
   }
@@ -110,8 +110,8 @@ function doTheLoginThingy(createNewAccount) {
   }).then(response => response.json()).then(response => {
     if (createNewAccount) {
       if (response.alreadyExists) {
-        states.setActivePopover(<CreateAccountPopover error={<>There's already an account with that email address,
-          would you like to <a href="#" onClick={() => states.setActivePopover(<SignInPopover/>)}>sign in</a> instead?</>}/>);
+        states.setActivePopover(<Popover title="Create Account"><CreateAccountPopover error={<>There's already an account with that email address,
+          would you like to <a href="#" onClick={() => states.setActivePopover(<Popover title="Sign In"><SignInPopover/></Popover>)}>sign in</a> instead?</>}/></Popover>);
         return;
       }
       states.setActivePopover(<Popover title="Check your emails!">Thanks for joining us, 
@@ -119,12 +119,12 @@ function doTheLoginThingy(createNewAccount) {
       return;
     } else {
       if (!response.alreadyExists) {
-        states.setActivePopover(<SignInPopover error={<>There's no account with that email address,
-          would you like to <a href="#" onClick={() => states.setActivePopover(<CreateAccountPopover/>)}>create one</a>?</>}/>);
+        states.setActivePopover(<Popover title="Sign In"><SignInPopover error={<>There's no account with that email address,
+          would you like to <a href="#" onClick={() => states.setActivePopover(<Popover title="Create Account"><CreateAccountPopover/></Popover>)}>create one</a>?</>}/></Popover>);
         return;
       }
       if (!response.passwordMatches) {
-        states.setActivePopover(<SignInPopover error="Incorrect password for this account"/>);
+        states.setActivePopover(<Popover title="Sign In"><SignInPopover error="Incorrect password for this account"/></Popover>);
         return;
       }
     }
@@ -134,8 +134,8 @@ function doTheLoginThingy(createNewAccount) {
 }
 
 function SignInPopover({ error="" }) {
-  return (<Popover title="Sign In">
-    <span>Welcome back! If you don't already have an account please <a href="#" onClick={() => states.setActivePopover(<CreateAccountPopover/>)}>create an account</a> instead.</span>
+  return (<>
+    <span>Welcome back! If you don't already have an account please <a href="#" onClick={() => states.setActivePopover(<Popover title="Create Account"><CreateAccountPopover/></Popover>)}>create an account</a> instead.</span>
     <div id="loginform">
       <em id="signInErrorMessage">{error}</em>
       <div style={{display:"grid",gridTemplateColumns:"auto auto"}}>
@@ -144,7 +144,7 @@ function SignInPopover({ error="" }) {
       </div>
     </div>
     <button onClick={() => doTheLoginThingy(false)}>Sign In</button>
-  </Popover>);
+  </>);
 }
 
 function CreateAccountPopover({ error="" }) {
@@ -154,8 +154,8 @@ function CreateAccountPopover({ error="" }) {
     React.useRef(null),
     React.useRef(null)
   ];
-  return (<Popover title="Create Account">
-  <span>Welcome to Platypuss! If you already have an account please <a href="#" onClick={() => states.setActivePopover(<SignInPopover/>)}>sign in</a> instead.</span>
+  return (<>
+  <span>Welcome to Platypuss! If you already have an account please <a href="#" onClick={() => states.setActivePopover(<Popover title="Sign In"><SignInPopover/></Popover>)}>sign in</a> instead.</span>
   <br/><strong>By using Platypuss you confirm that you have read and agreed to our <a href="/legal">legal agreements</a>.</strong>
     <div id="loginform">
       {error ? <em id="signInErrorMessage">{error}</em> : ""}
@@ -167,7 +167,7 @@ function CreateAccountPopover({ error="" }) {
       </div>
     </div>
     <button onClick={() => doTheLoginThingy(true)}>Create Account</button>
-  </Popover>);
+  </>);
 }
 
 function SyntaxHighlightedCode(props) {
@@ -187,7 +187,10 @@ function SyntaxHighlightedCode(props) {
 
 function PopoverParent({...props}) {
   return (
-    <div id="popoverParent" style={{display: "flex", height: states.activePopover === null ? 0 : "100%"}} onMouseDown={() => {setTimeout(() => {
+    <div id="popoverParent" style={{
+      display: "flex",
+      height: states.activePopover === null ? 0 : "100%"
+    }} onMouseDown={() => {setTimeout(() => {
       states.setActivePopover(null);
     }, 50)}} {...props}>{states.activePopover || <Popover style={{opacity: 0}}/>}</div>
   );
@@ -195,12 +198,11 @@ function PopoverParent({...props}) {
 
 // for popups / popovers in desktop, render as separate screens on mobile
 function Popover({children, title, style={}, ...props}) {
-  let popoverRef = React.useRef(null);
   return <div id="popover" style={{margin: style.margin ? style.margin : "auto", /*height: 0,*/ ...style}} onClick={event => {
     event.stopPropagation();
   }} onMouseDown={event => {
     event.stopPropagation();
-  }} className={states.activePopover ? "slideUp" : ""} ref={popoverRef} {...props}>
+  }} className={props.className ? props.className + " slideUp" : (states.activePopover ? "slideUp" : " ")} {...props}>
     {title ? <div id="popoverHeaderBar">
       <h3>{title}</h3>
       <div style={{flexGrow: 1}}></div>
@@ -363,12 +365,14 @@ function Message({message}) {
       </blockquote> : <blockquote className='messageReply'><em>Message couldn't be loaded</em></blockquote> : ""}
       <div className="messageContent">
         <Markdown options={markdownOptions}>{messageContent}</Markdown>
-        {uploads.map(upload => <img className="upload" src={"https://"+states.servers[states.focusedServer].ip+upload.url} onClick={() => {setTimeout(() => {
-          states.setActivePopover(<Popover className="darkThemed" style={{background: "transparent", boxShadow: "none", width: "auto"}} title={upload.name}>
-            <img src={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{borderRadius: 10, boxShadow: "0px 0px 10px black"}}/>
-            <a href={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{color: "white"}}>Download this image</a>
-          </Popover>);
-        }, 50);}}/>)}
+        <div className='horizontalrow'>
+          {uploads.map(upload => <img className="upload" src={"https://"+states.servers[states.focusedServer].ip+upload.url} onClick={() => {setTimeout(() => {
+            states.setActivePopover(<Popover className="imagePopover" style={{backgroundColor: "transparent", background: "transparent", boxShadow: "none", width: "auto"}} title={upload.name}>
+              <img src={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{borderRadius: 10, boxShadow: "0px 0px 10px black"}}/>
+              <a href={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{color: "white"}}>Download this image</a>
+            </Popover>);
+          }, 50);}}/>)}
+        </div>
       </div>
     </div>
     <div className="message3">
@@ -562,7 +566,7 @@ function RoomSettingsPopover({room}) {
     if (roomDescriptionRef.current)
       roomDescriptionRef.current.innerText = room.description;
   }, []);
-  return <Popover title="Room Settings">
+  return <>
     <div className='horizontalrow'>
       <label htmlFor="editRoomName">Room name: </label>
       <input type="text" id="editRoomName" ref={roomNameRef}/>
@@ -611,7 +615,7 @@ function RoomSettingsPopover({room}) {
     <button onClick={() => {setTimeout(() => {
       states.setActivePopover(null);
     }, 50);}}>Cancel</button>
-  </Popover>;
+  </>;
 }
 
 // a comment
@@ -632,7 +636,7 @@ function RoomLink({room}) {
     }} onClick={event => {
       event.stopPropagation();
       setTimeout(() => {
-        states.setActivePopover(<RoomSettingsPopover room={room}/>);
+        states.setActivePopover(<Popover title="Room Settings"><RoomSettingsPopover room={room}/></Popover>);
       }, 50);
     }}>settings</button>
   </div>);
@@ -641,7 +645,7 @@ function RoomLink({room}) {
 // The bar on the left showing the servers you're in, also for navigation
 function ServersBar({shown, className, ...props}) {
   return (<div className={className + " sidebar"} id="serversBar" style={{display: shown ? "flex" : "none"}} {...props}>
-    <span className="serverIcon material-symbols-outlined" id="newServerButton">add</span>
+    <button className="serverIcon material-symbols-outlined" id="newServerButton">add</button>
     {Object.values(states.servers).map(server => (<ServerIcon server={server}></ServerIcon>))}
   </div>);
 }
@@ -698,7 +702,7 @@ function AccountSettings() {
   }, [states.accountInformation]);
   
   return (
-    <Popover title="Account Settings">
+    <>
       <div id="profileBanner">
         <div className="avatar" id="changeAvatarHoverButton" onClick={() => {
           let input = document.createElement('input');
@@ -799,7 +803,7 @@ function AccountSettings() {
           }}>Yes</button>
           <button onClick={() => {
             setTimeout(() => {
-              states.setActivePopover(<AccountSettings/>);
+              states.setActivePopover(<Popover title="Account Settings"><AccountSettings/></Popover>);
             }, 50);
           }}>No</button>
         </Popover>);
@@ -811,7 +815,7 @@ function AccountSettings() {
         window.location = "/";
       }}>Log Out</button>
       <button onClick={() => {setTimeout(() => {states.setActivePopover(null);}, 50);}}>Done</button>
-    </Popover>
+    </>
   );
 }
 
@@ -888,7 +892,7 @@ function showInvitePopup(invite, domain) {
               );
             });
           } else {
-            states.setActivePopover(<CreateAccountPopover/>);
+            states.setActivePopover(<Popover title="Create Account"><CreateAccountPopover/></Popover>);
           }
         }}>Accept</button>
         <button onClick={() => {window.location = states.accountInformation.username ? "/chat" : "/"}}>Decline</button>
@@ -1107,7 +1111,7 @@ async function loadView(switchToServer) {
         states.setActivePopover(<Popover title="client loading error">
           <pre><code>{error.toString()}</code></pre>
           <span>You probably need to <a onClick={() => {
-            states.setActivePopover(<SignInPopover/>)
+            states.setActivePopover(<Popover title="Sign In"><SignInPopover/></Popover>)
           }} href="#">sign in</a></span>
         </Popover>);
       } else {
@@ -1140,7 +1144,7 @@ function PageHeader ({title, iconClickEvent, ...props}) {
     </h2>
     <div style={{flexGrow: 1}}></div>
     <img className="avatar" style={{cursor: "pointer", display: Object.keys(states.accountInformation).length ? "flex" : "none"}} src={authUrl+states.accountInformation.avatar} onClick={() => {
-      setTimeout(() => {states.setActivePopover(<AccountSettings/>);}, 50);
+      setTimeout(() => {states.setActivePopover(<Popover title="Account Settings"><AccountSettings/></Popover>);}, 50);
     }}/>
   </header>);
 };

@@ -619,7 +619,7 @@ input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focu
 
 #popoverParent {
   position: absolute;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.75);
   max-width: 100%;
   height: 0px;
   bottom: 0px;
@@ -649,7 +649,7 @@ input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focu
   }
 
   @media screen and (max-width: 20cm) {
-    background-color: var(--background-level4) !important;
+    background-color: var(--background-level4);
     transition: max-height 1s;
     border-radius: 0px;
     position: absolute;
@@ -673,11 +673,22 @@ input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focu
   }
 }
 
-.slideUp {
+.slideUp, .imagePopover {
   @media screen and (max-width: 20cm) {
     border-radius: 10px 10px 0px 0px !important;
     max-height: 100vh !important;
   }
+}
+
+.imagePopover button {
+  border: none;
+  color: white;
+  background: transparent;
+  box-shadow: none;
+}
+
+.imagePopover h3 {
+  color: white;
 }
 
 #popoverHeaderBar {

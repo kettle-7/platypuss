@@ -46,15 +46,15 @@ function hashPassword (str, seed = 20) { // hashes passwords somehow
 function doTheLoginThingy(createNewAccount) {
   if (createNewAccount) {
     if (passwordRef.current.value !== confirmPasswordRef.current.value) {
-      states.setActivePopover(<CreateAccountPopover error="Your passwords don't match"/>);
+      states.setActivePopover(<Popover title="Create Account"><CreateAccountPopover error="Your passwords don't match"/></Popover>);
       return;
     }
     if (passwordRef.current.value.replace(/[\n\r\t ]/g, "") === "") {
-      states.setActivePopover(<CreateAccountPopover error="Your password must be at least one character"/>);
+      states.setActivePopover(<Popover title="Create Account"><CreateAccountPopover error="Your password must be at least one character"/></Popover>);
       return;
     }
     if (usernameRef.current.value.replace(/[\n\r\t ]/g, "") === "") {
-      states.setActivePopover(<CreateAccountPopover error="Your username must be at least one character"/>);
+      states.setActivePopover(<Popover title="Create Account"><CreateAccountPopover error="Your username must be at least one character"/></Popover>);
       return;
     }
   }
@@ -74,8 +74,8 @@ function doTheLoginThingy(createNewAccount) {
   }).then(response => response.json()).then(response => {
     if (createNewAccount) {
       if (response.alreadyExists) {
-        states.setActivePopover(<CreateAccountPopover error={<>There's already an account with that email address,
-          would you like to <a href="#" onClick={() => states.setActivePopover(<SignInPopover/>)}>sign in</a> instead?</>}/>);
+        states.setActivePopover(<Popover title="Create Account"><CreateAccountPopover error={<>There's already an account with that email address,
+          would you like to <a href="#" onClick={() => states.setActivePopover(<Popover title="Sign In"><SignInPopover/></Popover>)}>sign in</a> instead?</>}/></Popover>);
         return;
       }
       states.setActivePopover(<Popover title="Check your emails!">Thanks for joining us, 
@@ -83,12 +83,12 @@ function doTheLoginThingy(createNewAccount) {
       return;
     } else {
       if (!response.alreadyExists) {
-        states.setActivePopover(<SignInPopover error={<>There's no account with that email address,
-          would you like to <a href="#" onClick={() => states.setActivePopover(<CreateAccountPopover/>)}>create one</a>?</>}/>);
+        states.setActivePopover(<Popover title="Sign In"><SignInPopover error={<>There's no account with that email address,
+          would you like to <a href="#" onClick={() => states.setActivePopover(<Popover title="Create Account"><CreateAccountPopover/></Popover>)}>create one</a>?</>}/></Popover>);
         return;
       }
       if (!response.passwordMatches) {
-        states.setActivePopover(<SignInPopover error="Incorrect password for this account"/>);
+        states.setActivePopover(<Popover title="Sign In"><SignInPopover error="Incorrect password for this account"/></Popover>);
         return;
       }
     }
@@ -266,8 +266,8 @@ function Popover({children, title, style={}, ...props}) {
 }
 
 function SignInPopover ({ error="" }) {
-  return (<Popover title="Sign In">
-    <span>Welcome back! If you don't already have an account please <a href="#" onClick={() => states.setActivePopover(<CreateAccountPopover/>)}>create an account</a> instead.</span>
+  return (<>
+    <span>Welcome back! If you don't already have an account please <a href="#" onClick={() => states.setActivePopover(<Popover title="Create Account"><CreateAccountPopover/></Popover>)}>create an account</a> instead.</span>
     <div id="loginform">
       <em id="signInErrorMessage">{error}</em>
       <div style={{display:"grid",gridTemplateColumns:"auto auto"}}>
@@ -276,12 +276,12 @@ function SignInPopover ({ error="" }) {
       </div>
     </div>
     <button onClick={() => doTheLoginThingy(false)}>Sign In</button>
-  </Popover>);
+  </>);
 }
 
 function CreateAccountPopover ({ error="" }) {
-  return (<Popover title="Create Account">
-  <span>Welcome to Platypuss! If you already have an account please <a href="#" onClick={() => states.setActivePopover(<SignInPopover/>)}>sign in</a> instead.</span>
+  return (<>
+  <span>Welcome to Platypuss! If you already have an account please <a href="#" onClick={() => states.setActivePopover(<Popover title="Sign In"><SignInPopover/></Popover>)}>sign in</a> instead.</span>
   <br/><strong>By using Platypuss you confirm that you have read and agreed to our <a href="/legal">legal agreements</a>.</strong>
     <div id="loginform">
       {error ? <em id="signInErrorMessage">{error}</em> : ""}
@@ -293,7 +293,7 @@ function CreateAccountPopover ({ error="" }) {
       </div>
     </div>
     <button onClick={() => doTheLoginThingy(true)}>Create Account</button>
-  </Popover>);
+  </>);
 }
 
 const CarpPage = () => {
