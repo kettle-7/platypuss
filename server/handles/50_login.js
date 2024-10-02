@@ -115,6 +115,7 @@ module.exports = {
                             obj.peers[client.uid].online = true;
                             onlinePeers[client.uid] = obj.peers[client.uid];
                         } else {
+                            console.log(!Object.keys(onlinePeers).includes(client.uid), client.uid, offlinePeers, obj.peers[client.uid])
                             if (!Object.keys(onlinePeers).includes(client.uid))
                                 offlinePeers[client.uid] = obj.peers[client.uid];
                         }
