@@ -986,6 +986,7 @@ async function loadView(switchToServer) {
             break;
           case "roomAdded":
           case "roomEdited":
+          case "roomDeleted":
             if (serverCode === states.focusedServer) {
               states.setFocusedServerRenderedRooms(packet.newRooms ? packet.newRooms : states.focusedServerRenderedRooms);
               if (!Object.keys(packet.newRooms).includes(states.focusedRoom.id)) {
