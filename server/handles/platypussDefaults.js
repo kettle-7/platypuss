@@ -83,6 +83,7 @@ module.exports = {
                     room: id
                 }
             };
+            this.description = "";
             this.permissionOverrides = {};
         }
     },

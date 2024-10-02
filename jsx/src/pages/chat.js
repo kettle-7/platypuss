@@ -560,7 +560,7 @@ function RoomLink({room}) {
     if (roomNameRef.current)
       roomNameRef.current.value = room.name;
     if (roomDescriptionRef.current)
-      roomDescriptionRef.current.innerText = states.accountInformation.aboutMe.text;
+      roomDescriptionRef.current.innerText = room.description ? room.description : "";
   });
 
   return (<div className="roomLink" style={{cursor:"pointer"}} onClick={() => {
@@ -582,13 +582,27 @@ function RoomLink({room}) {
         states.setActivePopover(<Popover title="Room Settings">
           <div className='horizontalrow'>
             <label htmlFor="editRoomName">Room name: </label>
-            <input type="text" id="editRoomName" ref={roomNameRef}/>
+            <input type="text" id="editRoomName" ref={roomNameRef} onInput={() => {
+              openSockets[states.focusedServer].send(JSON.stringify({
+                eventType: "editRoom",
+                operation: "rename",
+                newName: roomNameRef.current.innerText,
+                roomID: room.id
+              }));
+            }}/>
           </div>
           <h5>Room description:</h5>
-          <div id="changeAboutMe" contentEditable={(
+          <div id="roomDescription" contentEditable={(
             states.focusedServerPermissions.includes("room.edit") ||
             states.focusedServerPermissions.includes("admin")
-          )} ref={roomDescriptionRef}></div>
+          )} ref={roomDescriptionRef} onInput={() => {
+            openSockets[states.focusedServer].send(JSON.stringify({
+              eventType: "editRoom",
+              operation: "changeDescription",
+              newDescription: roomDescriptionRef.current.innerText,
+              roomID: room.id
+            }));
+          }}></div>
           {(states.focusedServerPermissions.includes("room.delete") ||
             states.focusedServerPermissions.includes("admin")) ? <button onClick={() => {
             openSockets[states.focusedServer].send(JSON.stringify({

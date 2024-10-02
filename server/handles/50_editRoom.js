@@ -53,6 +53,37 @@
             }));
             return;
         }
+        switch (packet.operation) {
+            case "rename":
+                if (!packet.newName) {
+                    packet.ws.send(JSON.stringify({
+                        eventType: "error",
+                        code: "missingData",
+                        explanation: "you need a new name for the room"
+                    }));
+                    return;
+                }
+                sdata.rooms[packet.roomID].name = packet.newName.toString();
+                break;
+            case "changeDescription":
+                if (!packet.newDescription) {
+                    packet.ws.send(JSON.stringify({
+                        eventType: "error",
+                        code: "missingData",
+                        explanation: "you need a new description for the room"
+                    }));
+                    return;
+                }
+                sdata.rooms[packet.roomID].description = packet.newDescription.toString();
+                break;
+            default:
+                packet.ws.send(JSON.stringify({
+                    eventType: "error",
+                    code: "invalidOperation",
+                    explanation: "this server does not support the requested operation"
+                }));
+                return;
+        }
         let newRooms = {};
         for (let room of Object.values(sdata.rooms)) {
             // TODO: permissions
