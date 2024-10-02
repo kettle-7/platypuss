@@ -102,23 +102,24 @@ module.exports = {
                     let onlinePeers = {};
                     let offlinePeers = {};
                     obj.peers = {};
-                    for (let user of Object.values(sdata.users)) {
-                        obj.peers[user.id] = {
-                            id: user.id,
-                            globalPermissions: user.globalPerms,
-                            isAdmin: sdata.properties.admins.includes(user.id),
-                            online: false
-                        }
-                    }
                     for (let client of clients) {
                         if (client.readyState < 2 && client.loggedinbytoken && obj.peers[client.uid] != undefined) {
-                            obj.peers[client.uid].online = true;
-                            onlinePeers[client.uid] = obj.peers[client.uid];
-                        } else {
-                            console.log(!Object.keys(onlinePeers).includes(client.uid), client.uid, offlinePeers, obj.peers[client.uid])
-                            if (!Object.keys(onlinePeers).includes(client.uid))
-                                offlinePeers[client.uid] = obj.peers[client.uid];
+                            onlinePeers[client.uid] = {
+                                id: client.uid,
+                                globalPermissions: sdata.users[client.uid].globalPerms,
+                                isAdmin: sdata.properties.admins.includes(client.uid),
+                                online: true
+                            }
                         }
+                    }
+                    for (let user of Object.values(sdata.users)) {
+                        if (!Object.keys(onlinePeers).includes(user))
+                            offlinePeers[user] = {
+                                id: user.id,
+                                globalPermissions: user.globalPerms,
+                                isAdmin: sdata.properties.admins.includes(user.id),
+                                online: false
+                            };
                     }
                     obj.peers = {...onlinePeers, ...offlinePeers};
                     obj.rooms = {};
