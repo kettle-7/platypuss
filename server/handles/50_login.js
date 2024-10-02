@@ -112,8 +112,8 @@ module.exports = {
                             }
                         }
                     }
-                    console.log(onlinePeers)
                     for (let user of Object.values(sdata.users)) {
+                        console.log(Object.keys(onlinePeers).includes(user))
                         if (!Object.keys(onlinePeers).includes(user))
                             offlinePeers[user.id] = {
                                 id: user.id,
