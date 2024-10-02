@@ -239,22 +239,29 @@ function PageHeader ({title, iconClickEvent, ...props}) {
 function PopoverParent({...props}) {
   [states.activePopover, states.setActivePopover] = React.useState(null);
   return (
-    <div id="popoverParent" style={{display: states.activePopover == null ? "none" : "flex"}} onClick={() => {
+    <div id="popoverParent" style={{display: "flex", height: states.activePopover === null ? 0 : "100%"}} onMouseDown={() => {setTimeout(() => {
       states.setActivePopover(null);
-    }} {...props}>{states.activePopover}</div>
+    }, 50)}} {...props}>{states.activePopover || <Popover style={{opacity: 0}}/>}</div>
   );
 }
 
 // for popups / popovers in desktop, render as separate screens on mobile
 function Popover({children, title, style={}, ...props}) {
-  return <div id="popover" style={{margin: style.margin ? style.margin : "auto", ...style}} onClick={event => {
+  let popoverRef = React.useRef(null);
+  return <div id="popover" style={{margin: style.margin ? style.margin : "auto", /*height: 0,*/ ...style}} onClick={event => {
     event.stopPropagation();
-  }} {...props}>
-    <div id="popoverHeaderBar">
+  }} onMouseDown={event => {
+    event.stopPropagation();
+  }} className={states.activePopover ? "slideUp" : ""} ref={popoverRef} {...props}>
+    {title ? <div id="popoverHeaderBar">
       <h3>{title}</h3>
       <div style={{flexGrow: 1}}></div>
-      <button onClick={() => {states.setActivePopover(null);}} className="material-symbols-outlined">close</button>
-    </div>
+      <button onClick={()=>{setTimeout(()=>{states.setActivePopover(null);}, 50)}} className="material-symbols-outlined">close</button>
+    </div> : <button onClick={()=>{setTimeout(()=>{states.setActivePopover(null);}, 50)}} style={{
+      position: "absolute",
+      top: 5,
+      right: 5
+    }} className="material-symbols-outlined">close</button>}
     {children}
   </div>
 }
@@ -265,11 +272,11 @@ function SignInPopover ({ error="" }) {
     <div id="loginform">
       <em id="signInErrorMessage">{error}</em>
       <div style={{display:"grid",gridTemplateColumns:"auto auto"}}>
-      <label>Email address </label><input type="email" id="email" className="textBox" ref={emailRef}/>
-      <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef}/>
-      </div><br/>
-      <button onClick={() => doTheLoginThingy(false)}>Sign In</button>
+        <label>Email address </label><input type="email" id="email" className="textBox" ref={emailRef}/>
+        <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef}/>
+      </div>
     </div>
+    <button onClick={() => doTheLoginThingy(false)}>Sign In</button>
   </Popover>);
 }
 
@@ -280,13 +287,13 @@ function CreateAccountPopover ({ error="" }) {
     <div id="loginform">
       {error ? <em id="signInErrorMessage">{error}</em> : ""}
       <div style={{display:"grid",gridTemplateColumns:"auto auto"}}>
-      <label>Email address </label><input type="email" id="email" className="textBox" ref={emailRef}/>
-      <label>Username </label><input type="text" id="unam" className="textBox" ref={usernameRef}/>
-      <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef}/>
-      <label>Confirm Password </label><input type="password" id="confirmPassword" className="textBox" ref={confirmPasswordRef}/>
-      </div><br/>
-      <button onClick={() => doTheLoginThingy(true)}>Create Account</button>
+        <label>Email address </label><input type="email" id="email" className="textBox" ref={emailRef}/>
+        <label>Username </label><input type="text" id="unam" className="textBox" ref={usernameRef}/>
+        <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef}/>
+        <label>Confirm Password </label><input type="password" id="confirmPassword" className="textBox" ref={confirmPasswordRef}/>
+      </div>
     </div>
+    <button onClick={() => doTheLoginThingy(true)}>Create Account</button>
   </Popover>);
 }
 

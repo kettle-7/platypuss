@@ -133,21 +133,21 @@ function doTheLoginThingy(createNewAccount) {
   });
 }
 
-function SignInPopover ({ error="" }) {
+function SignInPopover({ error="" }) {
   return (<Popover title="Sign In">
     <span>Welcome back! If you don't already have an account please <a href="#" onClick={() => states.setActivePopover(<CreateAccountPopover/>)}>create an account</a> instead.</span>
     <div id="loginform">
       <em id="signInErrorMessage">{error}</em>
       <div style={{display:"grid",gridTemplateColumns:"auto auto"}}>
-      <label>Email address </label><input type="email" id="email" className="textBox" ref={emailRef}/>
-      <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef}/>
-      </div><br/>
-      <button onClick={() => doTheLoginThingy(false)}>Sign In</button>
+        <label>Email address </label><input type="email" id="email" className="textBox" ref={emailRef}/>
+        <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef}/>
+      </div>
     </div>
+    <button onClick={() => doTheLoginThingy(false)}>Sign In</button>
   </Popover>);
 }
 
-function CreateAccountPopover ({ error="" }) {
+function CreateAccountPopover({ error="" }) {
   [emailRef, usernameRef, passwordRef, confirmPasswordRef] = [
     React.useRef(null),
     React.useRef(null),
@@ -160,13 +160,13 @@ function CreateAccountPopover ({ error="" }) {
     <div id="loginform">
       {error ? <em id="signInErrorMessage">{error}</em> : ""}
       <div style={{display:"grid",gridTemplateColumns:"auto auto"}}>
-      <label>Email address </label><input type="email" id="email" className="textBox" ref={emailRef}/>
-      <label>Username </label><input type="text" id="unam" className="textBox" ref={usernameRef}/>
-      <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef}/>
-      <label>Confirm Password </label><input type="password" id="confirmPassword" className="textBox" ref={confirmPasswordRef}/>
-      </div><br/>
-      <button onClick={() => doTheLoginThingy(true)}>Create Account</button>
+        <label>Email address </label><input type="email" id="email" className="textBox" ref={emailRef}/>
+        <label>Username </label><input type="text" id="unam" className="textBox" ref={usernameRef}/>
+        <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef}/>
+        <label>Confirm Password </label><input type="password" id="confirmPassword" className="textBox" ref={confirmPasswordRef}/>
+      </div>
     </div>
+    <button onClick={() => doTheLoginThingy(true)}>Create Account</button>
   </Popover>);
 }
 
@@ -189,7 +189,7 @@ function PopoverParent({...props}) {
   return (
     <div id="popoverParent" style={{display: "flex", height: states.activePopover === null ? 0 : "100%"}} onMouseDown={() => {setTimeout(() => {
       states.setActivePopover(null);
-    }, 50)}} {...props}>{states.activePopover}</div>
+    }, 50)}} {...props}>{states.activePopover || <Popover style={{opacity: 0}}/>}</div>
   );
 }
 
@@ -200,25 +200,17 @@ function Popover({children, title, style={}, ...props}) {
     event.stopPropagation();
   }} onMouseDown={event => {
     event.stopPropagation();
-  }} onLoad={() => {
-    popoverRef.current.className += " slideUp";
-  }} ref={popoverRef} {...props}>
-    <div style={{
-      display: "flex",
-      flexDirection: "column"
-    }}>
-      <div style={{flexGrow: 1, transition: "height 0.5ms"}}></div>
-      {title ? <div id="popoverHeaderBar">
-        <h3>{title}</h3>
-        <div style={{flexGrow: 1}}></div>
-        <button onClick={()=>{setTimeout(()=>{states.setActivePopover(null);}, 50)}} className="material-symbols-outlined">close</button>
-      </div> : <button onClick={()=>{setTimeout(()=>{states.setActivePopover(null);}, 50)}} style={{
-        position: "absolute",
-        top: 3,
-        right: 3
-      }} className="material-symbols-outlined">close</button>}
-      {children}
-    </div>
+  }} className={states.activePopover ? "slideUp" : ""} ref={popoverRef} {...props}>
+    {title ? <div id="popoverHeaderBar">
+      <h3>{title}</h3>
+      <div style={{flexGrow: 1}}></div>
+      <button onClick={()=>{setTimeout(()=>{states.setActivePopover(null);}, 50)}} className="material-symbols-outlined">close</button>
+    </div> : <button onClick={()=>{setTimeout(()=>{states.setActivePopover(null);}, 50)}} style={{
+      position: "absolute",
+      top: 5,
+      right: 5
+    }} className="material-symbols-outlined">close</button>}
+    {children}
   </div>
 }
 

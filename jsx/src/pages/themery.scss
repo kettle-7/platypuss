@@ -650,8 +650,8 @@ input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focu
 
   @media screen and (max-width: 20cm) {
     background-color: var(--background-level4) !important;
-    border-radius: 10px 10px 0px 0px;
-    transition: max-height 0.5s;
+    transition: max-height 1s;
+    border-radius: 0px;
     position: absolute;
     max-height: 0px;
     flex-shrink: 1;
@@ -661,8 +661,21 @@ input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focu
   }
 }
 
+#popover button, #popover input, #popover label, #popover p, #popover div, #popover select {
+  @media screen and (max-width: 20cm) {
+    font-size: large;
+  }
+}
+
+#popover .material-symbols-outlined {
+  @media screen and (max-width: 20cm) {
+    font-size: xx-large;
+  }
+}
+
 .slideUp {
   @media screen and (max-width: 20cm) {
+    border-radius: 10px 10px 0px 0px !important;
     max-height: 100vh !important;
   }
 }
@@ -670,7 +683,7 @@ input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focu
 #popoverHeaderBar {
   display: flex;
   flex-direction: row;
-  padding: 3px;
+  padding-left: 3px;
   gap: 3px;
   align-items: center;
 }
@@ -684,6 +697,10 @@ input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focu
 
 button.material-symbols-outlined {
   padding: 3px;
+}
+
+#gatsby-focus-wrapper {
+  overflow: clip;
 }
 
 #loadMoreMessagesButton {
