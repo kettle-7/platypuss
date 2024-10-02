@@ -627,11 +627,6 @@ input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focu
   right: 0px;
 }
 
-@keyframes slideUp {
-  from { max-height: 0px; }
-  to { max-height: 100vh; }
-}
-
 #popover {
   padding: 5px;
   gap: 5px;
@@ -657,7 +652,6 @@ input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focu
     background-color: var(--background-level4) !important;
     border-radius: 10px 10px 0px 0px;
     transition: max-height 0.5s;
-    /*height: fit-content;*/
     position: absolute;
     max-height: 0px;
     flex-shrink: 1;
@@ -668,13 +662,6 @@ input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focu
 }
 
 .slideUp {
-  @media screen and (max-width: 20cm) {
-    animation: slideUp 0.5s;
-    max-height: 100vh;
-  }
-}
-
-.doneSliding {
   @media screen and (max-width: 20cm) {
     max-height: 100vh !important;
   }

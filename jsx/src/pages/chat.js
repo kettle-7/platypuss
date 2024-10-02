@@ -202,9 +202,6 @@ function Popover({children, title, style={}, ...props}) {
     event.stopPropagation();
   }} onLoad={() => {
     popoverRef.current.className += " slideUp";
-    setTimeout(() => {
-      popoverRef.current.className += " doneSliding";
-    }, 500);
   }} ref={popoverRef} {...props}>
     <div style={{
       display: "flex",
