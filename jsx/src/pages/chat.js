@@ -505,7 +505,7 @@ function RoomsBar({shown, className, ...props}) {
       }} onClick={() => {setTimeout(() => {
         states.setActivePopover(<Popover title="New Room">
           <div className='horizontalbox'>
-            <label for="roomNameBox">Room name: </label>
+            <label htmlFor="roomNameBox">Room name: </label>
             <input type='text' placeholder='' id="roomNameBox" ref={roomNameRef}/>
           </div>
           <button onClick={() => {
@@ -561,6 +561,16 @@ function leaveServer() {
 
 // a comment
 function RoomLink({room}) {
+  let roomNameRef = React.useRef(null);
+  let roomDescriptionRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (roomNameRef.current)
+      roomNameRef.current.value = room.name;
+    if (roomDescriptionRef.current)
+      roomDescriptionRef.current.innerText = states.accountInformation.aboutMe.text;
+  });
+
   return (<div className="roomLink" style={{cursor:"pointer"}} onClick={() => {
       setTimeout(() => {
         states.setFocusedRoom(room);
@@ -577,8 +587,16 @@ function RoomLink({room}) {
     }} onClick={event => {
       event.stopPropagation();
       setTimeout(() => {
-        states.setActivePopover(<Popover title="room settings">
-          wheeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+        states.setActivePopover(<Popover title="Room Settings">
+          <div className='horizontalrow'>
+            <label htmlFor="editRoomName">Room name: </label>
+            <input type="text" id="editRoomName" ref={roomNameRef}/>
+          </div>
+          <h5>Room description:</h5>
+          <div id="changeAboutMe" contentEditable={(
+            states.focusedServerPermissions.includes("room.edit") ||
+            states.focusedServerPermissions.includes("admin")
+          )} ref={roomDescriptionRef}></div>
         </Popover>);
       }, 50);
     }}>settings</button>
@@ -965,10 +983,13 @@ async function loadView(switchToServer) {
             delete messageCache[packet.messageId];
             break;
           case "roomAdded":
+          case "roomEdited":
             if (serverCode === states.focusedServer) {
-              let newRooms = {...states.focusedServerRenderedRooms};
-              newRooms[packet.id] = packet.room;
-              states.setFocusedServerRenderedRooms(newRooms);
+              states.setFocusedServerRenderedRooms(packet.newRooms ? packet.newRooms : states.focusedServerRenderedRooms);
+              if (!Object.keys(packet.newRooms).includes(states.focusedRoom.id)) {
+                states.setFocusedRoom(Object.values(packet.newRooms)[0]);
+                loadView();
+              }
             }
             break;
           case "connected":

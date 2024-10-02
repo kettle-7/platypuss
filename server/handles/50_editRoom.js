@@ -19,17 +19,25 @@
  const { v4 } = require('uuid');
 
  module.exports = {
-	eventType: "createRoom",
+	eventType: "editRoom",
 	execute: function (sdata, wss, packet, clients) {
-        if (packet.name == undefined) {
+        if (packet.roomID == undefined) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
-                code: "missingRoomName",
-                explanation: "createRoom event requires a name for the room to be created"
+                code: "missingRoomID",
+                explanation: "editRoom event requires an ID for the room to be edited"
             }));
             return;
         }
-        if (!(sdata.users[packet.ws.uid].globalPerms.includes("room.add") || sdata.properties.admins.includes(packet.ws.uid))) {
+        if (packet.operation == undefined) {
+            packet.ws.send(JSON.stringify({
+                eventType: "error",
+                code: "missingRoomOperation",
+                explanation: "editRoom event requires an operation field for what will be changed"
+            }));
+            return;
+        }
+        if (!(sdata.users[packet.ws.uid].globalPerms.includes("room.edit") || sdata.properties.admins.includes(packet.ws.uid))) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
                 code: "noPerm",
@@ -37,8 +45,6 @@
             }));
             return;
         }
-        let newRoomId = v4();
-        sdata.rooms[newRoomId] = new Room(newRoomId, packet.name.toString());
         let newRooms = {};
         for (let room of Object.values(sdata.rooms)) {
             // TODO: permissions
@@ -51,9 +57,9 @@
         for (let client of clients) {
             if (client.loggedinbytoken)
             client.send(JSON.stringify({
-                eventType: "roomAdded",
-                id: newRoomId,
-                room: sdata.rooms[newRoomId],
+                eventType: "roomEdited",
+                id: packet.roomID,
+                room: sdata.rooms[packet.roomID],
                 newRooms: newRooms
             }));
         }

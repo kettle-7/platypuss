@@ -773,6 +773,26 @@ button.material-symbols-outlined {
   border: 1px solid var(--accent);
 }
 
+#roomDescription {
+  background-color: var(--background-level3);
+  box-shadow: 2px 2px 2px #1b1b1b88 inset;
+  background-color: var(--background-level5);
+  color: var(--foreground-level1);
+  border: 1px solid var(--grey);
+  border-radius: 5px;
+  margin-right: 3px;
+  margin-left: 3px;
+  min-height: 96px;
+  flex-grow: 1;
+  padding: 3px;
+}
+
+#roomDescription:focus {
+  background-color: var(--background-level4);
+  box-shadow: 2px 2px 2px #1b1b1b88 inset;
+  border: 1px solid var(--accent);
+}
+
 h5, h4, h6 {
   margin: 0px;
 }
