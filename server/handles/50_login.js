@@ -114,7 +114,7 @@ module.exports = {
                     }
                     for (let user of Object.values(sdata.users)) {
                         if (!Object.keys(onlinePeers).includes(user))
-                            offlinePeers[user] = {
+                            offlinePeers[user.id] = {
                                 id: user.id,
                                 globalPermissions: user.globalPerms,
                                 isAdmin: sdata.properties.admins.includes(user.id),
