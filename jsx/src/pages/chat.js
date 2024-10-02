@@ -248,16 +248,8 @@ function MiddleSection({shown, className, ...props}) {
             </p>
             <button onClick={leaveServer}>Leave this server</button>
           </div>
-        </div> : states.focusedRoomRenderedMessages[0] ?
-        <div id="messageArea">{states.focusedRoomRenderedMessages.map(message => <Message message={message} key={message.id}/>)}</div> :
-        <div id="messageArea" style={{position: "relative"}}>
-          <div id="noMessages">
-            <h2>Welcome to {states.focusedRoom.name}!</h2>
-            <p>
-              This room has no messages in it, so go ahead and send the first!
-            </p>
-          </div>
         </div> :
+        <div id="messageArea">{states.focusedRoomRenderedMessages.map(message => <Message message={message} key={message.id}/>)}</div> :
         <div id="messageArea" style={{position: "relative"}}>
           <div id="noServers">
             <h2>You're not in any servers!</h2>
@@ -597,6 +589,16 @@ function RoomLink({room}) {
             states.focusedServerPermissions.includes("room.edit") ||
             states.focusedServerPermissions.includes("admin")
           )} ref={roomDescriptionRef}></div>
+          {(states.focusedServerPermissions.includes("room.delete") ||
+            states.focusedServerPermissions.includes("admin")) ? <button onClick={() => {
+            openSockets[states.focusedServer].send(JSON.stringify({
+              eventType: "deleteRoom",
+              roomID: room.id
+            }));
+            setTimeout(() => {
+              states.setActivePopover(null);
+            }, 50);
+          }}>delete</button> : ""}
         </Popover>);
       }, 50);
     }}>settings</button>

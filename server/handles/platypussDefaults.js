@@ -73,7 +73,16 @@ module.exports = {
             this.include = [];
             this.exclude = [];
             this.public = true;
-            this.messages = [];
+            this.messages = {
+                first: {
+                    id: "first",
+                    content: "# Welcome to "+name+"!\n\nThis is the start of the room. Feel free to send messages here!",
+                    author: null,
+                    special: true,
+                    timestamp: Date.now(),
+                    room: id
+                }
+            };
             this.permissionOverrides = {};
         }
     },
