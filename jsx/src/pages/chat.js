@@ -187,7 +187,7 @@ function SyntaxHighlightedCode(props) {
 
 function PopoverParent({...props}) {
   return (
-    <div id="popoverParent" style={{display: states.activePopover === null ? "none" : "flex"}} onMouseDown={() => {setTimeout(() => {
+    <div id="popoverParent" style={{display: "flex", height: states.activePopover === null ? 0 : "100%"}} onMouseDown={() => {setTimeout(() => {
       states.setActivePopover(null);
     }, 50)}} {...props}>{states.activePopover}</div>
   );
@@ -195,21 +195,33 @@ function PopoverParent({...props}) {
 
 // for popups / popovers in desktop, render as separate screens on mobile
 function Popover({children, title, style={}, ...props}) {
-  return <div id="popover" style={{margin: style.margin ? style.margin : "auto", ...style}} onClick={event => {
+  let popoverRef = React.useRef(null);
+  return <div id="popover" style={{margin: style.margin ? style.margin : "auto", /*height: 0,*/ ...style}} onClick={event => {
     event.stopPropagation();
   }} onMouseDown={event => {
     event.stopPropagation();
-  }} {...props}>
-    {title ? <div id="popoverHeaderBar">
-      <h3>{title}</h3>
-      <div style={{flexGrow: 1}}></div>
-      <button onClick={()=>{setTimeout(()=>{states.setActivePopover(null);}, 50)}} className="material-symbols-outlined">close</button>
-    </div> : <button onClick={()=>{setTimeout(()=>{states.setActivePopover(null);}, 50)}} style={{
-      position: "absolute",
-      top: 3,
-      right: 3
-    }} className="material-symbols-outlined">close</button>}
-    {children}
+  }} onLoad={() => {
+    popoverRef.current.className += " slideUp";
+    setTimeout(() => {
+      popoverRef.current.className += " doneSliding";
+    }, 500);
+  }} ref={popoverRef} {...props}>
+    <div style={{
+      display: "flex",
+      flexDirection: "column"
+    }}>
+      <div style={{flexGrow: 1, transition: "height 0.5ms"}}></div>
+      {title ? <div id="popoverHeaderBar">
+        <h3>{title}</h3>
+        <div style={{flexGrow: 1}}></div>
+        <button onClick={()=>{setTimeout(()=>{states.setActivePopover(null);}, 50)}} className="material-symbols-outlined">close</button>
+      </div> : <button onClick={()=>{setTimeout(()=>{states.setActivePopover(null);}, 50)}} style={{
+        position: "absolute",
+        top: 3,
+        right: 3
+      }} className="material-symbols-outlined">close</button>}
+      {children}
+    </div>
   </div>
 }
 
@@ -1127,8 +1139,13 @@ function PageHeader ({title, iconClickEvent, ...props}) {
   }, []);
 
   return (<header {...props}>
-    <img className="avatar material-symbols-outlined" alt="menu" onClick={iconClickEvent ? iconClickEvent : () => {window.location = "/"}}
-      style={{cursor: "pointer"}} src={states.useMobileUI ? "" : "/icons/icon-96x96.png"}/>
+    {states.useMobileUI ?
+      <span className="avatar material-symbols-outlined" onClick={
+        iconClickEvent ? iconClickEvent : () => {window.location = "/"}
+      } style={{cursor: "pointer"}}>menu</span> : 
+      <img className="avatar material-symbols-outlined" alt="menu" onClick={
+        iconClickEvent ? iconClickEvent : () => {window.location = "/"}
+      } style={{cursor: "pointer"}} src="/icons/icon-96x96.png"/>}
     <h2 onClick={() => {window.location = "/"}} style={{cursor: "pointer"}}>
         {title ? title : "(Beta!) Platypuss"}
     </h2>
