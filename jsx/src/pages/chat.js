@@ -551,8 +551,7 @@ function leaveServer() {
     states.servers[states.focusedServer].subserver}`).then(() => {window.location.reload()});
 }
 
-// a comment
-function RoomLink({room}) {
+function RoomSettingsPopover({room}) {
   let roomNameRef = React.useRef(null);
   let roomDescriptionRef = React.useRef(null);
 
@@ -560,9 +559,62 @@ function RoomLink({room}) {
     if (roomNameRef.current)
       roomNameRef.current.value = room.name;
     if (roomDescriptionRef.current)
-      roomDescriptionRef.current.innerText = room.description ? room.description : "";
-  });
+      roomDescriptionRef.current.innerText = room.description;
+  }, []);
+  return <Popover title="Room Settings">
+    <div className='horizontalrow'>
+      <label htmlFor="editRoomName">Room name: </label>
+      <input type="text" id="editRoomName" ref={roomNameRef}/>
+    </div>
+    <h5>Room description:</h5>
+    <div id="roomDescription" contentEditable={(
+      states.focusedServerPermissions.includes("room.edit") ||
+      states.focusedServerPermissions.includes("admin")
+    )} ref={roomDescriptionRef}/>
+    {(states.focusedServerPermissions.includes("room.delete") ||
+      states.focusedServerPermissions.includes("admin")) ? <button onClick={() => {
+      setTimeout(() => {
+        states.setActivePopover(<Popover title={"Do you really want to delete "+room.name+"?"}>
+          <button onClick={() => {
+            openSockets[states.focusedServer].send(JSON.stringify({
+              eventType: "deleteRoom",
+              roomID: room.id
+            }));
+            setTimeout(() => {
+              states.setActivePopover(null);
+            }, 50);
+          }}>Yes</button>
+          <button onClick={() => {
+            setTimeout(() => {
+              states.setActivePopover(null);
+            }, 50);
+          }}>No</button>
+        </Popover>);
+      }, 50);
+    }}>Delete Room</button> : ""}
+    <button onClick={() => {setTimeout(() => {
+      openSockets[states.focusedServer].send(JSON.stringify({
+        eventType: "editRoom",
+        operation: "rename",
+        newName: roomNameRef.current.value,
+        roomID: room.id
+      }));
+      openSockets[states.focusedServer].send(JSON.stringify({
+        eventType: "editRoom",
+        operation: "changeDescription",
+        newDescription: roomDescriptionRef.current.innerText,
+        roomID: room.id
+      }));
+      states.setActivePopover(null);
+    }, 50);}}>Save</button>
+    <button onClick={() => {setTimeout(() => {
+      states.setActivePopover(null);
+    }, 50);}}>Cancel</button>
+  </Popover>;
+}
 
+// a comment
+function RoomLink({room}) {
   return (<div className="roomLink" style={{cursor:"pointer"}} onClick={() => {
       setTimeout(() => {
         states.setFocusedRoom(room);
@@ -579,41 +631,7 @@ function RoomLink({room}) {
     }} onClick={event => {
       event.stopPropagation();
       setTimeout(() => {
-        states.setActivePopover(<Popover title="Room Settings">
-          <div className='horizontalrow'>
-            <label htmlFor="editRoomName">Room name: </label>
-            <input type="text" id="editRoomName" ref={roomNameRef} onInput={() => {
-              openSockets[states.focusedServer].send(JSON.stringify({
-                eventType: "editRoom",
-                operation: "rename",
-                newName: roomNameRef.current.innerText,
-                roomID: room.id
-              }));
-            }}/>
-          </div>
-          <h5>Room description:</h5>
-          <div id="roomDescription" contentEditable={(
-            states.focusedServerPermissions.includes("room.edit") ||
-            states.focusedServerPermissions.includes("admin")
-          )} ref={roomDescriptionRef} onInput={() => {
-            openSockets[states.focusedServer].send(JSON.stringify({
-              eventType: "editRoom",
-              operation: "changeDescription",
-              newDescription: roomDescriptionRef.current.innerText,
-              roomID: room.id
-            }));
-          }}></div>
-          {(states.focusedServerPermissions.includes("room.delete") ||
-            states.focusedServerPermissions.includes("admin")) ? <button onClick={() => {
-            openSockets[states.focusedServer].send(JSON.stringify({
-              eventType: "deleteRoom",
-              roomID: room.id
-            }));
-            setTimeout(() => {
-              states.setActivePopover(null);
-            }, 50);
-          }}>delete</button> : ""}
-        </Popover>);
+        states.setActivePopover(<RoomSettingsPopover room={room}/>);
       }, 50);
     }}>settings</button>
   </div>);
@@ -687,27 +705,29 @@ function AccountSettings() {
           input.multiple = false;
           input.accept = "image/*";
           input.onchange = async function (event) {
-            let file = event.target.files[0];
-            if (file.size >= 10000000) {
-              states.setActivePopover(<Popover title="Woah, that's too big!">
-                We only allow avatar sizes up to 10MB, this is to save storage space on the server. Please choose a smaller image or resize it in an image editor.
-              </Popover>);
-              return;
-            }
-            let request = new XMLHttpRequest();
-            request.open("POST", `${authUrl}/pfpUpload?id=${localStorage.getItem("sessionID")}`);
-            request.onreadystatechange = () => {
-              if (request.readyState === XMLHttpRequest.DONE && request.status) {
-                window.location.reload();
+            setTimeout(async function() {
+              let file = event.target.files[0];
+              if (file.size >= 10000000) {
+                states.setActivePopover(<Popover title="Woah, that's too big!">
+                  We only allow avatar sizes up to 10MB, this is to save storage space on the server. Please choose a smaller image or resize it in an image editor.
+                </Popover>);
+                return;
               }
-              else {
-                console.log(request);
-              }
-            };
-            request.upload.onprogress = (event) => {
-              states.setAvatarProgress(event.loaded/event.total*100);
-            };
-            request.send(await file.bytes());
+              let request = new XMLHttpRequest();
+              request.open("POST", `${authUrl}/pfpUpload?id=${localStorage.getItem("sessionID")}`);
+              request.onreadystatechange = () => {
+                if (request.readyState === XMLHttpRequest.DONE && request.status) {
+                  window.location.reload();
+                }
+                else {
+                  console.log(request);
+                }
+              };
+              request.upload.onprogress = (event) => {
+                states.setAvatarProgress(event.loaded/event.total*100);
+              };
+              request.send(await file.bytes());
+            }, 50);
           };
           input.click();
         }}>
@@ -768,7 +788,22 @@ function AccountSettings() {
           {states.themeHex}
         </span>
       </span>
-      <button>Delete Account</button>
+      <button onClick={() => {
+      setTimeout(() => {
+        states.setActivePopover(<Popover title={"Do you really want to delete your account?"}>
+          <button onClick={() => {
+            fetch(authUrl+'/deleteAccount?id='+localStorage.getItem("sessionID")).then(() => {
+              window.location = "/";
+            });
+          }}>Yes</button>
+          <button onClick={() => {
+            setTimeout(() => {
+              states.setActivePopover(<AccountSettings/>);
+            }, 50);
+          }}>No</button>
+        </Popover>);
+      }, 50);
+    }}>Delete Account</button>
       <button>Change Password</button>
       <button onClick={() => {
         localStorage.setItem("sessionID", null);

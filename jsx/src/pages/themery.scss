@@ -284,11 +284,10 @@ a {
   display: flex;
   padding: 5px;
   gap: 5px;
-  flex-grow: 1;
   flex-shrink: 1;
   @media screen and (min-width: 20cm) {
       flex-shrink: 0;
-      max-width: 20%;
+      width: 20vw;
   }
 }
 
