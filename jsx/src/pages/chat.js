@@ -203,8 +203,8 @@ function Popover({children, title, style={}, ...props}) {
     {title ? <div id="popoverHeaderBar">
       <h3>{title}</h3>
       <div style={{flexGrow: 1}}></div>
-      <button onClick={()=>{setTimeout(()=>{states.setActivePopover(null); states.setMobileSidebarShown(false);}, 50)}} className="material-symbols-outlined">close</button>
-    </div> : <button onClick={()=>{setTimeout(()=>{states.setActivePopover(null); states.setMobileSidebarShown(false);}, 50)}} style={{
+      <button onClick={()=>{setTimeout(()=>{states.setActivePopover(null);}, 50)}} className="material-symbols-outlined">close</button>
+    </div> : <button onClick={()=>{setTimeout(()=>{states.setActivePopover(null);}, 50)}} style={{
       position: "absolute",
       top: 3,
       right: 3
@@ -248,8 +248,16 @@ function MiddleSection({shown, className, ...props}) {
             </p>
             <button onClick={leaveServer}>Leave this server</button>
           </div>
-        </div> :
+        </div> : states.focusedRoomRenderedMessages[0] ?
         <div id="messageArea">{states.focusedRoomRenderedMessages.map(message => <Message message={message} key={message.id}/>)}</div> :
+        <div id="messageArea" style={{position: "relative"}}>
+          <div id="noMessages">
+            <h2>Welcome to {states.focusedRoom.name}!</h2>
+            <p>
+              This room has no messages in it, so go ahead and send the first!
+            </p>
+          </div>
+        </div> :
         <div id="messageArea" style={{position: "relative"}}>
           <div id="noServers">
             <h2>You're not in any servers!</h2>
@@ -265,7 +273,7 @@ function MiddleSection({shown, className, ...props}) {
     <div style={{height:5,background:"linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3))"}}></div>
     <div id="messageGradientArea">
       <div id="showReplyingMessage" hidden={!states.reply}>
-        <div style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+        <div className='horizontalbox'>
           <h3 style={{margin: 3}}>Replying to <strong>
             {userCache[messageCache[states.reply]?.author]?.username}
           </strong></h3>
@@ -397,6 +405,9 @@ function triggerMessageSend() {
         reply: states.reply ? states.reply : undefined
       }
     }));
+    if (!states.focusedRoomRenderedMessages[0]) {
+      setTimeout(loadView, 50);
+    }
     messageTextBox.innerHTML = "";
     setTimeout(() => {
       states.setReply(null);
@@ -427,6 +438,9 @@ function triggerMessageSend() {
                   uploads: attachmentObjects
                 }
               }));
+              if (!states.focusedRoomRenderedMessages[0]) {
+                setTimeout(loadView, 50);
+              }
               messageTextBox.innerHTML = "";
               setTimeout(() => {
                 states.setReply(null);
@@ -474,12 +488,40 @@ async function showUser(id) {
 
 // A SLIGHTLY DIFFERENT COMMENT
 function RoomsBar({shown, className, ...props}) {
+  let roomNameRef = React.createRef(null);
+ 
   return (<div className={className + " sidebar"} id="roomsBar" style={{display: shown ? "flex" : "none"}} {...props}>
     <div id="serverTitle" style={{cursor: "pointer", backgroundImage: states.focusedServer ? states.servers[states.focusedServer].manifest.icon : ""}}>
     <h3 style={{margin: 5}}>
       {states.focusedServer ? states.servers[states.focusedServer].manifest.title : "Loading servers..."}
     </h3>
     <div style={{flexGrow: 1}}></div>
+    {(states.focusedServerPermissions.includes("room.add") || states.focusedServerPermissions.includes("admin")) && 
+      <button className="material-symbols-outlined" style={{
+        height: "fit-content",
+        width: "fit-content",
+        padding: 3,
+        margin: 3
+      }} onClick={() => {setTimeout(() => {
+        states.setActivePopover(<Popover title="New Room">
+          <div className='horizontalbox'>
+            <label for="roomNameBox">Room name: </label>
+            <input type='text' placeholder='' id="roomNameBox" ref={roomNameRef}/>
+          </div>
+          <button onClick={() => {
+            openSockets[states.focusedServer].send(JSON.stringify({
+              eventType: "createRoom",
+              name: roomNameRef.current.value
+            }));
+            setTimeout(() => {states.setActivePopover(null);}, 50);
+          }}>Create</button>
+          <button onClick={() => setTimeout(() => {
+            states.setActivePopover(null);
+          }, 50)}>Cancel</button>
+        </Popover>);
+      }, 50);}}>
+        add
+    </button>}
     <button className="material-symbols-outlined" style={{
       height: "fit-content",
       width: "fit-content",
@@ -534,6 +576,11 @@ function RoomLink({room}) {
       margin: 3
     }} onClick={event => {
       event.stopPropagation();
+      setTimeout(() => {
+        states.setActivePopover(<Popover title="room settings">
+          wheeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+        </Popover>);
+      }, 50);
     }}>settings</button>
   </div>);
 }
@@ -649,13 +696,7 @@ function AccountSettings() {
         newAccountInformation.aboutMe.text = aboutMeRef.current.innerText;
         states.setAccountInformation(newAccountInformation);
       }}/>
-      <div style={{
-          flexGrow: 0,
-          display: "flex",
-          flexDirection: "row",
-          gap: 5,
-          alignItems: "center"
-          }}>
+      <div className='horizontalbox'>
         Theme:
         <select defaultValue={states.theme}>
           <option value="dark" onClick={() => {setTimeout(() => {
@@ -906,6 +947,7 @@ async function loadView(switchToServer) {
             break;
           case "messages":
             if (states.focusedServer !== serverCode || states.focusedRoom.id != packet.room) break;
+            if (packet.messages[0])
             for (let messageID in packet.messages) {
               packet.messages[messageID].isHistoric = true; // whether it was sent before we loaded the page
               messageCache[packet.messages[messageID].id] = {...packet.messages[messageID]};
@@ -922,18 +964,26 @@ async function loadView(switchToServer) {
             document.getElementById(packet.messageId).remove();
             delete messageCache[packet.messageId];
             break;
+          case "roomAdded":
+            if (serverCode === states.focusedServer) {
+              let newRooms = {...states.focusedServerRenderedRooms};
+              newRooms[packet.id] = packet.room;
+              states.setFocusedServerRenderedRooms(newRooms);
+            }
+            break;
           case "connected":
             if (servers[serverCode].setManifest)
               servers[serverCode].setManifest(packet.manifest);
             else 
               servers[serverCode].manifest = packet.manifest;
             if (serverCode === states.focusedServer) {
+              if (packet.isAdmin) packet.permissions.push("admin");
               states.setFocusedServerPermissions(packet.permissions);
               states.setFocusedServerRenderedRooms(packet.rooms ? packet.rooms : {});
               states.setFocusedServerPeers(packet.peers);
               let roomToFocus = states.focusedRoom;
               if (packet.rooms) {
-                if (!Object.values(packet.rooms).includes(states.focusedRoom)) {
+                if (!Object.keys(packet.rooms).includes(states.focusedRoom.id)) {
                   roomToFocus = Object.values(packet.rooms)[0];
                   states.setFocusedRoom(roomToFocus);
                 }
@@ -1047,7 +1097,7 @@ export default function ChatPage() {
   // set a bunch of empty React state objects for stuff that needs to be accessed throughout the program
   [states.activePopover, states.setActivePopover] = React.useState(null);
   [states.servers, states.setServers] = React.useState({}); // Data related to servers the user is in
-  [states.focusedServerPermissions, states.setFocusedServerPermissions] = React.useState({}); // what permissions we have in the currently focused server
+  [states.focusedServerPermissions, states.setFocusedServerPermissions] = React.useState([]); // what permissions we have in the currently focused server
   [states.focusedRoomRenderedMessages, states.setFocusedRoomRenderedMessages] = React.useState([]); // The <Message/> elements shown in the view, set in ChatPage
   [states.focusedServer, states.setFocusedServer] = React.useState(null); // An object representing the currently focused server
   [states.focusedRoom, states.setFocusedRoom] = React.useState({}); // An object representing the currently focused room
@@ -1093,37 +1143,25 @@ export default function ChatPage() {
           states.theme === "green" ? "greenThemed" :
           states.theme === "light" ? "lightThemed" :
           "darkThemed"
-        } shown={
-          (states.mobileSidebarShown && states.activePopover === null)
-          || !states.useMobileUI
-        }/>
+        } shown={states.mobileSidebarShown || !states.useMobileUI}/>
         <RoomsBar className={
           states.theme === "custom" ? "" :
           states.theme === "green" ? "greenThemed" :
           states.theme === "light" ? "lightThemed" :
           "darkThemed"
-        } shown={
-          (states.mobileSidebarShown && states.activePopover === null)
-          || !states.useMobileUI
-        }/>
+        } shown={states.mobileSidebarShown || !states.useMobileUI}/>
         <MiddleSection className={
           states.theme === "custom" ? "" :
           states.theme === "green" ? "greenThemed" :
           states.theme === "dark" ? "darkThemed" :
           "lightThemed"
-        } shown={
-          (!states.mobileSidebarShown && states.activePopover === null)
-          || !states.useMobileUI
-        }/>
+        } shown={!states.mobileSidebarShown || !states.useMobileUI}/>
         <PeersBar className={
           states.theme === "custom" ? "" :
           states.theme === "green" ? "greenThemed" :
           states.theme === "light" ? "lightThemed" :
           "darkThemed"
-        } shown={
-          (states.mobileSidebarShown && states.activePopover === null)
-          || !states.useMobileUI
-        }/>
+        } shown={states.mobileSidebarShown || !states.useMobileUI}/>
         <PopoverParent className={
           states.theme === "custom" ? "" :
           states.theme === "green" ? "greenThemed" :

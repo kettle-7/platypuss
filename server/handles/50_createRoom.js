@@ -29,7 +29,7 @@
             }));
             return;
         }
-        if (!(sdata.users[packet.ws.uid].globalPerms.includes("management.addRooms") || sdata.properties.admins.includes(packet.ws.uid))) {
+        if (!(sdata.users[packet.ws.uid].globalPerms.includes("room.add") || sdata.properties.admins.includes(packet.ws.uid))) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
                 code: "noPerm",
@@ -43,6 +43,7 @@
             if (client.loggedinbytoken)
             client.send(JSON.stringify({
                 eventType: "roomAdded",
+                id: newRoomId,
                 room: sdata.rooms[newRoomId]
             }));
         }

@@ -323,7 +323,7 @@ a {
   border: 1px solid var(--background-level6);
 }
 
-#noServers {
+#noServers, #noMessages, #serverNotConnected {
   margin: auto;
   background: var(--background-level4);
   padding: 10px;
@@ -339,35 +339,11 @@ a {
   }
 }
 
-#noServers h2 {
+#noServers h2, #noMessages h2, #serverNotConnected h2 {
   margin: 0px;
 }
 
-#noServers p {
-  margin: 0px;
-}
-
-#serverNotConnected {
-  margin: auto;
-  background: var(--background-level4);
-  padding: 10px;
-  border: 1px solid var(--grey);
-  border-radius: 6px;
-  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-  display: flex;
-  flex-direction: column;
-  
-  @media screen and (min-width: 20cm) {
-    max-width: 80%;
-    max-height: 80%;
-  }
-}
-
-#serverNotConnected h2 {
-  margin: 0px;
-}
-
-#serverNotConnected p {
+#noServers p, #noMessages p, #serverNotConnected p {
   margin: 0px;
 }
 
@@ -459,6 +435,17 @@ a {
   display: flex;
   padding: 5px;
   gap: 3px;
+}
+
+.horizontalbox {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 3px;
+}
+
+.horizontalbox > input, select {
+  flex-grow: 1;
 }
 
 blockquote {
@@ -661,7 +648,6 @@ input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focu
   @media screen and (max-width: 20cm) {
       background-color: var(--background-level4) !important;
       position: absolute;
-      top: 0px;
       bottom: 0px;
       left: 0px;
       right: 0px;
