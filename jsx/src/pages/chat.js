@@ -857,7 +857,7 @@ function AccountSettings() {
           }}>No</button>
         </Popover>);
       }, 50);
-    }}>Delete Account</button>
+      }}>Delete Account</button>
       <button>Change Password</button>
       <button onClick={() => {
         localStorage.setItem("sessionID", null);

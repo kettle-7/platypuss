@@ -110,7 +110,7 @@ function AccountSettings() {
   }, [states.accountInformation]);
   
   return (
-    <Popover title="Account Settings">
+    <>
       <div id="profileBanner">
         <div className="avatar" id="changeAvatarHoverButton" onClick={() => {
           let input = document.createElement('input');
@@ -204,21 +204,33 @@ function AccountSettings() {
           {states.themeHex}
         </span>
       </span>
-      <button>Delete Account</button>
+      <button onClick={() => {
+      setTimeout(() => {
+        states.setActivePopover(<Popover title={"Do you really want to delete your account?"}>
+          <button onClick={() => {
+            fetch(authUrl+'/deleteAccount?id='+localStorage.getItem("sessionID")).then(() => {
+              window.location = "/";
+            });
+          }}>Yes</button>
+          <button onClick={() => {
+            setTimeout(() => {
+              states.setActivePopover(<Popover title="Account Settings"><AccountSettings/></Popover>);
+            }, 50);
+          }}>No</button>
+        </Popover>);
+      }, 50);
+      }}>Delete Account</button>
       <button>Change Password</button>
       <button onClick={() => {
         localStorage.setItem("sessionID", null);
         window.location = "/";
       }}>Log Out</button>
       <button onClick={() => {states.setActivePopover(null);}}>Done</button>
-    </Popover>
+    </>
   );
 }
 
 function PageHeader ({title, iconClickEvent, ...props}) {
-  let customThemeDisplayRef = React.useRef(null);
-  let customThemeEditRef = React.useRef(null);
-
   React.useEffect(() => {
     fetch(authUrl + "/uinfo?id=" + localStorage.getItem("sessionID"))
       .then(data => data.json())
@@ -233,7 +245,7 @@ function PageHeader ({title, iconClickEvent, ...props}) {
     </h2>
     <div style={{flexGrow: 1}}></div>
     <img className="avatar" style={{cursor: "pointer", display: Object.keys(states.accountInformation).length ? "flex" : "none"}} src={authUrl+states.accountInformation.avatar} onClick={() => {
-      states.setActivePopover(<AccountSettings/>);
+      states.setActivePopover(<Popover title="Account Settings"><AccountSettings/></Popover>);
     }}/>
   </header>);
 };
@@ -378,7 +390,7 @@ Platypuss:
   waiting minutes for button clicks to register. This is sadly underconsidered in the development of modern apps.
 - Open source: [Platypuss' code](https://github.com/kettle-7/platypuss) is free to use, modify
   and distribute as per [the GNU GPL version 3](https://www.gnu.org/licenses/gpl-3.0.en.html).
-  It does not cost you money, there are no ads (so far) and it's built and maintained by volunteers.
+  It does not cost you money, there are no ads and it's built and maintained by volunteers.
 - More decentralised: Compared to many other alternatives Platypuss is more decentralised,
   meaning flexibility for server owners and users while avoiding compromising security and
   privacy where possible.
@@ -391,11 +403,11 @@ Platypuss:
 How to get started
 ------------------
 
-Platypuss is in an alpha stage at the moment. I will not neccessarily provide support for any
-issues you have, although do please [let me know](https://github.com/kettle-7/platypuss/issues)
-about any you come across so that I can work towards fixing them. It's in a rather volatile
-state where lots is prone to change so I will not yet publicise the instructions for how to
-host your own server, although you can expect this to come soon.
+You can create a Platypuss account for free with the button at the top of this page, and you can
+either join an existing server with an invite link or see the instructions on the
+[wiki](https://github.com/kettle-7/platypuss/wiki) to host your own. In the future I will probably
+provide ways you can host your own server, probably on a small monthly subscription, but I don't
+have any short term plans.
       `}</Markdown> : <>
         <h1>
           You found the Platypuss public beta!
@@ -417,8 +429,8 @@ host your own server, although you can expect this to come soon.
     <PopoverParent className={
       states.theme === "custom" ? "" :
       states.theme === "green" ? "greenThemed" :
-      states.theme === "light" ? "lightThemed" :
-      "darkThemed"}/>
+      states.theme === "dark" ? "darkThemed" :
+      "lightThemed"}/>
   </>);
 };
 

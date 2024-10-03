@@ -107,7 +107,7 @@ function AccountSettings() {
   }, [states.accountInformation]);
   
   return (
-    <Popover title="Account Settings">
+    <>
       <div id="profileBanner">
         <div className="avatar" id="changeAvatarHoverButton" onClick={() => {
           let input = document.createElement('input');
@@ -201,14 +201,29 @@ function AccountSettings() {
           {states.themeHex}
         </span>
       </span>
-      <button>Delete Account</button>
+      <button onClick={() => {
+      setTimeout(() => {
+        states.setActivePopover(<Popover title={"Do you really want to delete your account?"}>
+          <button onClick={() => {
+            fetch(authUrl+'/deleteAccount?id='+localStorage.getItem("sessionID")).then(() => {
+              window.location = "/";
+            });
+          }}>Yes</button>
+          <button onClick={() => {
+            setTimeout(() => {
+              states.setActivePopover(<Popover title="Account Settings"><AccountSettings/></Popover>);
+            }, 50);
+          }}>No</button>
+        </Popover>);
+      }, 50);
+      }}>Delete Account</button>
       <button>Change Password</button>
       <button onClick={() => {
         localStorage.setItem("sessionID", null);
         window.location = "/";
       }}>Log Out</button>
       <button onClick={() => {states.setActivePopover(null);}}>Done</button>
-    </Popover>
+    </>
   );
 }
 
@@ -227,7 +242,7 @@ function PageHeader ({title, iconClickEvent, ...props}) {
     </h2>
     <div style={{flexGrow: 1}}></div>
     <img className="avatar" style={{cursor: "pointer", display: Object.keys(states.accountInformation).length ? "flex" : "none"}} src={authUrl+states.accountInformation.avatar} onClick={() => {
-      states.setActivePopover(<AccountSettings/>);
+      states.setActivePopover(<Popover title="Account Settings"><AccountSettings/></Popover>);
     }}/>
   </header>);
 };
@@ -358,8 +373,8 @@ const Error404Page = () => {
     <PopoverParent className={
       states.theme === "custom" ? "" :
       states.theme === "green" ? "greenThemed" :
-      states.theme === "light" ? "lightThemed" :
-      "darkThemed"}/>
+      states.theme === "dark" ? "darkThemed" :
+      "lightThemed"}/>
   </>);
 };
 
