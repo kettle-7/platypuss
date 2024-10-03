@@ -45,7 +45,7 @@ if (!fs.existsSync(__dirname+"/servers.properties")) {
         "manifest": {
             "title": question("What would you like to name the server?\n> "),
             "public": keyInYN("Will the server be public? "),
-            "icon": question("Please put in an image link for the server icon or leave blank for the default.\n> ", {defaultInput: "./icon.png"}),
+            "icon": question("Please put in an image link for the server icon or leave blank for the default.\n> ", {defaultInput: "/icon.png"}),
             "memberCount": 0,
             "description": question("In one line how would you describe the server? This will show up on the invite page.\n> ")
         },
