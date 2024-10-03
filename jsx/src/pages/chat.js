@@ -231,7 +231,7 @@ function MiddleSection({shown, className, ...props}) {
     }
   }, [states.focusedRoomRenderedMessages]);
 
-  return (<div id="middleSection" className={className} style={{maxWidth: shown ? "100vw" : 0, padding: shown ? undefined : 0, border: shown ? undefined : "none"}} {...props}>
+  return (<div id="middleSection" className={className} style={{transform: shown ? "none" : "translate(100vw, 0px)", position: shown ? undefined : "absolute"}} {...props}>
     <div id="aboveScrolledArea"></div>
     <div id="scrolledArea" ref={scrolledAreaRef}> {/* Has a scrollbar, contains load more messages button but not message typing box */}
       <div id="aboveMessageArea">
@@ -345,8 +345,57 @@ function Message({message}) {
   let sentByThisUser = message.author === states.accountInformation.id;
   let uploads = message.uploads ? message.uploads : [];
   let messageContent = message.content;
+  let touchTimer;
   fetchUser(message.author).then(newAuthor=>{setAuthor(newAuthor)});
-  return (<div className="message1" id={message.id}>
+
+  let showContextMenu = () => {
+    touchTimer = setTimeout(() => {
+      states.setActivePopover(<Popover title="">
+        <div className='horizontalbox'>
+          <button className='material-symbols-outlined' style={{display:(
+            sentByThisUser ? !states.focusedServerPermissions.includes("message.edit")
+            : true // You shouldn't be able to edit other people's messages no matter what
+          ) ? "none" : "flex"}}>Edit</button>
+          <button className='material-symbols-outlined' onClick={()=>{replyToMessage(message.id)}}>Reply</button>
+          <button className='material-symbols-outlined' onClick={()=>{pingUser(message.author)}}>alternate_email</button>
+          <button className='material-symbols-outlined' onClick={()=>{deleteMessage(message.id)}} style={{diplay: (
+            sentByThisUser ? !states.focusedServerPermissions.includes("message.delete")
+            : !states.focusedServerPermissions.includes("moderation.delete")
+          ) ? "none" : "flex"}}>Delete</button>
+        </div>
+        <div className="messageAuthor" style={{ display: message.special ? "none" : "flex" }}>
+          <h3 className="messageUsernameDisplay">{author.username}</h3>
+          <span className="messageTimestamp">@{author.tag} at {message.timestamp ? new Date(message.timestamp).toLocaleString() : new Date(message.stamp).toLocaleString()}</span>
+        </div>
+        {message.reply ? messageCache[message.reply] ? <blockquote className='messageReply'>
+          <span className='ping'>@{userCache[messageCache[message.reply].author]?.username} </span>
+          <span className='messageReplyContent'>{messageCache[message.reply]?.content}</span>
+        </blockquote> : <blockquote className='messageReply'><em>Message couldn't be loaded</em></blockquote> : ""}
+        <div className="messageContent">
+          <Markdown options={markdownOptions}>{messageContent}</Markdown>
+          <div className='horizontalbox'>
+            {uploads.map(upload => <img className="upload" src={"https://"+states.servers[states.focusedServer].ip+upload.url} onClick={() => {setTimeout(() => {
+              states.setActivePopover(<Popover className="imagePopover" style={{backgroundColor: "transparent", background: "transparent", boxShadow: "none", width: "auto"}} title={upload.name}>
+                <img src={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{borderRadius: 10, boxShadow: "0px 0px 10px black"}}/>
+                <a href={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{color: "white"}}>Download this image</a>
+              </Popover>);
+            }, 50);}}/>)}
+          </div>
+        </div>
+      </Popover>);
+    }, 750);
+  }
+
+  return (<div className="message1" id={message.id} onTouchStart={states.useMobileUI ? showContextMenu : null}
+      onMouseDown={states.useMobileUI ? showContextMenu : null} onTouchEnd={states.useMobileUI ? () => {
+        if (touchTimer) clearTimeout(touchTimer);
+      } : null} onTouchMove={states.useMobileUI ? () => {
+        if (touchTimer) clearTimeout(touchTimer);
+      } : null} onMouseOut={states.useMobileUI ? () => {
+        if (touchTimer) clearTimeout(touchTimer);
+      } : null} onMouseUp={states.useMobileUI ? () => {
+        if (touchTimer) clearTimeout(touchTimer);
+      } : null}>
     <img src={author.avatar ? authUrl+author.avatar :
       "https://img.freepik.com/premium-vector/hand-drawn-cartoon-doodle-skull-funny-cartoon-skull-isolated-white-background_217204-944.jpg"
     } alt="🐙" className="avatar" style={{
@@ -365,7 +414,7 @@ function Message({message}) {
       </blockquote> : <blockquote className='messageReply'><em>Message couldn't be loaded</em></blockquote> : ""}
       <div className="messageContent">
         <Markdown options={markdownOptions}>{messageContent}</Markdown>
-        <div className='horizontalrow'>
+        <div className='horizontalbox'>
           {uploads.map(upload => <img className="upload" src={"https://"+states.servers[states.focusedServer].ip+upload.url} onClick={() => {setTimeout(() => {
             states.setActivePopover(<Popover className="imagePopover" style={{backgroundColor: "transparent", background: "transparent", boxShadow: "none", width: "auto"}} title={upload.name}>
               <img src={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{borderRadius: 10, boxShadow: "0px 0px 10px black"}}/>
@@ -375,7 +424,7 @@ function Message({message}) {
         </div>
       </div>
     </div>
-    <div className="message3">
+    {states.useMobileUI ? "" : <div className="message3">
       <button className='material-symbols-outlined' style={{display:(
         sentByThisUser ? !states.focusedServerPermissions.includes("message.edit")
         : true // You shouldn't be able to edit other people's messages no matter what
@@ -386,7 +435,7 @@ function Message({message}) {
         sentByThisUser ? !states.focusedServerPermissions.includes("message.delete")
         : !states.focusedServerPermissions.includes("moderation.delete")
       ) ? "none" : "flex"}}>Delete</button>
-    </div>
+    </div>}
   </div>);
 }
 
@@ -487,7 +536,7 @@ async function showUser(id) {
 function RoomsBar({shown, className, ...props}) {
   let roomNameRef = React.createRef(null);
  
-  return (<div className={className + " sidebar"} id="roomsBar" style={{maxWidth: shown ? "100vw" : 0, padding: shown ? 3 : 0}} {...props}>
+  return (<div className={className + " sidebar"} id="roomsBar" style={{transform: shown ? "none" : "translate(-100vw, 0px)", position: shown ? undefined : "absolute", padding: shown ? 5 : 0}} {...props}>
     <div id="serverTitle" style={{cursor: "pointer", backgroundImage: states.focusedServer ? states.servers[states.focusedServer].manifest.icon : ""}}>
     <h3 style={{margin: 5}}>
       {states.focusedServer ? states.servers[states.focusedServer].manifest.title : "Loading servers..."}
@@ -567,7 +616,7 @@ function RoomSettingsPopover({room}) {
       roomDescriptionRef.current.innerText = room.description;
   }, []);
   return <>
-    <div className='horizontalrow'>
+    <div className='horizontalbox'>
       <label htmlFor="editRoomName">Room name: </label>
       <input type="text" id="editRoomName" ref={roomNameRef}/>
     </div>
@@ -644,7 +693,7 @@ function RoomLink({room}) {
 
 // The bar on the left showing the servers you're in, also for navigation
 function ServersBar({shown, className, ...props}) {
-  return (<div className={className + " sidebar"} id="serversBar" style={{maxWidth: shown ? 54 : 0, padding: shown ? 3 : 0}} {...props}>
+  return (<div className={className + " sidebar"} id="serversBar" style={{transform: shown ? "none" : "translate(-100vw, 0px)", position: shown ? undefined : "absolute"}} {...props}>
     <button className="serverIcon material-symbols-outlined" id="newServerButton">add</button>
     {Object.values(states.servers).map(server => (<ServerIcon server={server}></ServerIcon>))}
   </div>);
@@ -668,7 +717,7 @@ function ServerIcon({server}) {
 
 // The bar on the right showing other server members
 function PeersBar({shown, className, ...props}) {
-  return (<div className={className + " sidebar"} id="peersBar" style={{maxWidth: shown ? 54 : 0, padding: /*shown ? 3 :*/ 0}} {...props}>
+  return (<div className={className + " sidebar"} id="peersBar" style={{right: 0, transform: shown ? undefined : "translate(-100vw, 0px)", position: shown ? undefined : "absolute"}} {...props}>
     <button className="serverIcon material-symbols-outlined" id="inviteButton" onClick={() => {
       openSockets[states.focusedServer].send(JSON.stringify({
         eventType: "message",
@@ -1220,7 +1269,12 @@ export default function ChatPage() {
       }
     }} states={states}/>
     <main>
-      <div id="chatPage">
+      <div id="chatPage" className={
+          states.theme === "custom" ? "" :
+          states.theme === "green" ? "greenThemed" :
+          states.theme === "light" ? "lightThemed" :
+          "darkThemed"
+        }>
         <ServersBar className={
           states.theme === "custom" ? "" :
           states.theme === "green" ? "greenThemed" :

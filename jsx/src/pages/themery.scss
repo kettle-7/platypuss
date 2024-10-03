@@ -25,7 +25,7 @@
   'opsz' 24
 }
 
-.lightThemed, .lightThemed * {
+.lightThemed, .lightThemed *, #chatPage .lightThemed, #chatPage .lightThemed * {
   --outgradient: linear-gradient(#e0e0e0, #c4c4c4, #c4c4c4, #a8a8a8);
   --ingradient: linear-gradient(#a8a8a8, #c4c4c4, #c4c4c4, #e0e0e0);
   --outgradientsmooth: linear-gradient(#eeeeee, #aaaaaa);
@@ -219,9 +219,14 @@ blockquote p {
   margin-bottom: 0px;
 }
 
-.message2 > p {
+.messageContent > p {
   margin-top: 0px;
   margin-bottom: 0px;
+}
+
+.messageContent {
+  overflow: hidden;
+  position: relative;
 }
 
 footer {
@@ -276,7 +281,7 @@ a {
   flex-grow: 0;
   flex-shrink: 0;
   background: var(--background-level5);
-  transition: max-width 1s, padding 1s;
+  transition: transform 1s, padding 1s;
   overflow-y: scroll;
   scrollbar-width: none;
 }
@@ -292,8 +297,11 @@ a {
   }
 
   @media screen and (max-width: 20cm) {
-    flex-grow: 1;
+    max-width: 100vw;
     flex-shrink: 1;
+    flex-grow: 1;
+    right: 54px;
+    left: 54px;
   }
 }
 
@@ -302,6 +310,7 @@ a {
   height: 100%;
   width: 100%;
   overflow: hidden;
+  background: var(--background-level5);
 }
 
 #scrolledArea {
@@ -319,6 +328,7 @@ a {
 }
 
 #middleSection {
+  z-index: 1;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
@@ -326,7 +336,14 @@ a {
   background: var(--background-level3);
   overflow: hidden;
   border: 1px solid var(--background-level6);
-  transition: max-width 1s, padding 1s;
+  transition: transform 1s, padding 1s;
+
+  @media screen and (max-width: 20cm) {
+    max-width: 100vw;
+    min-width: 100vw;
+    bottom: 0px;
+    top: 70px;
+  }
 }
 
 #noServers, #noMessages, #serverNotConnected {
@@ -447,7 +464,7 @@ a {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 3px;
+  gap: 1px;
 }
 
 .horizontalbox > input, select {
@@ -566,8 +583,11 @@ blockquote {
 }
 
 .messageTimestamp {
+  text-overflow: ellipsis;
   color: var(--grey);
+  text-wrap: nowrap;
   padding-left: 2px;
+  overflow: hidden;
   opacity: 0;
 }
 
@@ -611,7 +631,7 @@ input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focu
   gap: 3px;
   border: none;
   align-content: center;
-  border-radius: 5px;
+  border-radius: 6px;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
   height: 20vh;
   width: 35vh;
@@ -620,14 +640,24 @@ input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focu
   margin: 3px;
 }
 
+.upload {
+  box-sizing: border-box;
+  object-fit: cover;
+  flex-shrink: 1;
+  max-width: 100%;
+  border-radius: 6px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+}
+
 #popoverParent {
   position: absolute;
   background-color: rgba(0, 0, 0, 0.75);
   max-width: 100%;
   height: 0px;
   bottom: 0px;
-  left: 0px;
   right: 0px;
+  z-index: 3;
+  left: 0px;
 }
 
 #popover {
