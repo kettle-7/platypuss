@@ -231,7 +231,7 @@ function MiddleSection({shown, className, ...props}) {
     }
   }, [states.focusedRoomRenderedMessages]);
 
-  return (<div id="middleSection" className={className} style={{display: shown ? "flex" : "none"}} {...props}>
+  return (<div id="middleSection" className={className} style={{maxWidth: shown ? "100vw" : 0, padding: shown ? undefined : 0, border: shown ? undefined : "none"}} {...props}>
     <div id="aboveScrolledArea"></div>
     <div id="scrolledArea" ref={scrolledAreaRef}> {/* Has a scrollbar, contains load more messages button but not message typing box */}
       <div id="aboveMessageArea">
@@ -487,7 +487,7 @@ async function showUser(id) {
 function RoomsBar({shown, className, ...props}) {
   let roomNameRef = React.createRef(null);
  
-  return (<div className={className + " sidebar"} id="roomsBar" style={{display: shown ? "flex" : "none"}} {...props}>
+  return (<div className={className + " sidebar"} id="roomsBar" style={{maxWidth: shown ? "100vw" : 0, padding: shown ? 3 : 0}} {...props}>
     <div id="serverTitle" style={{cursor: "pointer", backgroundImage: states.focusedServer ? states.servers[states.focusedServer].manifest.icon : ""}}>
     <h3 style={{margin: 5}}>
       {states.focusedServer ? states.servers[states.focusedServer].manifest.title : "Loading servers..."}
@@ -644,7 +644,7 @@ function RoomLink({room}) {
 
 // The bar on the left showing the servers you're in, also for navigation
 function ServersBar({shown, className, ...props}) {
-  return (<div className={className + " sidebar"} id="serversBar" style={{display: shown ? "flex" : "none"}} {...props}>
+  return (<div className={className + " sidebar"} id="serversBar" style={{maxWidth: shown ? 54 : 0, padding: shown ? 3 : 0}} {...props}>
     <button className="serverIcon material-symbols-outlined" id="newServerButton">add</button>
     {Object.values(states.servers).map(server => (<ServerIcon server={server}></ServerIcon>))}
   </div>);
@@ -668,7 +668,7 @@ function ServerIcon({server}) {
 
 // The bar on the right showing other server members
 function PeersBar({shown, className, ...props}) {
-  return (<div className={className + " sidebar"} id="peersBar" style={{display: shown ? "flex" : "none"}} {...props}>
+  return (<div className={className + " sidebar"} id="peersBar" style={{maxWidth: shown ? 54 : 0, padding: /*shown ? 3 :*/ 0}} {...props}>
     <button className="serverIcon material-symbols-outlined" id="inviteButton" onClick={() => {
       openSockets[states.focusedServer].send(JSON.stringify({
         eventType: "message",
@@ -1133,9 +1133,9 @@ function PageHeader ({title, iconClickEvent, ...props}) {
 
   return (<header {...props}>
     {states.useMobileUI ?
-      <span className="avatar material-symbols-outlined" onClick={
+      <button className="avatar material-symbols-outlined" onClick={
         iconClickEvent ? iconClickEvent : () => {window.location = "/"}
-      } style={{cursor: "pointer"}}>menu</span> : 
+      } style={{cursor: "pointer", border: "none"}}>menu</button> : 
       <img className="avatar material-symbols-outlined" alt="menu" onClick={
         iconClickEvent ? iconClickEvent : () => {window.location = "/"}
       } style={{cursor: "pointer"}} src="/icons/icon-96x96.png"/>}

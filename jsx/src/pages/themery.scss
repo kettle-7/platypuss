@@ -276,6 +276,7 @@ a {
   flex-grow: 0;
   flex-shrink: 0;
   background: var(--background-level5);
+  transition: max-width 1s, padding 1s;
   overflow-y: scroll;
   scrollbar-width: none;
 }
@@ -292,6 +293,7 @@ a {
 
   @media screen and (max-width: 20cm) {
     flex-grow: 1;
+    flex-shrink: 1;
   }
 }
 
@@ -324,6 +326,7 @@ a {
   background: var(--background-level3);
   overflow: hidden;
   border: 1px solid var(--background-level6);
+  transition: max-width 1s, padding 1s;
 }
 
 #noServers, #noMessages, #serverNotConnected {
