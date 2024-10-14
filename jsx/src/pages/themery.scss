@@ -405,7 +405,7 @@ a {
 .roomLink a {
   flex-grow: 1;
   margin-left: 4px;
-  color: white;
+  color: var(--foreground-level1);
 }
 
 .tooltipContainer .serverIconTooltip {

@@ -1225,6 +1225,7 @@ export default function ChatPage() {
         break;
     }
   }
+  console.log(theme);
 
   // set a bunch of empty React state objects for stuff that needs to be accessed throughout the program
   [states.activePopover, states.setActivePopover] = React.useState(null);
