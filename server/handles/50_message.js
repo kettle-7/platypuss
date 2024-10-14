@@ -391,7 +391,8 @@ all the information specified in the Platypuss API."
                     id: mid,
                     author: author,
                     uploads: packet.message.uploads,
-                    reply: packet.message.reply
+                    reply: packet.message.reply,
+                    room: packet.message.room
                 }
             }));
         }
