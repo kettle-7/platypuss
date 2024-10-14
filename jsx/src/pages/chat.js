@@ -1248,6 +1248,7 @@ export default function ChatPage() {
     loadView();
     states.setMobileSidebarShown(true);
     states.setTheme(theme);
+    console.log(theme, states.theme);
   }, []);
 
   // return the basic page layout
