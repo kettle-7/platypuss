@@ -704,7 +704,7 @@ async function loadView(switchToServer) {
           case "message":
             if (document.visibilityState == "hidden" && data.userId !== packet.message.author)
               new Audio(authUrl+'/randomsand.wav').play();
-            if (states.focusedServer !== serverCode) break;
+            if (states.focusedServer !== serverCode || states.focusedRoom.id != packet.room) break;
             // cache the message and add it to the list to render
             messageCache[packet.message.id] = packet.message;
             states.setFocusedRoomRenderedMessages([
