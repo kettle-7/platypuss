@@ -22,13 +22,14 @@ const { v4 } = require('uuid');
 // Feel free to modify these to your liking (you may want different default permissions or maximum file size)
 module.exports = {
     maximumFileSize: 25 * 1024 * 1024,
-    defaultPerms: [
+    defaultPermissions: [
         "message.send",
         "message.read",
         "message.history",
         "message.delete",
         "message.edit",
-        "message.attach"
+        "message.attach",
+        "room.view"
     ],
 
     availablePerms: {
@@ -40,17 +41,18 @@ module.exports = {
         "message.attach": "attach files and images to their messages",
         "moderation.delete": "delete other people's messages",
         "moderation.ban": "ban others from the server",
-        "management.addRooms": "add rooms to the server",
-        "management.editRooms": "edit rooms on the server",
-        "management.deleteRooms": "delete rooms from the server",
-        "admin.permedit": "edit other people's permissions (this does not include their own)"
+        "room.add": "add rooms to the server",
+        "room.view": "view rooms in the server",
+        "room.edit": "edit rooms on the server",
+        "room.delete": "delete rooms from the server",
+        "admin.editpermissions": "edit other people's permissions (this does not include their own)"
     },
 
     User: class {
         constructor(id) {
             this.id = id;
             this.groups = [];
-            this.globalPerms = module.exports.defaultPerms;
+            this.globalPermissions = module.exports.defaultPermissions;
             this.uploadedFiles = [];
         }
     },
@@ -60,7 +62,7 @@ module.exports = {
             this.id = v4();
             this.members = [];
             this.colour = "#eeeeee";
-            this.globalPerms = module.exports.defaultPerms;
+            this.globalPermissions = module.exports.defaultPermissions;
         }
     },
 
@@ -71,17 +73,27 @@ module.exports = {
             this.include = [];
             this.exclude = [];
             this.public = true;
-            this.messages = [];
+            this.messages = {
+                first: {
+                    id: "first",
+                    content: "# Welcome to "+name+"!\n\nThis is the start of the room. Feel free to send messages here!",
+                    author: null,
+                    special: true,
+                    timestamp: Date.now(),
+                    room: id
+                }
+            };
+            this.description = "";
             this.permissionOverrides = {};
         }
     },
 
     Message: class {
-        constructor(author, channel, content) {
+        constructor(author, room, content) {
             this.id = v4();
             this.content = content;
             this.author = author;
-            this.channel = channel;
+            this.room = room;
         }
     },
 
@@ -92,9 +104,9 @@ module.exports = {
         }
     },
 
-    generateInviteCode: function(ogip, port, inviteCode) {
+    generateInviteCode: function(subserver, port, inviteCode) {
         let code = "";
-        for (let part of ogip.split(".")) {
+        for (let part of subserver.split(".")) {
             cp = parseInt(part, 10).toString(16);
             while (cp.length < 2) {
                 cp = "0" + cp;

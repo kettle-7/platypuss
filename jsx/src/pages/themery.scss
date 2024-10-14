@@ -25,7 +25,7 @@
   'opsz' 24
 }
 
-.lightThemed, .lightThemed * {
+.lightThemed, .lightThemed *, #chatPage .lightThemed, #chatPage .lightThemed * {
   --outgradient: linear-gradient(#e0e0e0, #c4c4c4, #c4c4c4, #a8a8a8);
   --ingradient: linear-gradient(#a8a8a8, #c4c4c4, #c4c4c4, #e0e0e0);
   --outgradientsmooth: linear-gradient(#eeeeee, #aaaaaa);
@@ -141,7 +141,7 @@ body {
 button {
   color: var(--foreground-level1);
   background: var(--outgradient);
-  border: 0px solid var(--grey);
+  border: 1px solid var(--grey);
   border-radius: 5px;
   padding: 2px;
   padding-left: 10px;
@@ -219,9 +219,14 @@ blockquote p {
   margin-bottom: 0px;
 }
 
-.message2 > p {
+.messageContent > p {
   margin-top: 0px;
   margin-bottom: 0px;
+}
+
+.messageContent {
+  overflow: hidden;
+  position: relative;
 }
 
 footer {
@@ -276,6 +281,7 @@ a {
   flex-grow: 0;
   flex-shrink: 0;
   background: var(--background-level5);
+  transition: transform 1s, padding 1s;
   overflow-y: scroll;
   scrollbar-width: none;
 }
@@ -284,11 +290,18 @@ a {
   display: flex;
   padding: 5px;
   gap: 5px;
-  flex-grow: 1;
   flex-shrink: 1;
   @media screen and (min-width: 20cm) {
-      flex-shrink: 0;
-      max-width: 20%;
+    flex-shrink: 0;
+    width: 20vw;
+  }
+
+  @media screen and (max-width: 20cm) {
+    max-width: 100vw;
+    flex-shrink: 1;
+    flex-grow: 1;
+    right: 54px;
+    left: 54px;
   }
 }
 
@@ -297,6 +310,7 @@ a {
   height: 100%;
   width: 100%;
   overflow: hidden;
+  background: var(--background-level5);
 }
 
 #scrolledArea {
@@ -314,6 +328,7 @@ a {
 }
 
 #middleSection {
+  z-index: 1;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
@@ -321,6 +336,42 @@ a {
   background: var(--background-level3);
   overflow: hidden;
   border: 1px solid var(--background-level6);
+  transition: transform 1s, padding 1s;
+
+  @media screen and (max-width: 20cm) {
+    max-width: 100vw;
+    min-width: 100vw;
+    bottom: 0px;
+    top: 70px;
+  }
+}
+
+#noServers, #noMessages, #serverNotConnected {
+  margin: auto;
+  background: var(--background-level4);
+  padding: 10px;
+  border: 1px solid var(--grey);
+  border-radius: 6px;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+
+  @media screen and (min-width: 20cm) {
+    max-width: 80%;
+    max-height: 80%;
+  }
+}
+
+#noServers h2, #noMessages h2, #serverNotConnected h2 {
+  margin: 0px;
+}
+
+#noServers p, #noMessages p, #serverNotConnected p {
+  margin: 0px;
+}
+
+#serverNotConnected button {
+  margin-top: 5px;
 }
 
 .serverIcon {
@@ -409,6 +460,17 @@ a {
   gap: 3px;
 }
 
+.horizontalbox {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1px;
+}
+
+.horizontalbox > input, select {
+  flex-grow: 1;
+}
+
 blockquote {
   margin: 3px;
 }
@@ -422,7 +484,7 @@ blockquote {
 #messageBox {
   flex-grow: 1;
   font-weight: normal;
-  background: var(--background-level2);
+  background: var(--background-level3);
   border: 1px solid var(--grey);
   box-shadow: 2px 2px 2px #1b1b1b88 inset;
   border-radius: 10px;
@@ -435,6 +497,7 @@ blockquote {
 
 #messageBox:focus {
   border: 1px solid var(--accent);
+  background: var(--background-level2);
 }
 
 #serverTitle {
@@ -445,6 +508,13 @@ blockquote {
 }
 
 #serverTitle h3 {
+  flex-shrink: 1;
+  text-overflow: ellipsis;
+  text-wrap: nowrap;
+  overflow: hidden;
+}
+
+.popoverBanner h1 {
   flex-shrink: 1;
   text-overflow: ellipsis;
   text-wrap: nowrap;
@@ -493,6 +563,9 @@ blockquote {
   overflow-y: visible;
   transform: translate(0px, -16px);
   right: 8px;
+  display: flex;
+  flex-direction: row;
+  gap: 1px;
 }
 
 .message1:hover .message3 {
@@ -510,8 +583,11 @@ blockquote {
 }
 
 .messageTimestamp {
+  text-overflow: ellipsis;
   color: var(--grey);
+  text-wrap: nowrap;
   padding-left: 2px;
+  overflow: hidden;
   opacity: 0;
 }
 
@@ -555,7 +631,7 @@ input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focu
   gap: 3px;
   border: none;
   align-content: center;
-  border-radius: 5px;
+  border-radius: 6px;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
   height: 20vh;
   width: 35vh;
@@ -564,14 +640,24 @@ input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focu
   margin: 3px;
 }
 
+.upload {
+  box-sizing: border-box;
+  object-fit: cover;
+  flex-shrink: 1;
+  max-width: 100%;
+  border-radius: 6px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+}
+
 #popoverParent {
   position: absolute;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.75);
   max-width: 100%;
-  top: 0px;
+  height: 0px;
   bottom: 0px;
-  left: 0px;
   right: 0px;
+  z-index: 3;
+  left: 0px;
 }
 
 #popover {
@@ -582,32 +668,66 @@ input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focu
   background: var(--outgradient);
 
   @media screen and (min-width: 20cm) {
-      width: fit-content;
-      max-width: 90vw;
-      height: fit-content;
-      width: 50vh;
-      border: 0px solid var(--grey);
-      border-radius: 5px;
-      box-shadow: 0px 0px 10px black;
-      margin: auto;
-      align-content: stretch;
-      max-height: 90vh;
+    width: fit-content;
+    max-width: 90vw;
+    height: fit-content;
+    width: 50vh;
+    border: 0px solid var(--grey);
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px black;
+    margin: auto;
+    align-content: stretch;
+    max-height: 90vh;
+    position: relative;
   }
 
   @media screen and (max-width: 20cm) {
-      background-color: var(--background-level4) !important;
-      position: absolute;
-      top: 0px;
-      bottom: 0px;
-      left: 0px;
-      right: 0px;
+    background-color: var(--background-level4);
+    transition: max-height 1s;
+    border-radius: 0px;
+    position: absolute;
+    max-height: 0px;
+    flex-shrink: 1;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
   }
+}
+
+#popover button, #popover input, #popover label, #popover p, #popover div, #popover select {
+  @media screen and (max-width: 20cm) {
+    font-size: large;
+  }
+}
+
+#popover .material-symbols-outlined {
+  @media screen and (max-width: 20cm) {
+    font-size: xx-large;
+  }
+}
+
+.slideUp, .imagePopover {
+  @media screen and (max-width: 20cm) {
+    border-radius: 10px 10px 0px 0px !important;
+    max-height: 100vh !important;
+  }
+}
+
+.imagePopover button {
+  border: none;
+  color: white;
+  background: transparent;
+  box-shadow: none;
+}
+
+.imagePopover h3 {
+  color: white;
 }
 
 #popoverHeaderBar {
   display: flex;
   flex-direction: row;
-  padding: 3px;
+  padding-left: 3px;
   gap: 3px;
   align-items: center;
 }
@@ -619,22 +739,28 @@ input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focu
   margin: 0px;
 }
 
-#popoverHeaderBar > button {
+button.material-symbols-outlined {
   padding: 3px;
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
+}
+
+#gatsby-focus-wrapper {
+  overflow: clip;
 }
 
 #loadMoreMessagesButton {
   align-self: center;
   font-size: large;
+  margin: 5px;
 }
 
 #aboveMessageArea {
   display: flex;
   flex-direction: column;
   width: 100%;
+}
+
+#userAboutText > p {
+  margin: 0px;
 }
 
 #changeAvatarText {
@@ -672,9 +798,19 @@ input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focu
   align-content: center;
 }
 
-.inviteServerBanner {
+.popoverBanner {
   display: flex;
   align-items: center;
+  overflow: hidden;
+}
+
+.popoverBanner > div {
+  overflow: hidden;
+}
+
+.bannerIcon {
+  width: 96px;
+  height: 96px;
 }
 
 #accountSettingsUsername {
@@ -706,6 +842,26 @@ input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focu
 }
 
 #changeAboutMe:focus {
+  background-color: var(--background-level4);
+  box-shadow: 2px 2px 2px #1b1b1b88 inset;
+  border: 1px solid var(--accent);
+}
+
+#roomDescription {
+  background-color: var(--background-level3);
+  box-shadow: 2px 2px 2px #1b1b1b88 inset;
+  background-color: var(--background-level5);
+  color: var(--foreground-level1);
+  border: 1px solid var(--grey);
+  border-radius: 5px;
+  margin-right: 3px;
+  margin-left: 3px;
+  min-height: 96px;
+  flex-grow: 1;
+  padding: 3px;
+}
+
+#roomDescription:focus {
   background-color: var(--background-level4);
   box-shadow: 2px 2px 2px #1b1b1b88 inset;
   border: 1px solid var(--accent);

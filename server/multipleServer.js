@@ -45,7 +45,7 @@ if (!fs.existsSync(__dirname+"/servers.properties")) {
         "manifest": {
             "title": question("What would you like to name the server?\n> "),
             "public": keyInYN("Will the server be public? "),
-            "icon": question("Please put in an image link for the server icon or leave blank for the default.\n> ", {defaultInput: "./icon.png"}),
+            "icon": question("Please put in an image link for the server icon or leave blank for the default.\n> ", {defaultInput: "/icon.png"}),
             "memberCount": 0,
             "description": question("In one line how would you describe the server? This will show up on the invite page.\n> ")
         },
@@ -401,6 +401,6 @@ for (let part of Object.keys(conf)[2].split(".")) {
 }
 // finally fixed the invite code needing to be at least 16, although i'd reccommend keeping it above 16 just in case
 code += parseInt(conf.port, 10).toString(16) + parseInt(conf[Object.keys(conf)[2]].inviteCode, 10).toString(16).padStart(2, "0");
-inviteUrl = `https://platypuss.net/chat?invite=${code}&invip=localhost`;
+inviteUrl = `https://platypuss.net/chat?invite=${code}&ip=localhost`;
 
 console.log(`The server is currently running on port ${conf.port}, join at ${inviteUrl}`);

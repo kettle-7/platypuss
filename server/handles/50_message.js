@@ -228,7 +228,14 @@ all the information specified in the Platypuss API."
             packet.ws.send(JSON.stringify({
                 eventType: "message",
                 message: {
-                    content: `${JSON.stringify(Object.keys(packet.servers))}`,
+                    content: `${JSON.stringify(Object.keys(packet.servers).map(subserver => {
+                        return {
+                            subServer: subserver,
+                            inviteCode: packet.servers[subserver].properties?.inviteCode,
+                            title: packet.servers[subserver].properties?.manifest?.title,
+                            inviteLink: "<"+generateInviteCode(subserver, packet.servers.properties?.port, packet.servers[subserver].properties?.inviteCode)+">"
+                        };
+                    }))}`,
                     timestamp: packet.message.timestamp,
                     id: mid,
                     author: "server",

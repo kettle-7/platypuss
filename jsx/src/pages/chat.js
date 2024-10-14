@@ -35,7 +35,7 @@ var authUrl = "https://platypuss.net"; // Authentication server, you shouldn't h
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
 pageUrl.protocol = "https:"; // remove this in production
 
-window.loadedMessages = 0; // The number of messages loaded in the current view, used when loading older messages
+if (browser) window.loadedMessages = 0; // The number of messages loaded in the current view, used when loading older messages
 
 const markdownOptions = {
   disableParsingRawHTML: true, // poses a security thread we don't need
@@ -82,15 +82,15 @@ function fetchUser(id) {
 function doTheLoginThingy(createNewAccount) {
   if (createNewAccount) {
     if (passwordRef.current.value !== confirmPasswordRef.current.value) {
-      states.setActivePopover(<CreateAccountPopover error="Your passwords don't match"/>);
+      states.setActivePopover(<Popover title="Create Account"><CreateAccountPopover error="Your passwords don't match"/></Popover>);
       return;
     }
     if (passwordRef.current.value.replace(/[\n\r\t ]/g, "") === "") {
-      states.setActivePopover(<CreateAccountPopover error="Your password must be at least one character"/>);
+      states.setActivePopover(<Popover title="Create Account"><CreateAccountPopover error="Your password must be at least one character"/></Popover>);
       return;
     }
     if (usernameRef.current.value.replace(/[\n\r\t ]/g, "") === "") {
-      states.setActivePopover(<CreateAccountPopover error="Your username must be at least one character"/>);
+      states.setActivePopover(<Popover title="Create Account"><CreateAccountPopover error="Your username must be at least one character"/></Popover>);
       return;
     }
   }
@@ -110,8 +110,8 @@ function doTheLoginThingy(createNewAccount) {
   }).then(response => response.json()).then(response => {
     if (createNewAccount) {
       if (response.alreadyExists) {
-        states.setActivePopover(<CreateAccountPopover error={<>There's already an account with that email address,
-          would you like to <a href="#" onClick={() => states.setActivePopover(<SignInPopover/>)}>sign in</a> instead?</>}/>);
+        states.setActivePopover(<Popover title="Create Account"><CreateAccountPopover error={<>There's already an account with that email address,
+          would you like to <a href="#" onClick={() => states.setActivePopover(<Popover title="Sign In"><SignInPopover/></Popover>)}>sign in</a> instead?</>}/></Popover>);
         return;
       }
       states.setActivePopover(<Popover title="Check your emails!">Thanks for joining us, 
@@ -119,12 +119,12 @@ function doTheLoginThingy(createNewAccount) {
       return;
     } else {
       if (!response.alreadyExists) {
-        states.setActivePopover(<SignInPopover error={<>There's no account with that email address,
-          would you like to <a href="#" onClick={() => states.setActivePopover(<CreateAccountPopover/>)}>create one</a>?</>}/>);
+        states.setActivePopover(<Popover title="Sign In"><SignInPopover error={<>There's no account with that email address,
+          would you like to <a href="#" onClick={() => states.setActivePopover(<Popover title="Create Account"><CreateAccountPopover/></Popover>)}>create one</a>?</>}/></Popover>);
         return;
       }
       if (!response.passwordMatches) {
-        states.setActivePopover(<SignInPopover error="Incorrect password for this account"/>);
+        states.setActivePopover(<Popover title="Sign In"><SignInPopover error="Incorrect password for this account"/></Popover>);
         return;
       }
     }
@@ -133,41 +133,41 @@ function doTheLoginThingy(createNewAccount) {
   });
 }
 
-function SignInPopover ({ error="" }) {
-  return (<Popover title="Sign In">
-    <span>Welcome back! If you don't already have an account please <a href="#" onClick={() => states.setActivePopover(<CreateAccountPopover/>)}>create an account</a> instead.</span>
+function SignInPopover({ error="" }) {
+  return (<>
+    <span>Welcome back! If you don't already have an account please <a href="#" onClick={() => states.setActivePopover(<Popover title="Create Account"><CreateAccountPopover/></Popover>)}>create an account</a> instead.</span>
     <div id="loginform">
       <em id="signInErrorMessage">{error}</em>
       <div style={{display:"grid",gridTemplateColumns:"auto auto"}}>
-      <label>Email address </label><input type="email" id="email" className="textBox" ref={emailRef}/>
-      <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef}/>
-      </div><br/>
-      <button onClick={() => doTheLoginThingy(false)}>Sign In</button>
+        <label>Email address </label><input type="email" id="email" className="textBox" ref={emailRef}/>
+        <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef}/>
+      </div>
     </div>
-  </Popover>);
+    <button onClick={() => doTheLoginThingy(false)}>Sign In</button>
+  </>);
 }
 
-function CreateAccountPopover ({ error="" }) {
+function CreateAccountPopover({ error="" }) {
   [emailRef, usernameRef, passwordRef, confirmPasswordRef] = [
     React.useRef(null),
     React.useRef(null),
     React.useRef(null),
     React.useRef(null)
   ];
-  return (<Popover title="Create Account">
-  <span>Welcome to Platypuss! If you already have an account please <a href="#" onClick={() => states.setActivePopover(<SignInPopover/>)}>sign in</a> instead.</span>
+  return (<>
+  <span>Welcome to Platypuss! If you already have an account please <a href="#" onClick={() => states.setActivePopover(<Popover title="Sign In"><SignInPopover/></Popover>)}>sign in</a> instead.</span>
   <br/><strong>By using Platypuss you confirm that you have read and agreed to our <a href="/legal">legal agreements</a>.</strong>
     <div id="loginform">
       {error ? <em id="signInErrorMessage">{error}</em> : ""}
       <div style={{display:"grid",gridTemplateColumns:"auto auto"}}>
-      <label>Email address </label><input type="email" id="email" className="textBox" ref={emailRef}/>
-      <label>Username </label><input type="text" id="unam" className="textBox" ref={usernameRef}/>
-      <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef}/>
-      <label>Confirm Password </label><input type="password" id="confirmPassword" className="textBox" ref={confirmPasswordRef}/>
-      </div><br/>
-      <button onClick={() => doTheLoginThingy(true)}>Create Account</button>
+        <label>Email address </label><input type="email" id="email" className="textBox" ref={emailRef}/>
+        <label>Username </label><input type="text" id="unam" className="textBox" ref={usernameRef}/>
+        <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef}/>
+        <label>Confirm Password </label><input type="password" id="confirmPassword" className="textBox" ref={confirmPasswordRef}/>
+      </div>
     </div>
-  </Popover>);
+    <button onClick={() => doTheLoginThingy(true)}>Create Account</button>
+  </>);
 }
 
 function SyntaxHighlightedCode(props) {
@@ -186,24 +186,32 @@ function SyntaxHighlightedCode(props) {
 }
 
 function PopoverParent({...props}) {
-  [states.activePopover, states.setActivePopover] = React.useState(null);
   return (
-    <div id="popoverParent" style={{display: states.activePopover == null ? "none" : "flex"}} onClick={() => {
+    <div id="popoverParent" style={{
+      display: "flex",
+      height: states.activePopover === null ? 0 : "100%"
+    }} onMouseDown={() => {setTimeout(() => {
       states.setActivePopover(null);
-    }} {...props}>{states.activePopover}</div>
+    }, 50)}} {...props}>{states.activePopover || <Popover style={{opacity: 0}}/>}</div>
   );
 }
 
 // for popups / popovers in desktop, render as separate screens on mobile
 function Popover({children, title, style={}, ...props}) {
-  return <div id="popover" style={{margin: style.margin ? style.margin : "auto", ...style}} onClick={event => {
+  return <div id="popover" style={{margin: style.margin ? style.margin : "auto", /*height: 0,*/ ...style}} onClick={event => {
     event.stopPropagation();
-  }} {...props}>
-    <div id="popoverHeaderBar">
+  }} onMouseDown={event => {
+    event.stopPropagation();
+  }} className={props.className ? props.className + " slideUp" : (states.activePopover ? "slideUp" : " ")} {...props}>
+    {title ? <div id="popoverHeaderBar">
       <h3>{title}</h3>
       <div style={{flexGrow: 1}}></div>
-      <button onClick={()=>{setTimeout(()=>{states.setActivePopover(null); states.setMobileSidebarShown(false);}, 50)}} className="material-symbols-outlined">close</button>
-    </div>
+      <button onClick={()=>{setTimeout(()=>{states.setActivePopover(null);}, 50)}} className="material-symbols-outlined">close</button>
+    </div> : <button onClick={()=>{setTimeout(()=>{states.setActivePopover(null);}, 50)}} style={{
+      position: "absolute",
+      top: 5,
+      right: 5
+    }} className="material-symbols-outlined">close</button>}
     {children}
   </div>
 }
@@ -222,19 +230,45 @@ function MiddleSection({shown, className, ...props}) {
       belowMessagesRef.current?.scrollIntoView({ behaviour: "smooth" });
     }
   }, [states.focusedRoomRenderedMessages]);
-  return (<div id="middleSection" className={className} style={{display: shown ? "flex" : "none"}} {...props}>
+
+  return (<div id="middleSection" className={className} style={{transform: shown ? "none" : "translate(100vw, 0px)", position: shown ? undefined : "absolute"}} {...props}>
     <div id="aboveScrolledArea"></div>
     <div id="scrolledArea" ref={scrolledAreaRef}> {/* Has a scrollbar, contains load more messages button but not message typing box */}
       <div id="aboveMessageArea">
         <button id="loadMoreMessagesButton" onClick={loadMoreMessages}>Load more messages</button>
       </div>
-      <div id="messageArea">{states.focusedRoomRenderedMessages.map(message => <Message message={message} key={message.id}/>)}</div>
+      {Object.keys(states.servers).length ? states.servers[states.focusedServer]?.manifest?.pending ?
+        <div id="messageArea" style={{position: "relative"}}>
+          <div id="serverNotConnected">
+            <h2>We couldn't connect to this server</h2>
+            <p>
+              For whatever reason we aren't able to connect to this server at the moment. This may be a problem with
+              your internet connection or something on the server's side. If you can connect to other Platypuss servers
+              maybe try get in touch with the server owner if possible.
+              <br/><br/>
+              Server Address (for troubleshooting): {states.servers[states.focusedServer].ip}
+              <br/>
+            </p>
+            <button onClick={leaveServer}>Leave this server</button>
+          </div>
+        </div> :
+        <div id="messageArea">{states.focusedRoomRenderedMessages.map(message => <Message message={message} key={message.id}/>)}</div> :
+        <div id="messageArea" style={{position: "relative"}}>
+          <div id="noServers">
+            <h2>You're not in any servers!</h2>
+            <p>
+              You don't appear to be in any Platypuss servers at the moment. You can join one through an invite
+              link or look at <a href="https://github.com/kettle-7/platypuss/wiki" target='_blank'>the wiki
+              page</a> for how to host your own.<br/><br/><a href="https://platypuss.net" target='_blank'>What's Platypuss?</a>
+            </p>
+          </div>
+        </div>}
       <div id="belowMessageArea" ref={belowMessagesRef}></div>
     </div>
     <div style={{height:5,background:"linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3))"}}></div>
     <div id="messageGradientArea">
       <div id="showReplyingMessage" hidden={!states.reply}>
-        <div style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+        <div className='horizontalbox'>
           <h3 style={{margin: 3}}>Replying to <strong>
             {userCache[messageCache[states.reply]?.author]?.username}
           </strong></h3>
@@ -305,17 +339,70 @@ function MiddleSection({shown, className, ...props}) {
 function Message({message}) {
   // We might have the author cached already, if not we'll just get them later
   let [author, setAuthor] = React.useState(userCache[message.author] || {
-    avatar: "https://img.freepik.com/premium-vector/hand-drawn-cartoon-doodle-skull-funny-cartoon-skull-isolated-white-background_217204-944.jpg",
+    avatar: null,
     username: "Deleted User"
   });
   let sentByThisUser = message.author === states.accountInformation.id;
   let uploads = message.uploads ? message.uploads : [];
   let messageContent = message.content;
+  let touchTimer;
   fetchUser(message.author).then(newAuthor=>{setAuthor(newAuthor)});
-  return (<div className="message1" id={message.id}>
-    <img src={authUrl+author.avatar} alt="🐙" className="avatar" style={{
+
+  let showContextMenu = () => {
+    touchTimer = setTimeout(() => {
+      states.setActivePopover(<Popover title="">
+        <div className='horizontalbox'>
+          <button className='material-symbols-outlined' style={{display:(
+            sentByThisUser ? !states.focusedServerPermissions.includes("message.edit")
+            : true // You shouldn't be able to edit other people's messages no matter what
+          ) ? "none" : "flex"}}>Edit</button>
+          <button className='material-symbols-outlined' onClick={()=>{replyToMessage(message.id)}}>Reply</button>
+          <button className='material-symbols-outlined' onClick={()=>{pingUser(message.author)}}>alternate_email</button>
+          <button className='material-symbols-outlined' onClick={()=>{deleteMessage(message.id)}} style={{diplay: (
+            sentByThisUser ? !states.focusedServerPermissions.includes("message.delete")
+            : !states.focusedServerPermissions.includes("moderation.delete")
+          ) ? "none" : "flex"}}>Delete</button>
+        </div>
+        <div className="messageAuthor" style={{ display: message.special ? "none" : "flex" }}>
+          <h3 className="messageUsernameDisplay">{author.username}</h3>
+          <span className="messageTimestamp">@{author.tag} at {message.timestamp ? new Date(message.timestamp).toLocaleString() : new Date(message.stamp).toLocaleString()}</span>
+        </div>
+        {message.reply ? messageCache[message.reply] ? <blockquote className='messageReply'>
+          <span className='ping'>@{userCache[messageCache[message.reply].author]?.username} </span>
+          <span className='messageReplyContent'>{messageCache[message.reply]?.content}</span>
+        </blockquote> : <blockquote className='messageReply'><em>Message couldn't be loaded</em></blockquote> : ""}
+        <div className="messageContent">
+          <Markdown options={markdownOptions}>{messageContent}</Markdown>
+          <div className='horizontalbox'>
+            {uploads.map(upload => <img className="upload" src={"https://"+states.servers[states.focusedServer].ip+upload.url} onClick={() => {setTimeout(() => {
+              states.setActivePopover(<Popover className="imagePopover" style={{backgroundColor: "transparent", background: "transparent", boxShadow: "none", width: "auto"}} title={upload.name}>
+                <img src={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{borderRadius: 10, boxShadow: "0px 0px 10px black"}}/>
+                <a href={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{color: "white"}}>Download this image</a>
+              </Popover>);
+            }, 50);}}/>)}
+          </div>
+        </div>
+      </Popover>);
+    }, 750);
+  }
+
+  return (<div className="message1" id={message.id} onTouchStart={states.useMobileUI ? showContextMenu : null}
+      onMouseDown={states.useMobileUI ? showContextMenu : null} onTouchEnd={states.useMobileUI ? () => {
+        if (touchTimer) clearTimeout(touchTimer);
+      } : null} onTouchMove={states.useMobileUI ? () => {
+        if (touchTimer) clearTimeout(touchTimer);
+      } : null} onMouseOut={states.useMobileUI ? () => {
+        if (touchTimer) clearTimeout(touchTimer);
+      } : null} onMouseUp={states.useMobileUI ? () => {
+        if (touchTimer) clearTimeout(touchTimer);
+      } : null}>
+    <img src={author.avatar ? authUrl+author.avatar :
+      "https://img.freepik.com/premium-vector/hand-drawn-cartoon-doodle-skull-funny-cartoon-skull-isolated-white-background_217204-944.jpg"
+    } alt="🐙" className="avatar" style={{
       height: message.special ? "0px" : undefined
-    }}/>
+    }} onClick={() => {setTimeout(() => {
+      showUser(message.author);
+    }, 50);}}/>
     <div className="message2">
       <div className="messageAuthor" style={{ display: message.special ? "none" : "flex" }}>
         <h3 className="messageUsernameDisplay">{author.username}</h3>
@@ -327,26 +414,28 @@ function Message({message}) {
       </blockquote> : <blockquote className='messageReply'><em>Message couldn't be loaded</em></blockquote> : ""}
       <div className="messageContent">
         <Markdown options={markdownOptions}>{messageContent}</Markdown>
-        {uploads.map(upload => <img className="upload" src={"https://"+states.servers[states.focusedServer].ip+upload.url} onClick={() => {
-          states.setActivePopover(<Popover className="darkThemed" style={{background: "transparent", boxShadow: "none", width: "auto"}} title={upload.name}>
-            <img src={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{borderRadius: 10, boxShadow: "0px 0px 10px black"}}/>
-            <a href={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{color: "white"}}>Download this image</a>
-          </Popover>);
-        }}/>)}
+        <div className='horizontalbox'>
+          {uploads.map(upload => <img className="upload" src={"https://"+states.servers[states.focusedServer].ip+upload.url} onClick={() => {setTimeout(() => {
+            states.setActivePopover(<Popover className="imagePopover" style={{backgroundColor: "transparent", background: "transparent", boxShadow: "none", width: "auto"}} title={upload.name}>
+              <img src={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{borderRadius: 10, boxShadow: "0px 0px 10px black"}}/>
+              <a href={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{color: "white"}}>Download this image</a>
+            </Popover>);
+          }, 50);}}/>)}
+        </div>
       </div>
     </div>
-    <div className="message3">
-      <button className='material-symbols-outlined' hidden={
-        sentByThisUser ? !Object.keys(states.focusedServerPermissions).includes("message.edit")
+    {states.useMobileUI ? "" : <div className="message3">
+      <button className='material-symbols-outlined' style={{display:(
+        sentByThisUser ? !states.focusedServerPermissions.includes("message.edit")
         : true // You shouldn't be able to edit other people's messages no matter what
-      }>Edit</button>
+      ) ? "none" : "flex"}}>Edit</button>
       <button className='material-symbols-outlined' onClick={()=>{replyToMessage(message.id)}}>Reply</button>
       <button className='material-symbols-outlined' onClick={()=>{pingUser(message.author)}}>alternate_email</button>
-      <button className='material-symbols-outlined' onClick={()=>{deleteMessage(message.id)}} hidden={
-        sentByThisUser ? !Object.keys(states.focusedServerPermissions).includes("message.delete")
-        : !Object.keys(states.focusedServerPermissions).includes("moderation.delete")
-      }>Delete</button>
-    </div>
+      <button className='material-symbols-outlined' onClick={()=>{deleteMessage(message.id)}} style={{diplay: (
+        sentByThisUser ? !states.focusedServerPermissions.includes("message.delete")
+        : !states.focusedServerPermissions.includes("moderation.delete")
+      ) ? "none" : "flex"}}>Delete</button>
+    </div>}
   </div>);
 }
 
@@ -362,6 +451,9 @@ function triggerMessageSend() {
         reply: states.reply ? states.reply : undefined
       }
     }));
+    if (!states.focusedRoomRenderedMessages[0]) {
+      setTimeout(loadView, 50);
+    }
     messageTextBox.innerHTML = "";
     setTimeout(() => {
       states.setReply(null);
@@ -392,6 +484,9 @@ function triggerMessageSend() {
                   uploads: attachmentObjects
                 }
               }));
+              if (!states.focusedRoomRenderedMessages[0]) {
+                setTimeout(loadView, 50);
+              }
               messageTextBox.innerHTML = "";
               setTimeout(() => {
                 states.setReply(null);
@@ -416,24 +511,88 @@ function triggerMessageSend() {
   }
 }
 
+async function showUser(id) {
+  let user = await fetchUser(id);
+  states.setActivePopover(<Popover title="">
+    <div className='popoverBanner'>
+      <img className='avatar bannerIcon' alt="🐙" src={authUrl+user.avatar}/>
+      <div style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 2,
+        paddingLeft: 5
+      }}>
+        <span style={{display:"flex", alignItems: "center"}}><h2 style={{margin: 0, marginRight: 5}}>{user.username}</h2>@{user.tag}</span>
+        <h6 style={{margin: 0}}>ID: {id}</h6>
+      </div>
+    </div>
+    <div id="userAboutText"><Markdown options={markdownOptions}>{user.aboutMe.text}</Markdown></div>
+    <div style={{flexGrow: 1}}/>
+    <button onClick={() => {setTimeout(() => {states.setActivePopover(null)}, 50);}}>Done</button>
+  </Popover>);
+}
+
 // A SLIGHTLY DIFFERENT COMMENT
 function RoomsBar({shown, className, ...props}) {
-  return (<div className={className + " sidebar"} id="roomsBar" style={{display: shown ? "flex" : "none"}} {...props}>
+  let roomNameRef = React.createRef(null);
+ 
+  return (<div className={className + " sidebar"} id="roomsBar" style={{transform: shown ? "none" : "translate(-100vw, 0px)", position: shown ? undefined : "absolute", padding: shown ? 5 : 0}} {...props}>
     <div id="serverTitle" style={{cursor: "pointer", backgroundImage: states.focusedServer ? states.servers[states.focusedServer].manifest.icon : ""}}>
     <h3 style={{margin: 5}}>
       {states.focusedServer ? states.servers[states.focusedServer].manifest.title : "Loading servers..."}
     </h3>
     <div style={{flexGrow: 1}}></div>
+    {(states.focusedServerPermissions.includes("room.add") || states.focusedServerPermissions.includes("admin")) && 
+      <button className="material-symbols-outlined" style={{
+        height: "fit-content",
+        width: "fit-content",
+        padding: 3,
+        margin: 3
+      }} onClick={() => {setTimeout(() => {
+        states.setActivePopover(<Popover title="New Room">
+          <div className='horizontalbox'>
+            <label htmlFor="roomNameBox">Room name: </label>
+            <input type='text' placeholder='' id="roomNameBox" ref={roomNameRef}/>
+          </div>
+          <button onClick={() => {
+            openSockets[states.focusedServer].send(JSON.stringify({
+              eventType: "createRoom",
+              name: roomNameRef.current.value
+            }));
+            setTimeout(() => {states.setActivePopover(null);}, 50);
+          }}>Create</button>
+          <button onClick={() => setTimeout(() => {
+            states.setActivePopover(null);
+          }, 50)}>Cancel</button>
+        </Popover>);
+      }, 50);}}>
+        add
+    </button>}
     <button className="material-symbols-outlined" style={{
       height: "fit-content",
       width: "fit-content",
       padding: 3,
       margin: 3
-    }} onClick={() => {
-      states.setActivePopover(<Popover title="Server Settings">
+    }} onClick={() => {setTimeout(() => {
+      states.setActivePopover(<Popover title="">
+        <div className='popoverBanner'>
+          <img className='avatar bannerIcon' alt="🐙" src={states.servers[states.focusedServer].manifest.icon}/>
+          <div style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            paddingLeft: 5
+          }}>
+            <h1 style={{margin: 0}}>{states.servers[states.focusedServer].manifest.title}</h1>
+            <p style={{margin: 0}}>IP address: {states.servers[states.focusedServer].ip}
+            <br/>{states.servers[states.focusedServer].manifest.memberCount} members</p>
+          </div>
+        </div>
+        <div><Markdown options={markdownOptions}>{states.servers[states.focusedServer].manifest.description}</Markdown></div>
+        <div style={{flexGrow: 1}}/>
         <button onClick={leaveServer}>Leave this server</button>
       </Popover>);
-    }}>stat_minus_1</button></div>
+    }, 50);}}>stat_minus_1</button></div>
     {Object.values(states.focusedServerRenderedRooms).map(room => (<RoomLink room={room}></RoomLink>))}
     {Object.values(states.focusedServerRenderedRooms).length === 0 ? <p>This server doesn't have any rooms in it.</p> : <></>}
   </div>);
@@ -446,14 +605,77 @@ function leaveServer() {
     states.servers[states.focusedServer].subserver}`).then(() => {window.location.reload()});
 }
 
+function RoomSettingsPopover({room}) {
+  let roomNameRef = React.useRef(null);
+  let roomDescriptionRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (roomNameRef.current)
+      roomNameRef.current.value = room.name;
+    if (roomDescriptionRef.current)
+      roomDescriptionRef.current.innerText = room.description;
+  }, []);
+  return <>
+    <div className='horizontalbox'>
+      <label htmlFor="editRoomName">Room name: </label>
+      <input type="text" id="editRoomName" ref={roomNameRef}/>
+    </div>
+    <h5>Room description:</h5>
+    <div id="roomDescription" contentEditable={(
+      states.focusedServerPermissions.includes("room.edit") ||
+      states.focusedServerPermissions.includes("admin")
+    )} ref={roomDescriptionRef}/>
+    {(states.focusedServerPermissions.includes("room.delete") ||
+      states.focusedServerPermissions.includes("admin")) ? <button onClick={() => {
+      setTimeout(() => {
+        states.setActivePopover(<Popover title={"Do you really want to delete "+room.name+"?"}>
+          <button onClick={() => {
+            openSockets[states.focusedServer].send(JSON.stringify({
+              eventType: "deleteRoom",
+              roomID: room.id
+            }));
+            setTimeout(() => {
+              states.setActivePopover(null);
+            }, 50);
+          }}>Yes</button>
+          <button onClick={() => {
+            setTimeout(() => {
+              states.setActivePopover(null);
+            }, 50);
+          }}>No</button>
+        </Popover>);
+      }, 50);
+    }}>Delete Room</button> : ""}
+    <button onClick={() => {setTimeout(() => {
+      openSockets[states.focusedServer].send(JSON.stringify({
+        eventType: "editRoom",
+        operation: "rename",
+        newName: roomNameRef.current.value,
+        roomID: room.id
+      }));
+      openSockets[states.focusedServer].send(JSON.stringify({
+        eventType: "editRoom",
+        operation: "changeDescription",
+        newDescription: roomDescriptionRef.current.innerText,
+        roomID: room.id
+      }));
+      states.setActivePopover(null);
+    }, 50);}}>Save</button>
+    <button onClick={() => {setTimeout(() => {
+      states.setActivePopover(null);
+    }, 50);}}>Cancel</button>
+  </>;
+}
+
 // a comment
 function RoomLink({room}) {
   return (<div className="roomLink" style={{cursor:"pointer"}} onClick={() => {
-    setTimeout(() => {
-      states.setFocusedRoom(room);
-      loadView();
-    }, 50);
-  }}>
+      setTimeout(() => {
+        states.setFocusedRoom(room);
+        states.setMobileSidebarShown(false);
+        loadView();
+      }, 50);
+    }}>
     <a>{room.name}</a>
     <button className="roomSettings material-symbols-outlined" style={{
       height: "fit-content",
@@ -462,14 +684,17 @@ function RoomLink({room}) {
       margin: 3
     }} onClick={event => {
       event.stopPropagation();
+      setTimeout(() => {
+        states.setActivePopover(<Popover title="Room Settings"><RoomSettingsPopover room={room}/></Popover>);
+      }, 50);
     }}>settings</button>
   </div>);
 }
 
 // The bar on the left showing the servers you're in, also for navigation
 function ServersBar({shown, className, ...props}) {
-  return (<div className={className + " sidebar"} id="serversBar" style={{display: shown ? "flex" : "none"}} {...props}>
-    <span className="serverIcon material-symbols-outlined" id="newServerButton">add</span>
+  return (<div className={className + " sidebar"} id="serversBar" style={{transform: shown ? "none" : "translate(-100vw, 0px)", position: shown ? undefined : "absolute"}} {...props}>
+    <button className="serverIcon material-symbols-outlined" id="newServerButton">add</button>
     {Object.values(states.servers).map(server => (<ServerIcon server={server}></ServerIcon>))}
   </div>);
 }
@@ -478,7 +703,8 @@ function ServersBar({shown, className, ...props}) {
 function ServerIcon({server}) {
   [server.manifest, server.setManifest] = React.useState({
     icon: "",
-    title: "Couldn't connect to this server 🐙"
+    title: "Couldn't connect to this server 🐙",
+    pending: true
   });
   return (<div className="tooltipContainer">
     <img className="serverIcon" src={server.manifest.icon} alt="🐙" onClick={()=>{setTimeout(()=>{
@@ -491,7 +717,7 @@ function ServerIcon({server}) {
 
 // The bar on the right showing other server members
 function PeersBar({shown, className, ...props}) {
-  return (<div className={className + " sidebar"} id="peersBar" style={{display: shown ? "flex" : "none"}} {...props}>
+  return (<div className={className + " sidebar"} id="peersBar" style={{right: 0, transform: shown ? undefined : "translate(-100vw, 0px)", position: shown ? undefined : "absolute"}} {...props}>
     <button className="serverIcon material-symbols-outlined" id="inviteButton" onClick={() => {
       openSockets[states.focusedServer].send(JSON.stringify({
         eventType: "message",
@@ -512,7 +738,134 @@ function PeerIcon({peer}) {
   fetchUser(peer.id).then(setPeerInfo);
   return (<img src={authUrl+peerInfo.avatar} className="serverIcon avatar" alt="🐙" style={{
     opacity: peer.online ? 1 : 0.5
-  }}/>);
+  }} onClick={() => {setTimeout(() => {showUser(peer.id)}, 50);}}/>);
+}
+
+function AccountSettings() {
+  let customThemeDisplayRef = React.useRef(null);
+  let customThemeEditRef = React.useRef(null);
+  let aboutMeRef = React.useRef(null);
+
+  React.useEffect(() => {
+    aboutMeRef.current.innerText = states.accountInformation.aboutMe.text;
+  }, [states.accountInformation]);
+  
+  return (
+    <>
+      <div id="profileBanner">
+        <div className="avatar" id="changeAvatarHoverButton" onClick={() => {
+          let input = document.createElement('input');
+          input.type = "file";
+          input.multiple = false;
+          input.accept = "image/*";
+          input.onchange = async function (event) {
+            setTimeout(async function() {
+              let file = event.target.files[0];
+              if (file.size >= 10000000) {
+                states.setActivePopover(<Popover title="Woah, that's too big!">
+                  We only allow avatar sizes up to 10MB, this is to save storage space on the server. Please choose a smaller image or resize it in an image editor.
+                </Popover>);
+                return;
+              }
+              let request = new XMLHttpRequest();
+              request.open("POST", `${authUrl}/pfpUpload?id=${localStorage.getItem("sessionID")}`);
+              request.onreadystatechange = () => {
+                if (request.readyState === XMLHttpRequest.DONE && request.status) {
+                  window.location.reload();
+                }
+                else {
+                  console.log(request);
+                }
+              };
+              request.upload.onprogress = (event) => {
+                states.setAvatarProgress(event.loaded/event.total*100);
+              };
+              request.send(await file.bytes());
+            }, 50);
+          };
+          input.click();
+        }}>
+          <img className="avatar" id="changeAvatar" src={authUrl+states.accountInformation.avatar}/>
+          <span id="changeAvatarText">Change</span>
+        </div>
+        <h3 id="accountSettingsUsername" contentEditable>{states.accountInformation.username}</h3> @{states.accountInformation.tag}
+      </div>
+      <h5>Tell us a bit about you:</h5>
+      <div contentEditable id="changeAboutMe" ref={aboutMeRef} onInput={() => {
+        fetch(`${authUrl}/editAboutMe?id=${localStorage.getItem("sessionID")}`, {
+          headers: {
+            'Content-Type': 'text/plain'
+          },
+          method: "POST",
+          body: JSON.stringify({text: aboutMeRef.current.innerText})
+        });
+        userCache[states.accountInformation.id].aboutMe.text = aboutMeRef.current.innerText;
+        let newAccountInformation = {...states.accountInformation};
+        newAccountInformation.aboutMe.text = aboutMeRef.current.innerText;
+        states.setAccountInformation(newAccountInformation);
+      }}/>
+      <div className='horizontalbox'>
+        Theme:
+        <select defaultValue={states.theme}>
+          <option value="dark" onClick={() => {setTimeout(() => {
+            states.setTheme("dark");
+            localStorage.setItem("theme", "dark");
+            customThemeDisplayRef.current.hidden = true;
+          }, 50);}}>Dark</option>
+          <option value="medium" onClick={() => {setTimeout(() => {
+            states.setTheme("medium");
+            localStorage.setItem("theme", "medium");
+            customThemeDisplayRef.current.hidden = true;
+          }, 50);}}>Medium</option>
+          <option value="light" onClick={() => {setTimeout(() => {
+            states.setTheme("light");
+            localStorage.setItem("theme", "light");
+            customThemeDisplayRef.current.hidden = true;
+          }, 50);}}>Light</option>
+          <option value="green" onClick={() => {setTimeout(() => {
+            states.setTheme("green");
+            localStorage.setItem("theme", "green");
+            customThemeDisplayRef.current.hidden = true;
+          }, 50);}}>Greeeeeeeeeeeeeeeeeeeeeeeeeeen</option>
+          <option value="custom" onClick={() => {setTimeout(() => {
+            states.setTheme("custom");
+            localStorage.setItem("theme", "custom");
+            customThemeDisplayRef.current.hidden = false;
+          }, 50);}}>Custom</option>
+        </select>
+      </div>
+      <span hidden={states.theme !== "custom"} ref={customThemeDisplayRef}>Custom Theme Hex Colour: #
+        <span id="accountSettingsCustomTheme" contentEditable
+        ref={customThemeEditRef} onInput={() => {
+            updateCustomTheme(customThemeEditRef.current.innerText, states);
+          }}>
+          {states.themeHex}
+        </span>
+      </span>
+      <button onClick={() => {
+      setTimeout(() => {
+        states.setActivePopover(<Popover title={"Do you really want to delete your account?"}>
+          <button onClick={() => {
+            fetch(authUrl+'/deleteAccount?id='+localStorage.getItem("sessionID")).then(() => {
+              window.location = "/";
+            });
+          }}>Yes</button>
+          <button onClick={() => {
+            setTimeout(() => {
+              states.setActivePopover(<Popover title="Account Settings"><AccountSettings/></Popover>);
+            }, 50);
+          }}>No</button>
+        </Popover>);
+      }, 50);
+      }}>Delete Account</button>
+      <button>Change Password</button>
+      <button onClick={() => {
+        localStorage.setItem("sessionID", null);
+        window.location = "/";
+      }}>Log Out</button>
+      <button onClick={() => {setTimeout(() => {states.setActivePopover(null);}, 50);}}>Done</button>
+    </>
+  );
 }
 
 function loadMoreMessages() {
@@ -568,8 +921,8 @@ function showInvitePopup(invite, domain) {
   fetch(`http${pageUrl.protocol === "http:" ? "" : "s"}://${ip}:${port}/${subserver}`).then(res => res.json()).then(data => {
     states.setActivePopover(
       <Popover title={"You've been invited to join "+(data.title ? data.title.toString() : "an untitled server")}>
-        <div className='inviteServerBanner'>
-          <img className='avatar inviteServerIcon' alt="🐙" src={data.icon}/>
+        <div className='popoverBanner'>
+          <img className='avatar bannerIcon' alt="🐙" src={data.icon}/>
           <p>IP address: {ip}:{port}
           <br/>{data.memberCount} members</p>
         </div>
@@ -588,7 +941,7 @@ function showInvitePopup(invite, domain) {
               );
             });
           } else {
-            states.setActivePopover(<CreateAccountPopover/>);
+            states.setActivePopover(<Popover title="Create Account"><CreateAccountPopover/></Popover>);
           }
         }}>Accept</button>
         <button onClick={() => {window.location = states.accountInformation.username ? "/chat" : "/"}}>Decline</button>
@@ -597,8 +950,8 @@ function showInvitePopup(invite, domain) {
   }).catch(error => {
     states.setActivePopover(
       <Popover title="You were invited to join a server but we couldn't connect.">
-        <div className='inviteServerBanner'>
-          <img className='avatar inviteServerIcon' alt="🐙"/>
+        <div className='popoverBanner'>
+          <img className='avatar bannerIcon' alt="🐙"/>
           <p>IP address: {ip}:{port}
           <br/>Error message: <code>{error.toString()}</code></p>
         </div>
@@ -613,13 +966,14 @@ function showInvitePopup(invite, domain) {
 async function loadView(switchToServer) {
   // don't try load the client as part of the page compiling
   if (!browser) return;
-  states.setMobileSidebarShown(true);
   window.onkeydown = event => {
     if (event.key === "Escape") {
       states.setActivePopover(null);
     }
   };
+  let isInvite = false;
   if (pageUrl.searchParams.has("invite")) {
+    isInvite = true;
     showInvitePopup(pageUrl.searchParams.get("invite"), pageUrl.searchParams.get("ip"));
   }
 
@@ -656,7 +1010,8 @@ async function loadView(switchToServer) {
           icon: "/icon.png",
           memberCount: 0,
           public: false,
-          description: "Waiting for a response from the server"
+          description: "Waiting for a response from the server",
+          pending: true
         }
       };
       // Open a socket connection with the server
@@ -715,6 +1070,7 @@ async function loadView(switchToServer) {
             break;
           case "messages":
             if (states.focusedServer !== serverCode || states.focusedRoom.id != packet.room) break;
+            if (packet.messages[0])
             for (let messageID in packet.messages) {
               packet.messages[messageID].isHistoric = true; // whether it was sent before we loaded the page
               messageCache[packet.messages[messageID].id] = {...packet.messages[messageID]};
@@ -731,18 +1087,30 @@ async function loadView(switchToServer) {
             document.getElementById(packet.messageId).remove();
             delete messageCache[packet.messageId];
             break;
+          case "roomAdded":
+          case "roomEdited":
+          case "roomDeleted":
+            if (serverCode === states.focusedServer) {
+              states.setFocusedServerRenderedRooms(packet.newRooms ? packet.newRooms : states.focusedServerRenderedRooms);
+              if (!Object.keys(packet.newRooms).includes(states.focusedRoom.id)) {
+                states.setFocusedRoom(Object.values(packet.newRooms)[0]);
+                loadView();
+              }
+            }
+            break;
           case "connected":
             if (servers[serverCode].setManifest)
               servers[serverCode].setManifest(packet.manifest);
             else 
               servers[serverCode].manifest = packet.manifest;
             if (serverCode === states.focusedServer) {
+              if (packet.isAdmin) packet.permissions.push("admin");
               states.setFocusedServerPermissions(packet.permissions);
               states.setFocusedServerRenderedRooms(packet.rooms ? packet.rooms : {});
               states.setFocusedServerPeers(packet.peers);
               let roomToFocus = states.focusedRoom;
               if (packet.rooms) {
-                if (!Object.values(packet.rooms).includes(states.focusedRoom)) {
+                if (!Object.keys(packet.rooms).includes(states.focusedRoom.id)) {
                   roomToFocus = Object.values(packet.rooms)[0];
                   states.setFocusedRoom(roomToFocus);
                 }
@@ -785,14 +1153,25 @@ async function loadView(switchToServer) {
     }
     // update our list of servers and if no server is currently focused pick the first one
     states.setServers(servers);
-  }).catch(error => console.log(error));
+  }).catch(error => {
+    if (!isInvite) {
+      // if something is wrong then i want to be able to test it but otherwise people are probably logged out and therefore should be redirected to the homepage
+      if (pageUrl.hostname.includes("localhost")) {
+        states.setActivePopover(<Popover title="client loading error">
+          <pre><code>{error.toString()}</code></pre>
+          <span>You probably need to <a onClick={() => {
+            states.setActivePopover(<Popover title="Sign In"><SignInPopover/></Popover>)
+          }} href="#">sign in</a></span>
+        </Popover>);
+      } else {
+        window.location = "/";
+      }
+    }
+  });
 }
 
 function PageHeader ({title, iconClickEvent, ...props}) {
   [states.accountInformation, states.setAccountInformation] = React.useState({});
-
-  let customThemeDisplayRef = React.useRef(null);
-  let customThemeEditRef = React.useRef(null);
 
   React.useEffect(() => {
     fetch(authUrl + "/uinfo?id=" + localStorage.getItem("sessionID"))
@@ -802,105 +1181,19 @@ function PageHeader ({title, iconClickEvent, ...props}) {
   }, []);
 
   return (<header {...props}>
-    <img className="avatar" onClick={iconClickEvent ? iconClickEvent : () => {window.location = "/"}} style={{cursor: "pointer"}} src="/icons/icon-96x96.png"/>
+    {states.useMobileUI ?
+      <button className="avatar material-symbols-outlined" onClick={
+        iconClickEvent ? iconClickEvent : () => {window.location = "/"}
+      } style={{cursor: "pointer", border: "none"}}>menu</button> : 
+      <img className="avatar material-symbols-outlined" alt="menu" onClick={
+        iconClickEvent ? iconClickEvent : () => {window.location = "/"}
+      } style={{cursor: "pointer"}} src="/icons/icon-96x96.png"/>}
     <h2 onClick={() => {window.location = "/"}} style={{cursor: "pointer"}}>
         {title ? title : "(Beta!) Platypuss"}
     </h2>
     <div style={{flexGrow: 1}}></div>
     <img className="avatar" style={{cursor: "pointer", display: Object.keys(states.accountInformation).length ? "flex" : "none"}} src={authUrl+states.accountInformation.avatar} onClick={() => {
-      states.setActivePopover(
-        <Popover title="Account Settings">
-          <div id="profileBanner">
-            <div className="avatar" id="changeAvatarHoverButton" onClick={() => {
-              let input = document.createElement('input');
-              input.type = "file";
-              input.multiple = false;
-              input.accept = "image/*";
-              input.onchange = async function (event) {
-                let file = event.target.files[0];
-                if (file.size >= 10000000) {
-                  states.setActivePopover(<Popover title="Woah, that's too big!">
-                    We only allow avatar sizes up to 10MB, this is to save storage space on the server. Please choose a smaller image or resize it in an image editor.
-                  </Popover>);
-                  return;
-                }
-                let request = new XMLHttpRequest();
-                request.open("POST", `${authUrl}/pfpUpload?id=${localStorage.getItem("sessionID")}`);
-                request.onreadystatechange = () => {
-                  if (request.readyState === XMLHttpRequest.DONE && request.status) {
-                    window.location.reload();
-                  }
-                  else {
-                    console.log(request);
-                  }
-                };
-                request.upload.onprogress = (event) => {
-                  states.setAvatarProgress(event.loaded/event.total*100);
-                };
-                request.send(await file.bytes());
-              };
-              input.click();
-            }}>
-              <img className="avatar" id="changeAvatar" src={authUrl+states.accountInformation.avatar}/>
-              <span id="changeAvatarText">Change</span>
-            </div>
-            <h3 id="accountSettingsUsername" contentEditable>{states.accountInformation.username}</h3> @{states.accountInformation.tag}
-          </div>
-          <h5>Tell us a bit about you:</h5>
-          <div contentEditable id="changeAboutMe"></div>
-          <div style={{
-              flexGrow: 0,
-              display: "flex",
-              flexDirection: "row",
-              gap: 5,
-              alignItems: "center"
-              }}>
-            Theme:
-            <select defaultValue={states.theme}>
-              <option value="dark" onClick={() => {setTimeout(() => {
-                states.setTheme("dark");
-                localStorage.setItem("theme", "dark");
-                customThemeDisplayRef.current.hidden = true;
-              }, 50);}}>Dark</option>
-              <option value="medium" onClick={() => {setTimeout(() => {
-                states.setTheme("medium");
-                localStorage.setItem("theme", "medium");
-                customThemeDisplayRef.current.hidden = true;
-              }, 50);}}>Medium</option>
-              <option value="light" onClick={() => {setTimeout(() => {
-                states.setTheme("light");
-                localStorage.setItem("theme", "light");
-                customThemeDisplayRef.current.hidden = true;
-              }, 50);}}>Light</option>
-              <option value="green" onClick={() => {setTimeout(() => {
-                states.setTheme("green");
-                localStorage.setItem("theme", "green");
-                customThemeDisplayRef.current.hidden = true;
-              }, 50);}}>Greeeeeeeeeeeeeeeeeeeeeeeeeeen</option>
-              <option value="custom" onClick={() => {setTimeout(() => {
-                states.setTheme("custom");
-                localStorage.setItem("theme", "custom");
-                customThemeDisplayRef.current.hidden = false;
-              }, 50);}}>Custom</option>
-            </select>
-          </div>
-          <span hidden={states.theme !== "custom"} ref={customThemeDisplayRef}>Custom Theme Hex Colour: #
-            <span id="accountSettingsCustomTheme" contentEditable
-            ref={customThemeEditRef} onInput={() => {
-                updateCustomTheme(customThemeEditRef.current.innerText, states);
-              }}>
-              {states.themeHex}
-            </span>
-          </span>
-          <button>Delete Account</button>
-          <button>Change Password</button>
-          <button onClick={() => {
-            localStorage.setItem("sessionID", null);
-            window.location = "/";
-          }}>Log Out</button>
-          <button onClick={() => {states.setActivePopover(null);}}>Done</button>
-        </Popover>
-      );
+      setTimeout(() => {states.setActivePopover(<Popover title="Account Settings"><AccountSettings/></Popover>);}, 50);
     }}/>
   </header>);
 };
@@ -934,8 +1227,9 @@ export default function ChatPage() {
   }
 
   // set a bunch of empty React state objects for stuff that needs to be accessed throughout the program
+  [states.activePopover, states.setActivePopover] = React.useState(null);
   [states.servers, states.setServers] = React.useState({}); // Data related to servers the user is in
-  [states.focusedServerPermissions, states.setFocusedServerPermissions] = React.useState({}); // what permissions we have in the currently focused server
+  [states.focusedServerPermissions, states.setFocusedServerPermissions] = React.useState([]); // what permissions we have in the currently focused server
   [states.focusedRoomRenderedMessages, states.setFocusedRoomRenderedMessages] = React.useState([]); // The <Message/> elements shown in the view, set in ChatPage
   [states.focusedServer, states.setFocusedServer] = React.useState(null); // An object representing the currently focused server
   [states.focusedRoom, states.setFocusedRoom] = React.useState({}); // An object representing the currently focused room
@@ -950,7 +1244,10 @@ export default function ChatPage() {
   [states.uploadProgress, states.setUploadProgress] = React.useState(null); // progress bar for uploading message attachments
   [states.avatarProgress, states.setAvatarProgress] = React.useState(null); // how far through we are uploading our avatar
 
-  React.useEffect(() => {loadView();}, []);
+  React.useEffect(() => {
+    loadView();
+    states.setMobileSidebarShown(true);
+  }, []);
 
   // return the basic page layout
   return (<>
@@ -972,43 +1269,36 @@ export default function ChatPage() {
       }
     }} states={states}/>
     <main>
-      <div id="chatPage">
+      <div id="chatPage" className={
+          states.theme === "custom" ? "" :
+          states.theme === "green" ? "greenThemed" :
+          states.theme === "light" ? "lightThemed" :
+          "darkThemed"
+        }>
         <ServersBar className={
           states.theme === "custom" ? "" :
           states.theme === "green" ? "greenThemed" :
           states.theme === "light" ? "lightThemed" :
           "darkThemed"
-        } shown={
-          (states.mobileSidebarShown && !states.activePopover)
-          || !states.useMobileUI
-        }/>
+        } shown={states.mobileSidebarShown || !states.useMobileUI}/>
         <RoomsBar className={
           states.theme === "custom" ? "" :
           states.theme === "green" ? "greenThemed" :
           states.theme === "light" ? "lightThemed" :
           "darkThemed"
-        } shown={
-          (states.mobileSidebarShown && !states.activePopover)
-          || !states.useMobileUI
-        }/>
+        } shown={states.mobileSidebarShown || !states.useMobileUI}/>
         <MiddleSection className={
           states.theme === "custom" ? "" :
           states.theme === "green" ? "greenThemed" :
           states.theme === "dark" ? "darkThemed" :
           "lightThemed"
-        } shown={
-          (!states.mobileSidebarShown && !states.activePopover)
-          || !states.useMobileUI
-        }/>
+        } shown={!states.mobileSidebarShown || !states.useMobileUI}/>
         <PeersBar className={
           states.theme === "custom" ? "" :
           states.theme === "green" ? "greenThemed" :
           states.theme === "light" ? "lightThemed" :
           "darkThemed"
-        } shown={
-          (states.mobileSidebarShown && !states.activePopover)
-          || !states.useMobileUI
-        }/>
+        } shown={states.mobileSidebarShown || !states.useMobileUI}/>
         <PopoverParent className={
           states.theme === "custom" ? "" :
           states.theme === "green" ? "greenThemed" :

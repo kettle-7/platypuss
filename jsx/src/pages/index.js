@@ -49,15 +49,15 @@ function hashPassword (str, seed = 20) { // hashes passwords somehow
 function doTheLoginThingy(createNewAccount) {
   if (createNewAccount) {
     if (passwordRef.current.value !== confirmPasswordRef.current.value) {
-      states.setActivePopover(<CreateAccountPopover error="Your passwords don't match"/>);
+      states.setActivePopover(<Popover title="Create Account"><CreateAccountPopover error="Your passwords don't match"/></Popover>);
       return;
     }
     if (passwordRef.current.value.replace(/[\n\r\t ]/g, "") === "") {
-      states.setActivePopover(<CreateAccountPopover error="Your password must be at least one character"/>);
+      states.setActivePopover(<Popover title="Create Account"><CreateAccountPopover error="Your password must be at least one character"/></Popover>);
       return;
     }
     if (usernameRef.current.value.replace(/[\n\r\t ]/g, "") === "") {
-      states.setActivePopover(<CreateAccountPopover error="Your username must be at least one character"/>);
+      states.setActivePopover(<Popover title="Create Account"><CreateAccountPopover error="Your username must be at least one character"/></Popover>);
       return;
     }
   }
@@ -77,8 +77,8 @@ function doTheLoginThingy(createNewAccount) {
   }).then(response => response.json()).then(response => {
     if (createNewAccount) {
       if (response.alreadyExists) {
-        states.setActivePopover(<CreateAccountPopover error={<>There's already an account with that email address,
-          would you like to <a href="#" onClick={() => states.setActivePopover(<SignInPopover/>)}>sign in</a> instead?</>}/>);
+        states.setActivePopover(<Popover title="Create Account"><CreateAccountPopover error={<>There's already an account with that email address,
+          would you like to <a href="#" onClick={() => states.setActivePopover(<Popover title="Sign In"><SignInPopover/></Popover>)}>sign in</a> instead?</>}/></Popover>);
         return;
       }
       states.setActivePopover(<Popover title="Check your emails!">Thanks for joining us, 
@@ -86,12 +86,12 @@ function doTheLoginThingy(createNewAccount) {
       return;
     } else {
       if (!response.alreadyExists) {
-        states.setActivePopover(<SignInPopover error={<>There's no account with that email address,
-          would you like to <a href="#" onClick={() => states.setActivePopover(<CreateAccountPopover/>)}>create one</a>?</>}/>);
+        states.setActivePopover(<Popover title="Sign In"><SignInPopover error={<>There's no account with that email address,
+          would you like to <a href="#" onClick={() => states.setActivePopover(<Popover title="Create Account"><CreateAccountPopover/></Popover>)}>create one</a>?</>}/></Popover>);
         return;
       }
       if (!response.passwordMatches) {
-        states.setActivePopover(<SignInPopover error="Incorrect password for this account"/>);
+        states.setActivePopover(<Popover title="Sign In"><SignInPopover error="Incorrect password for this account"/></Popover>);
         return;
       }
     }
@@ -100,10 +100,137 @@ function doTheLoginThingy(createNewAccount) {
   });
 }
 
-function PageHeader ({title, iconClickEvent, ...props}) {
+function AccountSettings() {
   let customThemeDisplayRef = React.useRef(null);
   let customThemeEditRef = React.useRef(null);
+  let aboutMeRef = React.useRef(null);
 
+  React.useEffect(() => {
+    aboutMeRef.current.innerText = states.accountInformation.aboutMe.text;
+  }, [states.accountInformation]);
+  
+  return (
+    <>
+      <div id="profileBanner">
+        <div className="avatar" id="changeAvatarHoverButton" onClick={() => {
+          let input = document.createElement('input');
+          input.type = "file";
+          input.multiple = false;
+          input.accept = "image/*";
+          input.onchange = async function (event) {
+            let file = event.target.files[0];
+            if (file.size >= 10000000) {
+              states.setActivePopover(<Popover title="Woah, that's too big!">
+                We only allow avatar sizes up to 10MB, this is to save storage space on the server. Please choose a smaller image or resize it in an image editor.
+              </Popover>);
+              return;
+            }
+            let request = new XMLHttpRequest();
+            request.open("POST", `${authUrl}/pfpUpload?id=${localStorage.getItem("sessionID")}`);
+            request.onreadystatechange = () => {
+              if (request.readyState === XMLHttpRequest.DONE && request.status) {
+                window.location.reload();
+              }
+              else {
+                console.log(request);
+              }
+            };
+            request.upload.onprogress = (event) => {
+              states.setAvatarProgress(event.loaded/event.total*100);
+            };
+            request.send(await file.bytes());
+          };
+          input.click();
+        }}>
+          <img className="avatar" id="changeAvatar" src={authUrl+states.accountInformation.avatar}/>
+          <span id="changeAvatarText">Change</span>
+        </div>
+        <h3 id="accountSettingsUsername" contentEditable>{states.accountInformation.username}</h3> @{states.accountInformation.tag}
+      </div>
+      <h5>Tell us a bit about you:</h5>
+      <div contentEditable id="changeAboutMe" ref={aboutMeRef} onInput={() => {
+        fetch(`${authUrl}/editAboutMe?id=${localStorage.getItem("sessionID")}`, {
+          headers: {
+            'Content-Type': 'text/plain'
+          },
+          method: "POST",
+          body: JSON.stringify({text: aboutMeRef.current.innerText})
+        });
+        let newAccountInformation = {...states.accountInformation};
+        newAccountInformation.aboutMe.text = aboutMeRef.current.innerText;
+        states.setAccountInformation(newAccountInformation);
+      }}/>
+      <div style={{
+          flexGrow: 0,
+          display: "flex",
+          flexDirection: "row",
+          gap: 5,
+          alignItems: "center"
+          }}>
+        Theme:
+        <select defaultValue={states.theme}>
+          <option value="dark" onClick={() => {setTimeout(() => {
+            states.setTheme("dark");
+            localStorage.setItem("theme", "dark");
+            customThemeDisplayRef.current.hidden = true;
+          }, 50);}}>Dark</option>
+          <option value="medium" onClick={() => {setTimeout(() => {
+            states.setTheme("medium");
+            localStorage.setItem("theme", "medium");
+            customThemeDisplayRef.current.hidden = true;
+          }, 50);}}>Medium</option>
+          <option value="light" onClick={() => {setTimeout(() => {
+            states.setTheme("light");
+            localStorage.setItem("theme", "light");
+            customThemeDisplayRef.current.hidden = true;
+          }, 50);}}>Light</option>
+          <option value="green" onClick={() => {setTimeout(() => {
+            states.setTheme("green");
+            localStorage.setItem("theme", "green");
+            customThemeDisplayRef.current.hidden = true;
+          }, 50);}}>Greeeeeeeeeeeeeeeeeeeeeeeeeeen</option>
+          <option value="custom" onClick={() => {setTimeout(() => {
+            states.setTheme("custom");
+            localStorage.setItem("theme", "custom");
+            customThemeDisplayRef.current.hidden = false;
+          }, 50);}}>Custom</option>
+        </select>
+      </div>
+      <span hidden={states.theme !== "custom"} ref={customThemeDisplayRef}>Custom Theme Hex Colour: #
+        <span id="accountSettingsCustomTheme" contentEditable
+        ref={customThemeEditRef} onInput={() => {
+            updateCustomTheme(customThemeEditRef.current.innerText, states);
+          }}>
+          {states.themeHex}
+        </span>
+      </span>
+      <button onClick={() => {
+      setTimeout(() => {
+        states.setActivePopover(<Popover title={"Do you really want to delete your account?"}>
+          <button onClick={() => {
+            fetch(authUrl+'/deleteAccount?id='+localStorage.getItem("sessionID")).then(() => {
+              window.location = "/";
+            });
+          }}>Yes</button>
+          <button onClick={() => {
+            setTimeout(() => {
+              states.setActivePopover(<Popover title="Account Settings"><AccountSettings/></Popover>);
+            }, 50);
+          }}>No</button>
+        </Popover>);
+      }, 50);
+      }}>Delete Account</button>
+      <button>Change Password</button>
+      <button onClick={() => {
+        localStorage.setItem("sessionID", null);
+        window.location = "/";
+      }}>Log Out</button>
+      <button onClick={() => {states.setActivePopover(null);}}>Done</button>
+    </>
+  );
+}
+
+function PageHeader ({title, iconClickEvent, ...props}) {
   React.useEffect(() => {
     fetch(authUrl + "/uinfo?id=" + localStorage.getItem("sessionID"))
       .then(data => data.json())
@@ -118,99 +245,7 @@ function PageHeader ({title, iconClickEvent, ...props}) {
     </h2>
     <div style={{flexGrow: 1}}></div>
     <img className="avatar" style={{cursor: "pointer", display: Object.keys(states.accountInformation).length ? "flex" : "none"}} src={authUrl+states.accountInformation.avatar} onClick={() => {
-      states.setActivePopover(
-        <Popover title="Account Settings">
-          <div id="profileBanner">
-            <div className="avatar" id="changeAvatarHoverButton" onClick={() => {
-              let input = document.createElement('input');
-              input.type = "file";
-              input.multiple = false;
-              input.accept = "image/*";
-              input.onchange = async function (event) {
-                let file = event.target.files[0];
-                if (file.size >= 10000000) {
-                  states.setActivePopover(<Popover title="Woah, that's too big!">
-                    We only allow avatar sizes up to 10MB, this is to save storage space on the server. Please choose a smaller image or resize it in an image editor.
-                  </Popover>);
-                  return;
-                }
-                let request = new XMLHttpRequest();
-                request.open("POST", `${authUrl}/pfpUpload?id=${localStorage.getItem("sessionID")}`);
-                request.onreadystatechange = () => {
-                  if (request.readyState === XMLHttpRequest.DONE && request.status) {
-                    window.location.reload();
-                  }
-                  else {
-                    console.log(request);
-                  }
-                };
-                request.upload.onprogress = (event) => {
-                  states.setAvatarProgress(event.loaded/event.total*100);
-                };
-                request.send(await file.bytes());
-              };
-              input.click();
-            }}>
-              <img className="avatar" id="changeAvatar" src={authUrl+states.accountInformation.avatar}/>
-              <span id="changeAvatarText">Change</span>
-            </div>
-            <h3 id="accountSettingsUsername" contentEditable>{states.accountInformation.username}</h3> @{states.accountInformation.tag}
-          </div>
-          <h5>Tell us a bit about you:</h5>
-          <div contentEditable id="changeAboutMe"></div>
-          <div style={{
-              flexGrow: 0,
-              display: "flex",
-              flexDirection: "row",
-              gap: 5,
-              alignItems: "center"
-              }}>
-            Theme:
-            <select defaultValue={states.theme}>
-              <option value="dark" onClick={() => {setTimeout(() => {
-                states.setTheme("dark");
-                localStorage.setItem("theme", "dark");
-                customThemeDisplayRef.current.hidden = true;
-              }, 50);}}>Dark</option>
-              <option value="medium" onClick={() => {setTimeout(() => {
-                states.setTheme("medium");
-                localStorage.setItem("theme", "medium");
-                customThemeDisplayRef.current.hidden = true;
-              }, 50);}}>Medium</option>
-              <option value="light" onClick={() => {setTimeout(() => {
-                states.setTheme("light");
-                localStorage.setItem("theme", "light");
-                customThemeDisplayRef.current.hidden = true;
-              }, 50);}}>Light</option>
-              <option value="green" onClick={() => {setTimeout(() => {
-                states.setTheme("green");
-                localStorage.setItem("theme", "green");
-                customThemeDisplayRef.current.hidden = true;
-              }, 50);}}>Greeeeeeeeeeeeeeeeeeeeeeeeeeen</option>
-              <option value="custom" onClick={() => {setTimeout(() => {
-                states.setTheme("custom");
-                localStorage.setItem("theme", "custom");
-                customThemeDisplayRef.current.hidden = false;
-              }, 50);}}>Custom</option>
-            </select>
-          </div>
-          <span hidden={states.theme !== "custom"} ref={customThemeDisplayRef}>Custom Theme Hex Colour: #
-            <span id="accountSettingsCustomTheme" contentEditable
-            ref={customThemeEditRef} onInput={() => {
-                updateCustomTheme(customThemeEditRef.current.innerText, states);
-              }}>
-              {states.themeHex}
-            </span>
-          </span>
-          <button>Delete Account</button>
-          <button>Change Password</button>
-          <button onClick={() => {
-            localStorage.setItem("sessionID", null);
-            window.location = "/";
-          }}>Log Out</button>
-          <button onClick={() => {states.setActivePopover(null);}}>Done</button>
-        </Popover>
-      );
+      states.setActivePopover(<Popover title="Account Settings"><AccountSettings/></Popover>);
     }}/>
   </header>);
 };
@@ -218,55 +253,62 @@ function PageHeader ({title, iconClickEvent, ...props}) {
 function PopoverParent({...props}) {
   [states.activePopover, states.setActivePopover] = React.useState(null);
   return (
-    <div id="popoverParent" style={{display: states.activePopover == null ? "none" : "flex"}} onClick={() => {
+    <div id="popoverParent" style={{display: "flex", height: states.activePopover === null ? 0 : "100%"}} onMouseDown={() => {setTimeout(() => {
       states.setActivePopover(null);
-    }} {...props}>{states.activePopover}</div>
+    }, 50)}} {...props}>{states.activePopover || <Popover style={{opacity: 0}}/>}</div>
   );
 }
 
 // for popups / popovers in desktop, render as separate screens on mobile
 function Popover({children, title, style={}, ...props}) {
-  return <div id="popover" style={{margin: style.margin ? style.margin : "auto", ...style}} onClick={event => {
+  let popoverRef = React.useRef(null);
+  return <div id="popover" style={{margin: style.margin ? style.margin : "auto", /*height: 0,*/ ...style}} onClick={event => {
     event.stopPropagation();
-  }} {...props}>
-    <div id="popoverHeaderBar">
+  }} onMouseDown={event => {
+    event.stopPropagation();
+  }} className={states.activePopover ? "slideUp" : ""} ref={popoverRef} {...props}>
+    {title ? <div id="popoverHeaderBar">
       <h3>{title}</h3>
       <div style={{flexGrow: 1}}></div>
-      <button onClick={() => {states.setActivePopover(null);}} className="material-symbols-outlined">close</button>
-    </div>
+      <button onClick={()=>{setTimeout(()=>{states.setActivePopover(null);}, 50)}} className="material-symbols-outlined">close</button>
+    </div> : <button onClick={()=>{setTimeout(()=>{states.setActivePopover(null);}, 50)}} style={{
+      position: "absolute",
+      top: 5,
+      right: 5
+    }} className="material-symbols-outlined">close</button>}
     {children}
   </div>
 }
 
 function SignInPopover ({ error="" }) {
-  return (<Popover title="Sign In">
-    <span>Welcome back! If you don't already have an account please <a href="#" onClick={() => states.setActivePopover(<CreateAccountPopover/>)}>create an account</a> instead.</span>
+  return (<>
+    <span>Welcome back! If you don't already have an account please <a href="#" onClick={() => states.setActivePopover(<Popover title="Create Account"><CreateAccountPopover/></Popover>)}>create an account</a> instead.</span>
     <div id="loginform">
       <em id="signInErrorMessage">{error}</em>
       <div style={{display:"grid",gridTemplateColumns:"auto auto"}}>
-      <label>Email address </label><input type="email" id="email" className="textBox" ref={emailRef}/>
-      <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef}/>
-      </div><br/>
-      <button onClick={() => doTheLoginThingy(false)}>Sign In</button>
+        <label>Email address </label><input type="email" id="email" className="textBox" ref={emailRef}/>
+        <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef}/>
+      </div>
     </div>
-  </Popover>);
+    <button onClick={() => doTheLoginThingy(false)}>Sign In</button>
+  </>);
 }
 
 function CreateAccountPopover ({ error="" }) {
-  return (<Popover title="Create Account">
-    <span>Welcome to Platypuss! If you already have an account please <a href="#" onClick={() => states.setActivePopover(<SignInPopover/>)}>sign in</a> instead.</span>
-    <br/><strong>By using Platypuss you confirm that you have read and agreed to our <a href="/legal">legal agreements</a>.</strong>
+  return (<>
+  <span>Welcome to Platypuss! If you already have an account please <a href="#" onClick={() => states.setActivePopover(<Popover title="Sign In"><SignInPopover/></Popover>)}>sign in</a> instead.</span>
+  <br/><strong>By using Platypuss you confirm that you have read and agreed to our <a href="/legal">legal agreements</a>.</strong>
     <div id="loginform">
       {error ? <em id="signInErrorMessage">{error}</em> : ""}
       <div style={{display:"grid",gridTemplateColumns:"auto auto"}}>
-      <label>Email address </label><input type="email" id="email" className="textBox" ref={emailRef}/>
-      <label>Username </label><input type="text" id="unam" className="textBox" ref={usernameRef}/>
-      <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef}/>
-      <label>Confirm Password </label><input type="password" id="confirmPassword" className="textBox" ref={confirmPasswordRef}/>
-      </div><br/>
-      <button onClick={() => doTheLoginThingy(true)}>Create Account</button>
+        <label>Email address </label><input type="email" id="email" className="textBox" ref={emailRef}/>
+        <label>Username </label><input type="text" id="unam" className="textBox" ref={usernameRef}/>
+        <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef}/>
+        <label>Confirm Password </label><input type="password" id="confirmPassword" className="textBox" ref={confirmPasswordRef}/>
+      </div>
     </div>
-  </Popover>);
+    <button onClick={() => doTheLoginThingy(true)}>Create Account</button>
+  </>);
 }
 
 const IndexPage = () => {
@@ -318,9 +360,17 @@ const IndexPage = () => {
       states.theme === "green" ? "greenThemed" :
       states.theme === "dark" ? "darkThemed" :
       "lightThemed"}>
-      {(Object.keys(states.accountInformation).length !== 0) && <button style={{fontSize: "14pt"}} onClick={() => {window.location = '/chat'}}>Chat</button>}
-      {(Object.keys(states.accountInformation).length === 0) && <><button style={{fontSize: "14pt"}} onClick={() => {states.setActivePopover(<SignInPopover/>)}}>Sign In</button><br/></>}
-      {(Object.keys(states.accountInformation).length === 0) && <button style={{fontSize: "14pt"}} onClick={() => {states.setActivePopover(<CreateAccountPopover/>)}}>Create Account</button>}
+      <div style={{
+        display: "flex",
+        flexDirection: "row",
+        gap: 3
+      }}>{(Object.keys(states.accountInformation).length === 0) ? 
+        <>
+          <button style={{fontSize: "14pt"}} onClick={() => {states.setActivePopover(<Popover title="Sign In"><SignInPopover/></Popover>)}}>Sign In</button>
+          <button style={{fontSize: "14pt"}} onClick={() => {states.setActivePopover(<Popover title="Create Account"><CreateAccountPopover/></Popover>)}}>Create Account</button>
+        </>:
+        <button style={{fontSize: "14pt"}} onClick={() => {window.location = '/chat'}}>Chat page</button>}
+      </div>
       {PRODUCTION ? <Markdown>{`
 Platypuss
 =========
@@ -340,7 +390,7 @@ Platypuss:
   waiting minutes for button clicks to register. This is sadly underconsidered in the development of modern apps.
 - Open source: [Platypuss' code](https://github.com/kettle-7/platypuss) is free to use, modify
   and distribute as per [the GNU GPL version 3](https://www.gnu.org/licenses/gpl-3.0.en.html).
-  It does not cost you money, there are no ads (so far) and it's built and maintained by volunteers.
+  It does not cost you money, there are no ads and it's built and maintained by volunteers.
 - More decentralised: Compared to many other alternatives Platypuss is more decentralised,
   meaning flexibility for server owners and users while avoiding compromising security and
   privacy where possible.
@@ -353,11 +403,11 @@ Platypuss:
 How to get started
 ------------------
 
-Platypuss is in an alpha stage at the moment. I will not neccessarily provide support for any
-issues you have, although do please [let me know](https://github.com/kettle-7/platypuss/issues)
-about any you come across so that I can work towards fixing them. It's in a rather volatile
-state where lots is prone to change so I will not yet publicise the instructions for how to
-host your own server, although you can expect this to come soon.
+You can create a Platypuss account for free with the button at the top of this page, and you can
+either join an existing server with an invite link or see the instructions on the
+[wiki](https://github.com/kettle-7/platypuss/wiki) to host your own. In the future I will probably
+provide ways you can host your own server, probably on a small monthly subscription, but I don't
+have any short term plans.
       `}</Markdown> : <>
         <h1>
           You found the Platypuss public beta!
@@ -379,13 +429,16 @@ host your own server, although you can expect this to come soon.
     <PopoverParent className={
       states.theme === "custom" ? "" :
       states.theme === "green" ? "greenThemed" :
-      states.theme === "light" ? "lightThemed" :
-      "darkThemed"}/>
+      states.theme === "dark" ? "darkThemed" :
+      "lightThemed"}/>
   </>);
 };
 
 export default IndexPage;
 
 export const Head = () => (
-  <title>{PRODUCTION ? "" : "(Beta!) "}Platypuss</title>
+  <>
+    <title>{PRODUCTION ? "" : "(Beta!) "}Platypuss</title>
+    <link rel="canonical" href={PRODUCTION ? "https://platypuss.net" : "https://beta.platypuss.net"}/>
+  </>
 );

@@ -99,31 +99,38 @@ module.exports = {
                         availablePermissions: availablePerms,
                         isAdmin: sdata.properties.admins.includes(data.id)
                     }
+                    let onlinePeers = {};
+                    let offlinePeers = {};
                     obj.peers = {};
-                    for (let user of Object.values(sdata.users)) {
-                        obj.peers[user.id] = {
-                            id: user.id,
-                            globalPermissions: user.globalPerms,
-                            isAdmin: sdata.properties.admins.includes(user.id),
-                            online: false
-                        }
-                    }
                     for (let client of clients) {
-                        if (client.readyState < 2 && client.loggedinbytoken && obj.peers[client.uid] != undefined) {
-                            obj.peers[client.uid].online = true;
+                        if (client.readyState < 2 && client.loggedinbytoken && sdata.users[client.uid] != undefined) {
+                            onlinePeers[client.uid] = {
+                                id: client.uid,
+                                globalPermissions: sdata.users[client.uid].globalPerms,
+                                isAdmin: sdata.properties.admins.includes(client.uid),
+                                online: true
+                            }
                         }
                     }
+                    for (let user of Object.values(sdata.users)) {
+                        if (!Object.keys(onlinePeers).includes(user.id))
+                            offlinePeers[user.id] = {
+                                id: user.id,
+                                globalPermissions: user.globalPerms,
+                                isAdmin: sdata.properties.admins.includes(user.id),
+                                online: false
+                            };
+                    }
+                    obj.peers = {...onlinePeers, ...offlinePeers};
                     obj.rooms = {};
                     for (let room of Object.values(sdata.rooms)) {
                         // TODO: permissions
-                        console.log(Object.keys(room));
                         obj.rooms[room.id] = {
                             id: room.id,
                             name: room.name,
                             messages: {}
                         }
                     }
-                    console.log(obj.rooms);
                     packet.ws.send(JSON.stringify(obj));
                     return sdata;
                 } catch (e) {

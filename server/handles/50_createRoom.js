@@ -1,5 +1,5 @@
  /************************************************************************
- * Copyright 2020-2023 Ben Keppel                                        *
+ * Copyright 2020-2024 Ben Keppel                                        *
  *                                                                       *
  * This program is free software: you can redistribute it and/or modify  *
  * it under the terms of the GNU General Public License as published by  *
@@ -29,7 +29,7 @@
             }));
             return;
         }
-        if (!(sdata.users[packet.ws.uid].globalPerms.includes("management.addRooms") || sdata.properties.admins.includes(packet.ws.uid))) {
+        if (!(sdata.users[packet.ws.uid].globalPerms.includes("room.add") || sdata.properties.admins.includes(packet.ws.uid))) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
                 code: "noPerm",
@@ -39,11 +39,22 @@
         }
         let newRoomId = v4();
         sdata.rooms[newRoomId] = new Room(newRoomId, packet.name.toString());
+        let newRooms = {};
+        for (let room of Object.values(sdata.rooms)) {
+            // TODO: permissions
+            newRooms[room.id] = {
+                id: room.id,
+                name: room.name,
+                messages: {}
+            }
+        }
         for (let client of clients) {
             if (client.loggedinbytoken)
             client.send(JSON.stringify({
                 eventType: "roomAdded",
-                room: sdata.rooms[newRoomId]
+                id: newRoomId,
+                room: sdata.rooms[newRoomId],
+                newRooms: newRooms
             }));
         }
         return sdata;
