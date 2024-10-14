@@ -1059,7 +1059,7 @@ async function loadView(switchToServer) {
           case "message":
             if (document.visibilityState == "hidden" && data.userId !== packet.message.author)
               new Audio(authUrl+'/randomsand.wav').play();
-            if (states.focusedServer !== serverCode || states.focusedRoom.id != packet.message.room) break;
+            if (states.focusedServer !== serverCode || (packet.message.room && states.focusedRoom.id != packet.message.room)) break;
             // cache the message and add it to the list to render
             messageCache[packet.message.id] = packet.message;
             states.setFocusedRoomRenderedMessages([
@@ -1225,7 +1225,6 @@ export default function ChatPage() {
         break;
     }
   }
-  console.log(theme);
 
   // set a bunch of empty React state objects for stuff that needs to be accessed throughout the program
   [states.activePopover, states.setActivePopover] = React.useState(null);
@@ -1248,6 +1247,7 @@ export default function ChatPage() {
   React.useEffect(() => {
     loadView();
     states.setMobileSidebarShown(true);
+    states.setTheme(theme);
   }, []);
 
   // return the basic page layout
