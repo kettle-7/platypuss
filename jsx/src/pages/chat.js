@@ -1207,12 +1207,11 @@ export default function ChatPage() {
   let theme = "medium";
   let themeHex = "000000";
   if (browser && !states.hasRendered) {
-    window.addEventListener("dragenter", () => {}, false);
-    window.addEventListener("dragover", () => {}, false);
-    window.addEventListener("drop", fileDrop, false);
-
+    console.log(browser);
+    if (states.theme) theme = states.theme;
     themeHex = localStorage.getItem("themeHex");
     if (themeHex == null) themeHex = "000000";
+    if (states.themeHex) themeHex = states.themeHex;
     switch (localStorage.getItem("theme")) {
       case "custom":
       case "dark":
@@ -1249,6 +1248,9 @@ export default function ChatPage() {
     states.setMobileSidebarShown(true);
     states.setTheme(theme);
     console.log(theme, states.theme);
+    window.addEventListener("dragenter", () => {}, false);
+    window.addEventListener("dragover", () => {}, false);
+    window.addEventListener("drop", fileDrop, false);
   }, []);
   console.log(theme, states.theme);
 
