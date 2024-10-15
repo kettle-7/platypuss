@@ -1252,7 +1252,12 @@ export default function ChatPage() {
     window.addEventListener("dragover", () => {}, false);
     window.addEventListener("drop", fileDrop, false);
   }, []);
-  console.log(theme, states.theme);
+  console.log(theme, states.theme, 
+    states.theme === "custom" ? "" :
+    states.theme === "green" ? "greenThemed" :
+    states.theme === "light" ? "lightThemed" :
+    "darkThemed"
+  );
 
   // return the basic page layout
   return (<>
