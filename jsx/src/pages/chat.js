@@ -1250,6 +1250,7 @@ export default function ChatPage() {
     states.setTheme(theme);
     console.log(theme, states.theme);
   }, []);
+  console.log(theme, states.theme);
 
   // return the basic page layout
   return (<>
