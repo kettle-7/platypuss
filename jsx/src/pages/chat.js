@@ -356,9 +356,9 @@ function Message({message}) {
             sentByThisUser ? !states.focusedServerPermissions.includes("message.edit")
             : true // You shouldn't be able to edit other people's messages no matter what
           ) ? "none" : "flex"}}>Edit</button>
-          <button className='material-symbols-outlined' onClick={()=>{replyToMessage(message.id)}}>Reply</button>
-          <button className='material-symbols-outlined' onClick={()=>{pingUser(message.author)}}>alternate_email</button>
-          <button className='material-symbols-outlined' onClick={()=>{deleteMessage(message.id)}} style={{diplay: (
+          <button className='material-symbols-outlined' onClick={()=>{setTimeout(() => {states.setActivePopover(null)}, 50); replyToMessage(message.id)}}>Reply</button>
+          <button className='material-symbols-outlined' onClick={()=>{setTimeout(() => {states.setActivePopover(null)}, 50); pingUser(message.author)}}>alternate_email</button>
+          <button className='material-symbols-outlined' onClick={()=>{setTimeout(() => {states.setActivePopover(null)}, 50); deleteMessage(message.id)}} style={{diplay: (
             sentByThisUser ? !states.focusedServerPermissions.includes("message.delete")
             : !states.focusedServerPermissions.includes("moderation.delete")
           ) ? "none" : "flex"}}>Delete</button>
@@ -898,7 +898,7 @@ function replyToMessage(id) {
 
 // Add ping text for the specified user to the message box
 function pingUser(id) {
-  document.getElementById("messageBox").innerText += "[@" + id + "]";
+  document.getElementById("messageBox").innerHTML += "<strong>**[@" + id + "]**</strong>";
 }
 
 function showInvitePopup(invite, domain) {
@@ -1271,7 +1271,7 @@ export default function ChatPage() {
       } else {
         window.location = "/";
       }
-    }} states={states}/>
+    }}/>
     <main>
       <div id="chatPage" className={
           states.theme === "custom" ? "" :
