@@ -1171,6 +1171,7 @@ async function loadView(switchToServer) {
 }
 
 function PageHeader ({title, iconClickEvent, ...props}) {
+  console.log("h", states.theme, props.className);
   [states.accountInformation, states.setAccountInformation] = React.useState({});
 
   React.useEffect(() => {
