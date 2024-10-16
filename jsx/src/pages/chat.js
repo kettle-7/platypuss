@@ -1251,14 +1251,16 @@ export default function ChatPage() {
     window.addEventListener("drop", fileDrop, false);
   }, []);
 
+  let themeClass = (
+    theme === "custom" ? "" :
+    theme === "green" ? "greenThemed" :
+    theme === "light" ? "lightThemed" :
+    "darkThemed"
+  );
+
   // return the basic page layout
   return (<>
-    <PageHeader className={
-      states.theme === "custom" ? "" :
-      states.theme === "green" ? "greenThemed" :
-      states.theme === "light" ? "lightThemed" :
-      "darkThemed"
-    } iconClickEvent={() => {
+    <PageHeader className={themeClass} iconClickEvent={() => {
       if (states.useMobileUI) {
         setTimeout(() => {
           if (states.mobileSidebarShown)
