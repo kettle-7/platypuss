@@ -1171,7 +1171,6 @@ async function loadView(switchToServer) {
 }
 
 function PageHeader ({title, iconClickEvent, ...props}) {
-  console.log("h", states.theme, props.className);
   [states.accountInformation, states.setAccountInformation] = React.useState({});
 
   React.useEffect(() => {
@@ -1208,7 +1207,6 @@ export default function ChatPage() {
   let theme = "medium";
   let themeHex = "000000";
   if (browser && !states.hasRendered) {
-    console.log(browser);
     if (states.theme) theme = states.theme;
     themeHex = localStorage.getItem("themeHex");
     if (themeHex == null) themeHex = "000000";
@@ -1248,17 +1246,10 @@ export default function ChatPage() {
     loadView();
     states.setMobileSidebarShown(true);
     states.setTheme(theme);
-    console.log(theme, states.theme);
     window.addEventListener("dragenter", () => {}, false);
     window.addEventListener("dragover", () => {}, false);
     window.addEventListener("drop", fileDrop, false);
   }, []);
-  console.log(theme, states.theme, 
-    states.theme === "custom" ? "" :
-    states.theme === "green" ? "greenThemed" :
-    states.theme === "light" ? "lightThemed" :
-    "darkThemed"
-  );
 
   // return the basic page layout
   return (<>
