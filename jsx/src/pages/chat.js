@@ -30,17 +30,23 @@ var serverHashes = {}; // We can use these to get links to specific servers / ma
 var browser = typeof window !== "undefined"; // check if we're running in a browser rather than the build environment
 var emailRef, passwordRef, confirmPasswordRef, usernameRef; // these refer to the input fields on the login popup
 var finishedLoading = false; // to prevent some code from being ran multiple times
+var uuidreg = /[0-9a-f]{7,8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/ig;
 var pageUrl = browser ? new URL(window.location) : new URL("http://localhost:8000"); // window is not defined in the testing environment so just assume localhost
 var authUrl = "https://platypuss.net"; // Authentication server, you shouldn't have to change this but it's a variable just in case
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
 pageUrl.protocol = "https:"; // remove this in production
 
-if (browser) window.loadedMessages = 0; // The number of messages loaded in the current view, used when loading older messages
+if (browser) {
+  window.loadedMessages = 0; // The number of messages loaded in the current view, used when loading older messages
+  window.xDown = null;
+  window.yDown = null;
+}
 
 const markdownOptions = {
   disableParsingRawHTML: true, // poses a security thread we don't need
   overrides: {
-    code: SyntaxHighlightedCode
+    code: SyntaxHighlightedCode,
+    strong: TryParseMention
   }
 };
 
@@ -169,6 +175,37 @@ function CreateAccountPopover({ error="" }) {
     <button onClick={() => doTheLoginThingy(true)}>Create Account</button>
   </>);
 }
+                                                          
+function handleTouchStart(evt) {
+  const firstTouch = evt.touches[0];
+  window.xDown = firstTouch.clientX;
+  window.yDown = firstTouch.clientY;
+}
+                                                                         
+function handleTouchMove(evt) {
+  if (!window.xDown || !window.yDown) {
+    return;
+  }
+
+  var xUp = evt.touches[0].clientX;                                    
+  var yUp = evt.touches[0].clientY;
+  var xDiff = window.xDown - xUp;
+  var yDiff = window.yDown - yUp;
+                                                                        
+  if (Math.abs(xDiff) > Math.abs(yDiff)) {
+    if (xDiff > 0) {
+      if (states.mobileSidebarShown) {
+        setTimeout(() => {states.setMobileSidebarShown(false)}, 50);
+      }
+    } else {
+      if (!states.mobileSidebarShown) {
+        setTimeout(() => {states.setMobileSidebarShown(true)}, 50);
+      }
+    }                       
+  }
+  window.xDown = null;
+  window.yDown = null;                                             
+}
 
 function SyntaxHighlightedCode(props) {
   const ref = React.useRef(null);
@@ -183,6 +220,28 @@ function SyntaxHighlightedCode(props) {
   }, [props.className, props.children])
 
   return <code {...props} ref={ref} />
+}
+
+function TryParseMention(props) {
+  if (typeof props.children[0] !== typeof "e")
+    return (<strong {...props}>{props.children}</strong>);
+  let chars = props.children[0].split("");
+  if (chars[0] !== "[" || chars[38] !== "]")
+    return (<strong {...props}>{props.children}</strong>);
+  let id = chars.slice(2, 38).join("");
+  switch (chars[1]) {
+    case "@":
+      return (<button className='userMention' onClick={()=>{setTimeout(()=>{showUser(id)},50)}}>
+        <strong>@{userCache[id]?.username}</strong>
+      </button>);
+    case "#":
+      return (<button className='roomMention' onClick={() => {setTimeout(() => {
+        states.setFocusedRoom(states.focusedServerRenderedRooms[id]);
+        loadView();
+      }, 50);}}><strong>#{states.focusedServerRenderedRooms[id]?.name}</strong></button>);
+    default:
+      return (<strong {...props}>{props.children}</strong>);
+  }
 }
 
 function PopoverParent({...props}) {
@@ -368,8 +427,12 @@ function Message({message}) {
           <span className="messageTimestamp">@{author.tag} at {message.timestamp ? new Date(message.timestamp).toLocaleString() : new Date(message.stamp).toLocaleString()}</span>
         </div>
         {message.reply ? messageCache[message.reply] ? <blockquote className='messageReply'>
-          <span className='ping'>@{userCache[messageCache[message.reply].author]?.username} </span>
-          <span className='messageReplyContent'>{messageCache[message.reply]?.content}</span>
+        <button className='userMention' onClick={()=>{setTimeout(()=>{showUser(messageCache[message.reply].author)},50)}}>
+          <strong>
+            @{userCache[messageCache[message.reply].author]?.username}
+          </strong>
+        </button>
+        <span className='messageReplyContent'>{messageCache[message.reply]?.content}</span>
         </blockquote> : <blockquote className='messageReply'><em>Message couldn't be loaded</em></blockquote> : ""}
         <div className="messageContent">
           <Markdown options={markdownOptions}>{messageContent}</Markdown>
@@ -409,8 +472,12 @@ function Message({message}) {
         <span className="messageTimestamp">@{author.tag} at {message.timestamp ? new Date(message.timestamp).toLocaleString() : new Date(message.stamp).toLocaleString()}</span>
       </div>
       {message.reply ? messageCache[message.reply] ? <blockquote className='messageReply'>
-        <span className='ping'>@{userCache[messageCache[message.reply].author]?.username} </span>
-        <span className='messageReplyContent'>{messageCache[message.reply]?.content}</span>
+        <button className='userMention' onClick={()=>{setTimeout(()=>{showUser(messageCache[message.reply].author)},50)}}>
+          <strong>
+            @{userCache[messageCache[message.reply].author]?.username}
+          </strong>
+        </button>
+        <span className='messageReplyContent'> {messageCache[message.reply]?.content}</span>
       </blockquote> : <blockquote className='messageReply'><em>Message couldn't be loaded</em></blockquote> : ""}
       <div className="messageContent">
         <Markdown options={markdownOptions}>{messageContent}</Markdown>
@@ -620,6 +687,7 @@ function RoomSettingsPopover({room}) {
       <label htmlFor="editRoomName">Room name: </label>
       <input type="text" id="editRoomName" ref={roomNameRef}/>
     </div>
+    <h6>ID: {room.id}</h6>
     <h5>Room description:</h5>
     <div id="roomDescription" contentEditable={(
       states.focusedServerPermissions.includes("room.edit") ||
@@ -1207,6 +1275,8 @@ export default function ChatPage() {
   let theme = "medium";
   let themeHex = "000000";
   if (browser && !states.hasRendered) {
+    document.addEventListener('touchstart', handleTouchStart, false);
+    document.addEventListener('touchmove', handleTouchMove, false);
     if (states.theme) theme = states.theme;
     themeHex = localStorage.getItem("themeHex");
     if (themeHex == null) themeHex = "000000";
