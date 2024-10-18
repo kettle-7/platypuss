@@ -481,7 +481,7 @@ function Message({message}) {
       </blockquote> : <blockquote className='messageReply'><em>Message couldn't be loaded</em></blockquote> : ""}
       <div className="messageContent">
         <Markdown options={markdownOptions}>{messageContent}</Markdown>
-        <div className='horizontalbox'>
+        <div className='attachments horizontalbox'>
           {uploads.map(upload => <img className="upload" src={"https://"+states.servers[states.focusedServer].ip+upload.url} onClick={() => {setTimeout(() => {
             states.setActivePopover(<Popover className="imagePopover" style={{backgroundColor: "transparent", background: "transparent", boxShadow: "none", width: "auto"}} title={upload.name}>
               <img src={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{borderRadius: 10, boxShadow: "0px 0px 10px black"}}/>
