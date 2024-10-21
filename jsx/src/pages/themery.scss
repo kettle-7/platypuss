@@ -39,6 +39,8 @@
   --foreground-level1: black;
   --foreground-level2: #222222;
   /*--accent: #0075db;*/
+  /*--someAccent: #0075db33;*/
+  --someAccent: #b300ff33;
   --accent: #b300ff;
   --grey: #888888;
 }
@@ -57,6 +59,8 @@
   --foreground-level1: white;
   --foreground-level2: #e0e0e0;
   /*--accent: #349eff;*/
+  /*--someAccent: #349eff33;*/
+  --someAccent: #c847ff33;
   --accent: #c847ff;
   --grey: #888888;
 }
@@ -149,7 +153,7 @@ button {
   cursor: pointer;
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
   &:active {
-      box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5) inset !important;
+      box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5) inset;
       background: var(--ingradient);
   }
   &:focus {
@@ -473,6 +477,16 @@ a {
 
 .attachments {
   overflow-x: auto;
+}
+
+.userMention, .roomMention {
+  background: var(--someAccent) !important;
+  border: 1px solid transparent;
+  box-shadow: none !important;
+  padding: 2px;
+}
+.roomMention strong, .userMention strong {
+  color: var(--accent);
 }
 
 blockquote {

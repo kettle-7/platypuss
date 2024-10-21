@@ -140,6 +140,12 @@ function doTheLoginThingy(createNewAccount) {
 }
 
 function SignInPopover({ error="" }) {
+  [emailRef, usernameRef, passwordRef, confirmPasswordRef] = [
+    React.useRef(null),
+    React.useRef(null),
+    React.useRef(null),
+    React.useRef(null)
+  ];
   return (<>
     <span>Welcome back! If you don't already have an account please <a href="#" onClick={() => states.setActivePopover(<Popover title="Create Account"><CreateAccountPopover/></Popover>)}>create an account</a> instead.</span>
     <div id="loginform">
