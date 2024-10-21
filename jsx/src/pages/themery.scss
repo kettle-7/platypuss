@@ -409,6 +409,9 @@ a {
 .roomLink a {
   flex-grow: 1;
   margin-left: 4px;
+  text-overflow: ellipsis;
+  text-wrap: nowrap;
+  overflow: hidden;
   color: var(--foreground-level1);
 }
 
@@ -861,6 +864,7 @@ button.material-symbols-outlined {
   margin-right: 3px;
   margin-left: 3px;
   min-height: 96px;
+  overflow: auto;
   flex-grow: 1;
   padding: 3px;
 }

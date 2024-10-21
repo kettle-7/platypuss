@@ -360,7 +360,7 @@ function MiddleSection({shown, className, ...props}) {
               }
             }
             setTimeout(() => states.setUploads(newUploads), 50);
-          }} style={{borderRadius: "50%"}} alt="draft"/>
+          }} style={{borderRadius: "50%"}} alt="draft" key={upload}/>
         ))}
       </div>
       <div id="progressBarContainer" hidden={states.uploadProgress == null}>
@@ -448,7 +448,7 @@ function Message({message}) {
                 <img src={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{borderRadius: 10, boxShadow: "0px 0px 10px black"}}/>
                 <a href={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{color: "white"}}>Download this image</a>
               </Popover>);
-            }, 50);}}/>)}
+            }, 50);}} key={upload}/>)}
           </div>
         </div>
       </Popover>);
@@ -493,7 +493,7 @@ function Message({message}) {
               <img src={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{borderRadius: 10, boxShadow: "0px 0px 10px black"}}/>
               <a href={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{color: "white"}}>Download this image</a>
             </Popover>);
-          }, 50);}}/>)}
+          }, 50);}} key={upload}/>)}
         </div>
       </div>
     </div>
@@ -666,7 +666,7 @@ function RoomsBar({shown, className, ...props}) {
         <button onClick={leaveServer}>Leave this server</button>
       </Popover>);
     }, 50);}}>stat_minus_1</button></div>
-    {Object.values(states.focusedServerRenderedRooms).map(room => (<RoomLink room={room}></RoomLink>))}
+    {Object.values(states.focusedServerRenderedRooms).map(room => (<RoomLink room={room} key={room}></RoomLink>))}
     {Object.values(states.focusedServerRenderedRooms).length === 0 ? <p>This server doesn't have any rooms in it.</p> : <></>}
   </div>);
 }
@@ -769,7 +769,7 @@ function RoomLink({room}) {
 function ServersBar({shown, className, ...props}) {
   return (<div className={className + " sidebar"} id="serversBar" style={{transform: shown ? "none" : "translate(-100vw, 0px)", position: shown ? undefined : "absolute"}} {...props}>
     <button className="serverIcon material-symbols-outlined" id="newServerButton">add</button>
-    {Object.values(states.servers).map(server => (<ServerIcon server={server}></ServerIcon>))}
+    {Object.values(states.servers).map(server => (<ServerIcon server={server} key={server}></ServerIcon>))}
   </div>);
 }
 
@@ -802,7 +802,7 @@ function PeersBar({shown, className, ...props}) {
       }));
     }}>add</button>
     {Object.values(states.focusedServerPeers).map(peer =>
-      <PeerIcon peer={peer}/>
+      <PeerIcon peer={peer} key={peer}/>
     )}
   </div>);
 }
