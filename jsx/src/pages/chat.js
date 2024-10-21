@@ -972,7 +972,7 @@ function replyToMessage(id) {
 
 // Add ping text for the specified user to the message box
 function pingUser(id) {
-  document.getElementById("messageBox").innerHTML += "<strong>**[@" + id + "]**</strong>";
+  document.getElementById("messageBox").innerHTML += "<strong>**[@" + id + "]**</strong> ";
 }
 
 function showInvitePopup(invite, domain) {
@@ -1053,6 +1053,7 @@ async function loadView(switchToServer) {
 
   // delete all messages
   states.setFocusedRoomRenderedMessages([]);
+  states.setReply(null);
   window.loadedMessages = 0;
   finishedLoading = false;
   updateCustomTheme(states.themeHex, states);
@@ -1207,7 +1208,7 @@ async function loadView(switchToServer) {
           case "join":
             break; // we don't care about these
           default:
-            if ("explanation" in packet && states.focusedServer === serverCode && states.focusedRoom.id == packet.room) {
+            if ("explanation" in packet && states.focusedServer === serverCode && (states.focusedRoom.id == packet.room || !packet.room)) {
               let randomString = Math.random().toString();
               messageCache[randomString] = {
                 special: true,

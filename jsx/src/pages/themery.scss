@@ -777,6 +777,11 @@ button.material-symbols-outlined {
   width: 100%;
 }
 
+#userAboutText {
+  overflow-y: auto;
+  word-break: break-all;
+}
+
 #userAboutText > p {
   margin: 0px;
 }
@@ -820,6 +825,7 @@ button.material-symbols-outlined {
   display: flex;
   align-items: center;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .popoverBanner > div {
