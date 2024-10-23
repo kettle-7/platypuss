@@ -15,11 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ************************************************************************/
 
- const { } = require("./platypussDefaults.js");
+const { } = require("./platypussDefaults.js");
 
- module.exports = {
-	eventType: "messageLoad",
-	execute: function (sdata, wss, packet) {
+module.exports = {
+    eventType: "messageLoad",
+    execute: function (sdata, wss, packet) {
         if (!(sdata.users[packet.ws.uid].globalPerms.includes("message.history") && sdata.users[packet.ws.uid].globalPerms.includes("message.read"))) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
