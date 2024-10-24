@@ -155,11 +155,29 @@ function SignInPopover({ error="" }) {
         <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef}/>
       </div>
     </div>
-    <button className='roomMention' onClick={() => {
-      fetch(authUrl+"/requestAccountRecovery?accountEmailAddress="+emailRef.current.value)
-        .then(response => response.text())
-        .then(text => states.setActivePopover(<Popover>{text}</Popover>));
-    }}>a plz help i forgor me passworde</button>
+    <button onClick={() => {setTimeout(() => {
+      states.setActivePopover(
+        <Popover title="Account Recovery">
+          <span>
+            Forgotten your password? No worries, we can send you an email to let you
+            log in without it, and you can then change your password to something else
+            through the account settings menu in the top right of this page.
+          </span>
+          <hr/>
+          <div className='horizontalbox' style={{gap: 10}}>
+            <label>Email address </label><input type="email" ref={emailRef}/>
+          </div>
+          <button onClick={() => {
+            fetch(authUrl+"/requestAccountRecovery?accountEmailAddress="+emailRef.current.value)
+              .then(response => response.text())
+              .then(text => states.setActivePopover(<Popover title="Account Recovery">{text}</Popover>));
+            }}>Send</button>
+          <button onClick={() => {setTimeout(() => {
+            states.setActivePopover(null);
+          }, 50);}}>Cancel</button>
+        </Popover>
+      );
+    }, 50);}}>Forgot Password?</button>
     <button onClick={() => doTheLoginThingy(false)}>Sign In</button>
   </>);
 }
