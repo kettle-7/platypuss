@@ -219,10 +219,10 @@ function serverConnection() {
     ws.onopen = () => {
         ws.send(JSON.stringify({
                 eventType: "login",
-                ogip: ogip,
+                subserver: ogip,
                 isVoiceChatRobot: true,
-                code: code,
-                sid: localStorage.sid // this poses a big security risk if you don't trust the owner of the server
+                inviteCode: code,
+                sessionID: localStorage.sessionID // this poses a big security risk if you don't trust the owner of the server
         }));
     }
 }
