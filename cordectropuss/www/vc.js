@@ -5,8 +5,12 @@ const configuration = {
     iceServers: [
         {
             urls: [
-                'turn:192.168.1.66:3000',
-                'turn:www.platypuss.net:3000'
+                'turn:localhost:3479',
+                'turn:192.168.1.68:3479',
+                'turn:www.platypuss.net:3479',
+                'turn:localhost:3478',
+                'turn:192.168.1.68:3478',
+                'turn:www.platypuss.net:3478'
             ],
             username: "testing",
             credential: "testing"
@@ -237,7 +241,7 @@ async function joinRoomById(roomId) {
 
 async function openUserMedia(e) {
     const stream = await navigator.mediaDevices.getUserMedia(
-            {video: true, audio: true});
+            {video: false, audio: true});
     document.querySelector('#localVideo').srcObject = stream;
     localStream = stream;
     remoteStream = new MediaStream();
