@@ -155,6 +155,29 @@ function SignInPopover({ error="" }) {
         <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef}/>
       </div>
     </div>
+    <button onClick={() => {setTimeout(() => {
+      states.setActivePopover(
+        <Popover title="Account Recovery">
+          <span>
+            Forgotten your password? No worries, we can send you an email to let you
+            log in without it, and you can then change your password to something else
+            through the account settings menu in the top right of this page.
+          </span>
+          <hr/>
+          <div className='horizontalbox' style={{gap: 10}}>
+            <label>Email address </label><input type="email" ref={emailRef}/>
+          </div>
+          <button onClick={() => {
+            fetch(authUrl+"/requestAccountRecovery?accountEmailAddress="+emailRef.current.value)
+              .then(response => response.text())
+              .then(text => states.setActivePopover(<Popover title="Account Recovery">{text}</Popover>));
+            }}>Send</button>
+          <button onClick={() => {setTimeout(() => {
+            states.setActivePopover(null);
+          }, 50);}}>Cancel</button>
+        </Popover>
+      );
+    }, 50);}}>Forgot Password?</button>
     <button onClick={() => doTheLoginThingy(false)}>Sign In</button>
   </>);
 }
@@ -418,14 +441,14 @@ function Message({message}) {
       states.setActivePopover(<Popover title="">
         <div className='horizontalbox'>
           <button className='material-symbols-outlined' style={{display:(
-            sentByThisUser ? !states.focusedServerPermissions.includes("message.edit")
+            sentByThisUser ? !states.focusedServerPermissions?.includes("message.edit")
             : true // You shouldn't be able to edit other people's messages no matter what
           ) ? "none" : "flex"}}>Edit</button>
           <button className='material-symbols-outlined' onClick={()=>{setTimeout(() => {states.setActivePopover(null)}, 50); replyToMessage(message.id)}}>Reply</button>
           <button className='material-symbols-outlined' onClick={()=>{setTimeout(() => {states.setActivePopover(null)}, 50); pingUser(message.author)}}>alternate_email</button>
           <button className='material-symbols-outlined' onClick={()=>{setTimeout(() => {states.setActivePopover(null)}, 50); deleteMessage(message.id)}} style={{diplay: (
-            sentByThisUser ? !states.focusedServerPermissions.includes("message.delete")
-            : !states.focusedServerPermissions.includes("moderation.delete")
+            sentByThisUser ? !states.focusedServerPermissions?.includes("message.delete")
+            : !states.focusedServerPermissions?.includes("moderation.delete")
           ) ? "none" : "flex"}}>Delete</button>
         </div>
         <div className="messageAuthor" style={{ display: message.special ? "none" : "flex" }}>
@@ -499,14 +522,14 @@ function Message({message}) {
     </div>
     {states.useMobileUI ? "" : <div className="message3">
       <button className='material-symbols-outlined' style={{display:(
-        sentByThisUser ? !states.focusedServerPermissions.includes("message.edit")
+        sentByThisUser ? !states.focusedServerPermissions?.includes("message.edit")
         : true // You shouldn't be able to edit other people's messages no matter what
       ) ? "none" : "flex"}}>Edit</button>
       <button className='material-symbols-outlined' onClick={()=>{replyToMessage(message.id)}}>Reply</button>
       <button className='material-symbols-outlined' onClick={()=>{pingUser(message.author)}}>alternate_email</button>
       <button className='material-symbols-outlined' onClick={()=>{deleteMessage(message.id)}} style={{diplay: (
-        sentByThisUser ? !states.focusedServerPermissions.includes("message.delete")
-        : !states.focusedServerPermissions.includes("moderation.delete")
+        sentByThisUser ? !states.focusedServerPermissions?.includes("message.delete")
+        : !states.focusedServerPermissions?.includes("moderation.delete")
       ) ? "none" : "flex"}}>Delete</button>
     </div>}
   </div>);
@@ -621,7 +644,7 @@ function RoomsBar({shown, className, ...props}) {
       {states.focusedServer ? states.servers[states.focusedServer].manifest.title : "Loading servers..."}
     </h3>
     <div style={{flexGrow: 1}}></div>
-    {(states.focusedServerPermissions.includes("room.add") || states.focusedServerPermissions.includes("admin")) && 
+    {(states.focusedServerPermissions?.includes("room.add") || states.focusedServerPermissions?.includes("admin")) && 
       <button className="material-symbols-outlined" style={{
         height: "fit-content",
         width: "fit-content",
@@ -702,11 +725,11 @@ function RoomSettingsPopover({room}) {
     <h6>ID: {room.id}</h6>
     <h5>Room description:</h5>
     <div id="roomDescription" contentEditable={(
-      states.focusedServerPermissions.includes("room.edit") ||
-      states.focusedServerPermissions.includes("admin")
+      states.focusedServerPermissions?.includes("room.edit") ||
+      states.focusedServerPermissions?.includes("admin")
     )} ref={roomDescriptionRef}/>
-    {(states.focusedServerPermissions.includes("room.delete") ||
-      states.focusedServerPermissions.includes("admin")) ? <button onClick={() => {
+    {(states.focusedServerPermissions?.includes("room.delete") ||
+      states.focusedServerPermissions?.includes("admin")) ? <button onClick={() => {
       setTimeout(() => {
         states.setActivePopover(<Popover title={"Do you really want to delete "+room.name+"?"}>
           <button onClick={() => {
@@ -1150,6 +1173,7 @@ async function loadView(switchToServer) {
             window.loadedMessages++;
             break;
           case "messages":
+            console.log(packet)
             if (states.focusedServer !== serverCode || states.focusedRoom.id != packet.room) break;
             if (packet.messages[0])
             for (let messageID in packet.messages) {

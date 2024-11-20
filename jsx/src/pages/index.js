@@ -70,7 +70,7 @@ function doTheLoginThingy(createNewAccount) {
       createNew: createNewAccount,
       server: "example.com", // can be anything so long as no platypuss server will actually be hosted there,
       email: emailRef.current.value,
-      username: createNewAccount ? usernameRef.current.value : undefined,
+      username: usernameRef.current ? usernameRef.current.value : undefined,
       password: hashPassword(passwordRef.current.value)
     })
     // we take the response and save the session token to the browser
@@ -220,7 +220,15 @@ function AccountSettings() {
         </Popover>);
       }, 50);
       }}>Delete Account</button>
-      <button>Change Password</button>
+      <button onClick={() => {setTimeout(() => {
+        states.setActivePopover(<Popover title="Change Password">
+          <input id="password" type="password" placeholder='New Password'></input>
+          <input id="confirmPassword" type="password" placeholder='Confirm Password'></input>
+          <button onClick={() => {
+            fetch(authUrl+'/changePassword?id='+localStorage.getItem("sessionID")+"&newPassword="+hashPassword(document.getElementById("password").value)).then(window.location.reload);
+          }}>do the thing</button>
+        </Popover>);
+      }, 50);}}>Change Password</button>
       <button onClick={() => {
         localStorage.setItem("sessionID", null);
         window.location = "/";
@@ -283,13 +291,38 @@ function Popover({children, title, style={}, ...props}) {
 function SignInPopover ({ error="" }) {
   return (<>
     <span>Welcome back! If you don't already have an account please <a href="#" onClick={() => states.setActivePopover(<Popover title="Create Account"><CreateAccountPopover/></Popover>)}>create an account</a> instead.</span>
+    <p><em>temporary notice: i accidentally removed everyone's emails so if you haven't already then please put in your username as well as your email so i can tie it back to your account. thanks for all your patience!</em></p>
     <div id="loginform">
       <em id="signInErrorMessage">{error}</em>
       <div style={{display:"grid",gridTemplateColumns:"auto auto"}}>
         <label>Email address </label><input type="email" id="email" className="textBox" ref={emailRef}/>
+        <label>Username </label><input type="text" id="username" className='textBox' ref={usernameRef}></input>
         <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef}/>
       </div>
     </div>
+    <button onClick={() => {setTimeout(() => {
+      states.setActivePopover(
+        <Popover title="Account Recovery">
+          <span>
+            Forgotten your password? No worries, we can send you an email to let you
+            log in without it, and you can then change your password to something else
+            through the account settings menu in the top right of this page.
+          </span>
+          <hr/>
+          <div className='horizontalbox' style={{gap: 10}}>
+            <label>Email address </label><input type="email" ref={emailRef}/>
+          </div>
+          <button onClick={() => {
+            fetch(authUrl+"/requestAccountRecovery?accountEmailAddress="+emailRef.current.value)
+              .then(response => response.text())
+              .then(text => states.setActivePopover(<Popover title="Account Recovery">{text}</Popover>));
+            }}>Send</button>
+          <button onClick={() => {setTimeout(() => {
+            states.setActivePopover(null);
+          }, 50);}}>Cancel</button>
+        </Popover>
+      );
+    }, 50);}}>Forgot Password?</button>
     <button onClick={() => doTheLoginThingy(false)}>Sign In</button>
   </>);
 }

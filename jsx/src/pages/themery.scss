@@ -68,8 +68,8 @@
 .greenThemed, .greenThemed * {
   --outgradient: lime;
   --ingradient: lime;
-  --outgradientsmooth: linear-gradient(lime, rgb(3, 90, 3));
-  --ingradientsmooth: linear-gradient(rgb(3, 90, 3), lime);
+  --outgradientsmooth: linear-gradient(lime, rgb(3, 150, 3));
+  --ingradientsmooth: linear-gradient(rgb(3, 150, 3), lime);
   --background-level1: lime;
   --background-level2: lime;
   --background-level3: lime;
@@ -189,6 +189,11 @@ pre {
   padding: 3px;
   margin: 1px;
   overflow-x: auto;
+}
+
+hr {
+  width: 100%;
+  margin: 0px;
 }
 
 a {
