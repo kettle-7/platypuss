@@ -471,7 +471,7 @@ function Message({message}) {
                 <img src={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{borderRadius: 10, boxShadow: "0px 0px 10px black"}}/>
                 <a href={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{color: "white"}}>Download this image</a>
               </Popover>);
-            }, 50);}} key={upload.id}/> : <div className='upload'><a href={"https://"+states.servers[states.focusedServer].ip+upload.url}>{upload.name}</a></div>)}
+            }, 50);}} key={upload.id}/> : <div className='upload horizontalbox' style={{padding:4,margin:2,marginBottom:4}}><span class="material-symbols-outlined">attachment</span><a href={"https://"+states.servers[states.focusedServer].ip+upload.url}>{upload.name}</a></div>)}
           </div>
         </div>
       </Popover>);
@@ -516,7 +516,7 @@ function Message({message}) {
               <img src={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{borderRadius: 10, boxShadow: "0px 0px 10px black"}}/>
               <a href={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{color: "white"}}>Download this image</a>
             </Popover>);
-          }, 50);}} key={upload.id}/> : <div className='textAttachment'></div>)}
+          }, 50);}} key={upload.id}/> : <div className='upload horizontalbox' style={{padding:4,margin:2,marginBottom:4}}><span class="material-symbols-outlined">attachment</span><a href={"https://"+states.servers[states.focusedServer].ip+upload.url}>{upload.name}</a></div>)}
         </div>
       </div>
     </div>
