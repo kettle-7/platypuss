@@ -961,7 +961,15 @@ function AccountSettings() {
         </Popover>);
       }, 50);
       }}>Delete Account</button>
-      <button>Change Password</button>
+      <button onClick={() => {setTimeout(() => {
+        states.setActivePopover(<Popover title="Change Password">
+          <input id="password" type="password" placeholder='New Password'></input>
+          <input id="confirmPassword" type="password" placeholder='Confirm Password'></input>
+          <button onClick={() => {
+            fetch(authUrl+'/changePassword?id='+localStorage.getItem("sessionID")+"&newPassword="+hashPassword(document.getElementById("password").value)).then(window.location.reload);
+          }}>do the thing</button>
+        </Popover>);
+      }, 50);}}>Change Password</button>
       <button onClick={() => {
         localStorage.setItem("sessionID", null);
         window.location = "/";
