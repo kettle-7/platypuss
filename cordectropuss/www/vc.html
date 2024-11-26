@@ -166,6 +166,7 @@ mdc.ripple.MDCRipple.attachTo(document.querySelector('.mdc-button'));
 // DEfault configuration - Change these if you have a different STUN or TURN server.
 const configuration = {
     iceServers: [
+        { urls: "stun:stun.l.google.com:19302" },
         {
             urls: [
                 'turn:localhost:5349',
@@ -176,7 +177,7 @@ const configuration = {
             credential: "skillissue"
         },
     ],
-    iceCandidatePoolSize: 0
+	sdpSemantics: "unified-plan"
 };
 
 let peerConnection = null;
