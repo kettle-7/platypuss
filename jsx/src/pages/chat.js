@@ -466,12 +466,12 @@ function Message({message}) {
         <div className="messageContent">
           <Markdown options={markdownOptions}>{messageContent}</Markdown>
           <div className='horizontalbox'>
-            {uploads.map(upload => <img className="upload" src={"https://"+states.servers[states.focusedServer].ip+upload.url} onClick={() => {setTimeout(() => {
+            {uploads.map(upload => upload.type.startswith("image/") ? <img className="upload" src={"https://"+states.servers[states.focusedServer].ip+upload.url} onClick={() => {setTimeout(() => {
               states.setActivePopover(<Popover className="imagePopover" style={{backgroundColor: "transparent", background: "transparent", boxShadow: "none", width: "auto"}} title={upload.name}>
                 <img src={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{borderRadius: 10, boxShadow: "0px 0px 10px black"}}/>
                 <a href={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{color: "white"}}>Download this image</a>
               </Popover>);
-            }, 50);}} key={upload.id}/>)}
+            }, 50);}} key={upload.id}/> : <div className='upload'><a href={"https://"+states.servers[states.focusedServer].ip+upload.url}>{upload.name}</a></div>)}
           </div>
         </div>
       </Popover>);
@@ -511,12 +511,12 @@ function Message({message}) {
       <div className="messageContent">
         <Markdown options={markdownOptions}>{messageContent}</Markdown>
         <div className='attachments horizontalbox'>
-          {uploads.map(upload => <img className="upload" src={"https://"+states.servers[states.focusedServer].ip+upload.url} onClick={() => {setTimeout(() => {
+          {uploads.map(upload => upload.type.startsWith("image/") ? <img className="upload" src={"https://"+states.servers[states.focusedServer].ip+upload.url} onClick={() => {setTimeout(() => {
             states.setActivePopover(<Popover className="imagePopover" style={{backgroundColor: "transparent", background: "transparent", boxShadow: "none", width: "auto"}} title={upload.name}>
               <img src={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{borderRadius: 10, boxShadow: "0px 0px 10px black"}}/>
               <a href={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{color: "white"}}>Download this image</a>
             </Popover>);
-          }, 50);}} key={upload.id}/>)}
+          }, 50);}} key={upload.id}/> : <div className='textAttachment'></div>)}
         </div>
       </div>
     </div>
