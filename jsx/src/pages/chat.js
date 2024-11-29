@@ -22,6 +22,8 @@ import hljs from 'highlight.js';
 import * as React from "react";
 import "./themery.scss";
 
+const { Peer } = require('../peerjs.min.js');
+
 var userCache = {}; // A cache of data on users so we don't constantly have to look it up
 var messageCache = {}; // The same but for messages
 var states = {populated:false}; // One global variable for storing React state objects so we can access them anywhere
@@ -1240,6 +1242,23 @@ async function loadView(switchToServer) {
             setTimeout(() => {
               socket.send(JSON.stringify(packet.repeatedPacket));
             }, packet.delay);
+            break;
+          case "callJoined":
+            for (let callPeer in packet.callPeers) {
+              let peer = new Peer(packet.callPeers[callPeer]);
+              peer.on("open", () => {
+                // maybe something will go here idk
+              });
+              peer.on("call", call => {
+                call.answer(navigator.mediaDevices.getUserMedia({video: false, audio: true}));
+              });
+            }
+            break;
+          case "newCallPeer":
+            let peer = new Peer();
+            peer.on("open", () => {
+              peer.call(packet.id, navigator.mediaDevices.getUserMedia({video: false, audio: true}));
+            });
             break;
           case "connecting":
           case "disconnect":

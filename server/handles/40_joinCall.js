@@ -19,48 +19,34 @@ const { v4 } = require("uuid");
 const { } = require("./platypussDefaults.js"); // import nothing :o)
 
 module.exports = {
-    eventType: "joinCallRoom",
+    eventType: "joinCall",
     execute: function (sdata, wss, packet, clients) {
-        if (!wss.callRooms) {
-            wss.callRooms = {};
+        if (!sdata.callers) {
+            sdata.callers = [];
         }
         if (packet.ws.inCall) {
             packet.ws.send(JSON.stringify({
-                "eventType": "error",
-                "code": "alreadyInCall",
-                "explanation": "You're already in a call."
+                eventType: "error",
+                code: "alreadyInCall",
+                explanation: "You're already in a call."
             }));
             return;
         }
-        if (!packet.callName) {
-            packet.ws.send(JSON.stringify({
-                "eventType": "error",
-                "code": "missingData",
-                "explanation": "You need to send an ID for the call to join."
-            }));
-            return;
+        packet.ws.inCall = true;
+        let callPeers = {};
+        for (let caller of sdata.callers) {
+            let id = v4();
+            callPeers[caller.uid] = id;
+            caller.send({
+                eventType: "newCallPeer",
+                user: callPeers.uid,
+                id: id
+            });
         }
-        if (!wss.callRooms[packet.callName]) {
-            packet.ws.send(JSON.stringify({
-                "eventType": "error",
-                "code": "nonexistentCall",
-                "explanation": "That call doesn't exist."
-            }));
-            return;
-        }
-        if (wss.callRooms[packet.callName].callee) {
-            packet.ws.send(JSON.stringify({
-                "eventType": "error",
-                "code": "callFull",
-                "explanation": "There's already two people in that call."
-            }));
-            return;
-        }
-        packet.ws.inCall = packet.callName;
-        wss.callRooms[packet.callName].callee = packet.ws.uid;
+        sdata.callers.push(packet.ws);
         packet.ws.send(JSON.stringify({
-            "eventType": "callData",
-            "callData": wss.callRooms[packet.callName]
+            eventType: "callJoined",
+            callPeers: callPeers
         }));
         return;
     }

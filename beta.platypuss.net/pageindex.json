@@ -27,10 +27,6 @@
         "/legal/.html": {
             "type": "text/html",
             "path": "legal/index.html"
-        },
-        "/vc.html": {
-            "type": "text/html",
-            "path": "../../cordectropuss/www/vc.html"
         }
     }
 }

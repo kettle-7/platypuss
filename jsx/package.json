@@ -16,7 +16,9 @@
   },
   "dependencies": {
     "@mdx-js/react": ">=2.0.0",
+    "@msgpack/msgpack": "^3.0.0-beta2",
     "caniuse-lite": "^1.0.30001655",
+    "eventemitter3": "^5.0.1",
     "gatsby": "^5.13.7",
     "gatsby-plugin-manifest": "^5.13.1",
     "gatsby-plugin-mdx": "^5.13.1",
@@ -24,9 +26,11 @@
     "gatsby-source-filesystem": "^5.13.1",
     "highlight.js": "^11.10.0",
     "markdown-to-jsx": "^7.5.0",
+    "peerjs-js-binarypack": "^2.1.0",
     "react": ">=18.2.0",
     "react-dom": ">=18.2.0",
-    "sass": ">=1.77.6"
+    "sass": ">=1.77.6",
+    "webrtc-adapter": "^9.0.1"
   },
   "devDependencies": {
     "@babel/preset-react": "^7.24.7"

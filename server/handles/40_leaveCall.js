@@ -15,21 +15,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  ************************************************************************/
 
-const { v4 } = require("uuid");
+ const { v4 } = require("uuid");
 const { } = require("./platypussDefaults.js"); // import nothing :o)
 
 module.exports = {
-    eventType: "fetchCallData",
+    eventType: "joinCall",
     execute: function (sdata, wss, packet, clients) {
-        if (!wss.callRooms) {
-            wss.callRooms = {};
-        }
-        if (!packet.ws.inCall) {
+        if (!sdata.callers || !packet.ws.inCall) {
+            packet.ws.send(JSON.stringify({
+                eventType: "error",
+                code: "notInCall",
+                explanation: "You're not in a call."
+            }));
+            sdata.callers = [];
             return;
         }
-        packet.ws.send(JSON.stringify({
-            "eventType": "callData",
-            "callData": wss.callRooms[packet.ws.inCall]
-        }));
+        packet.ws.inCall = false;
+        for (let index of sdata.callers) {
+            if (sdata.callers[index] == packet.ws)
+                delete sdata.callers[index];
+        }
+        return;
     }
 };
