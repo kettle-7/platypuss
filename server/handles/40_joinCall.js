@@ -39,7 +39,7 @@ module.exports = {
         packet.ws.inCall = true;
         packet.ws.send(JSON.stringify({
             eventType: "debug",
-            explanation: "a"
+            explanation: Object.keys(sdata.callers)
         }));
         let callPeers = {};
         for (let caller of Object.values(sdata.callers)) {
