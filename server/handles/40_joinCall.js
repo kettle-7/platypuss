@@ -26,7 +26,7 @@ module.exports = {
         }
         packet.ws.send(JSON.stringify({
             eventType: "debug",
-            explanation: JSON.stringify(sdata.callers)
+            explanation: "p"
         }));
         if (packet.ws.inCall) {
             packet.ws.send(JSON.stringify({
