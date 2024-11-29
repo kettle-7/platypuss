@@ -24,6 +24,10 @@ module.exports = {
         if (!sdata.callers) {
             sdata.callers = [];
         }
+        packet.ws.send(JSON.stringify({
+            eventType: "debug",
+            explanation: JSON.stringify(sdata.callers)
+        }));
         if (packet.ws.inCall) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
@@ -33,6 +37,10 @@ module.exports = {
             return;
         }
         packet.ws.inCall = true;
+        packet.ws.send(JSON.stringify({
+            eventType: "debug",
+            explanation: "a"
+        }));
         let callPeers = {};
         for (let caller of sdata.callers) {
             let id = v4();
@@ -43,6 +51,10 @@ module.exports = {
                 id: id
             });
         }
+        packet.ws.send(JSON.stringify({
+            eventType: "debug",
+            explanation: "b"
+        }));
         sdata.callers.push(packet.ws);
         packet.ws.send(JSON.stringify({
             eventType: "callJoined",
