@@ -81,6 +81,7 @@ for (let server in conf) {
     clientses[server] = [];
     if (sdata[server]) {
         sdata[server].properties = conf[server];
+        sdata[server].callers = [];
     } else {
         sdata[server] = {
             multiple: true,

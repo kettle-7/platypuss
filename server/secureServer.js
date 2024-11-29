@@ -60,6 +60,7 @@ if (!fs.existsSync(__dirname+"/server.json")) {
 
 var sdata = JSON.parse(fs.readFileSync(__dirname+"/server.json"));
 sdata.properties = conf;
+sdata.callers = [];
 sdata.tls = true;
 var clients = [];
 var handlers = {};

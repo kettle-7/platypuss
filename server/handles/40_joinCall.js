@@ -42,7 +42,7 @@ module.exports = {
             explanation: "a"
         }));
         let callPeers = {};
-        for (let caller of sdata.callers) {
+        for (let caller of Object.values(sdata.callers)) {
             let id = v4();
             callPeers[caller.uid] = id;
             caller.send({

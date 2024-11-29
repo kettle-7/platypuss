@@ -67,6 +67,7 @@ if (!fs.existsSync(__dirname+"/server.json")) {
 
 var sdata = JSON.parse(fs.readFileSync(__dirname+"/server.json"));
 sdata.properties = conf;
+sdata.callers = [];
 var clients = [];
 var handlers = {};
 const handlePath = path.join(__dirname, 'handles');
