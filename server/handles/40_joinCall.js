@@ -49,6 +49,10 @@ module.exports = {
             }));
             let id = v4();
             callPeers[caller.uid] = id;
+            packet.ws.send(JSON.stringify({
+                eventType: "debug",
+                explanation: caller
+            }));
             caller.send({
                 eventType: "newCallPeer",
                 user: callPeers.uid,
