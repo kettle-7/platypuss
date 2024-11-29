@@ -1250,15 +1250,21 @@ async function loadView(switchToServer) {
               peer.on("open", () => {
                 // maybe something will go here idk
               });
-              peer.on("call", call => {
-                call.answer(navigator.mediaDevices.getUserMedia({video: false, audio: true}));
+              peer.on("call", async call => {
+                call.on("stream", stream => {
+                  console.log(stream);
+                  let video = document.createElement("video");
+                  video.srcObject = stream;
+                  video.play();
+                });
+                call.answer(await navigator.mediaDevices.getUserMedia({video: false, audio: true}));
               });
             }
             break;
           case "newCallPeer":
             let peer = new Peer();
-            peer.on("open", () => {
-              peer.call(packet.id, navigator.mediaDevices.getUserMedia({video: false, audio: true}));
+            peer.on("open", async () => {
+              peer.call(packet.id, await navigator.mediaDevices.getUserMedia({video: false, audio: true}));
             });
             break;
           case "connecting":
