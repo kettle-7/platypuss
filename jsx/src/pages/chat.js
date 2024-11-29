@@ -699,6 +699,7 @@ function RoomsBar({shown, className, ...props}) {
     }, 50);}}>stat_minus_1</button></div>
     {Object.values(states.focusedServerRenderedRooms).map(room => (<RoomLink room={room} key={room.id}></RoomLink>))}
     {Object.values(states.focusedServerRenderedRooms).length === 0 ? <p>This server doesn't have any rooms in it.</p> : <></>}
+    <button onClick={() => {openSockets[states.focusedServer].send({eventType: "joinCall"})}}>calling thing</button>
   </div>);
 }
 
