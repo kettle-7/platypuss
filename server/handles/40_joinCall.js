@@ -45,14 +45,10 @@ module.exports = {
         for (let caller of Object.values(sdata.callers)) {
             let id = v4();
             callPeers[caller.uid] = id;
-            caller.send({
+            caller.send(JSON.stringify({
                 eventType: "newCallPeer",
                 user: callPeers.uid,
                 id: id
-            });
-            packet.ws.send(JSON.stringify({
-                eventType: "debug",
-                explanation: "c"
             }));
         }
         packet.ws.send(JSON.stringify({
