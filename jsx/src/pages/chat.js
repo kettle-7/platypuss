@@ -1264,7 +1264,13 @@ async function loadView(switchToServer) {
           case "newCallPeer":
             let peer = new Peer();
             peer.on("open", async () => {
-              peer.call(packet.id, await navigator.mediaDevices.getUserMedia({video: false, audio: true}));
+              let call = peer.call(packet.id, await navigator.mediaDevices.getUserMedia({video: false, audio: true}));
+              call.on("stream", stream => {
+                console.log(stream);
+                let video = document.createElement("video");
+                video.srcObject = stream;
+                video.play();
+              });
             });
             break;
           case "connecting":
