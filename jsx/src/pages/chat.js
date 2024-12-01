@@ -1250,27 +1250,40 @@ async function loadView(switchToServer) {
               peer.on("open", () => {
                 // maybe something will go here idk
               });
-              peer.on("call", async call => {
-                call.on("stream", stream => {
+              peer.on("connection", async call => {
+                states.setActivePopover(<Popover>asuyidasodshui</Popover>);
+                call.on("open", () => {
+                  call.on("data", data => {
+                    states.setActivePopover(<Popover>{data}</Popover>);
+                  });
+                  call.send("Hi, I'm" + states.accountInformation.username);
+                });
+                /*call.on("stream", stream => {
                   console.log(stream);
                   let video = document.createElement("video");
                   video.srcObject = stream;
                   video.play();
                 });
-                call.answer(await navigator.mediaDevices.getUserMedia({video: false, audio: true}));
+                call.answer(await navigator.mediaDevices.getUserMedia({video: false, audio: true}));*/
               });
             }
             break;
           case "newCallPeer":
             let peer = new Peer();
             peer.on("open", async () => {
-              let call = peer.call(packet.id, await navigator.mediaDevices.getUserMedia({video: false, audio: true}));
-              call.on("stream", stream => {
+              let call = peer.connect(packet.id/*, await navigator.mediaDevices.getUserMedia({video: false, audio: true})*/);
+              call.on("open", () => {
+                call.on("data", data => {
+                  states.setActivePopover(<Popover>{data}</Popover>);
+                });
+                call.send("Hi, I'm" + states.accountInformation.username);
+              });
+              /*call.on("stream", stream => {
                 console.log(stream);
                 let video = document.createElement("video");
                 video.srcObject = stream;
                 video.play();
-              });
+              });*/
             });
             break;
           case "connecting":
