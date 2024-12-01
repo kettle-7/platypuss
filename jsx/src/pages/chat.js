@@ -1256,7 +1256,7 @@ async function loadView(switchToServer) {
                   call.on("data", data => {
                     states.setActivePopover(<Popover>{data}</Popover>);
                   });
-                  call.send("Hi, I'm" + states.accountInformation.username);
+                  call.send("Hi, I'm " + states.accountInformation.username);
                 });
                 /*call.on("stream", stream => {
                   console.log(stream);
