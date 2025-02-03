@@ -20,7 +20,7 @@
  module.exports = {
 	eventType: "permissionChange",
 	execute: function (sdata, wss, packet, clients) {
-        if (packet.uid == undefined) {
+        if (packet.userID == undefined) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
                 code: "missingField",
@@ -28,7 +28,7 @@
             }));
             return;
         }
-        if (sdata.users[packet.uid] == undefined) {
+        if (sdata.users[packet.userID] == undefined) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
                 code: "nonexistentUser",
@@ -36,7 +36,7 @@
             }));
             return;
         }
-        if (!(sdata.properties.admins.includes(packet.ws.uid) || (sdata.users[packet.ws.uid].globalPerms.includes("admin.permedit") && packet.ws.uid !== packet.uid))) {
+        if (!(sdata.properties.admins.includes(packet.ws.uid) || (sdata.users[packet.ws.uid].globalPerms.includes("admin.permedit") && packet.ws.uid !== packet.userID))) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
                 code: "noPermission",
@@ -80,7 +80,7 @@
                             eventType: "permissionChange",
                             permission: packet.permission,
                             value: !!packet.value, // just to be sure it's boolean
-                            user: packet.uid,
+                            user: packet.userID,
                             explanation: `You can now ${availablePerms[packet.permission]}.`
                         }));
                     } else if (sdata.properties.admins.includes(client.uid)) {
@@ -88,7 +88,7 @@
                             eventType: "permissionChange",
                             permission: packet.permission,
                             value: !!packet.value,
-                            user: packet.uid,
+                            user: packet.userID,
                             explanation: `Someone else can now ${availablePerms[packet.permission]}.`
                         }));
                     }
@@ -105,7 +105,7 @@
                             eventType: "permissionChange",
                             permission: packet.permission,
                             value: !!packet.value,
-                            user: packet.uid,
+                            user: packet.userID,
                             explanation: `You can now no longer ${availablePerms[packet.permission]}.`
                         }));
                     } else if (sdata.properties.admins.includes(client.uid)) {
@@ -113,7 +113,7 @@
                             eventType: "permissionChange",
                             permission: packet.permission,
                             value: !!packet.value,
-                            user: packet.uid,
+                            user: packet.userID,
                             explanation: `Someone else can now no longer ${availablePerms[packet.permission]}.`
                         }));
                     }

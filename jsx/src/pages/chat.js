@@ -355,8 +355,23 @@ function MiddleSection({shown, className, ...props}) {
         </div>}
       <div id="belowMessageArea" ref={belowMessagesRef}></div>
     </div>
-    <div style={{height:5,background:"linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.3))"}}></div>
+    <div style={{position:"relative"}}><div style={{height:5,background:"linear-gradient(rgba(0, 0, 0, 0), rgba(0,0,0,0.1), rgba(0, 0, 0, 0.3))",position:"absolute",bottom:0,width:"100%"}}></div></div>
     <div id="messageGradientArea">
+      <div id="showEditingMessage" hidden={!states.editMessage}>
+        <div className='horizontalbox'>
+          <h3 style={{margin: 3}}>Editing message</h3>
+          <div style={{flexGrow: 1}}></div>
+          <button className='material-symbols-outlined' onClick={() => {setTimeout(() => {
+            states.setEditMessage(null);
+            document.getElementById("messageBox").innerHTML = "";
+          }, 50)}} style={{
+            height: "fit-content",
+            width: "fit-content",
+            padding: 3,
+            margin: 3
+          }}>close</button>
+        </div>
+      </div>
       <div id="showReplyingMessage" hidden={!states.reply}>
         <div className='horizontalbox'>
           <h3 style={{margin: 3}}>Replying to <strong>
@@ -374,7 +389,7 @@ function MiddleSection({shown, className, ...props}) {
         </div>
         <blockquote><Markdown options={markdownOptions}>{messageCache[states.reply]?.content}</Markdown></blockquote>
       </div>
-      <span hidden={states.uploads.length === 0}>Attackments: (Click on a file to delete it)</span>
+      <span hidden={states.uploads.length === 0}>Attachments: (Click on a file to delete it)</span>
       <div id="showFiles" hidden={states.uploads.length == 0}>
         {states.uploads.map(upload => (
           <img src={upload.thumbnail} className='avatar material-symbols-outlined' onClick={() => {
@@ -526,7 +541,7 @@ function Message({message}) {
       <button className='material-symbols-outlined' style={{display:(
         sentByThisUser ? !states.focusedServerPermissions?.includes("message.edit")
         : true // You shouldn't be able to edit other people's messages no matter what
-      ) ? "none" : "flex"}}>Edit</button>
+      ) ? "none" : "flex"}} onClick={()=>{setTimeout(() => {states.setEditMessage(message.id); document.getElementById("messageBox").innerText = message.content}, 50)}}>Edit</button>
       <button className='material-symbols-outlined' onClick={()=>{replyToMessage(message.id)}}>Reply</button>
       <button className='material-symbols-outlined' onClick={()=>{pingUser(message.author)}}>alternate_email</button>
       <button className='material-symbols-outlined' onClick={()=>{deleteMessage(message.id)}} style={{diplay: (
@@ -540,6 +555,21 @@ function Message({message}) {
 function triggerMessageSend() {
   let socket = openSockets[states.focusedServer];
   let messageTextBox = document.getElementById("messageBox");
+  if (states.editMessage) {
+    socket.send(JSON.stringify({
+      eventType: "messageEdit",
+      id: states.editMessage,
+      message: {
+        content: messageTextBox.innerText,
+        room: states.focusedRoom.id
+      }
+    }));
+    messageTextBox.innerHTML = "";
+    setTimeout(() => {
+      states.setEditMessage(null);
+    }, 50);
+    return;
+  }
   if (states.uploads.length === 0) {
     socket.send(JSON.stringify({
       eventType: "message",
@@ -632,6 +662,51 @@ async function showUser(id) {
     </div>
     <div id="userAboutText"><Markdown options={markdownOptions}>{user.aboutMe.text}</Markdown></div>
     <div style={{flexGrow: 1}}/>
+    <div id="userAdminActions" hidden={(
+      !states.focusedServerPermissions.includes("moderation.ban") &&
+      !states.focusedServerPermissions.includes("admin.editpermissions") &&
+      !states.focusedServerPermissions.includes("admin")
+    )} style={{margin:2,padding:2,borderRadius:5,border:"1px solid #888888"}}>
+      <h3 style={{margin:3}}>Administrative Actions</h3>
+      <div hidden={(
+        !states.focusedServerPermissions.includes("moderation.ban") &&
+        !states.focusedServerPermissions.includes("admin")
+      )}>
+        <button>Ban {user.username} from this server</button>
+        <button>Unban {user.username} from this server</button>
+      </div>
+      <div style={{flexShrink:0,height:5}}></div>
+      <div hidden={(
+      !states.focusedServerPermissions.includes("admin.editpermissions") &&
+      !states.focusedServerPermissions.includes("admin")
+      )}>
+        <h4>Permissions</h4>
+        {Object.keys(states.focusedServerAvailablePermissions).map(key => <div>
+          <input id={key} type="checkbox" onChange={e => {
+            if(e.target.checked) {
+              if (!states.focusedServerPeers[user.id]?.globalPermissions.includes(key)) {
+                openSockets[states.focusedServer].send(JSON.stringify({
+                  eventType: "permissionChange",
+                  userID: user.id,
+                  permission: key,
+                  value: true
+                }));
+              }
+            } else {
+              if (states.focusedServerPeers[user.id]?.globalPermissions.includes(key)) {
+                openSockets[states.focusedServer].send(JSON.stringify({
+                  eventType: "permissionChange",
+                  userID: user.id,
+                  permission: key,
+                  value: false
+                }));
+              }
+            }
+          }} checked={states.focusedServerPeers[user.id]?.globalPermissions.includes(key)}/>
+          <label for={key}>{states.focusedServerAvailablePermissions[key]}</label>
+        </div>)}
+      </div>
+    </div>
     <button onClick={() => {setTimeout(() => {states.setActivePopover(null)}, 50);}}>Done</button>
   </Popover>);
 }
@@ -1203,6 +1278,19 @@ async function loadView(switchToServer) {
             document.getElementById(packet.messageId).remove();
             delete messageCache[packet.messageId];
             break;
+          case "messageEdited":
+            if (!messageCache[packet.message.id]) break;
+            messageCache[packet.message.id].content = packet.message.content;
+            if (states.focusedServer !== serverCode || (packet.message.room && states.focusedRoom.id != packet.message.room)) break;
+            let newMessages = [
+              ...states.focusedRoomRenderedMessages
+            ];
+            for (let message of newMessages) {
+              if (message.id == packet.message.id)
+                message.content = packet.message.content;
+            }
+            states.setFocusedRoomRenderedMessages(newMessages);
+            break;
           case "roomAdded":
           case "roomEdited":
           case "roomDeleted":
@@ -1224,6 +1312,7 @@ async function loadView(switchToServer) {
               states.setFocusedServerPermissions(packet.permissions);
               states.setFocusedServerRenderedRooms(packet.rooms ? packet.rooms : {});
               states.setFocusedServerPeers(packet.peers);
+              states.setFocusedServerAvailablePermissions(packet.availablePermissions);
               let roomToFocus = states.focusedRoom;
               if (packet.rooms) {
                 if (!Object.keys(packet.rooms).includes(states.focusedRoom.id)) {
@@ -1401,6 +1490,8 @@ export default function ChatPage() {
   [states.uploads, states.setUploads] = React.useState([]); // files we want to attach to the next message
   [states.uploadProgress, states.setUploadProgress] = React.useState(null); // progress bar for uploading message attachments
   [states.avatarProgress, states.setAvatarProgress] = React.useState(null); // how far through we are uploading our avatar
+  [states.editMessage, states.setEditMessage] = React.useState(null); // the id of the message being edited, if any
+  [states.focusedServerAvailablePermissions, states.setFocusedServerAvailablePermissions] = React.useState(null); // the permissions that can be had in the focused server
 
   React.useEffect(() => {
     loadView();
