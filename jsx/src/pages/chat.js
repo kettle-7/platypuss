@@ -488,7 +488,7 @@ function Message({message}) {
                 <img src={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{borderRadius: 10, boxShadow: "0px 0px 10px black"}}/>
                 <a href={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{color: "white"}}>Download this image</a>
               </Popover>);
-            }, 50);}} key={upload.id}/> : <div className='upload horizontalbox' style={{padding:4,margin:2,marginBottom:4}}><span class="material-symbols-outlined">attachment</span><a href={"https://"+states.servers[states.focusedServer].ip+upload.url}>{upload.name}</a></div>)}
+            }, 50);}} key={upload.id}/> : <div className='upload horizontalbox' style={{padding:4,margin:2,marginBottom:4}}><span className="material-symbols-outlined">attachment</span><a href={"https://"+states.servers[states.focusedServer].ip+upload.url}>{upload.name}</a></div>)}
           </div>
         </div>
       </Popover>);
@@ -533,7 +533,7 @@ function Message({message}) {
               <img src={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{borderRadius: 10, boxShadow: "0px 0px 10px black"}}/>
               <a href={"https://"+states.servers[states.focusedServer].ip+upload.url} style={{color: "white"}}>Download this image</a>
             </Popover>);
-          }, 50);}} key={upload.id}/> : <div className='upload horizontalbox' style={{padding:4,margin:2,marginBottom:4}}><span class="material-symbols-outlined">attachment</span><a href={"https://"+states.servers[states.focusedServer].ip+upload.url}>{upload.name}</a></div>)}
+          }, 50);}} key={upload.id}/> : <div className='upload horizontalbox' style={{padding:4,margin:2,marginBottom:4}}><span className="material-symbols-outlined">attachment</span><a href={"https://"+states.servers[states.focusedServer].ip+upload.url}>{upload.name}</a></div>)}
         </div>
       </div>
     </div>
@@ -660,20 +660,37 @@ async function showUser(id) {
         <h6 style={{margin: 0}}>ID: {id}</h6>
       </div>
     </div>
-    <div id="userAboutText"><Markdown options={markdownOptions}>{user.aboutMe.text}</Markdown></div>
+    <div id="userAboutText" style={{flexShrink:3,overflowY:"auto"}}><Markdown options={markdownOptions}>{user.aboutMe.text}</Markdown></div>
     <div style={{flexGrow: 1}}/>
     <div id="userAdminActions" hidden={(
       !states.focusedServerPermissions.includes("moderation.ban") &&
       !states.focusedServerPermissions.includes("admin.editpermissions") &&
       !states.focusedServerPermissions.includes("admin")
-    )} style={{margin:2,padding:2,borderRadius:5,border:"1px solid #888888"}}>
+    )} style={{margin:2,padding:2,borderRadius:5,border:"1px solid #888888",flexShrink:1,overflowY:"auto"}}>
       <h3 style={{margin:3}}>Administrative Actions</h3>
       <div hidden={(
         !states.focusedServerPermissions.includes("moderation.ban") &&
         !states.focusedServerPermissions.includes("admin")
       )}>
-        <button>Ban {user.username} from this server</button>
-        <button>Unban {user.username} from this server</button>
+        <button onClick={() => {
+          console.log(JSON.stringify({
+            eventType: "ban",
+            userID: user.id,
+            unban: true
+          }));
+          openSockets[states.focusedServer].send(JSON.stringify({
+            eventType: "ban",
+            userID: user.id,
+            unban: false
+          }));
+        }}>Ban {user.username} from this server</button>
+        <button onClick={() => {
+          openSockets[states.focusedServer].send(JSON.stringify({
+            eventType: "ban",
+            userID: user.id,
+            unban: true
+          }));
+        }}>Unban {user.username} from this server</button>
       </div>
       <div style={{flexShrink:0,height:5}}></div>
       <div hidden={(
@@ -683,23 +700,19 @@ async function showUser(id) {
         <h4>Permissions</h4>
         {Object.keys(states.focusedServerAvailablePermissions).map(key => <div>
           <input id={key} type="checkbox" onChange={e => {
-            if(e.target.checked) {
-              if (!states.focusedServerPeers[user.id]?.globalPermissions.includes(key)) {
-                openSockets[states.focusedServer].send(JSON.stringify({
-                  eventType: "permissionChange",
-                  userID: user.id,
-                  permission: key,
-                  value: true
-                }));
-              }
-            } else {
-              if (states.focusedServerPeers[user.id]?.globalPermissions.includes(key)) {
-                openSockets[states.focusedServer].send(JSON.stringify({
-                  eventType: "permissionChange",
-                  userID: user.id,
-                  permission: key,
-                  value: false
-                }));
+            console.log(e.target.checked, states.focusedServerPeers[user.id]);
+            if (states.focusedServerPeers[user.id]) {
+              openSockets[states.focusedServer].send(JSON.stringify({
+                eventType: "permissionChange",
+                userID: user.id,
+                permission: key,
+                value: e.target.checked
+              }));
+              if (states.focusedServerPeers[user.id].globalPermissions.includes(key)) {
+                states.focusedServerPeers[user.id].globalPermissions.splice(
+                  states.focusedServerPeers[user.id].globalPermissions.indexOf(key), 1);
+              } else {
+                states.focusedServerPeers[user.id].globalPermissions.push(key);
               }
             }
           }} checked={states.focusedServerPeers[user.id]?.globalPermissions.includes(key)}/>

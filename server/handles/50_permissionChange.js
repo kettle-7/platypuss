@@ -70,11 +70,12 @@
             return;
         }
         if (packet.value) {
-            if (sdata.users[packet.ws.uid].globalPerms.includes(packet.permission)) {
+            if (sdata.users[packet.userID].globalPerms.includes(packet.permission)) {
                 return; // don't need to do anything
             } else {
-                sdata.users[packet.ws.uid].globalPerms.push(packet.permission);
+                sdata.users[packet.userID].globalPerms.push(packet.permission);
                 for (let client of clients) {
+                    if (client.uid !== packet.userID) continue;
                     if (client.uid == packet.ws.uid) {
                         client.send(JSON.stringify({
                             eventType: "permissionChange",
@@ -95,11 +96,12 @@
                 }
             }
         } else {
-            if (sdata.users[packet.ws.uid].globalPerms.includes(packet.permission)) {
-                while (sdata.users[packet.ws.uid].globalPerms.includes(packet.permission)) {
-                    sdata.users[packet.ws.uid].globalPerms.splice(sdata.users[packet.ws.uid].globalPerms.indexOf(packet.permission), 1);
+            if (sdata.users[packet.userID].globalPerms.includes(packet.permission)) {
+                while (sdata.users[packet.userID].globalPerms.includes(packet.permission)) {
+                    sdata.users[packet.userID].globalPerms.splice(sdata.users[packet.userID].globalPerms.indexOf(packet.permission), 1);
                 }
                 for (let client of clients) {
+                    if (client.uid !== packet.userID) continue;
                     if (client.uid == packet.ws.uid) {
                         client.send(JSON.stringify({
                             eventType: "permissionChange",

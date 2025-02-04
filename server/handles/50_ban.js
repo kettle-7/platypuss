@@ -20,7 +20,7 @@
  module.exports = {
 	eventType: "ban",
 	execute: function (sdata, wss, packet, clients) {
-        if (packet.uid == undefined) {
+        if (packet.userID == undefined) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
                 code: "missingField",
@@ -28,7 +28,7 @@
             }));
             return;
         }
-        if (sdata.users[packet.uid] == undefined) {
+        if (sdata.users[packet.userID] == undefined) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
                 code: "nonexistentUser",
@@ -45,7 +45,7 @@
             return;
         }
         if (!packet.unban) packet.unban = false;
-		sdata.users[packet.uid].banned = !packet.unban;
+		sdata.users[packet.userID].banned = !packet.unban;
         for (let client of clients) {
             if (client.uid == packet.ws.uid) {
                 client.close();
