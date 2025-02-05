@@ -29,7 +29,7 @@
             }));
             return;
         }
-        if (!(sdata.users[packet.ws.uid].globalPerms.includes("room.delete") || sdata.properties.admins.includes(packet.ws.uid))) {
+        if (!(sdata.users[packet.ws.uid].globalPermissions.includes("room.delete") || sdata.properties.admins.includes(packet.ws.uid))) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
                 code: "noPerm",

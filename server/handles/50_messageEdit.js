@@ -137,7 +137,7 @@ all the information specified in the Platypuss API."
 		};
 		console.log(`<${author} (edit)> ${packet.message.content}`);
 		for (let client of clients) {
-			if (client.loggedinbytoken && sdata.users[client.uid].globalPerms.includes("message.read"))
+			if (client.loggedinbytoken && sdata.users[client.uid].globalPermissions.includes("message.read"))
 			client.send(JSON.stringify({
 				eventType: "messageEdited",
 				message: {

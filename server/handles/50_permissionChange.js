@@ -36,7 +36,7 @@
             }));
             return;
         }
-        if (!(sdata.properties.admins.includes(packet.ws.uid) || (sdata.users[packet.ws.uid].globalPerms.includes("admin.permedit") && packet.ws.uid !== packet.userID))) {
+        if (!(sdata.properties.admins.includes(packet.ws.uid) || (sdata.users[packet.ws.uid].globalPermissions.includes("admin.permedit") && packet.ws.uid !== packet.userID))) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
                 code: "noPermission",
@@ -70,10 +70,10 @@
             return;
         }
         if (packet.value) {
-            if (sdata.users[packet.userID].globalPerms.includes(packet.permission)) {
+            if (sdata.users[packet.userID].globalPermissions.includes(packet.permission)) {
                 return; // don't need to do anything
             } else {
-                sdata.users[packet.userID].globalPerms.push(packet.permission);
+                sdata.users[packet.userID].globalPermissions.push(packet.permission);
                 for (let client of clients) {
                     if (client.uid !== packet.userID) continue;
                     if (client.uid == packet.ws.uid) {
@@ -96,9 +96,9 @@
                 }
             }
         } else {
-            if (sdata.users[packet.userID].globalPerms.includes(packet.permission)) {
-                while (sdata.users[packet.userID].globalPerms.includes(packet.permission)) {
-                    sdata.users[packet.userID].globalPerms.splice(sdata.users[packet.userID].globalPerms.indexOf(packet.permission), 1);
+            if (sdata.users[packet.userID].globalPermissions.includes(packet.permission)) {
+                while (sdata.users[packet.userID].globalPermissions.includes(packet.permission)) {
+                    sdata.users[packet.userID].globalPermissions.splice(sdata.users[packet.userID].globalPermissions.indexOf(packet.permission), 1);
                 }
                 for (let client of clients) {
                     if (client.uid !== packet.userID) continue;

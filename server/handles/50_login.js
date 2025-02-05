@@ -51,12 +51,12 @@ module.exports = {
                     packet.ws.uid = data.id;
                     packet.ws.sessionID = packet.sessionID;
                     if (!(Object.keys(sdata.users).includes(data.id))) {
-                        console.log(`${data.unam} has joined us today.`);
+                        console.log(`${data.username} has joined us today.`);
                         sdata.users[data.id] = new User(data.id, data.tag);
                         let mid = v4();
                         sdata.messages[mid] = {
                             special: true,
-                            content: `${data.unam} has joined us today.`,
+                            content: `${data.username} has joined us today.`,
                             stamp: Date.now(),
                             id: mid,
                             author: "server"
@@ -66,9 +66,9 @@ module.exports = {
                             client.send(JSON.stringify({
                                 eventType: "welcome",
                                 user: data.id,
-                                globalPermissions: sdata.users[client.uid].globalPerms,
+                                globalPermissions: sdata.users[client.uid].globalPermissions,
                                 isAdmin: sdata.properties.admins.includes(client.uid),
-                                explanation: `${data.unam} has joined us today.`
+                                explanation: `${data.username} has joined us today.`
                             }));
                         }
                     } else {
@@ -79,13 +79,16 @@ module.exports = {
                             }));
                             return;
                         }
-                        console.log(`${data.unam} connected to the server.`);
+                        if (sdata.users[packet.ws.uid].globalPerms && !sdata.users[packet.ws.uid].globalPermissions) {
+                            sdata.users[packet.ws.uid].globalPermissions = sdata.users[packet.ws.uid].globalPerms;
+                        }
+                        console.log(`${data.username} connected to the server.`);
                         for (let client of clients) {
                             if (client != packet.ws && client.loggedinbytoken)
                             client.send(JSON.stringify({
                                 eventType: "join",
                                 user: data.id,
-                                globalPermissions: sdata.users[client.uid].globalPerms,
+                                globalPermissions: sdata.users[client.uid].globalPermissions,
                                 isAdmin: sdata.properties.admins.includes(client.uid),
                                 explanation: `${data.unam} connected to the server.`
                             }));
@@ -95,7 +98,7 @@ module.exports = {
                         eventType: "connected",
                         explanation: "You've connected to the server successfully.",
                         manifest: sdata.properties.manifest,
-                        permissions: sdata.users[packet.ws.uid].globalPerms,
+                        permissions: sdata.users[packet.ws.uid].globalPermissions,
                         availablePermissions: availablePerms,
                         isAdmin: sdata.properties.admins.includes(data.id)
                     }
@@ -106,7 +109,7 @@ module.exports = {
                         if (client.readyState < 2 && client.loggedinbytoken && sdata.users[client.uid] != undefined) {
                             onlinePeers[client.uid] = {
                                 id: client.uid,
-                                globalPermissions: sdata.users[client.uid].globalPerms,
+                                globalPermissions: sdata.users[client.uid].globalPermissions,
                                 isAdmin: sdata.properties.admins.includes(client.uid),
                                 online: true
                             }
@@ -116,7 +119,7 @@ module.exports = {
                         if (!Object.keys(onlinePeers).includes(user.id))
                             offlinePeers[user.id] = {
                                 id: user.id,
-                                globalPermissions: user.globalPerms,
+                                globalPermissions: user.globalPermissions,
                                 isAdmin: sdata.properties.admins.includes(user.id),
                                 online: false
                             };

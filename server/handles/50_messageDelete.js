@@ -45,8 +45,8 @@
             return;
         }
         if (!(
-            (sdata.rooms[packet.room].messages[packet.id].author == packet.ws.uid && sdata.users[packet.ws.uid].globalPerms.includes("message.delete"))
-            || sdata.users[packet.ws.uid].globalPerms.includes("moderation.delete"))) {
+            (sdata.rooms[packet.room].messages[packet.id].author == packet.ws.uid && sdata.users[packet.ws.uid].globalPermissions.includes("message.delete"))
+            || sdata.users[packet.ws.uid].globalPermissions.includes("moderation.delete"))) {
             packet.ws.send(JSON.stringify({
                 eventType: "error",
                 code: "noPerm",
