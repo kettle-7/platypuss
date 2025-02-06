@@ -79,9 +79,6 @@ module.exports = {
                             }));
                             return;
                         }
-                        if (sdata.users[packet.ws.uid].globalPerms && !sdata.users[packet.ws.uid].globalPermissions) {
-                            sdata.users[packet.ws.uid].globalPermissions = sdata.users[packet.ws.uid].globalPerms;
-                        }
                         console.log(`${data.username} connected to the server.`);
                         for (let client of clients) {
                             if (client != packet.ws && client.loggedinbytoken)
@@ -116,6 +113,9 @@ module.exports = {
                         }
                     }
                     for (let user of Object.values(sdata.users)) {
+                        if (user.globalPerms && !user.globalPermissions) {
+                            user.globalPermissions = user.globalPerms;
+                        }
                         if (!Object.keys(onlinePeers).includes(user.id))
                             offlinePeers[user.id] = {
                                 id: user.id,
