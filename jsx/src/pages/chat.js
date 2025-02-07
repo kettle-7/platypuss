@@ -342,7 +342,10 @@ function MiddleSection({shown, className, ...props}) {
             <button onClick={leaveServer}>Leave this server</button>
           </div>
         </div> :
-        <div id="messageArea">{states.focusedRoomRenderedMessages.map(message => <Message message={message} key={message.id}/>)}</div> :
+        <div id="messageArea">{states.focusedRoomRenderedMessages.map((message, index, array) => {
+          if (message.author == array[index - 1]?.author) message.special = true;
+          return (<Message message={message} key={message.id}/>);
+        })}</div> :
         <div id="messageArea" style={{position: "relative"}}>
           <div id="noServers">
             <h2>You're not in any servers!</h2>
@@ -698,9 +701,8 @@ async function showUser(id) {
       !states.focusedServerPermissions.includes("admin")
       )}>
         <h4>Permissions</h4>
-        {Object.keys(states.focusedServerAvailablePermissions).map(key => <div>
-          <input id={key} type="checkbox" onChange={e => {
-            console.log(e.target.checked, states.focusedServerPeers[user.id]);
+        {Object.keys(states.focusedServerAvailablePermissions).map(key => {let div = <div>
+          <input key={key} id={key} type="checkbox" onChange={e => {
             if (states.focusedServerPeers[user.id]) {
               openSockets[states.focusedServer].send(JSON.stringify({
                 eventType: "permissionChange",
@@ -714,10 +716,11 @@ async function showUser(id) {
               } else {
                 states.focusedServerPeers[user.id].globalPermissions.push(key);
               }
+              setTimeout(() => showUser(id), 50);
             }
           }} checked={states.focusedServerPeers[user.id]?.globalPermissions.includes(key)}/>
-          <label for={key}>{states.focusedServerAvailablePermissions[key]}</label>
-        </div>)}
+          <label htmlFor={key}>{states.focusedServerAvailablePermissions[key]}</label>
+        </div>; return div;})}
       </div>
     </div>
     <button onClick={() => {setTimeout(() => {states.setActivePopover(null)}, 50);}}>Done</button>
