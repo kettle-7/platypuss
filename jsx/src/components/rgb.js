@@ -53,7 +53,7 @@ function multiplyRGB(RGB, multiplier) {
 }
 
 // Update the custom theme settings to a specific color pallete
-export default function updateCustomTheme(attemptHex, states) {
+export default function updateCustomTheme(attemptHex, states, dry=false) {
   attemptHex = attemptHex.toLowerCase();
   let darkColorFix = attemptHex;
   for (let i = 0; i < 5; i++) {
@@ -61,7 +61,8 @@ export default function updateCustomTheme(attemptHex, states) {
     darkColorFix = darkColorFix.slice(1);
   }
 
-  if (attemptHex.length !== 6 || parseInt(attemptHex, 16).toString(16) !== darkColorFix) return;
+  if (attemptHex.length !== 6 || parseInt(attemptHex, 16).toString(16) !== darkColorFix) return false;
+  if (dry) return true;
 
   setTimeout(()=>{states.setThemeHex(attemptHex)}, 50);
   localStorage.setItem("themeHex", attemptHex);
@@ -95,4 +96,5 @@ export default function updateCustomTheme(attemptHex, states) {
   document.body.style.setProperty('--background-level5', "#" + RGBToString(multiplyRGB(rgb, 0.96437908497)));
   document.body.style.setProperty('--background-level6', primaryColor);
   document.body.style.setProperty('--grey', "#888888");
+  return true;
 }

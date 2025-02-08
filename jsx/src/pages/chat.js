@@ -1023,7 +1023,7 @@ function AccountSettings() {
             states.setTheme("green");
             localStorage.setItem("theme", "green");
             customThemeDisplayRef.current.hidden = true;
-          }, 50);}}>Greeeeeeeeeeeeeeeeeeeeeeeeeeen</option>
+          }, 50);}}>Grn</option>
           <option value="custom" onClick={() => {setTimeout(() => {
             states.setTheme("custom");
             localStorage.setItem("theme", "custom");
@@ -1033,8 +1033,12 @@ function AccountSettings() {
       </div>
       <span hidden={states.theme !== "custom"} ref={customThemeDisplayRef}>Custom Theme Hex Colour: #
         <span id="accountSettingsCustomTheme" contentEditable
-        ref={customThemeEditRef} onInput={() => {
-            updateCustomTheme(customThemeEditRef.current.innerText, states);
+        ref={customThemeEditRef} onInput={e => {
+            updateCustomTheme(e.target.innerText, states);
+          }} onBlur={e => {
+            if(e.target.innerText == "" || !updateCustomTheme(e.target.innerText, states, true)) {
+              e.target.innerText = states.themeHex;
+            }
           }}>
           {states.themeHex}
         </span>
