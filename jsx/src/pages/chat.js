@@ -701,7 +701,7 @@ async function showUser(id) {
       !states.focusedServerPermissions.includes("admin")
       )}>
         <h4>Permissions</h4>
-        {Object.keys(states.focusedServerAvailablePermissions).map(key => {let div = <div>
+        {Object.keys(states.focusedServerAvailablePermissions).map(key => <div>
           <input key={key} id={key} type="checkbox" onChange={e => {
             if (states.focusedServerPeers[user.id]) {
               openSockets[states.focusedServer].send(JSON.stringify({
@@ -720,7 +720,7 @@ async function showUser(id) {
             }
           }} checked={states.focusedServerPeers[user.id]?.globalPermissions.includes(key)}/>
           <label htmlFor={key}>{states.focusedServerAvailablePermissions[key]}</label>
-        </div>; return div;})}
+        </div>)}
       </div>
     </div>
     <button onClick={() => {setTimeout(() => {states.setActivePopover(null)}, 50);}}>Done</button>
