@@ -821,7 +821,14 @@ function RoomSettingsPopover({room}) {
     <div id="roomDescription" contentEditable={(
       states.focusedServerPermissions?.includes("room.edit") ||
       states.focusedServerPermissions?.includes("admin")
-    )} ref={roomDescriptionRef}/>
+    )} ref={roomDescriptionRef} onBlur={() => {
+      openSockets[states.focusedServer].send(JSON.stringify({
+        eventType: "editRoom",
+        operation: "changeDescription",
+        newDescription: roomDescriptionRef.current.innerText,
+        roomID: room.id
+      }));
+    }}/>
     {(states.focusedServerPermissions?.includes("room.delete") ||
       states.focusedServerPermissions?.includes("admin")) ? <button onClick={() => {
       setTimeout(() => {
