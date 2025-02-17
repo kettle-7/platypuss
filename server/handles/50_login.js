@@ -131,6 +131,7 @@ module.exports = {
                         obj.rooms[room.id] = {
                             id: room.id,
                             name: room.name,
+                            description: room.description,
                             messages: {}
                         }
                     }
