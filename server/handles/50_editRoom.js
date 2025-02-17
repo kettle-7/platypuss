@@ -61,7 +61,7 @@
                         code: "missingData",
                         explanation: "you need a new name for the room"
                     }));
-                    return;
+                    return sdata;
                 }
                 sdata.rooms[packet.roomID].name = packet.newName.toString();
                 break;
@@ -72,7 +72,7 @@
                         code: "missingData",
                         explanation: "you need a new description for the room"
                     }));
-                    return;
+                    return sdata;
                 }
                 sdata.rooms[packet.roomID].description = packet.newDescription.toString();
                 packet.ws.send(JSON.stringify({
@@ -94,6 +94,7 @@
             newRooms[room.id] = {
                 id: room.id,
                 name: room.name,
+                description: room.description,
                 messages: {}
             }
         }
