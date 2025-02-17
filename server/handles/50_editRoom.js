@@ -77,7 +77,7 @@
                 sdata.rooms[packet.roomID].description = packet.newDescription.toString();
                 packet.ws.send(JSON.stringify({
                     eventType: "debug",
-                    explanation: "e"
+                    explanation: packet.newDescription.toString()
                 }));
                 break;
             default:
