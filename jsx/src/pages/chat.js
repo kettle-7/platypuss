@@ -224,7 +224,7 @@ function handleTouchMove(evt) {
   var yDiff = window.yDown - yUp;
                                                                         
   if (Math.abs(xDiff) > Math.abs(yDiff)) {
-    if (xDiff > 0) {
+    if (xDiff > window.innerWidth / 2) {
       if (states.mobileSidebarShown) {
         setTimeout(() => {states.setMobileSidebarShown(false)}, 50);
       }
@@ -236,6 +236,20 @@ function handleTouchMove(evt) {
   }
   window.xDown = null;
   window.yDown = null;                                             
+}
+
+function generateInviteCode(subserver, port, inviteCode) {
+  let code = "";
+  for (let part of subserver.split(".")) {
+      let cp = parseInt(part, 10).toString(16);
+      while (cp.length < 2) {
+          cp = "0" + cp;
+      }
+      code += cp;
+  }
+  // the invite code must be at least 16
+  code += parseInt(port, 10).toString(16) + parseInt(inviteCode, 10).toString(16);
+  return `https://beta.platypuss.net/chat/?invite=${code}&ip=www.platypuss.net`;
 }
 
 function SyntaxHighlightedCode(props) {
@@ -322,6 +336,11 @@ function MiddleSection({shown, className, ...props}) {
   }, [states.focusedRoomRenderedMessages]);
 
   return (<div id="middleSection" className={className} style={{transform: shown ? "none" : "translate(100vw, 0px)", position: shown ? undefined : "absolute"}} {...props}>
+    <div id="toastArea" style={{top: (states.activeToast) ? 5 : '-50vh'}}>
+      <div id="toast">
+        {states.activeToast}
+      </div>
+    </div>
     <div id="aboveScrolledArea"></div>
     <div id="scrolledArea" ref={scrolledAreaRef}> {/* Has a scrollbar, contains load more messages button but not message typing box */}
       <div id="aboveMessageArea">
@@ -444,7 +463,7 @@ function MiddleSection({shown, className, ...props}) {
 }
 
 // Renders a single message
-function Message({message}) {
+function Message({message, type="normal"}) {
   // We might have the author cached already, if not we'll just get them later
   let [author, setAuthor] = React.useState(userCache[message.author] || {
     avatar: null,
@@ -518,7 +537,7 @@ function Message({message}) {
     <div className="message2">
       <div className="messageAuthor" style={{ display: message.special ? "none" : "flex" }}>
         <h3 className="messageUsernameDisplay">{author.username}</h3>
-        <span className="messageTimestamp">@{author.tag} at {message.timestamp ? new Date(message.timestamp).toLocaleString() : new Date(message.stamp).toLocaleString()}</span>
+        <span className="messageTimestamp" hidden={type == "toast" || states.useMobileUI}>@{author.tag} at {message.timestamp ? new Date(message.timestamp).toLocaleString() : new Date(message.stamp).toLocaleString()}</span>
       </div>
       {message.reply ? messageCache[message.reply] ? <blockquote className='messageReply'>
         <button className='userMention' onClick={()=>{setTimeout(()=>{showUser(messageCache[message.reply].author)},50)}}>
@@ -540,7 +559,7 @@ function Message({message}) {
         </div>
       </div>
     </div>
-    {states.useMobileUI ? "" : <div className="message3">
+    {states.useMobileUI || type == "toast" ? "" : <div className="message3">
       <button className='material-symbols-outlined' style={{display:(
         sentByThisUser ? !states.focusedServerPermissions?.includes("message.edit")
         : true // You shouldn't be able to edit other people's messages no matter what
@@ -676,11 +695,6 @@ async function showUser(id) {
         !states.focusedServerPermissions.includes("admin")
       )}>
         <button onClick={() => {
-          console.log(JSON.stringify({
-            eventType: "ban",
-            userID: user.id,
-            unban: true
-          }));
           openSockets[states.focusedServer].send(JSON.stringify({
             eventType: "ban",
             userID: user.id,
@@ -1276,7 +1290,13 @@ async function loadView(switchToServer) {
           case "message":
             if (document.visibilityState == "hidden" && data.userId !== packet.message.author)
               new Audio(authUrl+'/randomsand.wav').play();
-            if (states.focusedServer !== serverCode || (packet.message.room && states.focusedRoom.id != packet.message.room)) break;
+            if (states.focusedServer !== serverCode || (packet.message.room && states.focusedRoom.id != packet.message.room)) {
+              states.setActiveToast(<Message message={packet.message} type="toast"/>);
+              setTimeout(() => {
+                states.setActiveToast(null);
+              }, 3000);
+              break;
+            }
             // cache the message and add it to the list to render
             messageCache[packet.message.id] = packet.message;
             states.setFocusedRoomRenderedMessages([
@@ -1286,7 +1306,6 @@ async function loadView(switchToServer) {
             window.loadedMessages++;
             break;
           case "messages":
-            console.log(packet)
             if (states.focusedServer !== serverCode || states.focusedRoom.id != packet.room) break;
             if (packet.messages[0])
             for (let messageID in packet.messages) {
@@ -1519,6 +1538,7 @@ export default function ChatPage() {
   [states.avatarProgress, states.setAvatarProgress] = React.useState(null); // how far through we are uploading our avatar
   [states.editMessage, states.setEditMessage] = React.useState(null); // the id of the message being edited, if any
   [states.focusedServerAvailablePermissions, states.setFocusedServerAvailablePermissions] = React.useState(null); // the permissions that can be had in the focused server
+  [states.activeToast, states.setActiveToast] = React.useState(null); // the toast to show, null to show no toast
 
   React.useEffect(() => {
     loadView();

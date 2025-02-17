@@ -83,6 +83,31 @@
   --grey: rgb(0, 182, 0);
 }
 
+#toastArea {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  left: 5px;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  transition: top 1s;
+}
+
+#toast {
+  padding: 6px;
+  background: var(--outgradient);
+  border-radius: 5px;
+  align-self: center;
+  max-width: 10cm;
+  z-index: 3;
+  pointer-events: all;
+}
+
+#toast * {
+  word-break: break-word;
+}
+
 .account-settings-username {
   margin-left: 2px;
 }
@@ -892,6 +917,7 @@ button.material-symbols-outlined {
   min-height: 96px;
   flex-grow: 1;
   padding: 3px;
+  word-break: break-word;
 }
 
 #roomDescription:focus {
