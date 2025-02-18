@@ -775,6 +775,10 @@ input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focu
   color: white;
 }
 
+.imagePopover img {
+  max-height: inherit;
+}
+
 #popoverHeaderBar {
   display: flex;
   flex-direction: row;

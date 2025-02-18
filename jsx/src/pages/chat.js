@@ -238,18 +238,18 @@ function handleTouchMove(evt) {
   window.yDown = null;                                             
 }
 
-function generateInviteCode(subserver, port, inviteCode) {
+function generateInviteCode(ip, subserver, port, inviteCode) {
   let code = "";
   for (let part of subserver.split(".")) {
-      let cp = parseInt(part, 10).toString(16);
-      while (cp.length < 2) {
-          cp = "0" + cp;
-      }
-      code += cp;
+    let cp = parseInt(part, 10).toString(16);
+    while (cp.length < 2) {
+        cp = "0" + cp;
+    }
+    code += cp;
   }
   // the invite code must be at least 16
   code += parseInt(port, 10).toString(16) + parseInt(inviteCode, 10).toString(16);
-  return `https://beta.platypuss.net/chat/?invite=${code}&ip=www.platypuss.net`;
+  return `https://${pageUrl.host}/chat/?invite=${code}&ip=${ip}`;
 }
 
 function SyntaxHighlightedCode(props) {
@@ -652,6 +652,7 @@ function triggerMessageSend() {
             </Popover>);
           }
         } else if (request.readyState === XMLHttpRequest.DONE) {
+          console.log(request);
           states.setUploadProgress(null);
           states.setActivePopover(<Popover title="That's too big!">
             <span>One or more of the files you tried to upload exceeded the maximum size limit for this server.</span>
@@ -936,15 +937,22 @@ function ServerIcon({server}) {
 // The bar on the right showing other server members
 function PeersBar({shown, className, ...props}) {
   return (<div className={className + " sidebar"} id="peersBar" style={{right: 0, transform: shown ? undefined : "translate(-100vw, 0px)", position: shown ? undefined : "absolute"}} {...props}>
-    <button className="serverIcon material-symbols-outlined" id="inviteButton" onClick={() => {
-      openSockets[states.focusedServer].send(JSON.stringify({
-        eventType: "message",
-        message: {
-          content: "/invite",
-          room: states.focusedRoom.id
-        }
-      }));
-    }}>add</button>
+    <button className="serverIcon material-symbols-outlined" id="inviteButton" onClick={() => {setTimeout(() => {
+      let inviteUrl = generateInviteCode(
+        states.servers[states.focusedServer].ip,
+        states.servers[states.focusedServer].subserver,
+        states.servers[states.focusedServer].port,
+        states.servers[states.focusedServer].inviteCode
+      );
+      states.setActivePopover(<Popover title="Invite to Server" style={{width:"fit-content"}}>
+        <span>Send this link to someone else to let them join this server:</span>
+        <div style={{overflowX: "auto"}}>
+          <div style={{padding: 5}}>
+            <a style={{whiteSpace: "nowrap"}} target="_blank" href={inviteUrl}>{inviteUrl}</a>
+          </div>
+        </div>
+      </Popover>)
+    }, 50);}}>add</button>
     {Object.values(states.focusedServerPeers).map(peer =>
       <PeerIcon peer={peer} key={peer.id}/>
     )}
@@ -1294,7 +1302,7 @@ async function loadView(switchToServer) {
               states.setActiveToast(<Message message={packet.message} type="toast"/>);
               setTimeout(() => {
                 states.setActiveToast(null);
-              }, 3000);
+              }, 5000);
               break;
             }
             // cache the message and add it to the list to render
