@@ -206,25 +206,25 @@ function CreateAccountPopover({ error="" }) {
     <button onClick={() => doTheLoginThingy(true)}>Create Account</button>
   </>);
 }
-                                                          
+
 function handleTouchStart(evt) {
   const firstTouch = evt.touches[0];
   window.xDown = firstTouch.clientX;
   window.yDown = firstTouch.clientY;
 }
-                                                                         
+
 function handleTouchMove(evt) {
   if (!window.xDown || !window.yDown) {
     return;
   }
 
-  var xUp = evt.touches[0].clientX;                                    
+  var xUp = evt.touches[0].clientX;
   var yUp = evt.touches[0].clientY;
   var xDiff = window.xDown - xUp;
   var yDiff = window.yDown - yUp;
-                                                                        
-  if (Math.abs(xDiff) > Math.abs(yDiff)) {
-    if (xDiff > window.innerWidth / 2) {
+
+  if (Math.abs(xDiff) > Math.abs(yDiff) && Math.abs(xDiff) > window.innerWidth / 2) {
+    if (xDiff > 0) {
       if (states.mobileSidebarShown) {
         setTimeout(() => {states.setMobileSidebarShown(false)}, 50);
       }
@@ -232,7 +232,7 @@ function handleTouchMove(evt) {
       if (!states.mobileSidebarShown) {
         setTimeout(() => {states.setMobileSidebarShown(true)}, 50);
       }
-    }                       
+    }
   }
   window.xDown = null;
   window.yDown = null;                                             
@@ -362,8 +362,7 @@ function MiddleSection({shown, className, ...props}) {
           </div>
         </div> :
         <div id="messageArea">{states.focusedRoomRenderedMessages.map((message, index, array) => {
-          if (message.author == array[index - 1]?.author) message.special = true;
-          return (<Message message={message} key={message.id}/>);
+          return (<Message message={message} key={message.id} special={message.author == array[index - 1]?.author}/>);
         })}</div> :
         <div id="messageArea" style={{position: "relative"}}>
           <div id="noServers">
@@ -463,7 +462,7 @@ function MiddleSection({shown, className, ...props}) {
 }
 
 // Renders a single message
-function Message({message, type="normal"}) {
+function Message({message, special, type="normal"}) {
   // We might have the author cached already, if not we'll just get them later
   let [author, setAuthor] = React.useState(userCache[message.author] || {
     avatar: null,
@@ -490,9 +489,9 @@ function Message({message, type="normal"}) {
             : !states.focusedServerPermissions?.includes("moderation.delete")
           ) ? "none" : "flex"}}>Delete</button>
         </div>
-        <div className="messageAuthor" style={{ display: message.special ? "none" : "flex" }}>
+        <div className="messageAuthor" style={{ display: message.special ? "none" : "inline" }}>
           <h3 className="messageUsernameDisplay">{author.username}</h3>
-          <span className="messageTimestamp">@{author.tag} at {message.timestamp ? new Date(message.timestamp).toLocaleString() : new Date(message.stamp).toLocaleString()}</span>
+          <span className="messageTimestamp" style={{opacity: 1}}>@{author.tag}<br/>{message.timestamp ? new Date(message.timestamp).toLocaleString() : new Date(message.stamp).toLocaleString()}</span>
         </div>
         {message.reply ? messageCache[message.reply] ? <blockquote className='messageReply'>
         <button className='userMention' onClick={()=>{setTimeout(()=>{showUser(messageCache[message.reply].author)},50)}}>
@@ -530,12 +529,12 @@ function Message({message, type="normal"}) {
     <img src={author.avatar ? authUrl+author.avatar :
       "https://img.freepik.com/premium-vector/hand-drawn-cartoon-doodle-skull-funny-cartoon-skull-isolated-white-background_217204-944.jpg"
     } alt="🐙" className="avatar" style={{
-      height: message.special ? "0px" : undefined
+      height: (message.special || special) ? "0px" : undefined
     }} onClick={() => {setTimeout(() => {
       showUser(message.author);
     }, 50);}}/>
     <div className="message2">
-      <div className="messageAuthor" style={{ display: message.special ? "none" : "flex" }}>
+      <div className="messageAuthor" style={{ display: (message.special || special) ? "none" : "flex" }}>
         <h3 className="messageUsernameDisplay">{author.username}</h3>
         <span className="messageTimestamp" hidden={type == "toast" || states.useMobileUI}>@{author.tag} at {message.timestamp ? new Date(message.timestamp).toLocaleString() : new Date(message.stamp).toLocaleString()}</span>
       </div>
@@ -1299,7 +1298,7 @@ async function loadView(switchToServer) {
             if (document.visibilityState == "hidden" && data.userId !== packet.message.author)
               new Audio(authUrl+'/randomsand.wav').play();
             if (states.focusedServer !== serverCode || (packet.message.room && states.focusedRoom.id != packet.message.room)) {
-              states.setActiveToast(<Message message={packet.message} type="toast"/>);
+              states.setActiveToast(<Message message={packet.message} type="toast" special={false}/>);
               setTimeout(() => {
                 states.setActiveToast(null);
               }, 5000);
