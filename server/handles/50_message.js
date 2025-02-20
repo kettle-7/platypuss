@@ -266,16 +266,16 @@ all the information specified in the Platypuss API."
             let words = packet.message.content.split(" ");
             packet.ws.send(JSON.stringify({
                 eventType: "debug",
-                explanation: JSON.stringify(words)
+                explanation: JSON.stringify(parseInt(words[0]))
             }));
-            delete words[0];
-            if (parseInt(words[1])) {
-                sdata.properties.maximumFileSize = parseInt(words[1]) * 1024 * 1024;
+            words.splice(0, 1);
+            if (parseInt(words[0])) {
+                sdata.properties.maximumFileSize = parseInt(words[0]) * 1024 * 1024;
             }
             packet.ws.send(JSON.stringify({
                 eventType: "message",
                 message: {
-                    content: `changed file size limit to ${parseInt(words[1]).toString()} mib`,
+                    content: `changed file size limit to ${parseInt(words[0]).toString()} mib`,
                     timestamp: packet.message.timestamp,
                     id: mid,
                     author: "server",
