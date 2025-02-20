@@ -264,6 +264,10 @@ all the information specified in the Platypuss API."
         else if (sdata.properties.admins.includes(packet.message.author) &&
                 packet.message.content.indexOf("/changeFileSizeLimit") == 0) {
             let words = packet.message.content.split(" ");
+            packet.ws.send(JSON.stringify({
+                eventType: "debug",
+                explanation: JSON.stringify(words)
+            }));
             delete words[0];
             if (parseInt(words[0])) {
                 sdata.properties.maximumFileSize = parseInt(words[0]) * 1024 * 1024;
