@@ -21,7 +21,7 @@ const { v4 } = require('uuid');
 
 // Feel free to modify these to your liking (you may want different default permissions or maximum file size)
 module.exports = {
-    maximumFileSize: 25 * 1024 * 1024,
+    maximumFileSize: 2500 * 1024 * 1024,
     defaultPermissions: [
         "message.send",
         "message.read",

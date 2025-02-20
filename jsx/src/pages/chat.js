@@ -207,19 +207,19 @@ function CreateAccountPopover({ error="" }) {
   </>);
 }
 
-function handleTouchStart(evt) {
-  const firstTouch = evt.touches[0];
+function handleTouchStart(event) {
+  const firstTouch = event.touches[0];
   window.xDown = firstTouch.clientX;
   window.yDown = firstTouch.clientY;
 }
 
-function handleTouchMove(evt) {
+function handleTouchMove(event) {
   if (!window.xDown || !window.yDown) {
     return;
   }
 
-  var xUp = evt.touches[0].clientX;
-  var yUp = evt.touches[0].clientY;
+  var xUp = event.touches[0].clientX;
+  var yUp = event.touches[0].clientY;
   var xDiff = window.xDown - xUp;
   var yDiff = window.yDown - yUp;
 
