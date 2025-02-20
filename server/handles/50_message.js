@@ -269,13 +269,13 @@ all the information specified in the Platypuss API."
                 explanation: JSON.stringify(words)
             }));
             delete words[0];
-            if (parseInt(words[0])) {
-                sdata.properties.maximumFileSize = parseInt(words[0]) * 1024 * 1024;
+            if (parseInt(words[1])) {
+                sdata.properties.maximumFileSize = parseInt(words[1]) * 1024 * 1024;
             }
             packet.ws.send(JSON.stringify({
                 eventType: "message",
                 message: {
-                    content: `changed file size limit to ${words[0]}`,
+                    content: `changed file size limit to ${parseInt(words[1]).toString()} mib`,
                     timestamp: packet.message.timestamp,
                     id: mid,
                     author: "server",
