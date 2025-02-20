@@ -262,6 +262,25 @@ all the information specified in the Platypuss API."
             return sdata;
         }
         else if (sdata.properties.admins.includes(packet.message.author) &&
+                packet.message.content.indexOf("/changeFileSizeLimit") == 0) {
+            let words = packet.message.content.split(" ");
+            delete words[0];
+            if (parseInt(words[0])) {
+                sdata.properties.maximumFileSize = parseInt(words[0]) * 1024 * 1024;
+            }
+            packet.ws.send(JSON.stringify({
+                eventType: "message",
+                message: {
+                    content: `changed file size limit to ${words[0]}`,
+                    timestamp: packet.message.timestamp,
+                    id: mid,
+                    author: "server",
+                    special: true
+                }
+            }));
+            return sdata;
+        }
+        else if (sdata.properties.admins.includes(packet.message.author) &&
                 packet.message.content.indexOf("/changeIcon") == 0) {
             let words = packet.message.content.split(" ");
             delete words[0];
