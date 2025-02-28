@@ -362,6 +362,9 @@ function MiddleSection({shown, className, ...props}) {
           </div>
         </div> :
         <div id="messageArea">{states.focusedRoomRenderedMessages.map((message, index, array) => {
+          if (!message) { // for some strange reason in rooms with no messages instead of an
+            return "";    // empty array we get an array with a single null item
+          }
           return (<Message message={message} key={message.id} special={message.author == array[index - 1]?.author}/>);
         })}</div> :
         <div id="messageArea" style={{position: "relative"}}>
