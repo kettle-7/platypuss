@@ -850,7 +850,16 @@ function RoomsBar({shown, className, ...props}) {
             <br/>{states.servers[states.focusedServer].manifest.memberCount} members</p>
           </div>
         </div>
-        <div><Markdown options={markdownOptions}>{states.servers[states.focusedServer].manifest.description}</Markdown></div>
+        <div><Markdown options={markdownOptions} contentEditable={states.focusedServerPermissions.includes("admin")} onBlur={event => {
+              if (event.target.innerText.replace(/ \t\r\n\v/g, "") && states.focusedServerPermissions.includes("admin")) {
+                openSockets[states.focusedServer].send(JSON.stringify({
+                  eventType: "message",
+                  message: {
+                    content: "/changeDescription "+event.target.innerText
+                  }
+                }));
+              }
+        }}>{states.servers[states.focusedServer].manifest.description}</Markdown></div>
         <div style={{flexGrow: 1}}/>
         <button onClick={leaveServer}>Leave this server</button>
       </Popover>);
