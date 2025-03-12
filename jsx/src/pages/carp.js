@@ -284,7 +284,7 @@ function SignInPopover ({ error="" }) {
       <em id="signInErrorMessage">{error}</em>
       <div style={{display:"grid",gridTemplateColumns:"auto auto"}}>
         <label>Email address </label><input type="email" id="email" className="textBox" ref={emailRef}/>
-        <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef}/>
+        <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef} onKeyDown={event => {if (event.key == "Enter") doTheLoginThingy(false)}}/>
       </div>
     </div>
     <button onClick={() => {setTimeout(() => {
@@ -323,7 +323,7 @@ function CreateAccountPopover ({ error="" }) {
       <div style={{display:"grid",gridTemplateColumns:"auto auto"}}>
         <label>Email address </label><input type="email" id="email" className="textBox" ref={emailRef}/>
         <label>Username </label><input type="text" id="unam" className="textBox" ref={usernameRef}/>
-        <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef}/>
+        <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef} onKeyDown={event => {if (event.key == "Enter") doTheLoginThingy(false)}}/>
         <label>Confirm Password </label><input type="password" id="confirmPassword" className="textBox" ref={confirmPasswordRef}/>
       </div>
     </div>

@@ -154,7 +154,7 @@ function SignInPopover({ error="" }) {
       <em id="signInErrorMessage">{error}</em>
       <div style={{display:"grid",gridTemplateColumns:"auto auto"}}>
         <label>Email address </label><input type="email" id="email" className="textBox" ref={emailRef}/>
-        <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef}/>
+        <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef} onKeyDown={event => {if (event.key == "Enter") doTheLoginThingy(false)}}/>
       </div>
     </div>
     <button onClick={() => {setTimeout(() => {
@@ -199,7 +199,7 @@ function CreateAccountPopover({ error="" }) {
       <div style={{display:"grid",gridTemplateColumns:"auto auto"}}>
         <label>Email address </label><input type="email" id="email" className="textBox" ref={emailRef}/>
         <label>Username </label><input type="text" id="unam" className="textBox" ref={usernameRef}/>
-        <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef}/>
+        <label>Password </label><input type="password" id="password" className="textBox" ref={passwordRef} onKeyDown={event => {if (event.key == "Enter") doTheLoginThingy(false)}}/>
         <label>Confirm Password </label><input type="password" id="confirmPassword" className="textBox" ref={confirmPasswordRef}/>
       </div>
     </div>
@@ -496,12 +496,12 @@ function Message({message, special, type="normal", server=null}) {
           <h3 className="messageUsernameDisplay">{author.username}</h3>
           <span className="messageTimestamp" style={{opacity: 1}}>@{author.tag}<br/>{message.timestamp ? new Date(message.timestamp).toLocaleString() : new Date(message.stamp).toLocaleString()}</span>
         </div>
-        {message.reply ? messageCache[message.reply] ? <blockquote className='messageReply'>
+        {message.reply ? messageCache[message.reply] ? <blockquote className='messageReply' onClick={() => {document.getElementById(message.reply)?.scrollIntoView();}}>
         <button className='userMention' onClick={()=>{setTimeout(()=>{showUser(messageCache[message.reply].author)},50)}}>
           <strong>
             @{userCache[messageCache[message.reply].author]?.username}
           </strong>
-        </button>
+        </button><br/>
         <span className='messageReplyContent'>{messageCache[message.reply]?.content}</span>
         </blockquote> : <blockquote className='messageReply'><em>Message couldn't be loaded</em></blockquote> : ""}
         <div className="messageContent">
@@ -615,7 +615,7 @@ function triggerMessageSend() {
       states.setUploads([]);
     }, 50);
   } else {
-    let remainingUploads = 0;
+    let remainingUploads = 0; // how many attachments still have yet to be uploaded
     let attachmentObjects = [];
     for (let upload of states.uploads) {
       remainingUploads++;
@@ -791,19 +791,78 @@ function RoomsBar({shown, className, ...props}) {
     }} onClick={() => {setTimeout(() => {
       states.setActivePopover(<Popover title="">
         <div className='popoverBanner'>
-          <img className='avatar bannerIcon' alt="🐙" src={states.servers[states.focusedServer].manifest.icon}/>
+          {states.focusedServerPermissions.includes("admin") ? <div className="avatar bannerIcon" alt="🐙" id="changeServerIconHoverButton" onClick={() => {
+            let input = document.createElement('input');
+            input.type = "file";
+            input.multiple = false;
+            input.accept = "image/*";
+            input.onchange = async function (event) {
+              setTimeout(async function() {
+                let file = event.target.files[0];
+                if (file.size >= 10000000) {
+                  states.setActivePopover(<Popover title="Woah, that's too big!">
+                    We only allow avatar sizes up to 10MB, this is to save storage space on the server. Please choose a smaller image or resize it in an image editor.
+                  </Popover>);
+                  return;
+                }
+                let request = new XMLHttpRequest();
+                request.open("POST", `https://${states.servers[states.focusedServer].ip}/upload?sessionID=${states.servers[states.focusedServer].token}&mimeType=${upload.fileObject.type}&fileName=${upload.fileObject.name.replace(/[ \\\/]/g, "_")}`);
+                request.onreadystatechange = () => {
+                  if (request.readyState === XMLHttpRequest.DONE && request.status) {
+                    openSockets[states.focusedServer].send(JSON.stringify({
+                      eventType: "message",
+                      message: {
+                        content: "/changeIcon https://"+states.servers[states.focusedServer].ip+JSON.parse(request.responseText).url,
+                        room: states.focusedRoom.id
+                      }
+                    }));
+                  }
+                  else {
+                    console.log(request);
+                  }
+                };
+                request.upload.onprogress = (event) => {
+                  states.setAvatarProgress(event.loaded/event.total*100);
+                };
+                request.send(await file.bytes());
+              }, 50);
+            };
+            input.click();
+          }}>
+            <img className="avatar" id="changeServerIcon" src={states.servers[states.focusedServer].manifest.icon}/>
+            <span id="changeAvatarText">Change</span>
+          </div> :
+          <img className='avatar bannerIcon' alt="🐙" src={states.servers[states.focusedServer].manifest.icon}/>}
           <div style={{
             display: "flex",
             flexDirection: "column",
             gap: 2,
             paddingLeft: 5
           }}>
-            <h1 style={{margin: 0}}>{states.servers[states.focusedServer].manifest.title}</h1>
+            <h1 style={{margin: 0}} contentEditable={states.focusedServerPermissions.includes("admin")} onBlur={event => {
+              if (event.target.innerText.replace(/ \t\r\n\v/g, "") && states.focusedServerPermissions.includes("admin")) {
+                openSockets[states.focusedServer].send(JSON.stringify({
+                  eventType: "message",
+                  message: {
+                    content: "/rename "+event.target.innerText
+                  }
+                }));
+              }
+            }}>{states.servers[states.focusedServer].manifest.title}</h1>
             <p style={{margin: 0}}>IP address: {states.servers[states.focusedServer].ip}
             <br/>{states.servers[states.focusedServer].manifest.memberCount} members</p>
           </div>
         </div>
-        <div><Markdown options={markdownOptions}>{states.servers[states.focusedServer].manifest.description}</Markdown></div>
+        <div><Markdown options={markdownOptions} contentEditable={states.focusedServerPermissions.includes("admin")} onBlur={event => {
+              if (event.target.innerText.replace(/ \t\r\n\v/g, "") && states.focusedServerPermissions.includes("admin")) {
+                openSockets[states.focusedServer].send(JSON.stringify({
+                  eventType: "message",
+                  message: {
+                    content: "/changeDescription "+event.target.innerText
+                  }
+                }));
+              }
+        }}>{states.servers[states.focusedServer].manifest.description}</Markdown></div>
         <div style={{flexGrow: 1}}/>
         <button onClick={leaveServer}>Leave this server</button>
       </Popover>);
