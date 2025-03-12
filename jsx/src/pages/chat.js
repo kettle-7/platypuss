@@ -465,7 +465,7 @@ function MiddleSection({shown, className, ...props}) {
 }
 
 // Renders a single message
-function Message({message, special, type="normal"}) {
+function Message({message, special, type="normal", server=null}) {
   // We might have the author cached already, if not we'll just get them later
   let [author, setAuthor] = React.useState(userCache[message.author] || {
     avatar: null,
@@ -528,7 +528,10 @@ function Message({message, special, type="normal"}) {
         if (touchTimer) clearTimeout(touchTimer);
       } : null} onMouseUp={states.useMobileUI ? () => {
         if (touchTimer) clearTimeout(touchTimer);
-      } : null}>
+      } : null} onClick={type == "toast" ? () => {setTimeout(() => {
+        states.setFocusedRoom(message.room);
+        loadView(server);
+      }, 50);} : null}>
     <img src={author.avatar ? authUrl+author.avatar :
       "https://img.freepik.com/premium-vector/hand-drawn-cartoon-doodle-skull-funny-cartoon-skull-isolated-white-background_217204-944.jpg"
     } alt="🐙" className="avatar" style={{
@@ -1301,7 +1304,7 @@ async function loadView(switchToServer) {
             if (document.visibilityState == "hidden" && data.userId !== packet.message.author)
               new Audio(authUrl+'/randomsand.wav').play();
             if (states.focusedServer !== serverCode || (packet.message.room && states.focusedRoom.id != packet.message.room)) {
-              states.setActiveToast(<Message message={packet.message} type="toast" special={false}/>);
+              states.setActiveToast(<Message message={packet.message} type="toast" special={false} server={serverCode}/>);
               setTimeout(() => {
                 states.setActiveToast(null);
               }, 5000);
