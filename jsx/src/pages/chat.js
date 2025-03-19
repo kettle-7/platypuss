@@ -806,7 +806,7 @@ function RoomsBar({shown, className, ...props}) {
                   return;
                 }
                 let request = new XMLHttpRequest();
-                request.open("POST", `https://${states.servers[states.focusedServer].ip}/upload?sessionID=${states.servers[states.focusedServer].token}&mimeType=${upload.fileObject.type}&fileName=${upload.fileObject.name.replace(/[ \\\/]/g, "_")}`);
+                request.open("POST", `https://${states.servers[states.focusedServer].ip}/upload?sessionID=${states.servers[states.focusedServer].token}&mimeType=${file.type}&fileName=${file.name.replace(/[ \\\/]/g, "_")}`);
                 request.onreadystatechange = () => {
                   if (request.readyState === XMLHttpRequest.DONE && request.status) {
                     openSockets[states.focusedServer].send(JSON.stringify({
@@ -1362,7 +1362,7 @@ async function loadView(switchToServer) {
           case "message":
             if (document.visibilityState == "hidden" && data.userId !== packet.message.author)
               new Audio(authUrl+'/randomsand.wav').play();
-            if (states.focusedServer !== serverCode || (packet.message.room && states.focusedRoom.id != packet.message.room)) {
+            if ((states.focusedServer !== serverCode || (packet.message.room && states.focusedRoom.id != packet.message.room)) && data.userId !== packet.message.author) {
               states.setActiveToast(<Message message={packet.message} type="toast" special={false} server={serverCode}/>);
               setTimeout(() => {
                 states.setActiveToast(null);
@@ -1393,8 +1393,13 @@ async function loadView(switchToServer) {
             break;
           case "messageDeleted":
             if (!messageCache[packet.messageId]) break;
-            document.getElementById(packet.messageId).remove();
             delete messageCache[packet.messageId];
+            for (let message in focusedRoomRenderedMessages) {
+              if (message.id == packet.messageId) {
+                delete focusedRoomRenderedMessages[message];
+              }
+            }
+            states.setFocusedRoomRenderedMessages({...states.focusedRoomRenderedMessages});
             break;
           case "messageEdited":
             if (!messageCache[packet.message.id]) break;
