@@ -1394,12 +1394,12 @@ async function loadView(switchToServer) {
           case "messageDeleted":
             if (!messageCache[packet.messageId]) break;
             delete messageCache[packet.messageId];
-            for (let message in focusedRoomRenderedMessages) {
-              if (message.id == packet.messageId) {
-                delete focusedRoomRenderedMessages[message];
+            for (let message in (states.focusedRoomRenderedMessages || [])) {
+              if (states.focusedRoomRenderedMessages[message]?.id == packet.messageId) {
+                delete states.focusedRoomRenderedMessages[message];
               }
             }
-            states.setFocusedRoomRenderedMessages({...states.focusedRoomRenderedMessages});
+            states.setFocusedRoomRenderedMessages([...states.focusedRoomRenderedMessages]);
             break;
           case "messageEdited":
             if (!messageCache[packet.message.id]) break;
