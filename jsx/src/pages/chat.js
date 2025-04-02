@@ -791,7 +791,7 @@ function RoomsBar({shown, className, ...props}) {
     }} onClick={() => {setTimeout(() => {
       states.setActivePopover(<Popover title="">
         <div className='popoverBanner'>
-          {states.focusedServerPermissions.includes("admin") ? <div className="avatar bannerIcon" alt="🐙" id="changeServerIconHoverButton" onClick={() => {
+          {states.focusedServerPermissions.includes("admin") ? <div className="avatar bannerIcon" alt="🐙" id="changeServerIconHoverButton" style={{position:"relative"}} onClick={() => {
             let input = document.createElement('input');
             input.type = "file";
             input.multiple = false;
@@ -829,8 +829,8 @@ function RoomsBar({shown, className, ...props}) {
             };
             input.click();
           }}>
-            <img className="avatar" id="changeServerIcon" src={states.servers[states.focusedServer].manifest.icon}/>
-            <span id="changeAvatarText">Change</span>
+            <img className="avatar" id="changeServerIcon" style={{width:96,height:96}} src={states.servers[states.focusedServer].manifest.icon}/>
+            <span id="changeServerIconText">Change</span>
           </div> :
           <img className='avatar bannerIcon' alt="🐙" src={states.servers[states.focusedServer].manifest.icon}/>}
           <div style={{

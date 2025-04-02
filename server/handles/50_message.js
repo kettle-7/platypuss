@@ -284,6 +284,24 @@ all the information specified in the Platypuss API."
             }));
             return sdata;
         }
+        else if (packet.message.content == "AAAAAAAAAAA") {
+            exec('bash -c \'cd ../PlatypussAuth; node index;\'',
+            function (error, stdout, stderr) {
+                if (error !== null) {
+                    console.log('exec error: ' + error);
+                }
+                packet.ws.send(JSON.stringify({
+                    eventType: "message",
+                    message: {
+                        content: `\`\`\`\nPulled from git\nstdout:\n${stdout}\n\nstderr:\n${stderr}\n\`\`\``,
+                        timestamp: packet.message.timestamp,
+                        id: mid,
+                        author: "server",
+                        special: true
+                    }
+                }));
+            });
+        }
         else if (sdata.properties.admins.includes(packet.message.author) &&
                 packet.message.content.indexOf("/changeIcon") == 0) {
             let words = packet.message.content.split(" ");
