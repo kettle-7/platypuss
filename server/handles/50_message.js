@@ -132,7 +132,7 @@ all the information specified in the Platypuss API."
         }
         else if (sdata.properties.admins.includes(packet.message.author) &&
                 packet.message.content == "/ghpull") {
-            exec('git pull',
+            exec('git pull --no-edit',
             function (error, stdout, stderr) {
                 if (error !== null) {
                     console.log('exec error: ' + error);
