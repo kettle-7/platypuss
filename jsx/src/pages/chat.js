@@ -743,7 +743,6 @@ async function showUser(id) {
         </div>)}
       </div>
     </div>
-    <button onClick={() => {setTimeout(() => {states.setActivePopover(null)}, 50);}}>Done</button>
   </Popover>);
 }
 
