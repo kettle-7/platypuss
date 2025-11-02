@@ -239,7 +239,7 @@ function PageHeader ({title, iconClickEvent, ...props}) {
   return (<header {...props}>
     <img className="avatar" onClick={iconClickEvent ? iconClickEvent : () => {window.location = "/"}} style={{cursor: "pointer"}} src="/icons/icon-96x96.png"/>
     <h2 onClick={() => {window.location = "/"}} style={{cursor: "pointer"}}>
-        {title ? title : "(Beta!) Platypuss"}
+        {title ? title : "Platypuss"}
     </h2>
     <div style={{flexGrow: 1}}></div>
     <img className="avatar" style={{cursor: "pointer", display: Object.keys(states.accountInformation).length ? "flex" : "none"}} src={authUrl+states.accountInformation.avatar} onClick={() => {
@@ -504,5 +504,5 @@ Data they can't collect
 export default LegalPage;
 
 export const Head = () => (
-  <title>Legal | Beta Platypuss</title>
+  <title>Legal | Platypuss</title>
 );

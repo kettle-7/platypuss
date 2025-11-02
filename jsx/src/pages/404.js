@@ -238,7 +238,7 @@ function PageHeader ({title, iconClickEvent, ...props}) {
   return (<header {...props}>
     <img className="avatar" onClick={iconClickEvent ? iconClickEvent : () => {window.location = "/"}} style={{cursor: "pointer"}} src="/icons/icon-96x96.png"/>
     <h2 onClick={() => {window.location = "/"}} style={{cursor: "pointer"}}>
-        {title ? title : "(Beta!) Platypuss"}
+        {title ? title : "Platypuss"}
     </h2>
     <div style={{flexGrow: 1}}></div>
     <img className="avatar" style={{cursor: "pointer", display: Object.keys(states.accountInformation).length ? "flex" : "none"}} src={authUrl+states.accountInformation.avatar} onClick={() => {
@@ -404,6 +404,6 @@ const Error404Page = () => {
 export default Error404Page;
 
 export const Head = () => (
-  <title>Page not found | Beta Platypuss</title>
+  <title>Page not found | Platypuss</title>
 );
 

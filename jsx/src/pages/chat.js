@@ -1181,7 +1181,7 @@ function loadMoreMessages() {
 
 // The document head contains metadata, most of it is defined in use-site-metadata.jsx
 export const Head = () => (
-  <title>(Beta!) Platypuss</title>
+  <title>Platypuss</title>
 );
 
 // Send a packet to delete a message
@@ -1270,7 +1270,7 @@ async function loadView(switchToServer) {
   if (!browser) return;
   window.onkeydown = event => {
     if (event.key === "Escape") {
-      states.setActivePopover(null);
+      setTimeout(() => {states.setActivePopover(null);}, 50);
     }
   };
   let isInvite = false;
@@ -1559,7 +1559,7 @@ function PageHeader ({title, iconClickEvent, ...props}) {
         iconClickEvent ? iconClickEvent : () => {window.location = "/"}
       } style={{cursor: "pointer"}} src="/icons/icon-96x96.png"/>}
     <h2 onClick={() => {window.location = "/"}} style={{cursor: "pointer"}}>
-        {title ? title : "(Beta!) Platypuss"}
+        {title ? title : "Platypuss"}
     </h2>
     <div style={{flexGrow: 1}}></div>
     <img className="avatar" style={{cursor: "pointer", display: Object.keys(states.accountInformation).length ? "flex" : "none"}} src={authUrl+states.accountInformation.avatar} onClick={() => {

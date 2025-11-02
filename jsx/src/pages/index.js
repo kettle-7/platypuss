@@ -20,7 +20,7 @@ import Markdown from 'markdown-to-jsx';
 import * as React from "react";
 import "./themery.scss";
 
-const PRODUCTION = false; // don't change this other than for testing
+const PRODUCTION = true; // don't change this other than for testing
 
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
 var browser = typeof window !== "undefined"; // check if we're running in a browser rather than the build environment
