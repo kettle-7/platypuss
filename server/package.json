@@ -18,7 +18,7 @@
   "homepage": "https://github.com/kettle-7/platypuss#readme",
   "dependencies": {
     "readline-sync": "^1.4.10",
-    "uuid": "^9.0.0",
+    "uuid": "^14.0.0",
     "ws": "^8.21.0"
   },
   "optionalDependencies": {
