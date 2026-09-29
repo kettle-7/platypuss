@@ -1,5 +1,5 @@
 /************************************************************************
-* Copyright 2021-2024 Ben Keppel, Moss Finder                           *
+* Copyright 2021-2026 Ben Keppel, Freya Keppel, Moss Finder             *
 *                                                                       *
 * This program is free software: you can redistribute it and/or modify  *
 * it under the terms of the GNU General Public License as published by  *
@@ -36,7 +36,6 @@ var uuidreg = /[0-9a-f]{7,8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/ig
 var pageUrl = browser ? new URL(window.location) : new URL("http://localhost:8000"); // window is not defined in the testing environment so just assume localhost
 var authUrl = "https://platypuss.net"; // Authentication server, you shouldn't have to change this but it's a variable just in case
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
-pageUrl.protocol = "https:"; // remove this in production
 
 if (browser) {
   window.loadedMessages = 0; // The number of messages loaded in the current view, used when loading older messages
@@ -529,6 +528,7 @@ function Message({message, special, type="normal", server=null}) {
       } : null} onMouseUp={states.useMobileUI ? () => {
         if (touchTimer) clearTimeout(touchTimer);
       } : null} onClick={type == "toast" ? () => {setTimeout(() => {
+        states.setFocusedServer(server);
         states.setFocusedRoom(message.room);
         loadView(server);
       }, 50);} : null}>
@@ -706,7 +706,7 @@ async function showUser(id) {
             userID: user.id,
             unban: false
           }));
-        }}>Ban {user.username} from this server</button>
+        }} style={{paddingRight: 3}}>Ban {user.username} from this server</button>
         <button onClick={() => {
           openSockets[states.focusedServer].send(JSON.stringify({
             eventType: "ban",
@@ -869,7 +869,7 @@ function RoomsBar({shown, className, ...props}) {
     }, 50);}}>stat_minus_1</button></div>
     {Object.values(states.focusedServerRenderedRooms).map(room => (<RoomLink room={room} key={room.id}></RoomLink>))}
     {Object.values(states.focusedServerRenderedRooms).length === 0 ? <p>This server doesn't have any rooms in it.</p> : <></>}
-    <button onClick={() => {openSockets[states.focusedServer].send(JSON.stringify({eventType: "joinCall"}));}}>calling thing</button>
+    {/*<button onClick={() => {openSockets[states.focusedServer].send(JSON.stringify({eventType: "joinCall"}));}}>calling thing</button>*/}
   </div>);
 }
 
@@ -950,7 +950,7 @@ function RoomSettingsPopover({room}) {
   </>;
 }
 
-// a comment
+// A link to a room in the rooms bar on the left
 function RoomLink({room}) {
   return (<div className="roomLink" style={{cursor:"pointer"}} onClick={() => {
       setTimeout(() => {
@@ -1193,12 +1193,12 @@ function deleteMessage(id) {
   }));
 }
 
-// Make the next message a reply to the said message
+// Make the next message a reply to the hovered message
 function replyToMessage(id) {
   setTimeout(()=>{states.setReply(id)}, 50);
 }
 
-// Add ping text for the specified user to the message box
+// Add mention for the specified user to the message box
 function pingUser(id) {
   document.getElementById("messageBox").innerHTML += "<strong>**[@" + id + "]**</strong> ";
 }
@@ -1363,7 +1363,16 @@ async function loadView(switchToServer) {
             if (document.visibilityState == "hidden" && data.userId !== packet.message.author)
               new Audio(authUrl+'/randomsand.wav').play();
             if ((states.focusedServer !== serverCode || (packet.message.room && states.focusedRoom.id != packet.message.room)) && data.userId !== packet.message.author) {
-              states.setActiveToast(<Message message={packet.message} type="toast" special={false} server={serverCode}/>);
+              states.setActiveToast(<div className="messageNotification"><Message message={packet.message} type="toast" special={false} server={serverCode}/><span>From {states.focusedServerRenderedRooms[packet.message.room] ?
+                <button className='roomMention' onClick={() => {setTimeout(() => {
+                  states.setFocusedRoom(states.focusedServerRenderedRooms[packet.message.room]);
+                  loadView();
+                }, 50);}}><strong>#{states.focusedServerRenderedRooms[packet.message.room]?.name}</strong></button> : 
+                <button className='roomMention' onClick={() => {setTimeout(() => {
+                  states.setFocusedServer(serverCode);
+                  loadView();
+                }, 50);}}><strong>#{states.servers[serverCode]?.manifest?.title}</strong></button>
+              }</span></div>);
               setTimeout(() => {
                 states.setActiveToast(null);
               }, 5000);
