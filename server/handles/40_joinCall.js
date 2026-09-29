@@ -43,7 +43,7 @@ module.exports = {
                 id: id
             }));
         }
-        sdata.callers.push(packet.ws);
+        //sdata.callers.push(packet.ws);
         packet.ws.send(JSON.stringify({
             eventType: "callJoined",
             callPeers: callPeers
