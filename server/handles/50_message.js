@@ -401,7 +401,8 @@ all the information specified in the Platypuss API."
             author: author,
             uploads: packet.message.uploads,
             reply: packet.message.reply,
-            room: packet.message.room
+            room: packet.message.room,
+            poll: packet.message.poll
         };
         console.log(`<${author}> ${packet.message.content}`);
         for (let client of clients) {
@@ -415,7 +416,8 @@ all the information specified in the Platypuss API."
                     author: author,
                     uploads: packet.message.uploads,
                     reply: packet.message.reply,
-                    room: packet.message.room
+                    room: packet.message.room,
+                    poll: packet.message.poll
                 }
             }));
         }
